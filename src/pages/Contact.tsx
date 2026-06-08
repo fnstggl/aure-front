@@ -14,7 +14,7 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
-import { supabase } from "@/integrations/supabase/client";
+import { supabase, isSupabaseConfigured } from "@/integrations/supabase/safeClient";
 import { Container, SectionEyebrow, Reveal } from "@/components/site/primitives";
 
 const contactSchema = z.object({
@@ -41,6 +41,14 @@ export default function Contact() {
   });
 
   const onSubmit = async (data: ContactFormValues) => {
+    if (!supabase) {
+      toast({
+        title: "Form not configured",
+        description: "Set VITE_SUPABASE_URL and VITE_SUPABASE_PUBLISHABLE_KEY to enable submissions.",
+        variant: "destructive",
+      });
+      return;
+    }
     setIsSubmitting(true);
     try {
       const { error } = await supabase.from("pilot_requests").insert({
@@ -194,6 +202,12 @@ export default function Contact() {
                         )}
                       />
 
+                      {!isSupabaseConfigured && (
+                        <p className="rounded-sm border border-signal/30 bg-signal/[0.06] px-3 py-2 font-mono text-[11px] leading-relaxed text-signal/90">
+                          Submissions are disabled — set VITE_SUPABASE_URL and
+                          VITE_SUPABASE_PUBLISHABLE_KEY to enable this form.
+                        </p>
+                      )}
                       <button
                         type="submit"
                         disabled={isSubmitting}
