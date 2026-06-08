@@ -2,7 +2,6 @@ import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
-import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Layout } from "@/components/layout/Layout";
@@ -16,50 +15,29 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { supabase } from "@/integrations/supabase/client";
+import { Container, SectionEyebrow, Reveal } from "@/components/site/primitives";
 
 const contactSchema = z.object({
-  name: z
-    .string()
-    .trim()
-    .min(1, "Name is required")
-    .max(100, "Name must be less than 100 characters"),
-  organization: z
-    .string()
-    .trim()
-    .min(1, "Organization is required")
-    .max(200, "Organization must be less than 200 characters"),
-  role: z
-    .string()
-    .trim()
-    .min(1, "Role is required")
-    .max(100, "Role must be less than 100 characters"),
-  compute_environment: z
-    .string()
-    .trim()
-    .min(1, "Compute environment is required")
-    .max(500, "Description must be less than 500 characters"),
-  email: z
-    .string()
-    .trim()
-    .email("Invalid email address")
-    .max(255, "Email must be less than 255 characters"),
+  name: z.string().trim().min(1, "Name is required").max(100, "Name must be less than 100 characters"),
+  organization: z.string().trim().min(1, "Organization is required").max(200, "Organization must be less than 200 characters"),
+  role: z.string().trim().min(1, "Role is required").max(100, "Role must be less than 100 characters"),
+  compute_environment: z.string().trim().min(1, "Compute environment is required").max(500, "Description must be less than 500 characters"),
+  email: z.string().trim().email("Invalid email address").max(255, "Email must be less than 255 characters"),
 });
 
 type ContactFormValues = z.infer<typeof contactSchema>;
 
+const inputClass =
+  "bg-card border-input text-foreground placeholder:text-white/30 focus-visible:ring-signal/40 focus-visible:border-signal/40";
+
 export default function Contact() {
   const { toast } = useToast();
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [submitted, setSubmitted] = useState(false);
 
   const form = useForm<ContactFormValues>({
     resolver: zodResolver(contactSchema),
-    defaultValues: {
-      name: "",
-      organization: "",
-      role: "",
-      compute_environment: "",
-      email: "",
-    },
+    defaultValues: { name: "", organization: "", role: "", compute_environment: "", email: "" },
   });
 
   const onSubmit = async (data: ContactFormValues) => {
@@ -72,18 +50,14 @@ export default function Contact() {
         compute_environment: data.compute_environment,
         email: data.email,
       });
-
       if (error) throw error;
-
-      toast({
-        title: "Request submitted",
-        description: "We will be in touch shortly.",
-      });
+      toast({ title: "Request submitted", description: "We will be in touch shortly." });
       form.reset();
+      setSubmitted(true);
     } catch (error) {
       toast({
-        title: "Error",
-        description: "Failed to submit request. Please try again.",
+        title: "Could not submit request",
+        description: "Something went wrong. Please try again.",
         variant: "destructive",
       });
     } finally {
@@ -93,123 +67,147 @@ export default function Contact() {
 
   return (
     <Layout>
-      {/* Header */}
-      <section className="px-6 py-24 lg:px-8">
-        <div className="mx-auto max-w-xl">
-          <h1 className="mb-4 text-3xl font-semibold tracking-tight text-foreground md:text-4xl">
-            Request pilot access
-          </h1>
-        </div>
-      </section>
+      <section className="relative overflow-hidden pb-24 pt-32 md:pt-40">
+        <div className="pointer-events-none absolute inset-0 bg-dotgrid opacity-50" aria-hidden />
+        <Container className="relative">
+          <div className="grid gap-12 lg:grid-cols-12 lg:gap-16">
+            {/* Context column */}
+            <div className="lg:col-span-5">
+              <Reveal>
+                <SectionEyebrow>Request access</SectionEyebrow>
+              </Reveal>
+              <Reveal delay={80}>
+                <h1 className="mt-6 text-balance text-[clamp(1.9rem,4vw,2.8rem)] font-medium leading-[1.08] tracking-tight text-foreground">
+                  Start with a shadow-mode analysis
+                </h1>
+              </Reveal>
+              <Reveal delay={140}>
+                <p className="mt-5 max-w-md text-[15px] leading-relaxed text-white/62">
+                  Tell us about your fleet. We run against scheduler metadata only — no payload
+                  access, no execution impact — and return a counterfactual savings report.
+                </p>
+              </Reveal>
+              <Reveal delay={200}>
+                <ul className="mt-8 space-y-2.5">
+                  {["Metadata only", "Read-only shadow mode", "Counterfactual savings report"].map((t) => (
+                    <li key={t} className="flex items-center gap-3 font-mono text-[12px] text-white/55">
+                      <span className="inline-block h-1 w-1 shrink-0 bg-signal" aria-hidden />
+                      {t}
+                    </li>
+                  ))}
+                </ul>
+              </Reveal>
+            </div>
 
-      {/* Form */}
-      <section className="px-6 pb-24 lg:px-8">
-        <div className="mx-auto max-w-xl">
-          <Form {...form}>
-            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-              <FormField
-                control={form.control}
-                name="name"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel className="text-foreground">Name</FormLabel>
-                    <FormControl>
-                      <Input
-                        placeholder="Your name"
-                        className="bg-secondary border-border text-foreground placeholder:text-muted-foreground"
-                        {...field}
+            {/* Form column */}
+            <div className="lg:col-span-7">
+              <Reveal delay={160}>
+                <div className="rounded-md border border-border bg-card p-6 md:p-8">
+                  <Form {...form}>
+                    <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-5">
+                      <div className="grid gap-5 sm:grid-cols-2">
+                        <FormField
+                          control={form.control}
+                          name="name"
+                          render={({ field }) => (
+                            <FormItem>
+                              <FormLabel className="font-mono text-[11px] uppercase tracking-[0.1em] text-white/62">
+                                Name
+                              </FormLabel>
+                              <FormControl>
+                                <Input placeholder="Your name" className={inputClass} {...field} />
+                              </FormControl>
+                              <FormMessage />
+                            </FormItem>
+                          )}
+                        />
+                        <FormField
+                          control={form.control}
+                          name="email"
+                          render={({ field }) => (
+                            <FormItem>
+                              <FormLabel className="font-mono text-[11px] uppercase tracking-[0.1em] text-white/62">
+                                Email
+                              </FormLabel>
+                              <FormControl>
+                                <Input type="email" placeholder="you@company.com" className={inputClass} {...field} />
+                              </FormControl>
+                              <FormMessage />
+                            </FormItem>
+                          )}
+                        />
+                      </div>
+
+                      <div className="grid gap-5 sm:grid-cols-2">
+                        <FormField
+                          control={form.control}
+                          name="organization"
+                          render={({ field }) => (
+                            <FormItem>
+                              <FormLabel className="font-mono text-[11px] uppercase tracking-[0.1em] text-white/62">
+                                Organization
+                              </FormLabel>
+                              <FormControl>
+                                <Input placeholder="Company or institution" className={inputClass} {...field} />
+                              </FormControl>
+                              <FormMessage />
+                            </FormItem>
+                          )}
+                        />
+                        <FormField
+                          control={form.control}
+                          name="role"
+                          render={({ field }) => (
+                            <FormItem>
+                              <FormLabel className="font-mono text-[11px] uppercase tracking-[0.1em] text-white/62">
+                                Role
+                              </FormLabel>
+                              <FormControl>
+                                <Input placeholder="Your position" className={inputClass} {...field} />
+                              </FormControl>
+                              <FormMessage />
+                            </FormItem>
+                          )}
+                        />
+                      </div>
+
+                      <FormField
+                        control={form.control}
+                        name="compute_environment"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel className="font-mono text-[11px] uppercase tracking-[0.1em] text-white/62">
+                              Compute environment
+                            </FormLabel>
+                            <FormControl>
+                              <Textarea
+                                placeholder="Scheduler, GPU pools, regions, rough fleet size"
+                                className={`${inputClass} min-h-[110px]`}
+                                {...field}
+                              />
+                            </FormControl>
+                            <p className="font-mono text-[11px] text-white/30">
+                              Metadata only — never share secrets or customer data.
+                            </p>
+                            <FormMessage />
+                          </FormItem>
+                        )}
                       />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
 
-              <FormField
-                control={form.control}
-                name="organization"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel className="text-foreground">Organization</FormLabel>
-                    <FormControl>
-                      <Input
-                        placeholder="Company or institution"
-                        className="bg-secondary border-border text-foreground placeholder:text-muted-foreground"
-                        {...field}
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-
-              <FormField
-                control={form.control}
-                name="role"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel className="text-foreground">Role</FormLabel>
-                    <FormControl>
-                      <Input
-                        placeholder="Your position"
-                        className="bg-secondary border-border text-foreground placeholder:text-muted-foreground"
-                        {...field}
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-
-              <FormField
-                control={form.control}
-                name="compute_environment"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel className="text-foreground">Compute environment</FormLabel>
-                    <FormControl>
-                      <Textarea
-                        placeholder="Brief description of your compute infrastructure"
-                        className="bg-secondary border-border text-foreground placeholder:text-muted-foreground min-h-[100px]"
-                        {...field}
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-
-              <FormField
-                control={form.control}
-                name="email"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel className="text-foreground">Email</FormLabel>
-                    <FormControl>
-                      <Input
-                        type="email"
-                        placeholder="your@email.com"
-                        className="bg-secondary border-border text-foreground placeholder:text-muted-foreground"
-                        {...field}
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-
-              <Button
-                type="submit"
-                variant="outline"
-                size="lg"
-                disabled={isSubmitting}
-                className="w-full"
-              >
-                {isSubmitting ? "Submitting..." : "Submit request"}
-              </Button>
-            </form>
-          </Form>
-        </div>
+                      <button
+                        type="submit"
+                        disabled={isSubmitting}
+                        className="inline-flex h-11 w-full items-center justify-center rounded-md bg-foreground px-6 text-sm font-medium tracking-tight text-background transition-all duration-200 ease-premium hover:bg-white active:translate-y-px disabled:opacity-50"
+                      >
+                        {isSubmitting ? "Submitting…" : submitted ? "Submitted — we'll be in touch" : "Submit request"}
+                      </button>
+                    </form>
+                  </Form>
+                </div>
+              </Reveal>
+            </div>
+          </div>
+        </Container>
       </section>
     </Layout>
   );

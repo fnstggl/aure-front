@@ -2,102 +2,102 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Aurelius Design System - Dark, Technical, Enterprise-Grade
-   Monochrome palette with sharp corners, Atkinson Hyperlegible font
-*/
+/* ============================================================
+   Aurelius Design System
+   Enterprise infrastructure minimalism.
+   Off-black surfaces, single amber state accent, Geist + Geist Mono.
+   Motion exists only to explain system behavior.
+   ============================================================ */
 
 @layer base {
   :root {
-    --background: 0 0% 0%;
-    --foreground: 0 0% 100%;
+    /* Surfaces — off-black, never pure #000 */
+    --background: 0 0% 2%;          /* #050505 */
+    --background-alt: 0 0% 3%;      /* #080808 */
+    --card: 0 0% 5%;                /* #0D0D0D */
+    --card-elevated: 0 0% 6.5%;     /* #101010 */
 
-    --card: 0 0% 4%;
-    --card-foreground: 0 0% 100%;
+    --foreground: 0 0% 96%;         /* headline text */
+    --card-foreground: 0 0% 96%;
+    --popover: 0 0% 5%;
+    --popover-foreground: 0 0% 96%;
 
-    --popover: 0 0% 4%;
-    --popover-foreground: 0 0% 100%;
+    /* Buttons / primary uses near-white on dark */
+    --primary: 0 0% 96%;
+    --primary-foreground: 0 0% 4%;
 
-    --primary: 0 0% 100%;
-    --primary-foreground: 0 0% 0%;
-
-    --secondary: 0 0% 6%;
-    --secondary-foreground: 0 0% 100%;
+    --secondary: 0 0% 8%;
+    --secondary-foreground: 0 0% 96%;
 
     --muted: 0 0% 10%;
-    --muted-foreground: 0 0% 70%;
+    --muted-foreground: 0 0% 62%;   /* body text */
 
-    --accent: 0 0% 8%;
-    --accent-foreground: 0 0% 100%;
+    --accent: 0 0% 9%;
+    --accent-foreground: 0 0% 96%;
 
-    --destructive: 0 84% 60%;
-    --destructive-foreground: 0 0% 100%;
+    --destructive: 0 72% 51%;
+    --destructive-foreground: 0 0% 96%;
 
-    --border: 0 0% 10%;
-    --input: 0 0% 10%;
-    --ring: 0 0% 100%;
+    /* Hairline borders carry their own alpha */
+    --border: 0 0% 100% / 0.08;
+    --border-strong: 0 0% 100% / 0.16;
+    --input: 0 0% 100% / 0.12;
+    --ring: 38 92% 50%;
 
-    --radius: 0px;
+    --radius: 0.25rem;
 
-    /* Custom tokens for Aurelius */
-    --surface-glass: 0 0% 100% / 0.03;
+    /* Amber — the single state/signal accent */
+    --signal: 38 92% 50%;           /* #F59E0B */
+    --signal-strong: 32 95% 44%;    /* #D97706 */
+    --signal-muted: 22 76% 44%;     /* #C75A1B */
+
+    /* Legacy custom tokens kept for existing components */
+    --surface-glass: 0 0% 100% / 0.025;
     --surface-glass-border: 0 0% 100% / 0.08;
-    --divider: 0 0% 10%;
-    --text-secondary: 0 0% 70%;
-    --text-tertiary: 0 0% 50%;
+    --divider: 0 0% 100% / 0.08;
 
-    --sidebar-background: 0 0% 2%;
-    --sidebar-foreground: 0 0% 100%;
-    --sidebar-primary: 0 0% 100%;
-    --sidebar-primary-foreground: 0 0% 0%;
-    --sidebar-accent: 0 0% 6%;
-    --sidebar-accent-foreground: 0 0% 100%;
-    --sidebar-border: 0 0% 10%;
-    --sidebar-ring: 0 0% 100%;
+    --sidebar-background: 0 0% 3%;
+    --sidebar-foreground: 0 0% 96%;
+    --sidebar-primary: 0 0% 96%;
+    --sidebar-primary-foreground: 0 0% 4%;
+    --sidebar-accent: 0 0% 8%;
+    --sidebar-accent-foreground: 0 0% 96%;
+    --sidebar-border: 0 0% 100% / 0.08;
+    --sidebar-ring: 38 92% 50%;
   }
 
   .dark {
-    --background: 0 0% 0%;
-    --foreground: 0 0% 100%;
-
-    --card: 0 0% 4%;
-    --card-foreground: 0 0% 100%;
-
-    --popover: 0 0% 4%;
-    --popover-foreground: 0 0% 100%;
-
-    --primary: 0 0% 100%;
-    --primary-foreground: 0 0% 0%;
-
-    --secondary: 0 0% 6%;
-    --secondary-foreground: 0 0% 100%;
-
+    --background: 0 0% 2%;
+    --background-alt: 0 0% 3%;
+    --card: 0 0% 5%;
+    --card-elevated: 0 0% 6.5%;
+    --foreground: 0 0% 96%;
+    --card-foreground: 0 0% 96%;
+    --popover: 0 0% 5%;
+    --popover-foreground: 0 0% 96%;
+    --primary: 0 0% 96%;
+    --primary-foreground: 0 0% 4%;
+    --secondary: 0 0% 8%;
+    --secondary-foreground: 0 0% 96%;
     --muted: 0 0% 10%;
-    --muted-foreground: 0 0% 70%;
-
-    --accent: 0 0% 8%;
-    --accent-foreground: 0 0% 100%;
-
-    --destructive: 0 84% 60%;
-    --destructive-foreground: 0 0% 100%;
-
-    --border: 0 0% 10%;
-    --input: 0 0% 10%;
-    --ring: 0 0% 100%;
-    
-    --sidebar-background: 0 0% 2%;
-    --sidebar-foreground: 0 0% 100%;
-    --sidebar-primary: 0 0% 100%;
-    --sidebar-primary-foreground: 0 0% 0%;
-    --sidebar-accent: 0 0% 6%;
-    --sidebar-accent-foreground: 0 0% 100%;
-    --sidebar-border: 0 0% 10%;
-    --sidebar-ring: 0 0% 100%;
+    --muted-foreground: 0 0% 62%;
+    --accent: 0 0% 9%;
+    --accent-foreground: 0 0% 96%;
+    --destructive: 0 72% 51%;
+    --destructive-foreground: 0 0% 96%;
+    --border: 0 0% 100% / 0.08;
+    --border-strong: 0 0% 100% / 0.16;
+    --input: 0 0% 100% / 0.12;
+    --ring: 38 92% 50%;
+    --signal: 38 92% 50%;
+    --signal-strong: 32 95% 44%;
+    --signal-muted: 22 76% 44%;
   }
 }
 
 @layer base {
   * {
-    @apply border-border;
+    border-color: hsl(var(--border));
   }
 
   html {
@@ -106,27 +106,183 @@
 
   body {
     @apply bg-background text-foreground antialiased;
-    font-family: 'Roboto', sans-serif;
+    font-family: "Geist", "Inter", system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+    font-feature-settings: "ss01", "cv01";
+    -webkit-font-smoothing: antialiased;
   }
 
+  ::selection {
+    background: hsl(var(--signal) / 0.25);
+    color: hsl(var(--foreground));
+  }
+
+  /* Amber focus ring for keyboard users only */
+  :focus-visible {
+    outline: 2px solid hsl(var(--signal) / 0.6);
+    outline-offset: 2px;
+  }
 }
 
 @layer utilities {
+  .font-mono {
+    font-family: "Geist Mono", "IBM Plex Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
+  }
+
   .glass-nav {
-    background: hsla(0, 0%, 0%, 0.6);
-    backdrop-filter: blur(12px);
-    -webkit-backdrop-filter: blur(12px);
-    border-bottom: 1px solid hsl(var(--surface-glass-border));
+    background: hsl(0 0% 2% / 0.7);
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+    border-bottom: 1px solid hsl(var(--border));
   }
-}
 
-@layer utilities {
   .glass-panel {
-    background: hsl(var(--surface-glass));
-    border: 1px solid hsl(var(--surface-glass-border));
+    background: hsl(var(--card));
+    border: 1px solid hsl(var(--border));
   }
 
   .text-balance {
     text-wrap: balance;
+  }
+
+  /* Very subtle dot grid — almost invisible, infrastructure texture */
+  .bg-dotgrid {
+    background-image: radial-gradient(hsl(0 0% 100% / 0.05) 1px, transparent 1px);
+    background-size: 32px 32px;
+    background-position: -1px -1px;
+  }
+
+  /* Radial vignette to focus the hero composition */
+  .hero-vignette {
+    background:
+      radial-gradient(120% 90% at 50% 0%, hsl(38 92% 50% / 0.05), transparent 60%),
+      radial-gradient(80% 80% at 50% 30%, hsl(0 0% 8% / 0.6), transparent 70%);
+  }
+
+  .border-strong {
+    border-color: hsl(var(--border-strong));
+  }
+}
+
+/* ============================================================
+   Motion — staggered entrance reveals + ambient system loops.
+   Animates transform/opacity only. All disabled under reduced motion.
+   ============================================================ */
+@layer utilities {
+  .reveal {
+    opacity: 0;
+    transform: translateY(14px);
+    transition:
+      opacity 0.7s cubic-bezier(0.16, 1, 0.3, 1),
+      transform 0.7s cubic-bezier(0.16, 1, 0.3, 1);
+    transition-delay: var(--reveal-delay, 0ms);
+    will-change: transform, opacity;
+  }
+
+  .reveal.is-visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes flow-x {
+  0% { transform: translateX(0); opacity: 0; }
+  12% { opacity: 1; }
+  88% { opacity: 1; }
+  100% { transform: translateX(var(--flow-distance, 100px)); opacity: 0; }
+}
+
+@keyframes flow-y {
+  0% { transform: translateY(0); opacity: 0; }
+  12% { opacity: 1; }
+  88% { opacity: 1; }
+  100% { transform: translateY(var(--flow-distance, 100px)); opacity: 0; }
+}
+
+@keyframes node-breathe {
+  0%, 100% { opacity: 0.55; }
+  50% { opacity: 1; }
+}
+
+@keyframes ring-pulse {
+  0% { transform: scale(1); opacity: 0.5; }
+  70%, 100% { transform: scale(1.9); opacity: 0; }
+}
+
+@keyframes cursor-blink {
+  0%, 49% { opacity: 1; }
+  50%, 100% { opacity: 0; }
+}
+
+@keyframes dash-draw {
+  to { stroke-dashoffset: 0; }
+}
+
+@keyframes orbit {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+/* Directional dashed flow along an SVG path (negative offset = forward). */
+@keyframes dash-move {
+  to { stroke-dashoffset: -160; }
+}
+
+@layer utilities {
+  .flow-dash {
+    stroke-dasharray: 3 7;
+    animation: dash-move 5s linear infinite;
+  }
+}
+
+/* Connector flows — a short amber glow travels along a hairline rail.
+   Width/height-agnostic (sweeps via background-position), paint-only,
+   negligible cost on a 1px rail. */
+@keyframes rail-sweep-x {
+  0% { background-position: -48px 0; }
+  100% { background-position: calc(100% + 48px) 0; }
+}
+@keyframes rail-sweep-y {
+  0% { background-position: 0 -48px; }
+  100% { background-position: 0 calc(100% + 48px); }
+}
+
+@layer utilities {
+  .anim-breathe { animation: node-breathe 4s ease-in-out infinite; }
+  .anim-cursor { animation: cursor-blink 1.1s step-end infinite; }
+
+  .rail-x {
+    background-color: hsl(var(--border));
+    background-image: linear-gradient(90deg, transparent, hsl(var(--signal) / 0.95), transparent);
+    background-size: 48px 100%;
+    background-repeat: no-repeat;
+    background-position: -48px 0;
+    animation: rail-sweep-x 3.2s linear infinite;
+    animation-delay: var(--rail-delay, 0ms);
+  }
+  .rail-y {
+    background-color: hsl(var(--border));
+    background-image: linear-gradient(180deg, transparent, hsl(var(--signal) / 0.95), transparent);
+    background-size: 100% 48px;
+    background-repeat: no-repeat;
+    background-position: 0 -48px;
+    animation: rail-sweep-y 3.2s linear infinite;
+    animation-delay: var(--rail-delay, 0ms);
+  }
+}
+
+/* Honor reduced-motion across all decorative + ambient motion */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
+
+  .reveal {
+    opacity: 1 !important;
+    transform: none !important;
   }
 }
