@@ -1,115 +1,123 @@
-import { Link } from "react-router-dom";
-import { Button } from "@/components/ui/button";
 import { Layout } from "@/components/layout/Layout";
+import {
+  Container,
+  Section,
+  SectionEyebrow,
+  SectionHeader,
+  CTAButton,
+  Reveal,
+} from "@/components/site/primitives";
+import { KV } from "@/components/diagrams/bits";
+import { ShadowModeAuditDiagram } from "@/components/diagrams/ShadowModeAuditDiagram";
 
 const whatYouSee = [
-  "Approved decisions — optimizations that would have been applied",
-  "Skipped decisions — and the specific reason each was rejected",
-  "Simulated savings — energy cost and carbon emissions reduction",
-  "Latency guarantees preserved — proof that no SLA would be violated",
+  { k: "Approved decisions", v: "optimizations that would have been applied" },
+  { k: "Skipped decisions", v: "and the specific reason each was rejected" },
+  { k: "Simulated savings", v: "energy cost and carbon reduction" },
+  { k: "Latency preserved", v: "proof that no SLA would be violated" },
 ];
 
 export default function ShadowAudit() {
   return (
     <Layout>
-      {/* Header */}
-      <section className="px-6 py-24 lg:px-8">
-        <div className="mx-auto max-w-3xl">
-          <h1 className="mb-4 text-3xl font-semibold tracking-tight text-foreground md:text-4xl">
-            Shadow Audit
-          </h1>
-          <p className="text-lg text-muted-foreground">
-            See what would happen without changing anything.
-          </p>
-        </div>
+      {/* Page header */}
+      <section className="relative overflow-hidden pb-12 pt-32 md:pt-40">
+        <div className="pointer-events-none absolute inset-0 bg-dotgrid opacity-50" aria-hidden />
+        <Container className="relative">
+          <Reveal>
+            <SectionEyebrow>Shadow audit</SectionEyebrow>
+          </Reveal>
+          <Reveal delay={80}>
+            <h1 className="mt-6 max-w-3xl text-balance text-[clamp(1.9rem,4.4vw,3rem)] font-medium leading-[1.08] tracking-tight text-foreground">
+              See what would happen — without changing anything
+            </h1>
+          </Reveal>
+          <Reveal delay={140}>
+            <p className="mt-5 max-w-2xl text-[15px] leading-relaxed text-white/62 md:text-base">
+              A shadow audit runs Aurelius in dry-run mode against your existing workloads. Nothing
+              changes. No permissions beyond read access to job metadata. Aurelius records the
+              decisions it would have made — without executing any of them.
+            </p>
+          </Reveal>
+          <Reveal delay={220} className="mt-10">
+            <ShadowModeAuditDiagram />
+          </Reveal>
+        </Container>
       </section>
 
-      {/* What Is a Shadow Audit */}
-      <section className="border-t border-border px-6 py-24 lg:px-8">
-        <div className="mx-auto max-w-3xl">
-          <h2 className="mb-8 text-2xl font-semibold tracking-tight text-foreground">
-            What Is a Shadow Audit
-          </h2>
-          <div className="space-y-6 text-muted-foreground">
-            <p className="leading-relaxed">
-              A shadow audit runs Aurelius in dry-run mode against your existing workloads. Nothing changes. No permissions are required beyond read access to job metadata.
-            </p>
-            <p className="leading-relaxed">
-              Aurelius observes your scheduler activity, applies its forecasting and optimization logic, and records what decisions it would have made — without executing any of them.
-            </p>
-            <p className="leading-relaxed">
-              The result is a complete picture of potential savings and safety behavior, with zero risk to your production environment.
-            </p>
-          </div>
-        </div>
-      </section>
+      {/* What you see */}
+      <Section>
+        <Container>
+          <Reveal>
+            <SectionHeader
+              eyebrow="The report"
+              title="A complete picture of savings and safety behavior"
+              intro="Zero risk to your production environment. The output is a structured report designed for infrastructure teams."
+            />
+          </Reveal>
+          <ul className="mt-10 divide-y divide-border border-y border-border">
+            {whatYouSee.map((item, i) => (
+              <Reveal as="li" key={item.k} delay={i * 60} className="flex flex-col gap-1 py-4 sm:flex-row sm:items-center sm:justify-between">
+                <span className="font-mono text-[12px] uppercase tracking-[0.1em] text-foreground">
+                  {item.k}
+                </span>
+                <span className="text-[13.5px] text-white/55">{item.v}</span>
+              </Reveal>
+            ))}
+          </ul>
+        </Container>
+      </Section>
 
-      {/* What You See */}
-      <section className="border-t border-border px-6 py-24 lg:px-8">
-        <div className="mx-auto max-w-3xl">
-          <h2 className="mb-8 text-2xl font-semibold tracking-tight text-foreground">
-            What You See
-          </h2>
-          <div className="glass-panel p-8">
-            <ul className="space-y-4">
-              {whatYouSee.map((item, index) => (
-                <li key={index} className="text-muted-foreground">
-                  {item}
-                </li>
-              ))}
-            </ul>
-          </div>
-        </div>
-      </section>
-
-      {/* Output Artifact */}
-      <section className="border-t border-border px-6 py-24 lg:px-8">
-        <div className="mx-auto max-w-3xl">
-          <h2 className="mb-8 text-2xl font-semibold tracking-tight text-foreground">
-            Output Artifact
-          </h2>
-          <div className="space-y-6 text-muted-foreground">
-            <p className="leading-relaxed">
-              The shadow audit produces a structured report designed for infrastructure teams. The format matches the Aurelius interface — black background, white text, zero clutter.
-            </p>
-            <div className="glass-panel p-8 my-8">
-              <div className="space-y-4 font-mono text-sm">
-                <div className="flex justify-between border-b border-border pb-2">
-                  <span className="text-muted-foreground">Energy delta</span>
-                  <span className="text-foreground">-12.4%</span>
-                </div>
-                <div className="flex justify-between border-b border-border pb-2">
-                  <span className="text-muted-foreground">Cost delta</span>
-                  <span className="text-foreground">-$4,280/mo</span>
-                </div>
-                <div className="flex justify-between border-b border-border pb-2">
-                  <span className="text-muted-foreground">Carbon delta</span>
-                  <span className="text-foreground">-8.2 tCO2e/mo</span>
-                </div>
-                <div className="flex justify-between">
-                  <span className="text-muted-foreground">Latency impact</span>
-                  <span className="text-foreground">None</span>
-                </div>
-              </div>
+      {/* Output artifact */}
+      <Section alt>
+        <Container>
+          <div className="grid items-start gap-10 lg:grid-cols-12 lg:gap-14">
+            <div className="lg:col-span-5">
+              <Reveal>
+                <SectionHeader
+                  eyebrow="Output artifact"
+                  title="Every number is auditable"
+                  intro="Reports include energy, cost, and carbon deltas, plus operational notes explaining any decisions filtered out by safety gates."
+                />
+              </Reveal>
             </div>
-            <p className="leading-relaxed">
-              Reports include energy, cost, and carbon deltas. Operational notes explain any decisions that were filtered out by safety gates. Every number is auditable.
-            </p>
+            <div className="lg:col-span-7">
+              <Reveal delay={140}>
+                <div className="rounded-md border border-border bg-card p-6">
+                  <div className="mb-4 flex items-center gap-2 font-mono text-[11px] uppercase tracking-[0.16em] text-white/50">
+                    <span className="inline-block h-1.5 w-1.5 rounded-full bg-signal anim-breathe" aria-hidden />
+                    counterfactual report
+                  </div>
+                  <div className="space-y-2.5">
+                    <KV k="energy delta" v="−12.4%" vClass="text-signal" />
+                    <KV k="cost delta" v="−$4,280 / mo" vClass="text-signal" />
+                    <KV k="carbon delta" v="−8.2 tCO₂e / mo" vClass="text-signal" />
+                    <KV k="latency impact" v="none" />
+                  </div>
+                </div>
+              </Reveal>
+            </div>
           </div>
-        </div>
-      </section>
+        </Container>
+      </Section>
 
       {/* CTA */}
-      <section className="border-t border-border px-6 py-24 lg:px-8">
-        <div className="mx-auto max-w-3xl text-center">
-          <p className="mb-8 text-lg text-muted-foreground">
-            Run your shadow audit.
-          </p>
-          <Button variant="outline" size="lg" asChild>
-            <Link to="/contact">Request access</Link>
-          </Button>
-        </div>
-      </section>
+      <Section>
+        <Container>
+          <div className="mx-auto max-w-2xl text-center">
+            <Reveal>
+              <h2 className="text-balance text-[clamp(1.5rem,3.2vw,2.2rem)] font-medium tracking-tight text-foreground">
+                Run your shadow audit
+              </h2>
+            </Reveal>
+            <Reveal delay={120} className="mt-8 flex justify-center">
+              <CTAButton to="/contact" variant="primary" withArrow>
+                Request access
+              </CTAButton>
+            </Reveal>
+          </div>
+        </Container>
+      </Section>
     </Layout>
   );
 }

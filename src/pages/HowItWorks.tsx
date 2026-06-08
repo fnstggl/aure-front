@@ -1,158 +1,154 @@
 import { Layout } from "@/components/layout/Layout";
+import {
+  Container,
+  Section,
+  SectionEyebrow,
+  SectionHeader,
+  DiagramCard,
+  Reveal,
+} from "@/components/site/primitives";
+import { SchedulerInterceptionDiagram } from "@/components/diagrams/SchedulerInterceptionDiagram";
+import { ControlLoopDiagram } from "@/components/diagrams/ControlLoopDiagram";
+import { StatusTag } from "@/components/diagrams/bits";
 
 export default function HowItWorks() {
   return (
     <Layout>
-      {/* Header */}
-      <section className="px-6 py-24 lg:px-8">
-        <div className="mx-auto max-w-3xl">
-          <h1 className="mb-4 text-3xl font-semibold tracking-tight text-foreground md:text-4xl">
-            How It Works
-          </h1>
-          <p className="text-lg text-muted-foreground">
-            Technical documentation for infrastructure engineers.
-          </p>
-        </div>
+      {/* Page header */}
+      <section className="relative overflow-hidden pb-12 pt-32 md:pt-40">
+        <div className="pointer-events-none absolute inset-0 bg-dotgrid opacity-50" aria-hidden />
+        <Container className="relative">
+          <Reveal>
+            <SectionEyebrow>How it works</SectionEyebrow>
+          </Reveal>
+          <Reveal delay={80}>
+            <h1 className="mt-6 max-w-3xl text-balance text-[clamp(1.9rem,4.4vw,3rem)] font-medium leading-[1.08] tracking-tight text-foreground">
+              An advisory control layer, not a scheduler replacement
+            </h1>
+          </Reveal>
+          <Reveal delay={140}>
+            <p className="mt-5 max-w-2xl text-[15px] leading-relaxed text-white/62 md:text-base">
+              Technical documentation for infrastructure engineers. Aurelius evaluates pending
+              decisions before they reach execution — observing metadata, forecasting conditions,
+              and filtering risk — without touching the execution path.
+            </p>
+          </Reveal>
+        </Container>
       </section>
 
-      {/* Execution Model */}
-      <section className="border-t border-border px-6 py-24 lg:px-8">
-        <div className="mx-auto max-w-3xl">
-          <h2 className="mb-8 text-2xl font-semibold tracking-tight text-foreground">
-            Execution Model
-          </h2>
-          <div className="space-y-6 text-muted-foreground">
-            <p className="leading-relaxed">
-              Aurelius does not replace your scheduler. It does not intercept payloads. It does not modify job execution directly.
-            </p>
-            <p className="leading-relaxed">
-              Instead, Aurelius operates as an advisory layer. It evaluates pending decisions before they reach execution. It observes job metadata, forecasts energy conditions, generates optimization options, and filters risky decisions — all without touching the execution path.
-            </p>
-            <p className="leading-relaxed">
-              Your scheduler remains in full control. Aurelius provides recommendations. Execution remains unchanged.
-            </p>
-
-            {/* Minimal Diagram */}
-            <div className="my-12 glass-panel p-8">
-              <div className="flex items-center justify-between text-sm">
-                <div className="text-center">
-                  <div className="mb-2 text-muted-foreground">Scheduler</div>
-                  <div className="h-12 w-24 border border-border flex items-center justify-center text-foreground">
-                    Jobs
-                  </div>
-                </div>
-                <div className="flex-1 mx-4 border-t border-border relative">
-                  <span className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-background px-2 text-muted-foreground text-xs">
-                    →
-                  </span>
-                </div>
-                <div className="text-center">
-                  <div className="mb-2 text-muted-foreground">Aurelius</div>
-                  <div className="h-12 w-24 border border-foreground/30 flex items-center justify-center text-foreground">
-                    Advise
-                  </div>
-                </div>
-                <div className="flex-1 mx-4 border-t border-border relative">
-                  <span className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-background px-2 text-muted-foreground text-xs">
-                    →
-                  </span>
-                </div>
-                <div className="text-center">
-                  <div className="mb-2 text-muted-foreground">Execution</div>
-                  <div className="h-12 w-24 border border-border flex items-center justify-center text-foreground">
-                    Run
-                  </div>
-                </div>
-              </div>
+      {/* Execution model */}
+      <Section>
+        <Container>
+          <div className="grid items-start gap-10 lg:grid-cols-12 lg:gap-14">
+            <div className="lg:col-span-5">
+              <Reveal>
+                <SectionHeader
+                  eyebrow="Execution model"
+                  title="Your scheduler stays in control"
+                  intro="Aurelius does not replace your scheduler, intercept payloads, or modify execution. It operates as an advisory layer: it observes job metadata, forecasts energy conditions, generates options, and filters risky decisions. Execution remains unchanged."
+                />
+              </Reveal>
+            </div>
+            <div className="lg:col-span-7">
+              <Reveal delay={140}>
+                <DiagramCard label="Scheduler interception layer">
+                  <SchedulerInterceptionDiagram />
+                </DiagramCard>
+              </Reveal>
             </div>
           </div>
-        </div>
-      </section>
+        </Container>
+      </Section>
 
-      {/* Forecasting Layer */}
-      <section className="border-t border-border px-6 py-24 lg:px-8">
-        <div className="mx-auto max-w-3xl">
-          <h2 className="mb-8 text-2xl font-semibold tracking-tight text-foreground">
-            Forecasting Layer
-          </h2>
-          <div className="space-y-6 text-muted-foreground">
-            <p className="leading-relaxed">
-              Aurelius uses short-horizon forecasting to predict energy cost and carbon intensity. Forecasts are generated using lag-based signals derived from historical patterns and real-time grid data.
-            </p>
-            <p className="leading-relaxed">
-              All forecasts include explicit uncertainty bounds. When uncertainty exceeds acceptable thresholds, Aurelius applies a deterministic fallback — defaulting to conservative assumptions rather than speculative optimization.
-            </p>
-            <p className="leading-relaxed">
-              There is no ML magic here. No black-box models. Forecasts are transparent, auditable, and explainable. If you ask why a decision was made, you will receive a clear answer.
-            </p>
-          </div>
-        </div>
-      </section>
+      {/* Forecasting layer */}
+      <Section alt>
+        <Container>
+          <Reveal>
+            <SectionHeader
+              eyebrow="Forecasting layer"
+              title="Short-horizon forecasts with explicit uncertainty"
+              intro="Aurelius predicts energy cost and carbon intensity using lag-based signals derived from historical patterns and real-time grid data. Every forecast carries uncertainty bounds — and when uncertainty exceeds threshold, a deterministic conservative fallback applies. No black-box models."
+            />
+          </Reveal>
+          <Reveal delay={140} className="mt-12">
+            <DiagramCard label="Forecast / control loop">
+              <ControlLoopDiagram />
+            </DiagramCard>
+          </Reveal>
+        </Container>
+      </Section>
 
-      {/* Optimization vs Safety */}
-      <section className="border-t border-border px-6 py-24 lg:px-8">
-        <div className="mx-auto max-w-3xl">
-          <h2 className="mb-8 text-2xl font-semibold tracking-tight text-foreground">
-            Optimization vs Safety
-          </h2>
-          <div className="grid gap-8 md:grid-cols-2">
-            <div className="glass-panel p-6">
-              <h3 className="mb-4 text-lg font-medium text-foreground">
+      {/* Optimization vs safety */}
+      <Section>
+        <Container>
+          <Reveal>
+            <SectionHeader
+              eyebrow="Optimization vs safety"
+              title="When the two conflict, safety wins"
+            />
+          </Reveal>
+          <div className="mt-10 grid gap-px overflow-hidden rounded-md border border-border bg-border md:grid-cols-2">
+            <Reveal className="bg-card p-6">
+              <div className="mb-4 font-mono text-[11px] uppercase tracking-[0.16em] text-white/50">
                 Optimization
-              </h3>
-              <ul className="space-y-3 text-sm text-muted-foreground">
-                <li>Finds lower-cost execution windows</li>
-                <li>Identifies lower-carbon periods</li>
-                <li>Ranks options by expected savings</li>
-                <li>Respects resource constraints</li>
+              </div>
+              <ul className="space-y-2.5">
+                {[
+                  "Finds lower-cost execution windows",
+                  "Identifies lower-carbon periods",
+                  "Ranks options by expected savings",
+                  "Respects resource constraints",
+                ].map((t) => (
+                  <li key={t} className="flex items-center gap-3 text-[13.5px] text-white/62">
+                    <span className="inline-block h-1 w-1 shrink-0 bg-white/30" aria-hidden />
+                    {t}
+                  </li>
+                ))}
               </ul>
-            </div>
-            <div className="glass-panel p-6">
-              <h3 className="mb-4 text-lg font-medium text-foreground">
+            </Reveal>
+            <Reveal delay={120} className="bg-card p-6">
+              <div className="mb-4 font-mono text-[11px] uppercase tracking-[0.16em] text-signal">
                 Safety
-              </h3>
-              <ul className="space-y-3 text-sm text-muted-foreground">
-                <li>Quantile-based safety gates</li>
-                <li>Latency-safe constraints</li>
-                <li>Deterministic fallback</li>
-                <li>Conservative defaults</li>
+              </div>
+              <ul className="space-y-2.5">
+                {[
+                  "Quantile-based safety gates",
+                  "Latency-safe constraints",
+                  "Deterministic fallback",
+                  "Conservative defaults",
+                ].map((t) => (
+                  <li key={t} className="flex items-center gap-3 text-[13.5px] text-white/62">
+                    <span className="inline-block h-1 w-1 shrink-0 bg-signal" aria-hidden />
+                    {t}
+                  </li>
+                ))}
               </ul>
-            </div>
+            </Reveal>
           </div>
-          <p className="mt-8 text-lg text-foreground font-medium">
-            Safety always wins.
-          </p>
-        </div>
-      </section>
+          <Reveal delay={160} className="mt-6">
+            <StatusTag state="pass">safety always wins</StatusTag>
+          </Reveal>
+        </Container>
+      </Section>
 
-      {/* Latency-Safe Mode */}
-      <section className="border-t border-border px-6 py-24 lg:px-8">
-        <div className="mx-auto max-w-3xl">
-          <h2 className="mb-8 text-2xl font-semibold tracking-tight text-foreground">
-            Latency-Safe Mode
-          </h2>
-          <div className="space-y-6 text-muted-foreground">
-            <p className="leading-relaxed">
-              Latency-safe mode enforces a zero-slack requirement. Jobs must complete within their original time bounds. No exceptions.
+      {/* Latency-safe mode */}
+      <Section alt>
+        <Container>
+          <Reveal>
+            <SectionHeader
+              eyebrow="Latency-safe mode"
+              title="Workloads behave exactly as they would without Aurelius"
+              intro="Latency-safe mode enforces a zero-slack requirement: jobs complete within their original bounds, start times are preserved, and there is no power throttling. If optimization cannot be achieved within these constraints, an invisible fallback applies. The only difference is lower cost and carbon — when safe."
+            />
+          </Reveal>
+          <Reveal delay={140}>
+            <p className="mt-8 max-w-2xl border-l border-signal/40 pl-5 text-[14px] leading-relaxed text-white/55">
+              Most savings come from time-shifting batch and training workloads away from peak
+              pricing windows — not from throttling or resource reduction.
             </p>
-            <p className="leading-relaxed">
-              Start-time preservation ensures that scheduled jobs begin exactly when expected. There is no power throttling — CPU and memory allocations remain unchanged. If optimization cannot be achieved within these constraints, an invisible fallback is applied automatically.
-            </p>
-            <p className="leading-relaxed">
-              The goal is simple: workloads behave exactly as they would without Aurelius. The only difference is lower energy cost and carbon emissions — when safe.
-            </p>
-          </div>
-        </div>
-      </section>
-
-      {/* Savings Clarification */}
-      <section className="border-t border-border px-6 py-16 lg:px-8">
-        <div className="mx-auto max-w-3xl">
-          <p className="text-muted-foreground leading-relaxed">
-            Most savings come from time-shifting batch and training workloads away from peak pricing windows — not from throttling or resource reduction.
-          </p>
-        </div>
-      </section>
+          </Reveal>
+        </Container>
+      </Section>
     </Layout>
   );
 }

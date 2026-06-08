@@ -14,14 +14,23 @@ export default {
     },
     extend: {
       fontFamily: {
-        sans: ["Atkinson Hyperlegible", "system-ui", "-apple-system", "BlinkMacSystemFont", "sans-serif"],
+        sans: ["Geist", "Inter", "system-ui", "-apple-system", "BlinkMacSystemFont", "sans-serif"],
+        mono: ["Geist Mono", "IBM Plex Mono", "ui-monospace", "SFMono-Regular", "Menlo", "monospace"],
       },
       colors: {
         border: "hsl(var(--border))",
         input: "hsl(var(--input))",
         ring: "hsl(var(--ring))",
-        background: "hsl(var(--background))",
+        background: {
+          DEFAULT: "hsl(var(--background))",
+          alt: "hsl(var(--background-alt))",
+        },
         foreground: "hsl(var(--foreground))",
+        signal: {
+          DEFAULT: "hsl(var(--signal))",
+          strong: "hsl(var(--signal-strong))",
+          muted: "hsl(var(--signal-muted))",
+        },
         primary: {
           DEFAULT: "hsl(var(--primary))",
           foreground: "hsl(var(--primary-foreground))",
@@ -49,6 +58,7 @@ export default {
         card: {
           DEFAULT: "hsl(var(--card))",
           foreground: "hsl(var(--card-foreground))",
+          elevated: "hsl(var(--card-elevated))",
         },
         sidebar: {
           DEFAULT: "hsl(var(--sidebar-background))",
@@ -67,12 +77,18 @@ export default {
         },
       },
       borderRadius: {
-        lg: "0",
-        md: "0",
-        sm: "0",
+        lg: "var(--radius)",
+        md: "calc(var(--radius) - 1px)",
+        sm: "calc(var(--radius) - 2px)",
+      },
+      maxWidth: {
+        content: "1200px",
+      },
+      transitionTimingFunction: {
+        premium: "cubic-bezier(0.16, 1, 0.3, 1)",
       },
       letterSpacing: {
-        tighter: "-0.02em",
+        tighter: "-0.03em",
         tight: "-0.01em",
       },
       keyframes: {
