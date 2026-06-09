@@ -2,8 +2,8 @@ import { motion } from "framer-motion";
 import { usePrefersReducedMotion } from "@/hooks/usePrefersReducedMotion";
 
 /* A restrained cost-forecast sparkline. The forecast curve and its confidence
-   band use the blue→violet data accent (forecast / uncertainty); the resolved
-   lower-cost window is marked in gold (the selected economic decision). */
+   band use a muted steel accent (forecast / uncertainty); the resolved
+   lower-cost window is marked in steel-blue (the selected economic decision). */
 
 const EASE = [0.16, 1, 0.3, 1] as const;
 
@@ -65,16 +65,16 @@ export function MiniForecastChart({
         transition={{ duration: 1.6, ease: EASE }}
       />
 
-      {/* lower-cost window — the resolved decision, in gold */}
+      {/* lower-cost window — the resolved decision */}
       <motion.g
         initial={{ opacity: 0 }}
         animate={{ opacity: active ? 1 : 0.3 }}
         transition={{ duration: 0.6, delay: 0.9, ease: EASE }}
       >
-        <line x1={MARK_X} x2={MARK_X} y1="8" y2="88" stroke="hsl(41 47% 60% / 0.45)" strokeWidth="1" strokeDasharray="2 3" />
-        <circle cx={MARK_X} cy={MARK_Y} r="6" fill="hsl(41 47% 60% / 0.16)" className={active && !reduced ? "anim-breathe" : ""} />
-        <circle cx={MARK_X} cy={MARK_Y} r="2.5" fill="hsl(44 55% 76%)" />
-        <text x={MARK_X + 8} y="20" className="font-mono" fontSize="9" fill="hsl(44 55% 76%)">
+        <line x1={MARK_X} x2={MARK_X} y1="8" y2="88" stroke="hsl(218 45% 66% / 0.45)" strokeWidth="1" strokeDasharray="2 3" />
+        <circle cx={MARK_X} cy={MARK_Y} r="6" fill="hsl(218 45% 66% / 0.16)" className={active && !reduced ? "anim-breathe" : ""} />
+        <circle cx={MARK_X} cy={MARK_Y} r="2.5" fill="hsl(218 38% 76%)" />
+        <text x={MARK_X + 8} y="20" className="font-mono" fontSize="9" fill="hsl(218 38% 76%)">
           +38m
         </text>
       </motion.g>

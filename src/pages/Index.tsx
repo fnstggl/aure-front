@@ -65,9 +65,9 @@ export default function Index() {
 
             <Reveal delay={320}>
               <div className="mt-11 flex flex-wrap items-center justify-center gap-x-5 gap-y-2 font-mono text-[12px] tracking-tight text-white/45">
-                <span><span className="text-signal">+42%</span> goodput / $</span>
+                <span><span className="text-foreground">+42%</span> goodput / $</span>
                 <span className="text-white/15">·</span>
-                <span><span className="text-signal">−21%</span> GPU-hours</span>
+                <span><span className="text-foreground">−21%</span> GPU-hours</span>
                 <span className="text-white/15">·</span>
                 <span>public Azure traces</span>
                 <span className="text-white/15">·</span>

@@ -74,7 +74,7 @@ export function OptimizationDecisionDiagram() {
                 selected
                   ? "border-signal/55 bg-signal/[0.05] shadow-[0_12px_36px_-24px_hsl(40_46%_58%/0.5)]"
                   : scanning
-                    ? "border-white/22 bg-white/[0.03]"
+                    ? "border-signal/40 bg-signal/[0.04]"
                     : "border-border bg-card-elevated",
               )}
             >
@@ -136,8 +136,8 @@ export function OptimizationDecisionDiagram() {
           animate={{ opacity: settled ? 0 : 1 }}
           transition={{ duration: 0.45, ease: EASE }}
         >
-          <span className="h-1.5 w-1.5 rounded-full bg-white/50 anim-breathe" aria-hidden />
-          <span className="font-mono text-[11px] uppercase tracking-[0.14em] text-white/40">
+          <span className="h-1.5 w-1.5 rounded-full bg-signal anim-breathe" aria-hidden />
+          <span className="font-mono text-[11px] uppercase tracking-[0.14em] text-signal/80">
             scanning candidates · gate checks running
           </span>
         </motion.div>
