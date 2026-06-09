@@ -89,7 +89,7 @@ export function SchedulerInterceptionDiagram() {
                 animate={{ opacity: decided ? 1 : 0 }}
                 transition={{ duration: 0.5, ease: EASE }}
               >
-                <KV k="forecast" v="lower-cost +38m" vClass="text-white/70" />
+                <KV k="forecast" v="lower-cost +38m" vClass="text-signal" />
                 <div className="flex items-center justify-between gap-3">
                   <span className="font-mono text-[11px] text-white/42">selected</span>
                   <span className="font-mono text-[11px] text-signal">delay batch job</span>

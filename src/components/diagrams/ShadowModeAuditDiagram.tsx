@@ -23,8 +23,8 @@ const LINES: { segs: Seg[] }[] = [
 const colorClass: Record<NonNullable<Seg["c"]>, string> = {
   time: "text-white/28",
   key: "text-white/80",
-  blue: "text-white/65",
-  gold: "text-signal",
+  blue: "text-signal/85", // forecast / confidence
+  gold: "text-signal", // approved / validated outcome
   body: "text-white/50",
 };
 
@@ -72,10 +72,10 @@ export function ShadowModeAuditDiagram() {
           <span className="font-mono text-[11px] uppercase tracking-[0.16em] text-white/50">ledger</span>
         </div>
         <div className="divide-y divide-border">
-          <Stat label="Counterfactual savings" value={<><span className="text-signal"><Counter to={18.4} enabled={inView} decimals={1} prefix="−" suffix="%" /></span></>} sub="$4,280 / mo" />
+          <Stat label="Counterfactual savings" value={<Counter to={18.4} enabled={inView} decimals={1} prefix="−" suffix="%" />} sub="$4,280 / mo" />
           <Stat label="Rejected unsafe candidates" value={<Counter to={14} enabled={inView} />} />
           <Stat label="SLA violations avoided" value={<Counter to={6} enabled={inView} />} />
-          <Stat label="Forecast confidence" value={<Counter to={0.91} enabled={inView} decimals={2} />} />
+          <Stat label="Forecast confidence" value={<span className="text-signal"><Counter to={0.91} enabled={inView} decimals={2} /></span>} />
         </div>
       </div>
     </div>

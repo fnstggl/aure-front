@@ -2,13 +2,14 @@ import { useEffect, useRef, useState } from "react";
 import { cn } from "@/lib/utils";
 import { usePrefersReducedMotion } from "@/hooks/usePrefersReducedMotion";
 
-const GLYPHS = "▓▒░█▌▐◇◆▪·";
-const FRAMES = 10;
-const FRAME_MS = 32; // ~320ms total, 10 stepped frames
+const GLYPHS = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789/_-.:+*";
+const FRAMES = 14;
+const FRAME_MS = 28; // ~390ms total — controlled computational decoding
 
 /**
- * Nav-label scramble: on hover/focus the label briefly resolves through blocky
- * pixel glyphs, left-to-right, then settles to the exact original text.
+ * Nav-label scramble: on hover/focus the label briefly decodes through
+ * matrix-style alphanumeric characters, resolving left-to-right, then settles
+ * to the exact original text. Feels like controlled computational decoding.
  *
  * - The real text sits underneath (opacity-0) to reserve width and stay
  *   readable to assistive tech; the animating layer is aria-hidden and

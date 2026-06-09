@@ -4,9 +4,9 @@
 
 /* ============================================================
    Aurelius Design System
-   Royal · elegant · technical · enterprise.
-   Off-black surfaces, antique-gold brand accent, blue→violet
-   reserved for forecast / emergent intelligence. Order from complexity.
+   Dependable · precise · quiet · deeply technical.
+   Off-black surfaces; muted steel-blue = selected/safe/evaluating;
+   white = truth/metrics; red = rejected/blocked. Order from complexity.
    Motion explains system behavior and never shifts layout.
    ============================================================ */
 
@@ -42,20 +42,20 @@
     --border: 0 0% 100% / 0.08;
     --border-strong: 0 0% 100% / 0.16;
     --input: 0 0% 100% / 0.12;
-    --ring: 41 47% 60%;
+    --ring: 218 45% 66%;
 
     --radius: 0.3rem;
 
-    /* Antique gold — the brand / safe-decision accent */
-    --signal: 41 47% 60%;           /* #C9A45C */
-    --signal-strong: 39 42% 34%;    /* #8A6A2E deep gold */
-    --signal-muted: 44 55% 76%;     /* #E8D7A2 pale gold */
+    /* Muted steel-blue — selected / approved / evaluating / safe path */
+    --signal: 218 45% 66%;           /* #7F9CCF */
+    --signal-strong: 219 32% 57%;    /* #6F87B5 */
+    --signal-muted: 219 17% 53%;     /* #72809A */
 
-    /* Blue → violet — forecast / uncertainty / emergent intelligence */
-    --data-blue: 219 15% 51%;      /* #7DB7FF */
-    --data-pale: 219 16% 62%;      /* #A7D8FF */
-    --data-violet: 219 15% 51%;     /* #A78BFA */
-    --data-deep: 219 14% 42%;       /* #6D5DD3 */
+    /* Forecast / confidence steel (kept within the steel family) */
+    --data-blue: 219 17% 58%;
+    --data-pale: 219 16% 62%;
+    --data-violet: 219 15% 51%;
+    --data-deep: 219 14% 42%;
 
     /* Legacy custom tokens kept for existing components */
     --surface-glass: 0 0% 100% / 0.025;
@@ -69,7 +69,7 @@
     --sidebar-accent: 0 0% 9%;
     --sidebar-accent-foreground: 0 0% 93%;
     --sidebar-border: 0 0% 100% / 0.08;
-    --sidebar-ring: 41 47% 60%;
+    --sidebar-ring: 218 45% 66%;
   }
 
   .dark {
@@ -94,11 +94,11 @@
     --border: 0 0% 100% / 0.08;
     --border-strong: 0 0% 100% / 0.16;
     --input: 0 0% 100% / 0.12;
-    --ring: 41 47% 60%;
-    --signal: 41 47% 60%;
-    --signal-strong: 39 42% 34%;
-    --signal-muted: 44 55% 76%;
-    --data-blue: 219 15% 51%;
+    --ring: 218 45% 66%;
+    --signal: 218 45% 66%;
+    --signal-strong: 219 32% 57%;
+    --signal-muted: 219 17% 53%;
+    --data-blue: 219 17% 58%;
     --data-pale: 219 16% 62%;
     --data-violet: 219 15% 51%;
     --data-deep: 219 14% 42%;
@@ -178,20 +178,15 @@
     background-position: -1px -1px;
   }
 
-  /* Soft, rare vignette to compose the hero — gold + cool data tint */
+  /* Soft, rare vignette to compose the hero — steel + neutral depth */
   .hero-vignette {
     background:
-      radial-gradient(110% 80% at 50% 8%, hsl(41 47% 60% / 0.05), transparent 55%),
+      radial-gradient(110% 80% at 50% 8%, hsl(218 45% 66% / 0.05), transparent 55%),
       radial-gradient(90% 70% at 50% 40%, hsl(0 0% 10% / 0.5), transparent 62%);
   }
 
   .border-strong {
     border-color: hsl(var(--border-strong));
-  }
-
-  /* Refined wordmark diamond */
-  .brand-diamond {
-    background: linear-gradient(135deg, hsl(45 58% 78%), hsl(40 46% 58%) 55%, hsl(38 50% 36%));
   }
 }
 
