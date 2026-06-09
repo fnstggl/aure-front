@@ -199,10 +199,16 @@ function basePlane() {
   body += `<rect x="0" y="0" width="${W}" height="${H}" fill="url(#vign)"/>`;
   // platform cuboid (top surface = ground z0)
   body += cuboid(gx, gy, a, b, thick, PLANE, -thick, { rim: false });
+  // soft pool of light on the platform top, under the control-plane cluster —
+  // grounds the scene and gives it rendered depth instead of flat void.
+  const [hx, hy] = pt(S.aurelius.gx + S.aurelius.a / 2, S.aurelius.gy + S.aurelius.b / 2, 0);
+  body += `<ellipse cx="${r(hx)}" cy="${r(hy)}" rx="430" ry="215" fill="url(#floorlit)"/>`;
   // faint top edge of platform
   const T0 = pt(gx, gy, 0), T1 = pt(gx + a, gy, 0), T2 = pt(gx + a, gy + b, 0), T3 = pt(gx, gy + b, 0);
   body += `<polygon points="${P([T0, T1, T2, T3])}" fill="none" stroke="${PLANE.edge}" stroke-width="1.2"/>`;
-  const defs = `<radialGradient id="vign" cx="46%" cy="40%" r="75%"><stop offset="0%" stop-color="#0d1016" stop-opacity="0.9"/><stop offset="55%" stop-color="#090c11" stop-opacity="0.4"/><stop offset="100%" stop-color="#04060a" stop-opacity="0.9"/></radialGradient>`;
+  const defs =
+    `<radialGradient id="vign" cx="46%" cy="40%" r="75%"><stop offset="0%" stop-color="#0d1016" stop-opacity="0.9"/><stop offset="55%" stop-color="#090c11" stop-opacity="0.4"/><stop offset="100%" stop-color="#04060a" stop-opacity="0.9"/></radialGradient>` +
+    `<radialGradient id="floorlit" cx="50%" cy="50%" r="50%"><stop offset="0%" stop-color="#1b2230" stop-opacity="0.9"/><stop offset="55%" stop-color="#12161d" stop-opacity="0.5"/><stop offset="100%" stop-color="#0b0e13" stop-opacity="0"/></radialGradient>`;
   return doc(defs, body);
 }
 
@@ -225,15 +231,31 @@ function backgroundGrid() {
 
 /* ===================== customer_environment (secure boundary) =========== */
 function customerEnvironment() {
-  // dashed rhombus tracing platform perimeter, lifted slightly
-  const { gx, gy, a, b } = S.plane;
-  const m = 0.4, z = 0.05;
-  const pts = [pt(gx + m, gy + m, z), pt(gx + a - m, gy + m, z), pt(gx + a - m, gy + b - m, z), pt(gx + m, gy + b - m, z)];
-  let body = `<polygon points="${P(pts)}" fill="none" stroke="${STEEL.line}" stroke-width="1.4" stroke-dasharray="3 7" opacity="0.5"/>`;
-  // corner ticks
-  pts.forEach(([x, y]) => {
-    body += `<circle cx="${r(x)}" cy="${r(y)}" r="2.4" fill="none" stroke="${STEEL.edge}" stroke-width="1.1" opacity="0.6"/>`;
-  });
+  // Two nested dashed iso regions define the system like a real schematic:
+  //  - outer = YOUR SECURE ENVIRONMENT (encloses every subsystem)
+  //  - inner = the Aurelius control zone (sidecar)
+  // A faint fill lifts the regions off the void so the scene reads as contained.
+  const z = 0.04;
+  const region = (x0, y0, x1, y1, { fill, stroke, dash, op, brackets }) => {
+    const a = pt(x0, y0, z), b = pt(x1, y0, z), c = pt(x1, y1, z), d = pt(x0, y1, z);
+    let s = "";
+    if (fill) s += `<polygon points="${P([a, b, c, d])}" fill="${fill}"/>`;
+    s += `<polygon points="${P([a, b, c, d])}" fill="none" stroke="${stroke}" stroke-width="1.4" stroke-dasharray="${dash}" opacity="${op}"/>`;
+    if (brackets) {
+      const L = 0.9;
+      const bracket = (cx, cy, ex, ey) => {
+        const o = pt(cx, cy, z), h = pt(cx + ex * L, cy, z), v = pt(cx, cy + ey * L, z);
+        return `<polyline points="${P([h, o, v])}" fill="none" stroke="${stroke}" stroke-width="1.6" opacity="${Math.min(1, op + 0.3)}"/>`;
+      };
+      s += bracket(x0, y0, 1, 1) + bracket(x1, y0, -1, 1) + bracket(x1, y1, -1, -1) + bracket(x0, y1, 1, -1);
+    }
+    return s;
+  };
+  let body = "";
+  // outer secure environment
+  body += region(-0.4, -1.4, 15.6, 13.2, { fill: "rgba(150,170,200,0.018)", stroke: "rgba(170,185,210,0.34)", dash: "5 6", op: 0.6, brackets: true });
+  // inner control-plane zone (steel)
+  body += region(6.4, 5.6, 15.4, 11.6, { fill: "rgba(74,91,120,0.05)", stroke: STEEL.line, dash: "3 6", op: 0.55, brackets: true });
   return doc("", body);
 }
 
@@ -374,16 +396,29 @@ function activePaths() {
   const sOut = pt(S.scheduler.gx + S.scheduler.a, S.scheduler.gy + S.scheduler.b / 2, 1.2);
   const eIn = pt(S.exec.gx, S.exec.gy + (S.exec.racks * S.exec.gap) / 2, 1.2);
   const WHITE = "rgba(232,236,240,0.62)";
+  // connector bead: a small node sitting on a rail, ties the flow together
+  const bead = (A, B, t, color) => {
+    const x = A[0] + (B[0] - A[0]) * t, y = A[1] + (B[1] - A[1]) * t;
+    return `<circle cx="${r(x)}" cy="${r(y)}" r="2.6" fill="${color}"/><circle cx="${r(x)}" cy="${r(y)}" r="5.5" fill="none" stroke="${color}" stroke-width="1" opacity="0.35"/>`;
+  };
   let body = "";
   body += railTo(qC, sIn, WHITE, 2);
+  body += bead(qC, sIn, 0.5, "rgba(232,236,240,0.7)");
   body += chevron(sIn, 1, WHITE);
   body += railTo(sOut, eIn, WHITE, 2);
+  body += bead(sOut, eIn, 0.5, "rgba(232,236,240,0.7)");
   body += chevron(eIn, 1, WHITE);
   // advisory decision returns: aurelius -> scheduler (steel, dashed)
   const aTop = pt(S.aurelius.gx + S.aurelius.a / 2 - 0.6, S.aurelius.gy + 0.3, S.aurelius.c + 0.4);
   const sBot = pt(S.scheduler.gx + S.scheduler.a / 2 - 0.6, S.scheduler.gy + S.scheduler.b - 0.3, S.scheduler.c * 0.4);
   body += railTo(aTop, sBot, STEEL.line, 1.8, "1 5", 0.9);
+  body += bead(aTop, sBot, 0.5, STEEL.edge);
   body += chevron(sBot, 1, STEEL.edge);
+  // aurelius -> audit ledger (steel append flow)
+  const aBot = pt(S.aurelius.gx + 0.4, S.aurelius.gy + S.aurelius.b - 0.2, S.aurelius.c * 0.4);
+  const lTop = pt(S.ledger.gx, S.ledger.gy, S.ledger.hg);
+  body += railTo(aBot, lTop, STEEL.line, 1.6, "1 5", 0.75);
+  body += chevron(lTop, 1, STEEL.edge);
   return doc("", body);
 }
 
