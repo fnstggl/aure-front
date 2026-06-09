@@ -13,7 +13,7 @@ const NotFound = () => {
       <div className="pointer-events-none absolute inset-0 bg-dotgrid opacity-50" aria-hidden />
       <div className="pointer-events-none absolute inset-0 hero-vignette" aria-hidden />
       <div className="relative text-center">
-        <div className="font-mono text-[11px] uppercase tracking-[0.22em] text-signal">
+        <div className="font-mono text-[11px] uppercase tracking-[0.22em] text-steel">
           404 · route not found
         </div>
         <h1 className="mt-5 text-[clamp(2.5rem,8vw,4rem)] font-medium tracking-tight text-foreground">

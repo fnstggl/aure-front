@@ -71,10 +71,10 @@ export function MiniForecastChart({
         animate={{ opacity: active ? 1 : 0.3 }}
         transition={{ duration: 0.6, delay: 0.9, ease: EASE }}
       >
-        <line x1={MARK_X} x2={MARK_X} y1="8" y2="88" stroke="hsl(218 45% 66% / 0.45)" strokeWidth="1" strokeDasharray="2 3" />
-        <circle cx={MARK_X} cy={MARK_Y} r="6" fill="hsl(218 45% 66% / 0.16)" className={active && !reduced ? "anim-breathe" : ""} />
-        <circle cx={MARK_X} cy={MARK_Y} r="2.5" fill="hsl(218 38% 76%)" />
-        <text x={MARK_X + 8} y="20" className="font-mono" fontSize="9" fill="hsl(218 38% 76%)">
+        <line x1={MARK_X} x2={MARK_X} y1="8" y2="88" stroke="hsl(214 22% 42% / 0.55)" strokeWidth="1" strokeDasharray="2 3" />
+        <circle cx={MARK_X} cy={MARK_Y} r="6" fill="hsl(214 22% 42% / 0.16)" className={active && !reduced ? "anim-breathe" : ""} />
+        <circle cx={MARK_X} cy={MARK_Y} r="2.5" fill="hsl(216 24% 64%)" />
+        <text x={MARK_X + 8} y="20" className="font-mono" fontSize="9" fill="hsl(216 24% 64%)">
           +38m
         </text>
       </motion.g>

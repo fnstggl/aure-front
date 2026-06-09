@@ -38,7 +38,7 @@ export function ControlLoopDiagram() {
                 className={cn(
                   "min-w-0 flex-1 rounded-md border px-2 py-2.5 text-center transition-all duration-500",
                   active
-                    ? "border-signal/45 bg-signal/[0.06] shadow-[0_12px_36px_-24px_hsl(218_45%_66%/0.45)]"
+                    ? "border-signal/45 bg-signal/[0.06] shadow-[0_12px_36px_-24px_hsl(214_22%_42%/0.45)]"
                     : "border-border bg-card-elevated",
                 )}
               >
@@ -48,7 +48,7 @@ export function ControlLoopDiagram() {
                 <div
                   className={cn(
                     "mt-0.5 truncate font-mono text-[10.5px] uppercase tracking-[0.12em]",
-                    active ? "text-signal" : "text-white/72",
+                    active ? "text-steel" : "text-white/72",
                   )}
                 >
                   {s.label}
@@ -74,7 +74,7 @@ export function ControlLoopDiagram() {
           <path
             d="M97,1 C97,5 97,5 50,5 C3,5 3,5 3,1"
             fill="none"
-            stroke="hsl(218 45% 66% / 0.4)"
+            stroke="hsl(214 22% 42% / 0.4)"
             strokeWidth="0.4"
             vectorEffect="non-scaling-stroke"
             className={inView ? "flow-dash" : ""}
@@ -90,7 +90,7 @@ export function ControlLoopDiagram() {
       {/* Detail panel for the active stage */}
       <div className="mt-5 h-[176px] overflow-hidden rounded-md border border-border bg-card p-4">
         <div className="mb-3 flex items-center justify-between">
-          <span className="font-mono text-[11px] uppercase tracking-[0.16em] text-signal">
+          <span className="font-mono text-[11px] uppercase tracking-[0.16em] text-steel">
             {STEPS[step].label}
           </span>
           <span className="font-mono text-[10px] text-white/30">stage {step + 1}/5</span>
@@ -150,9 +150,9 @@ export function ControlLoopDiagram() {
             {step === 4 && (
               <div className="rounded-sm border border-border bg-background/60 p-2.5 font-mono text-[11px] leading-relaxed text-white/55">
                 <span className="text-white/30">14:01:23 </span>
-                <span className="text-signal">candidate.delay </span>
+                <span className="text-steel">candidate.delay </span>
                 expected_savings=18.4% sla=pass
-                <span className="anim-cursor text-signal">▍</span>
+                <span className="anim-cursor text-steel">▍</span>
               </div>
             )}
           </motion.div>

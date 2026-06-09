@@ -57,7 +57,7 @@ export function ConstraintEngineDiagram() {
                       <motion.span
                         layoutId="constraint-packet"
                         transition={{ type: "spring", stiffness: 220, damping: 26 }}
-                        className="block h-2 w-2 rounded-full bg-signal shadow-[0_0_8px_hsl(218_45%_66%/0.6)]"
+                        className="block h-2 w-2 rounded-full bg-signal shadow-[0_0_8px_hsl(214_22%_42%/0.6)]"
                       />
                     )}
                   </div>
@@ -108,7 +108,7 @@ export function ConstraintEngineDiagram() {
               transition={{ duration: 0.4, ease: EASE }}
               className={cn(
                 "inline-flex items-center gap-2 rounded-sm border px-2.5 py-1 font-mono text-[11px] uppercase tracking-[0.12em]",
-                verdict === "approved" ? "border-signal/50 text-signal" : "border-destructive/55 text-destructive",
+                verdict === "approved" ? "border-signal/50 text-steel" : "border-destructive/55 text-destructive",
               )}
             >
               <span className={cn("h-1.5 w-1.5 rounded-full", verdict === "approved" ? "bg-signal" : "bg-destructive")} />
@@ -120,7 +120,7 @@ export function ConstraintEngineDiagram() {
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
-              className="font-mono text-[11px] uppercase tracking-[0.12em] text-signal/85"
+              className="font-mono text-[11px] uppercase tracking-[0.12em] text-steel/85"
             >
               evaluating · gate {Math.max(activeIndex, 0) + 1}/{GATES.length}
             </motion.div>
@@ -157,7 +157,7 @@ export function ConstraintEngineDiagram() {
 
 function GateGlyph({ state }: { state: GateState }) {
   const color =
-    state === "pass" ? "hsl(218 45% 66%)" : state === "fail" ? "hsl(0 72% 51%)" : state === "active" ? "hsl(218 50% 74%)" : "hsl(0 0% 40%)";
+    state === "pass" ? "hsl(214 22% 42%)" : state === "fail" ? "hsl(1 44% 44%)" : state === "active" ? "hsl(216 28% 66%)" : "hsl(0 0% 40%)";
   if (state === "fail") {
     return (
       <svg width="12" height="12" viewBox="0 0 12 12" fill="none" aria-hidden>

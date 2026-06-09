@@ -37,7 +37,7 @@ export function Node({
       <div
         className={cn(
           "font-mono text-[10.5px] uppercase tracking-[0.16em]",
-          active ? "text-signal" : "text-white/68",
+          active ? "text-steel" : "text-white/68",
         )}
       >
         {label}
@@ -103,8 +103,8 @@ export function StatusTag({
   className?: string;
 }) {
   const styles: Record<GateState, string> = {
-    pass: "border-signal/35 text-signal/85",
-    gold: "border-signal/55 bg-signal/10 text-signal",
+    pass: "border-signal/35 text-steel/85",
+    gold: "border-signal/55 bg-signal/10 text-steel",
     fail: "border-destructive/50 text-destructive",
     idle: "border-border text-white/40",
   };

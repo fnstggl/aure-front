@@ -101,7 +101,7 @@ export default function HowItWorks() {
               </ul>
             </Reveal>
             <Reveal delay={120} className="bg-card p-6">
-              <div className="mb-4 font-mono text-[11px] uppercase tracking-[0.16em] text-signal">
+              <div className="mb-4 font-mono text-[11px] uppercase tracking-[0.16em] text-steel">
                 Safety
               </div>
               <ul className="space-y-2.5">

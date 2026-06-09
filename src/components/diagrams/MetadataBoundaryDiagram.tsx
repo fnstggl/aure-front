@@ -31,7 +31,7 @@ function MiniNode({ label, sub, tone }: { label: string; sub: string; tone: "neu
         tone === "gold" ? "border-signal/25" : "border-border",
       )}
     >
-      <div className={cn("font-mono text-[10px] uppercase tracking-[0.12em]", tone === "gold" ? "text-signal/90" : "text-white/72")}>
+      <div className={cn("font-mono text-[10px] uppercase tracking-[0.12em]", tone === "gold" ? "text-steel/90" : "text-white/72")}>
         {label}
       </div>
       <div className="mt-0.5 font-mono text-[10px] text-white/40">{sub}</div>
@@ -98,7 +98,7 @@ export function MetadataBoundaryDiagram() {
                 )}
               </div>
             </div>
-            <span className="rounded-sm border border-signal/40 bg-signal/[0.06] px-2 py-0.5 font-mono text-[9.5px] uppercase tracking-[0.12em] text-signal">
+            <span className="rounded-sm border border-signal/40 bg-signal/[0.06] px-2 py-0.5 font-mono text-[9.5px] uppercase tracking-[0.12em] text-steel">
               metadata only
             </span>
 
@@ -106,8 +106,8 @@ export function MetadataBoundaryDiagram() {
             <div className="flex w-full items-center gap-1.5">
               <div className="h-px flex-1 bg-white/10" aria-hidden />
               <svg width="12" height="12" viewBox="0 0 12 12" fill="none" aria-hidden>
-                <circle cx="6" cy="6" r="5" stroke="hsl(0 72% 51% / 0.7)" strokeWidth="1" />
-                <path d="M3 3l6 6" stroke="hsl(0 72% 51% / 0.7)" strokeWidth="1.2" strokeLinecap="round" />
+                <circle cx="6" cy="6" r="5" stroke="hsl(1 44% 44% / 0.7)" strokeWidth="1" />
+                <path d="M3 3l6 6" stroke="hsl(1 44% 44% / 0.7)" strokeWidth="1.2" strokeLinecap="round" />
               </svg>
             </div>
             <span className="font-mono text-[9.5px] uppercase tracking-[0.12em] text-white/40">payload blocked</span>
@@ -116,7 +116,7 @@ export function MetadataBoundaryDiagram() {
 
         {/* Aurelius */}
         <div className="flex-1 rounded-md border border-signal/20 bg-signal/[0.03] p-4">
-          <div className="mb-3 font-mono text-[10px] uppercase tracking-[0.18em] text-signal/80">
+          <div className="mb-3 font-mono text-[10px] uppercase tracking-[0.18em] text-steel/80">
             Aurelius control layer
           </div>
           <div className="flex flex-col items-stretch gap-0">
