@@ -34,7 +34,7 @@ function regionState(index: number, step: number): RegionState {
 
 const strokeFor: Record<RegionState, string> = {
   idle: "hsl(0 0% 100% / 0.1)",
-  considering: "hsl(0 0% 100% / 0.45)",
+  considering: "hsl(213 100% 74% / 0.5)",
   rejected: "hsl(0 72% 51% / 0.4)",
   selected: "hsl(40 46% 58% / 0.7)",
 };
@@ -130,13 +130,14 @@ export function FleetTopologyDiagram() {
         <svg viewBox="0 0 700 360" className="h-auto w-full min-w-[640px]" role="img" aria-label="GPU fleet topology with candidate placement paths">
           {/* candidate paths */}
           {PATHS.map((d, i) => {
+            const isSelected = i === 2 && step === 2;
             const active = step === i;
-            const stroke = i === 2 && step === 2 ? "hsl(40 46% 58% / 0.8)" : active ? "hsl(0 0% 100% / 0.4)" : "hsl(0 0% 100% / 0.12)";
+            const stroke = isSelected ? "hsl(40 46% 58% / 0.8)" : active ? "hsl(213 100% 74% / 0.5)" : "hsl(0 0% 100% / 0.1)";
             return (
               <g key={d}>
                 <path id={`fleet-path-${i}`} d={d} fill="none" stroke={stroke} strokeWidth="1.5" style={{ transition: "stroke 0.5s" }} />
-                {((i === 2 && step === 2) || active) && (
-                  <path d={d} fill="none" stroke="hsl(40 46% 58% / 0.6)" strokeWidth="1.5" className="flow-dash" />
+                {(isSelected || active) && (
+                  <path d={d} fill="none" stroke={isSelected ? "hsl(40 46% 58% / 0.6)" : "hsl(213 100% 74% / 0.45)"} strokeWidth="1.5" className="flow-dash" />
                 )}
               </g>
             );

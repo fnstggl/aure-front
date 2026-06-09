@@ -28,10 +28,10 @@ function MiniNode({ label, sub, tone }: { label: string; sub: string; tone: "neu
     <div
       className={cn(
         "rounded-md border bg-card-elevated px-3 py-2",
-        tone === "amber" ? "border-signal/25" : "border-border",
+        tone === "amber" ? "border-data/25" : "border-border",
       )}
     >
-      <div className={cn("font-mono text-[10px] uppercase tracking-[0.12em]", tone === "amber" ? "text-signal/90" : "text-white/72")}>
+      <div className={cn("font-mono text-[10px] uppercase tracking-[0.12em]", tone === "amber" ? "text-data/90" : "text-white/72")}>
         {label}
       </div>
       <div className="mt-0.5 font-mono text-[10px] text-white/40">{sub}</div>
@@ -75,7 +75,7 @@ export function MetadataBoundaryDiagram() {
               <div className="relative h-px flex-1 rail-x" aria-hidden>
                 {!reduced && inView && (
                   <motion.span
-                    className="absolute top-1/2 h-1.5 w-1.5 -translate-y-1/2 rounded-full bg-signal"
+                    className="absolute top-1/2 h-1.5 w-1.5 -translate-y-1/2 rounded-full bg-data"
                     initial={{ left: "0%", opacity: 0 }}
                     animate={{ left: ["0%", "100%"], opacity: [0, 1, 1, 0] }}
                     transition={{ duration: 2.4, repeat: Infinity, ease: "linear" }}
@@ -83,7 +83,7 @@ export function MetadataBoundaryDiagram() {
                 )}
               </div>
             </div>
-            <span className="rounded-sm border border-signal/40 bg-signal/[0.06] px-2 py-0.5 font-mono text-[9.5px] uppercase tracking-[0.12em] text-signal">
+            <span className="rounded-sm border border-data/40 bg-data/[0.06] px-2 py-0.5 font-mono text-[9.5px] uppercase tracking-[0.12em] text-data">
               metadata only
             </span>
 
@@ -100,8 +100,8 @@ export function MetadataBoundaryDiagram() {
         </div>
 
         {/* Aurelius */}
-        <div className="flex-1 rounded-md border border-signal/20 bg-signal/[0.03] p-4">
-          <div className="mb-3 font-mono text-[10px] uppercase tracking-[0.18em] text-signal/80">
+        <div className="flex-1 rounded-md border border-data/20 bg-data/[0.03] p-4">
+          <div className="mb-3 font-mono text-[10px] uppercase tracking-[0.18em] text-data/80">
             Aurelius control layer
           </div>
           <div className="flex flex-col items-stretch gap-0">

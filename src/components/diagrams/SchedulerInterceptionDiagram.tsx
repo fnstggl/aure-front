@@ -100,7 +100,7 @@ export function SchedulerInterceptionDiagram() {
                 </div>
                 <div className="flex items-center justify-between gap-3 pt-0.5">
                   <span className="font-mono text-[11px] text-white/42">constraint</span>
-                  <StatusTag state="pass">sla pass</StatusTag>
+                  <StatusTag state="gold">sla pass</StatusTag>
                 </div>
               </motion.div>
             </div>

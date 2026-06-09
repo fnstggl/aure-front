@@ -52,7 +52,7 @@ export function OptimizationDecisionDiagram() {
           <KV k="duration" v="42m" />
           <KV k="region" v="us only" />
           <KV k="priority" v="flexible" />
-          <KV k="access" v="metadata only" vClass="text-signal" />
+          <KV k="access" v="metadata only" vClass="text-data" />
         </div>
       </div>
 
@@ -72,9 +72,9 @@ export function OptimizationDecisionDiagram() {
               className={cn(
                 "rounded-md border px-3 py-2.5 transition-all duration-500",
                 selected
-                  ? "border-signal/60 bg-signal/[0.06] shadow-[0_12px_36px_-22px_hsl(38_92%_50%/0.6)]"
+                  ? "border-signal/55 bg-signal/[0.05] shadow-[0_12px_36px_-24px_hsl(40_46%_58%/0.5)]"
                   : scanning
-                    ? "border-white/30 bg-white/[0.03]"
+                    ? "border-data/40 bg-data/[0.03]"
                     : "border-border bg-card-elevated",
               )}
             >
@@ -113,7 +113,7 @@ export function OptimizationDecisionDiagram() {
                       animate={{ opacity: 1, scale: 1 }}
                       className="ml-auto"
                     >
-                      <StatusTag state="pass">selected</StatusTag>
+                      <StatusTag state="gold">selected</StatusTag>
                     </motion.span>
                   )}
                   {rejected && (

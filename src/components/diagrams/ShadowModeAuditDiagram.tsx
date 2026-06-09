@@ -9,20 +9,22 @@ import { Counter } from "@/components/site/Counter";
 
 const EASE = [0.16, 1, 0.3, 1] as const;
 
-type Seg = { t: string; c?: "time" | "key" | "amber" | "body" };
+// blue = forecast / evaluation, gold = economic outcome, neutral = the rest
+type Seg = { t: string; c?: "time" | "key" | "blue" | "gold" | "body" };
 const LINES: { segs: Seg[] }[] = [
   { segs: [{ t: "14:01:22", c: "time" }, { t: "observed.job", c: "key" }, { t: "batch_inference gpu=128 deadline=4h", c: "body" }] },
-  { segs: [{ t: "14:01:23", c: "time" }, { t: "forecast.window", c: "key" }, { t: "lower_cost_in=38m", c: "body" }, { t: "confidence=0.91", c: "amber" }] },
-  { segs: [{ t: "14:01:23", c: "time" }, { t: "candidate.delay", c: "key" }, { t: "expected_savings=18.4%", c: "amber" }, { t: "sla=pass", c: "body" }] },
+  { segs: [{ t: "14:01:23", c: "time" }, { t: "forecast.window", c: "key" }, { t: "lower_cost_in=38m", c: "body" }, { t: "confidence=0.91", c: "blue" }] },
+  { segs: [{ t: "14:01:23", c: "time" }, { t: "candidate.delay", c: "key" }, { t: "expected_savings=18.4%", c: "gold" }, { t: "sla=pass", c: "body" }] },
   { segs: [{ t: "14:01:23", c: "time" }, { t: "constraint.residency", c: "key" }, { t: "pass region=us-west", c: "body" }] },
-  { segs: [{ t: "14:01:23", c: "time" }, { t: "shadow_mode", c: "key" }, { t: "no_action_taken", c: "amber" }] },
-  { segs: [{ t: "14:42:10", c: "time" }, { t: "outcome.counterfactual", c: "key" }, { t: "savings_validated=true", c: "amber" }] },
+  { segs: [{ t: "14:01:23", c: "time" }, { t: "shadow_mode", c: "key" }, { t: "no_action_taken", c: "body" }] },
+  { segs: [{ t: "14:42:10", c: "time" }, { t: "outcome.counterfactual", c: "key" }, { t: "savings_validated=true", c: "gold" }] },
 ];
 
 const colorClass: Record<NonNullable<Seg["c"]>, string> = {
   time: "text-white/28",
   key: "text-white/80",
-  amber: "text-signal",
+  blue: "text-data",
+  gold: "text-signal",
   body: "text-white/50",
 };
 
@@ -37,8 +39,8 @@ export function ShadowModeAuditDiagram() {
       <div className="bg-card">
         <div className="flex items-center justify-between border-b border-border px-4 py-2.5">
           <span className="font-mono text-[11px] uppercase tracking-[0.16em] text-white/50">audit.log</span>
-          <span className="flex items-center gap-1.5 font-mono text-[10px] uppercase tracking-wider text-signal">
-            <span className="h-1.5 w-1.5 rounded-full bg-signal anim-breathe" /> append-only
+          <span className="flex items-center gap-1.5 font-mono text-[10px] uppercase tracking-wider text-white/40">
+            <span className="h-1.5 w-1.5 rounded-full bg-white/30" /> append-only
           </span>
         </div>
         <div className="h-[208px] overflow-hidden space-y-1 p-4 font-mono text-[11.5px] leading-relaxed">
@@ -57,7 +59,7 @@ export function ShadowModeAuditDiagram() {
                     {s.t}
                   </span>
                 ))}
-                {i === visible.length - 1 && <span className="anim-cursor text-signal">▍</span>}
+                {i === visible.length - 1 && <span className="anim-cursor text-data/70">▍</span>}
               </motion.div>
             ))}
           </AnimatePresence>
