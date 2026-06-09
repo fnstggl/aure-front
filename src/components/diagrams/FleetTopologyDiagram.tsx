@@ -2,116 +2,73 @@ import { AnimatePresence, motion } from "framer-motion";
 import { useInView } from "@/hooks/useInView";
 import { useSequence } from "@/hooks/useSequence";
 import { usePrefersReducedMotion } from "@/hooks/usePrefersReducedMotion";
+import { TopologyPlate, SystemSurface, Annotation, Tag, StatusMark, C, EASE } from "./plate";
 
-/* Diagram 3 — GPU Fleet Topology.
-   Three candidate placements are evaluated in sequence: capacity-limited,
-   residency-blocked, then a safe lower-cost window in US-WEST. The chosen
-   path carries a flowing packet; the readout updates as the candidate
-   under evaluation changes. */
+/* Plate 04 — Fleet topology.
+   One idea: candidate placements are explored across real fleet topology;
+   invalid regions are rejected with a reason, and one safe lower-cost
+   placement is selected and carried through to a GPU pool. */
 
-const EASE = [0.16, 1, 0.3, 1] as const;
+type RState = "rejected" | "selected";
 
-type RegionState = "idle" | "considering" | "rejected" | "selected";
+const REGIONS: {
+  code: string;
+  x: number;
+  y: number;
+  state: RState;
+  clusters: { name: string; pools: { id: string; sel?: boolean }[] }[];
+}[] = [
+  {
+    code: "US-EAST", x: 560, y: 40, state: "rejected",
+    clusters: [{ name: "cluster-a", pools: [{ id: "A100" }, { id: "L40S" }] }, { name: "cluster-b", pools: [{ id: "H100" }] }],
+  },
+  {
+    code: "US-WEST", x: 596, y: 186, state: "selected",
+    clusters: [{ name: "cluster-a", pools: [{ id: "A100" }] }, { name: "cluster-b", pools: [{ id: "H100", sel: true }, { id: "spot" }] }],
+  },
+  {
+    code: "EU-CENTRAL", x: 560, y: 332, state: "rejected",
+    clusters: [{ name: "cluster-a", pools: [{ id: "H100" }] }, { name: "cluster-b", pools: [{ id: "A100" }, { id: "rsv" }] }],
+  },
+];
+
+const RW = 400;
+const RH = 108;
 
 const PATHS = [
-  "M120,180 C220,180 250,70 356,70",
-  "M120,180 C220,180 250,180 356,180",
-  "M120,180 C220,180 250,290 356,290",
+  "M232 250 C400 250 420 94 560 94",
+  "M232 250 C420 250 470 240 596 240",
+  "M232 250 C400 250 420 386 560 386",
 ];
 
 const READOUT = [
-  { text: "candidate A · US-EAST — capacity limited", tone: "fail" as const },
-  { text: "candidate C · EU-CENTRAL — data residency blocked", tone: "fail" as const },
-  { text: "selected · US-WEST / Cluster B / H100 — −18% · sla pass", tone: "pass" as const },
+  { t: "candidate · US-EAST — capacity insufficient", sel: false },
+  { t: "candidate · EU-CENTRAL — data residency blocked", sel: false },
+  { t: "selected · US-WEST / cluster-b / H100 — −18% · sla pass", sel: true },
 ];
 
-function regionState(index: number, step: number): RegionState {
-  if (index === 2) return step === 2 ? "selected" : step < 2 ? "idle" : "idle";
-  if (step === index) return "considering";
-  if (step > index) return "rejected";
-  return "idle";
-}
-
-const strokeFor: Record<RegionState, string> = {
-  idle: "hsl(0 0% 100% / 0.1)",
-  considering: "hsl(214 22% 42% / 0.55)",
-  rejected: "hsl(1 44% 44% / 0.4)",
-  selected: "hsl(214 22% 42% / 0.7)",
-};
-
-function Region({
-  x,
-  y,
-  code,
-  clusters,
-  state,
-  selectedPool,
-}: {
-  x: number;
-  y: number;
-  code: string;
-  clusters: { name: string; pools: string[] }[];
-  state: RegionState;
-  selectedPool?: string;
-}) {
-  const dim = state === "idle" || state === "rejected";
+function Region({ r }: { r: (typeof REGIONS)[number] }) {
+  const sel = r.state === "selected";
   return (
-    <g opacity={dim ? 0.5 : 1} style={{ transition: "opacity 0.5s" }}>
-      <rect
-        x={x}
-        y={y}
-        width="300"
-        height="84"
-        rx="5"
-        fill={state === "selected" ? "hsl(214 22% 42% / 0.05)" : "hsl(0 0% 6.5%)"}
-        stroke={strokeFor[state]}
-        strokeWidth="1"
-      />
-      <text x={x + 12} y={y + 18} className="font-mono" fontSize="10" letterSpacing="1.5" fill={state === "selected" ? "hsl(216 24% 64%)" : "hsl(0 0% 60%)"}>
-        {code}
-      </text>
-      {state === "rejected" && (
-        <g stroke="hsl(1 44% 44% / 0.8)" strokeWidth="1.4" strokeLinecap="round">
-          <line x1={x + 280} y1={y + 8} x2={x + 290} y2={y + 18} />
-          <line x1={x + 290} y1={y + 8} x2={x + 280} y2={y + 18} />
-        </g>
-      )}
-      {clusters.map((c, ci) => {
-        const cx = x + 12 + ci * 142;
+    <g style={{ transition: "opacity 0.5s" }} opacity={sel ? 1 : 0.62}>
+      <SystemSurface x={r.x} y={r.y} w={RW} h={RH} state={r.state} />
+      <Tag x={r.x + 16} y={r.y + 24} state={sel ? "selected" : "rejected"}>{r.code}</Tag>
+      <StatusMark x={r.x + RW - 18} y={r.y + 18} kind={sel ? "pass" : "fail"} r={7} />
+      {r.clusters.map((c, ci) => {
+        const cx = r.x + 16 + ci * 192;
         return (
           <g key={c.name}>
-            <rect x={cx} y={y + 28} width="130" height="44" rx="3" fill="hsl(0 0% 100% / 0.018)" stroke="hsl(0 0% 100% / 0.04)" />
-            <text x={cx + 8} y={y + 42} className="font-mono" fontSize="8.5" fill="hsl(0 0% 50%)">
-              {c.name}
-            </text>
-            <g>
-              {c.pools.map((p, pi) => {
-                const isSel = state === "selected" && p === selectedPool;
-                return (
-                  <g key={p}>
-                    <rect
-                      x={cx + 8 + pi * 40}
-                      y={y + 50}
-                      width="36"
-                      height="14"
-                      rx="2"
-                      fill={isSel ? "hsl(214 22% 42% / 0.18)" : "hsl(0 0% 100% / 0.04)"}
-                      stroke={isSel ? "hsl(214 22% 42% / 0.7)" : "hsl(0 0% 100% / 0.08)"}
-                    />
-                    <text
-                      x={cx + 8 + pi * 40 + 18}
-                      y={y + 60}
-                      textAnchor="middle"
-                      className="font-mono"
-                      fontSize="7.5"
-                      fill={isSel ? "hsl(216 24% 64%)" : "hsl(0 0% 55%)"}
-                    >
-                      {p}
-                    </text>
-                  </g>
-                );
-              })}
-            </g>
+            <rect x={cx} y={r.y + 40} width={176} height={52} rx={4} fill="hsl(0 0% 100% / 0.014)" stroke="hsl(0 0% 100% / 0.06)" />
+            <Annotation x={cx + 12} y={r.y + 58} state="dim" size={10.5} track={0.4}>{c.name}</Annotation>
+            {c.pools.map((p, pi) => {
+              const px = cx + 12 + pi * 56;
+              return (
+                <g key={p.id}>
+                  <rect x={px} y={r.y + 66} width={50} height={18} rx={3} fill={p.sel ? C.steelFill : "hsl(0 0% 100% / 0.04)"} stroke={p.sel ? C.steelStrong : "hsl(0 0% 100% / 0.09)"} strokeWidth="1" />
+                  <Annotation x={px + 25} y={r.y + 78} anchor="middle" state={p.sel ? "selected" : "neutral"} size={9.5} track={0.4}>{p.id}</Annotation>
+                </g>
+              );
+            })}
           </g>
         );
       })}
@@ -122,81 +79,55 @@ function Region({
 export function FleetTopologyDiagram() {
   const { ref, inView } = useInView();
   const reduced = usePrefersReducedMotion();
-  const step = useSequence(3, { enabled: inView, interval: 3600, resting: 2 });
+  const step = useSequence(3, { enabled: inView, interval: 2600, resting: 2 });
 
   return (
-    <div ref={ref} className="w-full p-5 md:p-7">
-      <div className="overflow-x-auto">
-        <svg viewBox="0 0 700 360" className="h-auto w-full min-w-[640px]" role="img" aria-label="GPU fleet topology with candidate placement paths">
-          {/* candidate paths */}
-          {PATHS.map((d, i) => {
-            const isSelected = i === 2 && step === 2;
-            const active = step === i;
-            const stroke = isSelected ? "hsl(214 22% 42% / 0.85)" : active ? "hsl(214 22% 42% / 0.55)" : "hsl(0 0% 100% / 0.1)";
-            return (
-              <g key={d}>
-                <path id={`fleet-path-${i}`} d={d} fill="none" stroke={stroke} strokeWidth="1.5" style={{ transition: "stroke 0.5s" }} />
-                {(isSelected || active) && (
-                  <path d={d} fill="none" stroke={isSelected ? "hsl(214 22% 42% / 0.65)" : "hsl(214 22% 42% / 0.5)"} strokeWidth="1.5" className="flow-dash" />
-                )}
-              </g>
-            );
-          })}
+    <div ref={ref}>
+      <TopologyPlate fig="fig.04" caption="region · cluster · pool placement" vb={[1000, 472]} minWidth={900}>
+        {/* candidate paths */}
+        {PATHS.map((d, i) => {
+          const isSel = i === 1;
+          return (
+            <path key={d} d={d} fill="none" stroke={isSel ? C.steelStrong : C.redLine} strokeWidth={isSel ? 1.6 : 1.2} strokeDasharray={isSel ? undefined : "3 4"} opacity={isSel ? 0.9 : 0.4} />
+          );
+        })}
+        {!reduced && inView && (
+          <circle r="4" fill={C.steelText}>
+            <animateMotion dur="2.6s" repeatCount="indefinite" keyPoints="0;1" keyTimes="0;1" calcMode="linear">
+              <mpath href="#fleet-sel" />
+            </animateMotion>
+          </circle>
+        )}
+        <path id="fleet-sel" d={PATHS[1]} fill="none" stroke="none" />
 
-          {/* flowing packet on the selected path */}
-          {step === 2 && !reduced && (
-            <circle r="4" fill="hsl(214 22% 42%)">
-              <animateMotion dur="2.4s" repeatCount="indefinite" keyPoints="0;1" keyTimes="0;1" calcMode="linear">
-                <mpath href="#fleet-path-2" />
-              </animateMotion>
-            </circle>
-          )}
-
-          {/* workload queue source */}
-          <g>
-            <rect x="24" y="150" width="96" height="60" rx="5" fill="hsl(0 0% 6.5%)" stroke="hsl(0 0% 100% / 0.14)" />
-            <text x="72" y="176" textAnchor="middle" className="font-mono" fontSize="9" letterSpacing="1" fill="hsl(0 0% 70%)">
-              WORKLOAD
-            </text>
-            <text x="72" y="190" textAnchor="middle" className="font-mono" fontSize="9" letterSpacing="1" fill="hsl(0 0% 70%)">
-              QUEUE
-            </text>
-            <circle cx="120" cy="180" r="2.5" fill="hsl(214 22% 42%)" />
+        {/* workload source plate */}
+        <SystemSurface x={40} y={184} w={192} h={132} state="active" />
+        <Annotation x={58} y={210} state="active" size={13} track={0.8}>WORKLOAD</Annotation>
+        <line x1={58} y1={222} x2={214} y2={222} stroke={C.steelLine} strokeWidth="1" opacity={0.35} />
+        {[["job", "batch_infer"], ["gpus", "128×H100"], ["deadline", "4h"], ["region", "us only"]].map(([k, v], i) => (
+          <g key={k}>
+            <Annotation x={58} y={244 + i * 18} state="neutral" size={11}>{k}</Annotation>
+            <Annotation x={214} y={244 + i * 18} anchor="end" state="neutral" size={11}>{v}</Annotation>
           </g>
+        ))}
+        <circle cx={232} cy={250} r={3} fill={C.steelText} />
 
-          <Region x={356} y={28} code="US-EAST" state={regionState(0, step)} clusters={[
-            { name: "cluster-a", pools: ["A100", "L40S"] },
-            { name: "cluster-b", pools: ["H100"] },
-          ]} />
-          <Region x={356} y={138} code="US-WEST" state={regionState(2, step)} selectedPool="H100" clusters={[
-            { name: "cluster-a", pools: ["A100"] },
-            { name: "cluster-b", pools: ["H100", "spot"] },
-          ]} />
-          <Region x={356} y={248} code="EU-CENTRAL" state={regionState(1, step)} clusters={[
-            { name: "cluster-a", pools: ["H100"] },
-            { name: "cluster-b", pools: ["A100", "rsv"] },
-          ]} />
-        </svg>
-      </div>
+        {REGIONS.map((r) => <Region key={r.code} r={r} />)}
 
-      {/* readout */}
-      <div className="mt-4 flex items-center gap-2.5">
-        <span className={`inline-block h-1.5 w-1.5 rounded-full ${READOUT[step].tone === "pass" ? "bg-signal" : "bg-destructive"} anim-breathe`} aria-hidden />
-        <div className="relative h-4 flex-1 overflow-hidden">
-          <AnimatePresence mode="wait">
-            <motion.span
-              key={step}
-              initial={{ opacity: 0, y: 8 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -8 }}
-              transition={{ duration: 0.4, ease: EASE }}
-              className={`block font-mono text-[11px] tracking-[0.04em] ${READOUT[step].tone === "pass" ? "text-steel" : "text-white/55"}`}
-            >
-              {READOUT[step].text}
-            </motion.span>
-          </AnimatePresence>
-        </div>
-      </div>
+        {/* readout */}
+        <foreignObject x={40} y={446} width={900} height={24}>
+          <div className="flex h-full items-center gap-2.5">
+            <span className="inline-block h-1.5 w-1.5 rounded-full" style={{ background: READOUT[step].sel ? C.steelText : C.red }} />
+            <div className="relative h-4 flex-1 overflow-hidden">
+              <AnimatePresence mode="wait">
+                <motion.span key={step} initial={{ opacity: 0, y: 6 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -6 }} transition={{ duration: 0.4, ease: EASE }} className="block font-mono text-[11.5px]" style={{ color: READOUT[step].sel ? C.steelText : "hsl(0 0% 100% / 0.5)" }}>
+                  {READOUT[step].t}
+                </motion.span>
+              </AnimatePresence>
+            </div>
+          </div>
+        </foreignObject>
+      </TopologyPlate>
     </div>
   );
 }

@@ -47,9 +47,7 @@ export default function HowItWorks() {
             />
           </Reveal>
           <Reveal delay={140} className="mt-12">
-            <DiagramCard label="Scheduler interception layer">
-              <SchedulerInterceptionDiagram />
-            </DiagramCard>
+            <SchedulerInterceptionDiagram />
           </Reveal>
         </Container>
       </Section>
@@ -65,9 +63,7 @@ export default function HowItWorks() {
             />
           </Reveal>
           <Reveal delay={140} className="mt-12">
-            <DiagramCard label="Forecast / control loop">
-              <ControlLoopDiagram />
-            </DiagramCard>
+            <ControlLoopDiagram />
           </Reveal>
         </Container>
       </Section>

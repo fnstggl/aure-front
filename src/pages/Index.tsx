@@ -6,7 +6,6 @@ import {
   SectionEyebrow,
   SectionHeader,
   CTAButton,
-  DiagramCard,
   Reveal,
 } from "@/components/site/primitives";
 import { SchedulerInterceptionDiagram } from "@/components/diagrams/SchedulerInterceptionDiagram";
@@ -17,7 +16,6 @@ import { OptimizationDecisionDiagram } from "@/components/diagrams/OptimizationD
 import { ConstraintEngineDiagram } from "@/components/diagrams/ConstraintEngineDiagram";
 import { ShadowModeAuditDiagram } from "@/components/diagrams/ShadowModeAuditDiagram";
 import { MetadataBoundaryDiagram } from "@/components/diagrams/MetadataBoundaryDiagram";
-import { HeroMetadata } from "@/components/site/HeroMetadata";
 
 export default function Index() {
   return (
@@ -27,13 +25,15 @@ export default function Index() {
         {/* Quiet mathematical structure behind the claim — static PNG + subtle shimmer */}
         <div className="hero-field" aria-hidden />
         <div className="hero-field-shimmer" aria-hidden />
-        <HeroMetadata />
         <div className="hero-field-vignette" aria-hidden />
 
         <Container className="relative">
           <div className="mx-auto max-w-3xl text-center">
             <Reveal>
-              <SectionEyebrow className="justify-center">Aurelius Control Layer</SectionEyebrow>
+              <div className="flex items-center justify-center gap-2.5 font-mono text-[9.5px] uppercase tracking-[0.3em] text-white/22">
+                <span className="h-px w-5 bg-white/10" aria-hidden />
+                Aurelius Control Layer
+              </div>
             </Reveal>
             <Reveal delay={60}>
               <h1 className="mt-7 text-balance text-[clamp(2rem,5.2vw,3.6rem)] font-medium leading-[1.05] tracking-[-0.025em]">
@@ -94,9 +94,7 @@ export default function Index() {
             />
           </Reveal>
           <Reveal delay={140} className="mt-12">
-            <DiagramCard label="Scheduler interception layer" coord="fig.01">
-              <SchedulerInterceptionDiagram />
-            </DiagramCard>
+            <SchedulerInterceptionDiagram />
           </Reveal>
         </Container>
       </Section>
@@ -104,40 +102,32 @@ export default function Index() {
       {/* ============================ Problem ============================ */}
       <Section>
         <Container>
-          <div className="grid items-center gap-10 lg:grid-cols-12 lg:gap-14">
-            <div className="lg:col-span-5">
-              <Reveal>
-                <SectionHeader
-                  eyebrow="The problem"
-                  title="Your scheduler is costing you money"
-                  intro="Modern schedulers optimize for availability, fairness, and latency — not economic outcome. Once a job is placed, its energy cost, regional constraints, and timing tradeoffs are often locked in."
-                />
-              </Reveal>
-              <Reveal delay={120}>
-                <ul className="mt-8 divide-y divide-border border-y border-border">
-                  {[
-                    "Schedulers do not see future grid conditions.",
-                    "Utilization does not equal economic efficiency.",
-                    "Teams lack audit-grade counterfactuals before changing production behavior.",
-                  ].map((point, i) => (
-                    <li key={point} className="flex gap-4 py-4">
-                      <span className="font-mono text-[12px] tabular-nums text-white/25">
-                        {String(i + 1).padStart(2, "0")}
-                      </span>
-                      <span className="text-[14px] leading-relaxed text-white/62">{point}</span>
-                    </li>
-                  ))}
-                </ul>
-              </Reveal>
-            </div>
-            <div className="lg:col-span-7">
-              <Reveal delay={160}>
-                <DiagramCard label="Queue · energy price window" coord="fig.02">
-                  <QueueShiftDiagram />
-                </DiagramCard>
-              </Reveal>
-            </div>
-          </div>
+          <Reveal>
+            <SectionHeader
+              eyebrow="The problem"
+              title="Your scheduler is costing you money"
+              intro="Modern schedulers optimize for availability, fairness, and latency — not economic outcome. Once a job is placed, its energy cost, regional constraints, and timing tradeoffs are often locked in."
+            />
+          </Reveal>
+          <Reveal delay={120}>
+            <ul className="mt-10 grid gap-px overflow-hidden rounded-md border border-border bg-border md:grid-cols-3">
+              {[
+                "Schedulers do not see future grid conditions.",
+                "Utilization does not equal economic efficiency.",
+                "Teams lack audit-grade counterfactuals before changing production behavior.",
+              ].map((point, i) => (
+                <li key={point} className="bg-background p-5">
+                  <span className="font-mono text-[12px] tabular-nums text-white/25">
+                    {String(i + 1).padStart(2, "0")}
+                  </span>
+                  <p className="mt-3 text-[14px] leading-relaxed text-white/62">{point}</p>
+                </li>
+              ))}
+            </ul>
+          </Reveal>
+          <Reveal delay={160} className="mt-12">
+            <QueueShiftDiagram />
+          </Reveal>
         </Container>
       </Section>
 
@@ -170,9 +160,7 @@ export default function Index() {
             />
           </Reveal>
           <Reveal delay={140} className="mt-12">
-            <DiagramCard label="Forecast / control loop" coord="fig.03">
-              <ControlLoopDiagram />
-            </DiagramCard>
+            <ControlLoopDiagram />
           </Reveal>
         </Container>
       </Section>
@@ -188,9 +176,7 @@ export default function Index() {
             />
           </Reveal>
           <Reveal delay={140} className="mt-12">
-            <DiagramCard label="Region · cluster · pool placement" coord="fig.04">
-              <FleetTopologyDiagram />
-            </DiagramCard>
+            <FleetTopologyDiagram />
           </Reveal>
         </Container>
       </Section>
@@ -198,24 +184,16 @@ export default function Index() {
       {/* ===================== Optimization Decision ==================== */}
       <Section alt>
         <Container>
-          <div className="grid items-center gap-10 lg:grid-cols-12 lg:gap-14">
-            <div className="order-2 lg:order-1 lg:col-span-7">
-              <Reveal delay={120}>
-                <DiagramCard label="Live optimization decision" coord="fig.05">
-                  <OptimizationDecisionDiagram />
-                </DiagramCard>
-              </Reveal>
-            </div>
-            <div className="order-1 lg:order-2 lg:col-span-5">
-              <Reveal>
-                <SectionHeader
-                  eyebrow="Decision logic"
-                  title="Every optimization is ranked, filtered, and explainable"
-                  intro="For each workload, Aurelius generates candidate decisions — run now, delay, or relocate — scores each on expected cost, and filters anything that violates a constraint. The selected candidate comes with its reasons, not a black-box verdict."
-                />
-              </Reveal>
-            </div>
-          </div>
+          <Reveal>
+            <SectionHeader
+              eyebrow="Decision logic"
+              title="Every optimization is ranked, filtered, and explainable"
+              intro="For each workload, Aurelius generates candidate decisions — run now, delay, or relocate — scores each on expected cost, and filters anything that violates a constraint. The selected candidate comes with its reasons, not a black-box verdict."
+            />
+          </Reveal>
+          <Reveal delay={140} className="mt-12">
+            <OptimizationDecisionDiagram />
+          </Reveal>
         </Container>
       </Section>
 
@@ -230,9 +208,7 @@ export default function Index() {
             />
           </Reveal>
           <Reveal delay={140} className="mt-12">
-            <DiagramCard label="Constraint gates" coord="fig.06">
-              <ConstraintEngineDiagram />
-            </DiagramCard>
+            <ConstraintEngineDiagram />
           </Reveal>
         </Container>
       </Section>
@@ -279,9 +255,7 @@ export default function Index() {
             />
           </Reveal>
           <Reveal delay={140} className="mt-12">
-            <DiagramCard label="Metadata boundary" coord="fig.07">
-              <MetadataBoundaryDiagram />
-            </DiagramCard>
+            <MetadataBoundaryDiagram />
           </Reveal>
           <Reveal delay={200}>
             <ul className="mt-8 grid gap-x-10 gap-y-2.5 sm:grid-cols-2">
