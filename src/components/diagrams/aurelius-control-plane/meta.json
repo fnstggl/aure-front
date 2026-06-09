@@ -1,0 +1,133 @@
+{
+  "viewBox": [
+    1440,
+    900
+  ],
+  "labels": [
+    {
+      "id": "workload_queue",
+      "text": "WORKLOAD QUEUE",
+      "at": [
+        328.79999999999995,
+        462
+      ],
+      "dy": 64,
+      "anchor": "middle",
+      "sub": "job metadata · timing"
+    },
+    {
+      "id": "scheduler",
+      "text": "EXISTING SCHEDULER",
+      "at": [
+        645.6,
+        384.5
+      ],
+      "dy": -22,
+      "anchor": "middle",
+      "sub": "availability · fairness",
+      "authority": true
+    },
+    {
+      "id": "execution",
+      "text": "EXECUTION LAYER",
+      "at": [
+        844,
+        379.6
+      ],
+      "dy": -20,
+      "anchor": "middle",
+      "sub": "execution unchanged"
+    },
+    {
+      "id": "aurelius",
+      "text": "AURELIUS CONTROL PLANE",
+      "at": [
+        613.6,
+        489.69999999999993
+      ],
+      "dy": 70,
+      "anchor": "middle",
+      "primary": true,
+      "sub": "forecast · rank · filter · log"
+    },
+    {
+      "id": "constraint",
+      "text": "CONSTRAINT ENGINE",
+      "at": [
+        802.4000000000001,
+        601.2
+      ],
+      "dy": 60,
+      "anchor": "middle"
+    },
+    {
+      "id": "ledger",
+      "text": "APPEND-ONLY AUDIT LEDGER",
+      "at": [
+        402.4,
+        521.2
+      ],
+      "dy": 58,
+      "anchor": "middle"
+    }
+  ],
+  "metaOnlyTag": {
+    "at": [
+      688.4000000000001,
+      402.45000000000005
+    ],
+    "text": "METADATA ONLY"
+  },
+  "payloadTag": {
+    "at": [
+      741.6,
+      565.8549999999999
+    ],
+    "text": "PAYLOAD BLOCKED"
+  },
+  "envTag": {
+    "at": [
+      159.20000000000005,
+      438
+    ],
+    "text": "YOUR SECURE ENVIRONMENT"
+  },
+  "notes": [
+    "SCHEDULER REMAINS AUTHORITY",
+    "EXECUTION UNCHANGED"
+  ],
+  "packet": {
+    "from": [
+      695.2,
+      454.45000000000005
+    ],
+    "mid": [
+      688.4000000000001,
+      402.45000000000005
+    ],
+    "to": [
+      669.6,
+      460.22
+    ]
+  },
+  "blocked": {
+    "from": [
+      826.4,
+      450.59999999999997
+    ],
+    "mid": [
+      781,
+      490.22749999999996
+    ],
+    "to": [
+      723.6,
+      565.8549999999999
+    ]
+  },
+  "shadowBadge": {
+    "at": [
+      613.6,
+      440.55999999999995
+    ]
+  }
+}

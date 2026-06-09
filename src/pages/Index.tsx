@@ -8,7 +8,7 @@ import {
   CTAButton,
   Reveal,
 } from "@/components/site/primitives";
-import { SchedulerInterceptionDiagram } from "@/components/diagrams/SchedulerInterceptionDiagram";
+import { AureliusControlPlaneIllustration } from "@/components/diagrams/AureliusControlPlaneIllustration";
 import { QueueShiftDiagram } from "@/components/diagrams/QueueShiftDiagram";
 import { ControlLoopDiagram } from "@/components/diagrams/ControlLoopDiagram";
 import { FleetTopologyDiagram } from "@/components/diagrams/FleetTopologyDiagram";
@@ -88,7 +88,7 @@ export default function Index() {
             />
           </Reveal>
           <Reveal delay={140} className="mt-12">
-            <SchedulerInterceptionDiagram />
+            <AureliusControlPlaneIllustration />
           </Reveal>
         </Container>
       </Section>

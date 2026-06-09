@@ -1,0 +1,4 @@
+<!-- Authored isometric source asset. Swap with a Figma/Spline render of the same layer + canvas (1440x900) to upgrade fidelity with no component change. -->
+<svg xmlns="http://www.w3.org/2000/svg" width="1440" height="900" viewBox="0 0 1440 900" fill="none">
+<path d="M695.2,454.5 Q688.4,402.5 669.6,460.2" fill="none" stroke="#3a4658" stroke-width="13" opacity="0.22" stroke-linecap="round"/><path d="M695.2,454.5 Q688.4,402.5 669.6,460.2" fill="none" stroke="#4d6088" stroke-width="3" stroke-linecap="round"/><path d="M695.2,454.5 Q688.4,402.5 669.6,460.2" fill="none" stroke="#a8b8d2" stroke-width="1.1" stroke-dasharray="1.5 6" stroke-linecap="round" opacity="0.95"/><circle cx="695.2" cy="454.5" r="4.2" fill="#3a4658" stroke="#6479a0" stroke-width="1.2"/><circle cx="695.2" cy="454.5" r="1.6" fill="#cdd7e6"/><circle cx="669.6" cy="460.2" r="4.2" fill="#3a4658" stroke="#6479a0" stroke-width="1.2"/><circle cx="669.6" cy="460.2" r="1.6" fill="#cdd7e6"/>
+</svg>
