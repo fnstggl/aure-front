@@ -36,7 +36,7 @@ const LOG_LINES = [
 export function OptimizationDecisionDiagram() {
   const { ref, inView } = useInView();
   // steps 0-3 scan each candidate; step 4 settles the verdict
-  const step = useSequence(5, { enabled: inView, interval: 1500, resting: 4 });
+  const step = useSequence(5, { enabled: inView, interval: 2200, resting: 4 });
   const settled = step === 4;
 
   return (
@@ -128,36 +128,45 @@ export function OptimizationDecisionDiagram() {
         })}
       </div>
 
-      {/* explanation + log */}
-      <AnimatePresence>
-        {settled && (
-          <motion.div
-            initial={{ opacity: 0, height: 0, marginTop: 0 }}
-            animate={{ opacity: 1, height: "auto", marginTop: 16 }}
-            exit={{ opacity: 0, height: 0 }}
-            transition={{ duration: 0.5, ease: EASE }}
-            className="overflow-hidden"
-          >
-            <p className="mb-3 text-[12.5px] leading-relaxed text-white/62">
-              Selected delay candidate — lower expected cost, SLA-safe, no migration risk.
-            </p>
-            <div className="rounded-sm border border-border bg-background/60 p-3 font-mono text-[11px] leading-relaxed">
-              {LOG_LINES.map((line, i) => (
-                <motion.div
-                  key={line}
-                  initial={{ opacity: 0, x: -6 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  transition={{ duration: 0.4, delay: 0.2 + i * 0.18, ease: EASE }}
-                  className="text-white/55"
-                >
-                  <span className="text-white/28">append · </span>
-                  <span className="text-signal">{line}</span>
-                </motion.div>
-              ))}
-            </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
+      {/* explanation + log — reserved fixed height, opacity crossfade only */}
+      <div className="relative mt-4 h-[132px]">
+        {/* scanning placeholder */}
+        <motion.div
+          className="absolute inset-0 flex items-center gap-2.5"
+          animate={{ opacity: settled ? 0 : 1 }}
+          transition={{ duration: 0.45, ease: EASE }}
+        >
+          <span className="h-1.5 w-1.5 rounded-full bg-data anim-breathe" aria-hidden />
+          <span className="font-mono text-[11px] uppercase tracking-[0.14em] text-white/40">
+            scanning candidates · gate checks running
+          </span>
+        </motion.div>
+
+        {/* resolved verdict */}
+        <motion.div
+          className="absolute inset-0"
+          animate={{ opacity: settled ? 1 : 0 }}
+          transition={{ duration: 0.5, ease: EASE }}
+          aria-hidden={!settled}
+        >
+          <p className="mb-3 text-[12.5px] leading-relaxed text-white/64">
+            Selected delay candidate — lower expected cost, SLA-safe, no migration risk.
+          </p>
+          <div className="rounded-sm border border-border bg-background/60 p-3 font-mono text-[11px] leading-relaxed">
+            {LOG_LINES.map((line, i) => (
+              <motion.div
+                key={line}
+                animate={{ opacity: settled ? 1 : 0, x: settled ? 0 : -6 }}
+                transition={{ duration: 0.4, delay: settled ? 0.2 + i * 0.18 : 0, ease: EASE }}
+                className="text-white/55"
+              >
+                <span className="text-white/28">append · </span>
+                <span className="text-signal">{line}</span>
+              </motion.div>
+            ))}
+          </div>
+        </motion.div>
+      </div>
     </div>
   );
 }

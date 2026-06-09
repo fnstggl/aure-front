@@ -13,11 +13,7 @@ export function Container({
   className?: string;
   children: React.ReactNode;
 }) {
-  return (
-    <div className={cn("mx-auto w-full max-w-content px-6 lg:px-8", className)}>
-      {children}
-    </div>
-  );
+  return <div className={cn("mx-auto w-full max-w-content px-6 lg:px-8", className)}>{children}</div>;
 }
 
 export function Section({
@@ -28,9 +24,7 @@ export function Section({
   id,
 }: {
   className?: string;
-  /** thin top hairline between major sections */
   divider?: boolean;
-  /** subtly lighter surface for alternating rhythm */
   alt?: boolean;
   children: React.ReactNode;
   id?: string;
@@ -39,7 +33,7 @@ export function Section({
     <section
       id={id}
       className={cn(
-        "py-[72px] md:py-[104px] lg:py-[124px]",
+        "py-[76px] md:py-[108px] lg:py-[132px]",
         divider && "border-t border-border",
         alt && "bg-background-alt",
         className,
@@ -55,7 +49,7 @@ export function Divider({ className }: { className?: string }) {
 }
 
 /* ------------------------------------------------------------------ */
-/* Reveal — staggered entrance, transform/opacity only                 */
+/* Reveal — entrance, transform/opacity only (no layout shift)         */
 /* ------------------------------------------------------------------ */
 
 export function Reveal({
@@ -95,11 +89,11 @@ export function SectionEyebrow({
   return (
     <div
       className={cn(
-        "flex items-center gap-2.5 font-mono text-[11px] uppercase tracking-[0.22em] text-white/42",
+        "flex items-center gap-3 font-mono text-[10.5px] uppercase tracking-[0.24em] text-white/40",
         className,
       )}
     >
-      <span className="inline-block h-1.5 w-1.5 bg-signal anim-breathe" aria-hidden />
+      <span className="h-px w-7 bg-gradient-to-r from-signal/80 to-signal/0" aria-hidden />
       {children}
     </div>
   );
@@ -119,23 +113,17 @@ export function SectionHeader({
   align?: "left" | "center";
 }) {
   return (
-    <div
-      className={cn(
-        "max-w-2xl",
-        align === "center" && "mx-auto text-center",
-        className,
-      )}
-    >
+    <div className={cn("max-w-2xl", align === "center" && "mx-auto text-center", className)}>
       {eyebrow && (
-        <SectionEyebrow className={cn("mb-5", align === "center" && "justify-center")}>
+        <SectionEyebrow className={cn("mb-6", align === "center" && "justify-center")}>
           {eyebrow}
         </SectionEyebrow>
       )}
-      <h2 className="text-balance text-[clamp(1.6rem,3.2vw,2.4rem)] font-medium leading-[1.1] tracking-tight text-foreground">
+      <h2 className="text-balance text-[clamp(1.75rem,3.6vw,2.6rem)] font-medium leading-[1.08] tracking-[-0.02em] text-foreground">
         {title}
       </h2>
       {intro && (
-        <p className="mt-5 text-[15px] leading-relaxed text-white/62 md:text-base">
+        <p className="mt-5 max-w-xl text-pretty text-[15px] leading-relaxed text-white/64 md:text-[16px]">
           {intro}
         </p>
       )}
@@ -144,11 +132,11 @@ export function SectionHeader({
 }
 
 /* ------------------------------------------------------------------ */
-/* CTA buttons — primary (light) / secondary (ghost) with tactile push */
+/* CTA buttons                                                         */
 /* ------------------------------------------------------------------ */
 
 const baseCta =
-  "inline-flex h-11 items-center justify-center gap-2 rounded-md px-6 text-sm font-medium tracking-tight transition-all duration-200 ease-premium active:translate-y-px focus-visible:outline-none";
+  "inline-flex h-11 items-center justify-center gap-2 rounded-md px-6 text-[14px] font-medium tracking-tight transition-all duration-200 ease-premium active:translate-y-px focus-visible:outline-none";
 
 export function CTAButton({
   to,
@@ -169,7 +157,7 @@ export function CTAButton({
   const styles =
     variant === "primary"
       ? "bg-foreground text-background hover:bg-white"
-      : "border border-border-strong bg-transparent text-foreground hover:border-white/30 hover:bg-white/[0.04]";
+      : "border border-border-strong bg-transparent text-foreground hover:border-signal/40 hover:bg-white/[0.03]";
 
   const content = (
     <>
@@ -195,7 +183,7 @@ export function CTAButton({
 }
 
 /* ------------------------------------------------------------------ */
-/* Metric chip — mono, monochrome with optional amber emphasis         */
+/* Metric chip — mono value, sans label, restrained                   */
 /* ------------------------------------------------------------------ */
 
 export function MetricChip({
@@ -212,27 +200,20 @@ export function MetricChip({
   return (
     <div
       className={cn(
-        "flex items-baseline gap-2 border border-border bg-card/40 px-3.5 py-2",
+        "flex items-baseline gap-2 rounded-md border border-white/[0.06] bg-white/[0.015] px-3.5 py-1.5",
         className,
       )}
     >
-      <span
-        className={cn(
-          "font-mono text-sm tabular-nums",
-          emphasis ? "text-signal" : "text-foreground",
-        )}
-      >
+      <span className={cn("font-mono text-[13px] tabular-nums", emphasis ? "text-signal" : "text-foreground/90")}>
         {value}
       </span>
-      <span className="font-mono text-[11px] uppercase tracking-wider text-white/42">
-        {label}
-      </span>
+      <span className="text-[12px] tracking-tight text-white/42">{label}</span>
     </div>
   );
 }
 
 /* ------------------------------------------------------------------ */
-/* Diagram card — dark surface, hairline border, mono caption label    */
+/* Diagram card — dark surface, hairline border, refined caption       */
 /* ------------------------------------------------------------------ */
 
 export function DiagramCard({
@@ -245,16 +226,11 @@ export function DiagramCard({
   className?: string;
 }) {
   return (
-    <figure
-      className={cn(
-        "relative overflow-hidden rounded-md border border-border bg-card",
-        className,
-      )}
-    >
+    <figure className={cn("relative overflow-hidden rounded-lg border border-border bg-card", className)}>
       <div className="bg-dotgrid">{children}</div>
       {label && (
-        <figcaption className="flex items-center gap-2 border-t border-border px-4 py-2.5 font-mono text-[11px] uppercase tracking-[0.18em] text-white/42">
-          <span className="inline-block h-1 w-1 bg-signal" aria-hidden />
+        <figcaption className="flex items-center gap-2.5 border-t border-border px-4 py-2.5 font-mono text-[10.5px] uppercase tracking-[0.2em] text-white/38">
+          <span className="h-px w-4 bg-signal/60" aria-hidden />
           {label}
         </figcaption>
       )}
@@ -268,14 +244,7 @@ export function DiagramCard({
 
 export function Arrow({ className }: { className?: string }) {
   return (
-    <svg
-      width="14"
-      height="14"
-      viewBox="0 0 14 14"
-      fill="none"
-      aria-hidden
-      className={className}
-    >
+    <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden className={className}>
       <path
         d="M3 7h8M7.5 3.5 11 7l-3.5 3.5"
         stroke="currentColor"

@@ -1,3 +1,4 @@
+import { cn } from "@/lib/utils";
 import { Layout } from "@/components/layout/Layout";
 import {
   Container,
@@ -9,6 +10,7 @@ import {
   DiagramCard,
   Reveal,
 } from "@/components/site/primitives";
+import { EmergentField } from "@/components/diagrams/EmergentField";
 import { SchedulerInterceptionDiagram } from "@/components/diagrams/SchedulerInterceptionDiagram";
 import { QueueShiftDiagram } from "@/components/diagrams/QueueShiftDiagram";
 import { ControlLoopDiagram } from "@/components/diagrams/ControlLoopDiagram";
@@ -23,7 +25,15 @@ export default function Index() {
     <Layout>
       {/* ============================== Hero ============================== */}
       <section className="relative flex min-h-[100dvh] flex-col justify-center overflow-hidden pb-20 pt-28 md:pt-32">
-        <div className="pointer-events-none absolute inset-0 bg-dotgrid opacity-60" aria-hidden />
+        <div className="pointer-events-none absolute inset-0 bg-dotgrid opacity-40" aria-hidden />
+        {/* Order emerging from complexity — fixed-height canvas, no layout impact */}
+        <div
+          className="pointer-events-none absolute inset-x-0 top-0 h-[82vh]"
+          style={{ maskImage: "linear-gradient(to bottom, black 62%, transparent)", WebkitMaskImage: "linear-gradient(to bottom, black 62%, transparent)" }}
+          aria-hidden
+        >
+          <EmergentField className="h-full w-full" />
+        </div>
         <div className="pointer-events-none absolute inset-0 hero-vignette" aria-hidden />
 
         <Container className="relative">
@@ -43,7 +53,7 @@ export default function Index() {
               </p>
             </Reveal>
             <Reveal delay={180}>
-              <p className="mx-auto mt-4 max-w-xl font-mono text-[12px] leading-relaxed text-white/42">
+              <p className="mx-auto mt-4 max-w-xl text-[13.5px] leading-relaxed text-white/46">
                 Shadow-mode first. Constraint-aware by default. Built for schedulers, platform
                 teams, and GPU fleet operators.
               </p>
@@ -55,7 +65,7 @@ export default function Index() {
                   See what you would have saved
                 </CTAButton>
                 <CTAButton to="/how-it-works" variant="secondary">
-                  How it works
+                  View technical overview
                 </CTAButton>
               </div>
             </Reveal>
@@ -250,6 +260,47 @@ export default function Index() {
           </Reveal>
         </Container>
       </Section>
+
+      {/* ===================== Adoption (light relief) ================== */}
+      <section className="section-light border-t border-border">
+        <Container className="py-[76px] md:py-[108px] lg:py-[124px]">
+          <Reveal>
+            <div className="flex items-center gap-3 font-mono text-[10.5px] uppercase tracking-[0.24em] text-foreground/50">
+              <span className="h-px w-7 bg-gradient-to-r from-signal-strong to-transparent" aria-hidden />
+              Adoption
+            </div>
+          </Reveal>
+          <Reveal delay={80}>
+            <h2 className="mt-6 max-w-2xl text-balance text-[clamp(1.7rem,3.4vw,2.5rem)] font-medium leading-[1.08] tracking-[-0.02em] text-foreground">
+              From metadata to validated savings, in three steps
+            </h2>
+          </Reveal>
+          <Reveal delay={130}>
+            <p className="mt-5 max-w-xl text-[15px] leading-relaxed text-muted-foreground">
+              No execution risk to start. Aurelius proves its economics against your real scheduler
+              behavior before it ever changes a decision.
+            </p>
+          </Reveal>
+
+          <div className="mt-12 grid gap-y-10 md:grid-cols-3 md:gap-0">
+            {[
+              { n: "01", t: "Connect metadata", d: "Aurelius reads scheduler metadata only — job timing, resources, constraints. No payloads, no model outputs, no customer code." },
+              { n: "02", t: "Run shadow mode", d: "Counterfactual decisions are recorded read-only, in parallel with your scheduler, with zero execution impact." },
+              { n: "03", t: "Review the report", d: "Audit-grade counterfactual savings, rejected unsafe candidates, and proof that SLAs would have held." },
+            ].map((s, i) => (
+              <Reveal
+                key={s.n}
+                delay={i * 90}
+                className={cn("md:px-7", i > 0 && "md:border-l md:border-black/10", i === 0 && "md:pl-0")}
+              >
+                <div className="font-mono text-[13px] tabular-nums text-signal-strong">{s.n}</div>
+                <h3 className="mt-4 text-[17px] font-medium tracking-tight text-foreground">{s.t}</h3>
+                <p className="mt-2.5 text-[13.5px] leading-relaxed text-muted-foreground">{s.d}</p>
+              </Reveal>
+            ))}
+          </div>
+        </Container>
+      </section>
 
       {/* ============================== CTA ============================= */}
       <Section alt>
