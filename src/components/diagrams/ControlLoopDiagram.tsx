@@ -2,162 +2,141 @@ import { AnimatePresence, motion } from "framer-motion";
 import { cn } from "@/lib/utils";
 import { useInView } from "@/hooks/useInView";
 import { useSequence } from "@/hooks/useSequence";
-import { StatusTag, KV } from "./bits";
-import { MiniForecastChart } from "./MiniForecastChart";
+import { usePrefersReducedMotion } from "@/hooks/usePrefersReducedMotion";
+import { TopologyPlate, Annotation, C, EASE } from "./plate";
 
-/* Diagram 2 — Forecast / Control Loop.
-   A deterministic loop: Observe, Forecast, Decide, Filter, Log. The active
-   stage drives a detail panel below; a dashed arc shows the loop closing. */
+/* Plate 03 — Control loop.
+   One idea: a deterministic closed loop. A single packet travels
+   observe → forecast → decide → filter → log; the active station drives the
+   evidence plane below. */
 
-const EASE = [0.16, 1, 0.3, 1] as const;
+const STATIONS = [
+  { key: "observe", label: "OBSERVE", cx: 120, cy: 116 },
+  { key: "forecast", label: "FORECAST", cx: 350, cy: 66 },
+  { key: "decide", label: "DECIDE", cx: 650, cy: 66 },
+  { key: "filter", label: "FILTER", cx: 880, cy: 116 },
+  { key: "log", label: "LOG", cx: 500, cy: 196 },
+];
 
-const STEPS = [
-  { key: "observe", label: "Observe", note: "Read scheduler metadata only" },
-  { key: "forecast", label: "Forecast", note: "Predict cost and carbon with uncertainty bounds" },
-  { key: "decide", label: "Decide", note: "Rank run, delay, region, and capacity options" },
-  { key: "filter", label: "Filter", note: "Reject unsafe candidates under hard constraints" },
-  { key: "log", label: "Log", note: "Record decisions and outcomes, append-only" },
+const LOOP =
+  "M120 116 C170 78 255 58 350 66 C470 76 540 58 650 66 C770 74 845 82 880 116 C800 176 640 196 500 196 C360 196 175 176 120 116 Z";
+
+const NOTE = [
+  "read scheduler metadata only",
+  "predict cost & carbon with uncertainty bounds",
+  "rank run / delay / region / capacity options",
+  "reject unsafe candidates under hard constraints",
+  "record decisions & outcomes, append-only",
 ];
 
 export function ControlLoopDiagram() {
   const { ref, inView } = useInView();
-  const step = useSequence(STEPS.length, { enabled: inView, interval: 3000, resting: 1 });
+  const reduced = usePrefersReducedMotion();
+  const step = useSequence(STATIONS.length, { enabled: inView, interval: 2400, resting: 1 });
 
   return (
-    <div ref={ref} className="w-full p-5 md:p-7">
-      {/* Pipeline rail */}
-      <div className="relative flex items-stretch gap-1.5">
-        {STEPS.map((s, i) => {
+    <div ref={ref}>
+      <TopologyPlate fig="fig.03" caption="deterministic control loop" vb={[1000, 420]} minWidth={760}>
+        {/* loop rail */}
+        <path d={LOOP} fill="none" stroke={C.rail} strokeWidth="1.3" />
+        {!reduced && inView && (
+          <path d={LOOP} fill="none" stroke={C.steelLine} strokeWidth="1.3" strokeDasharray="3 9" className="flow-dash" opacity={0.7} />
+        )}
+
+        {/* stations */}
+        {STATIONS.map((s, i) => {
           const active = i === step;
-          const passed = i < step;
           return (
-            <div key={s.key} className="flex min-w-0 flex-1 items-center gap-1.5">
-              <motion.div
-                animate={{ opacity: active ? 1 : passed ? 0.7 : 0.42, y: active ? -2 : 0 }}
-                transition={{ duration: 0.5, ease: EASE }}
-                className={cn(
-                  "min-w-0 flex-1 rounded-md border px-2 py-2.5 text-center transition-all duration-500",
-                  active
-                    ? "border-signal/45 bg-signal/[0.06] shadow-[0_12px_36px_-24px_hsl(214_22%_42%/0.45)]"
-                    : "border-border bg-card-elevated",
-                )}
-              >
-                <div className="font-mono text-[10px] tabular-nums text-white/30">
-                  {String(i + 1).padStart(2, "0")}
-                </div>
-                <div
-                  className={cn(
-                    "mt-0.5 truncate font-mono text-[10.5px] uppercase tracking-[0.12em]",
-                    active ? "text-steel" : "text-white/72",
-                  )}
-                >
-                  {s.label}
-                </div>
-              </motion.div>
-              {i < STEPS.length - 1 && (
-                <div
-                  className={cn("h-px w-3 shrink-0 md:w-5", i + 1 === step ? "rail-x" : "bg-border")}
-                  aria-hidden
-                />
-              )}
-            </div>
+            <g key={s.key} style={{ transition: "opacity 0.5s" }} opacity={active ? 1 : 0.5}>
+              <rect x={s.cx - 62} y={s.cy - 17} width={124} height={34} rx={5} fill={active ? C.steelFill : C.surface} stroke={active ? C.steelStrong : C.surfaceStroke} strokeWidth="1" style={{ transition: "fill 0.5s, stroke 0.5s" }} />
+              <Annotation x={s.cx} y={s.cy + 4} anchor="middle" state={active ? "active" : "neutral"} size={12} track={1}>
+                {String(i + 1).padStart(2, "0")} {s.label}
+              </Annotation>
+            </g>
           );
         })}
 
-        {/* loop-return arc */}
-        <svg
-          className="pointer-events-none absolute -bottom-3 left-0 h-5 w-full"
-          viewBox="0 0 100 6"
-          preserveAspectRatio="none"
-          aria-hidden
-        >
-          <path
-            d="M97,1 C97,5 97,5 50,5 C3,5 3,5 3,1"
-            fill="none"
-            stroke="hsl(214 22% 42% / 0.4)"
-            strokeWidth="0.4"
-            vectorEffect="non-scaling-stroke"
-            className={inView ? "flow-dash" : ""}
-          />
-        </svg>
-      </div>
+        {/* traveling packet */}
+        {!reduced && inView && (
+          <circle r="4" fill={C.steelText}>
+            <animateMotion dur={`${STATIONS.length * 2.4}s`} repeatCount="indefinite" keyPoints="0;1" keyTimes="0;1" calcMode="linear">
+              <mpath href="#loop-rail" />
+            </animateMotion>
+          </circle>
+        )}
+        <path id="loop-rail" d={LOOP} fill="none" stroke="none" />
 
-      <div className="mt-2 flex items-center gap-2 pl-1">
-        <span className="font-mono text-[10px] uppercase tracking-[0.16em] text-white/28">loop</span>
-        <span className="h-px flex-1 bg-transparent" />
-      </div>
-
-      {/* Detail panel for the active stage */}
-      <div className="mt-5 h-[176px] overflow-hidden rounded-md border border-border bg-card p-4">
-        <div className="mb-3 flex items-center justify-between">
-          <span className="font-mono text-[11px] uppercase tracking-[0.16em] text-steel">
-            {STEPS[step].label}
-          </span>
-          <span className="font-mono text-[10px] text-white/30">stage {step + 1}/5</span>
-        </div>
-        <p className="mb-3 text-[12.5px] text-white/55">{STEPS[step].note}</p>
-
-        <AnimatePresence mode="wait">
-          <motion.div
-            key={STEPS[step].key}
-            initial={{ opacity: 0, y: 8 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -8 }}
-            transition={{ duration: 0.4, ease: EASE }}
-          >
-            {step === 0 && (
-              <div className="grid gap-1.5 sm:grid-cols-2">
-                <KV k="job" v="batch_inference" />
-                <KV k="gpus" v="128 × H100" />
-                <KV k="deadline" v="4h" />
-                <KV k="access" v="metadata only" vClass="text-white/65" />
-              </div>
-            )}
-            {step === 1 && <MiniForecastChart active className="h-[96px] w-full" />}
-            {step === 2 && (
-              <div className="space-y-2">
-                {[
-                  { name: "delay 38m", cost: 0.81, w: "81%" },
-                  { name: "move region", cost: 0.74, w: "74%" },
-                  { name: "run now", cost: 1.0, w: "100%" },
-                ].map((o, idx) => (
-                  <div key={o.name} className="flex items-center gap-3">
-                    <span className="w-24 shrink-0 font-mono text-[11px] text-white/60">{o.name}</span>
-                    <div className="h-1.5 flex-1 overflow-hidden rounded-full bg-white/5">
-                      <motion.div
-                        initial={{ width: 0 }}
-                        animate={{ width: o.w }}
-                        transition={{ duration: 0.7, delay: idx * 0.08, ease: EASE }}
-                        className={cn("h-full rounded-full", idx === 0 ? "bg-signal" : "bg-white/25")}
-                      />
+        {/* evidence plane */}
+        <rect x={150} y={250} width={700} height={146} rx={7} fill={C.surface} stroke={C.surfaceStroke} strokeWidth="1" />
+        <foreignObject x={150} y={250} width={700} height={146}>
+          <div className="flex h-full flex-col p-4">
+            <div className="mb-2 flex items-center justify-between">
+              <span className="font-mono text-[11px] uppercase tracking-[0.18em]" style={{ color: C.steelText }}>
+                {STATIONS[step].label}
+              </span>
+              <span className="font-mono text-[10px] text-white/28">stage {step + 1}/5</span>
+            </div>
+            <p className="mb-2.5 font-mono text-[11.5px] text-white/45">{NOTE[step]}</p>
+            <div className="min-h-0 flex-1">
+              <AnimatePresence mode="wait">
+                <motion.div key={step} initial={{ opacity: 0, y: 6 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -6 }} transition={{ duration: 0.35, ease: EASE }}>
+                  {step === 0 && (
+                    <div className="grid grid-cols-2 gap-x-8 gap-y-1 font-mono text-[11.5px]">
+                      <Row k="job" v="batch_inference" /><Row k="gpus" v="128 × H100" />
+                      <Row k="deadline" v="4h" /><Row k="access" v="metadata only" steel />
                     </div>
-                    <span className="w-12 shrink-0 text-right font-mono text-[11px] tabular-nums text-white/60">
-                      {o.cost.toFixed(2)}x
-                    </span>
-                  </div>
-                ))}
-              </div>
-            )}
-            {step === 3 && (
-              <div className="flex flex-wrap gap-2">
-                <StatusTag state="pass">sla</StatusTag>
-                <StatusTag state="pass">capacity</StatusTag>
-                <StatusTag state="pass">residency</StatusTag>
-                <StatusTag state="pass">power</StatusTag>
-                <StatusTag state="fail">delay 2h · sla</StatusTag>
-              </div>
-            )}
-            {step === 4 && (
-              <div className="rounded-sm border border-border bg-background/60 p-2.5 font-mono text-[11px] leading-relaxed text-white/55">
-                <span className="text-white/30">14:01:23 </span>
-                <span className="text-steel">candidate.delay </span>
-                expected_savings=18.4% sla=pass
-                <span className="anim-cursor text-steel">▍</span>
-              </div>
-            )}
-          </motion.div>
-        </AnimatePresence>
-      </div>
+                  )}
+                  {step === 1 && (
+                    <svg viewBox="0 0 600 60" className="h-[52px] w-full">
+                      <path d="M6 40 C80 30 130 18 200 34 C280 52 330 30 600 16" fill="none" stroke={C.steelLine} strokeWidth="1.6" />
+                      <line x1="360" y1="6" x2="360" y2="54" stroke={C.steelLine} strokeDasharray="2 3" strokeWidth="1" opacity="0.6" />
+                      <circle cx="360" cy="29" r="3" fill={C.steelText} />
+                      <text x="372" y="20" className="font-mono" fontSize="11" fill={C.steelText}>−38m</text>
+                    </svg>
+                  )}
+                  {step === 2 && (
+                    <div className="space-y-1.5">
+                      {[["delay 38m", 0.81, true], ["move region", 0.74, false], ["run now", 1.0, false]].map(([n, w, sel]) => (
+                        <div key={n as string} className="flex items-center gap-3 font-mono text-[11px]">
+                          <span className="w-24 text-white/55">{n as string}</span>
+                          <span className="h-1.5 flex-1 overflow-hidden rounded-full bg-white/[0.06]">
+                            <span className="block h-full rounded-full" style={{ width: `${(w as number) * 100}%`, background: sel ? C.steelStrong : "hsl(0 0% 100% / 0.22)" }} />
+                          </span>
+                          <span className="w-10 text-right tabular-nums text-white/55">{(w as number).toFixed(2)}x</span>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                  {step === 3 && (
+                    <div className="flex flex-wrap gap-2 font-mono text-[10.5px] uppercase tracking-wider">
+                      {["sla", "capacity", "residency", "power"].map((t) => (
+                        <span key={t} className="rounded-sm border px-2 py-0.5" style={{ borderColor: C.steelLine, color: C.steelText }}>✓ {t}</span>
+                      ))}
+                      <span className="rounded-sm border px-2 py-0.5" style={{ borderColor: C.redLine, color: C.red }}>✕ delay 2h · sla</span>
+                    </div>
+                  )}
+                  {step === 4 && (
+                    <div className="rounded-sm border border-border bg-background/60 p-2.5 font-mono text-[11px] text-white/55">
+                      <span className="text-white/30">14:01:23 </span>
+                      <span style={{ color: C.steelText }}>candidate.delay </span>expected_savings=18.4% sla=pass
+                      <span className="anim-cursor" style={{ color: C.steelText }}>▍</span>
+                    </div>
+                  )}
+                </motion.div>
+              </AnimatePresence>
+            </div>
+          </div>
+        </foreignObject>
+      </TopologyPlate>
+    </div>
+  );
+}
+
+function Row({ k, v, steel }: { k: string; v: string; steel?: boolean }) {
+  return (
+    <div className="flex items-center justify-between">
+      <span className="text-white/38">{k}</span>
+      <span className={cn("tabular-nums", !steel && "text-white/70")} style={steel ? { color: C.steelText } : undefined}>{v}</span>
     </div>
   );
 }

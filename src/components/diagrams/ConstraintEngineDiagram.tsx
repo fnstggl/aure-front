@@ -1,176 +1,104 @@
 import { AnimatePresence, motion } from "framer-motion";
-import { cn } from "@/lib/utils";
 import { useInView } from "@/hooks/useInView";
 import { useSequence } from "@/hooks/useSequence";
+import { usePrefersReducedMotion } from "@/hooks/usePrefersReducedMotion";
+import { TopologyPlate, Annotation, StatusMark, C, EASE } from "./plate";
 
-/* Diagram 5 — Constraint Engine.
-   A candidate is checked gate by gate. One run clears every gate and is
-   approved; the next fails at a hard constraint and is rejected — and still
-   recorded. A shared-layout packet slides between gates. */
+/* Plate 06 — Constraint gates.
+   One idea: safety is structural. A candidate signal passes physically
+   through hard gates; if one fails, it stops at a red boundary and the
+   rejection is recorded. */
 
-const EASE = [0.16, 1, 0.3, 1] as const;
-const GATES = ["SLA", "Capacity", "Power", "Residency", "Policy", "Availability", "Confidence"];
-const FRAMES = 12; // 0-7 approve scenario, 8-11 reject scenario
+const GATES = ["SLA", "CAPACITY", "POWER", "RESIDENCY", "POLICY", "AVAILABILITY", "CONFIDENCE"];
+const GX = GATES.map((_, i) => 140 + i * 116);
+const RAIL_Y = 140;
+const FRAMES = 13; // 0-7 approve, 8-12 reject (fails at POWER = index 2)
 
-type GateState = "idle" | "active" | "pass" | "fail";
+type GS = "idle" | "active" | "pass" | "fail";
 
-function deriveFrame(f: number) {
+function frame(f: number) {
   if (f <= 7) {
-    const gate = (g: number): GateState => (g < f ? "pass" : g === f && f <= 6 ? "active" : "idle");
-    const cleared = Math.min(f, 7);
-    const activeIndex = f <= 6 ? f : -1;
-    const verdict = f === 7 ? ("approved" as const) : null;
-    return { gate, cleared, activeIndex, verdict, scenario: "approve" as const };
+    const gate = (g: number): GS => (g < f ? "pass" : g === f && f <= 6 ? "active" : "idle");
+    const pos = f <= 6 ? GX[f] : GX[6] + 70;
+    return { gate, pos, verdict: f === 7 ? ("approved" as const) : null };
   }
-  const local = f - 8; // 0..3
-  const gate = (g: number): GateState => {
-    if (g === 2 && local >= 3) return "fail";
-    if (g < local && g < 2) return "pass";
-    if (g === local && local < 3) return "active";
-    if (g === 2 && local === 2) return "active";
+  const l = f - 8; // 0..4 ; fail at gate 2
+  const gate = (g: number): GS => {
+    if (g === 2 && l >= 2) return "fail";
+    if (g < Math.min(l, 2)) return "pass";
+    if (g === l && l < 2) return "active";
     return "idle";
   };
-  const cleared = Math.min(local, 2);
-  const activeIndex = local < 3 ? local : 2;
-  const verdict = local >= 3 ? ("rejected" as const) : null;
-  return { gate, cleared, activeIndex, verdict, scenario: "reject" as const };
+  const pos = l < 2 ? GX[l] : GX[2];
+  return { gate, pos, verdict: l >= 2 ? ("rejected" as const) : null };
 }
+
+const FILL: Record<GS, string> = { idle: C.surface, active: C.steelFillSoft, pass: C.steelFill, fail: C.redSoft };
+const STROKE: Record<GS, string> = { idle: C.surfaceStroke, active: C.steelLine, pass: C.steelStrong, fail: C.redLine };
 
 export function ConstraintEngineDiagram() {
   const { ref, inView } = useInView();
-  const f = useSequence(FRAMES, { enabled: inView, interval: 1300, resting: 7 });
-  const { gate, cleared, activeIndex, verdict } = deriveFrame(f);
+  const reduced = usePrefersReducedMotion();
+  const f = useSequence(FRAMES, { enabled: inView, interval: 1150, resting: 7 });
+  const { gate, pos, verdict } = frame(f);
 
   return (
-    <div ref={ref} className="w-full p-5 md:p-7">
-      <div className="overflow-x-auto pb-1">
-        <div className="min-w-[560px]">
-          {/* candidate token + gate row */}
-          <div className="flex items-stretch gap-1.5">
-            {GATES.map((name, i) => {
-              const state = gate(i);
-              return (
-                <div key={name} className="relative flex min-w-0 flex-1 flex-col items-center">
-                  {/* packet hovers above the active gate; slides via layout */}
-                  <div className="mb-1.5 h-2">
-                    {activeIndex === i && verdict === null && (
-                      <motion.span
-                        layoutId="constraint-packet"
-                        transition={{ type: "spring", stiffness: 220, damping: 26 }}
-                        className="block h-2 w-2 rounded-full bg-signal shadow-[0_0_8px_hsl(214_22%_42%/0.6)]"
-                      />
-                    )}
-                  </div>
-                  <div
-                    className={cn(
-                      "flex h-12 w-full flex-col items-center justify-center rounded-md border px-1 text-center transition-all duration-500",
-                      state === "pass" && "border-signal/35 bg-signal/[0.04]",
-                      state === "fail" && "border-destructive/55 bg-destructive/[0.08]",
-                      state === "active" && "border-signal/55 bg-signal/[0.06]",
-                      state === "idle" && "border-border bg-card-elevated opacity-55",
-                    )}
-                  >
-                    <GateGlyph state={state} />
-                    <span
-                      className={cn(
-                        "mt-1 truncate font-mono text-[9px] uppercase tracking-[0.08em]",
-                        state === "pass" ? "text-white/72" : state === "fail" ? "text-destructive" : "text-white/60",
-                      )}
-                    >
-                      {name}
-                    </span>
-                  </div>
-                </div>
-              );
-            })}
+    <div ref={ref}>
+      <TopologyPlate fig="fig.06" caption="hard constraint gates" vb={[1000, 360]} minWidth={840}>
+        {/* rail */}
+        <line x1={50} y1={RAIL_Y} x2={950} y2={RAIL_Y} stroke={C.rail} strokeWidth="1.3" />
+
+        {/* gates as vertical boundary plates */}
+        {GATES.map((name, i) => {
+          const s = gate(i);
+          return (
+            <g key={name} style={{ transition: "opacity 0.4s" }} opacity={s === "idle" ? 0.55 : 1}>
+              <rect x={GX[i] - 9} y={RAIL_Y - 64} width={18} height={128} rx={4} fill={FILL[s]} stroke={STROKE[s]} strokeWidth="1" style={{ transition: "fill 0.4s, stroke 0.4s" }} />
+              {s === "pass" && <StatusMark x={GX[i]} y={RAIL_Y - 80} kind="pass" r={6} />}
+              {s === "fail" && <StatusMark x={GX[i]} y={RAIL_Y - 80} kind="fail" r={6} />}
+              <Annotation x={GX[i]} y={RAIL_Y + 92} anchor="middle" state={s === "fail" ? "rejected" : s === "idle" ? "dim" : "active"} size={9.5} track={0.4}>{name}</Annotation>
+            </g>
+          );
+        })}
+
+        {/* candidate packet on the rail */}
+        {!reduced && (
+          <motion.circle r="5" cy={RAIL_Y} fill={verdict === "rejected" ? C.red : C.steelText} animate={{ cx: pos }} transition={{ type: "spring", stiffness: 180, damping: 24 }} />
+        )}
+
+        {/* verdict + ledger */}
+        <foreignObject x={50} y={250} width={900} height={40}>
+          <div className="flex h-full items-center gap-4">
+            <AnimatePresence mode="wait">
+              <motion.span
+                key={verdict ?? "eval"}
+                initial={{ opacity: 0, y: 5 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -5 }}
+                transition={{ duration: 0.35, ease: EASE }}
+                className="rounded-sm border px-2.5 py-1 font-mono text-[11px] uppercase tracking-[0.12em]"
+                style={
+                  verdict === "approved"
+                    ? { borderColor: C.steelLine, color: C.steelText }
+                    : verdict === "rejected"
+                      ? { borderColor: C.redLine, color: C.red }
+                      : { borderColor: "transparent", color: C.dim }
+                }
+              >
+                {verdict === "approved" ? "approved candidate" : verdict === "rejected" ? "rejected · failed at power" : "evaluating gates…"}
+              </motion.span>
+            </AnimatePresence>
+            {verdict === "rejected" && (
+              <span className="font-mono text-[11px] text-white/45">
+                <span className="text-white/28">append · </span>
+                <span style={{ color: C.red }}>constraint.power.fail</span> rejection_logged=true
+              </span>
+            )}
           </div>
-
-          {/* progress rail */}
-          <div className="mt-2 h-px w-full bg-border">
-            <motion.div
-              className={cn("h-full", verdict === "rejected" ? "bg-destructive/60" : "bg-signal")}
-              animate={{ width: `${(cleared / GATES.length) * 100}%` }}
-              transition={{ duration: 0.5, ease: EASE }}
-            />
-          </div>
-        </div>
-      </div>
-
-      {/* verdict + rejection logging */}
-      <div className="mt-5 flex flex-wrap items-center gap-3">
-        <AnimatePresence mode="wait">
-          {verdict ? (
-            <motion.div
-              key={verdict}
-              initial={{ opacity: 0, y: 6 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -6 }}
-              transition={{ duration: 0.4, ease: EASE }}
-              className={cn(
-                "inline-flex items-center gap-2 rounded-sm border px-2.5 py-1 font-mono text-[11px] uppercase tracking-[0.12em]",
-                verdict === "approved" ? "border-signal/50 text-steel" : "border-destructive/55 text-destructive",
-              )}
-            >
-              <span className={cn("h-1.5 w-1.5 rounded-full", verdict === "approved" ? "bg-signal" : "bg-destructive")} />
-              {verdict === "approved" ? "approved candidate" : "rejected · failed at power"}
-            </motion.div>
-          ) : (
-            <motion.div
-              key="evaluating"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              className="font-mono text-[11px] uppercase tracking-[0.12em] text-steel/85"
-            >
-              evaluating · gate {Math.max(activeIndex, 0) + 1}/{GATES.length}
-            </motion.div>
-          )}
-        </AnimatePresence>
-
-        <AnimatePresence>
-          {verdict === "rejected" && (
-            <motion.span
-              initial={{ opacity: 0, x: -6 }}
-              animate={{ opacity: 1, x: 0 }}
-              exit={{ opacity: 0 }}
-              transition={{ delay: 0.2, duration: 0.4 }}
-              className="font-mono text-[11px] text-white/45"
-            >
-              <span className="text-white/28">append · </span>
-              <span className="text-destructive/90">constraint.power.fail</span> rejection_logged=true
-            </motion.span>
-          )}
-        </AnimatePresence>
-      </div>
-
-      <div className="mt-5 space-y-1.5 border-t border-border pt-4">
-        {["Hard constraints are not optimization preferences.", "Unsafe savings do not count.", "Every rejection is recorded."].map((t) => (
-          <p key={t} className="font-mono text-[11px] text-white/42">
-            <span className="mr-2 text-white/30">—</span>
-            {t}
-          </p>
-        ))}
-      </div>
+        </foreignObject>
+        <line x1={50} y1={300} x2={950} y2={300} stroke={C.rail} strokeWidth="1" />
+        <Annotation x={50} y={326} state="dim" size={10.5} track={0.5}>HARD CONSTRAINTS ARE NOT PREFERENCES · UNSAFE SAVINGS DO NOT COUNT · EVERY REJECTION RECORDED</Annotation>
+      </TopologyPlate>
     </div>
   );
-}
-
-function GateGlyph({ state }: { state: GateState }) {
-  const color =
-    state === "pass" ? "hsl(214 22% 42%)" : state === "fail" ? "hsl(1 44% 44%)" : state === "active" ? "hsl(216 28% 66%)" : "hsl(0 0% 40%)";
-  if (state === "fail") {
-    return (
-      <svg width="12" height="12" viewBox="0 0 12 12" fill="none" aria-hidden>
-        <path d="M3 3l6 6M9 3l-6 6" stroke={color} strokeWidth="1.5" strokeLinecap="round" />
-      </svg>
-    );
-  }
-  if (state === "pass") {
-    return (
-      <svg width="12" height="12" viewBox="0 0 12 12" fill="none" aria-hidden>
-        <path d="M2.5 6.5L5 9l4.5-5.5" stroke={color} strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
-      </svg>
-    );
-  }
-  return <span className="block h-1.5 w-1.5 rounded-full" style={{ background: color }} aria-hidden />;
 }

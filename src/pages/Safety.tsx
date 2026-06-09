@@ -129,9 +129,7 @@ export default function Safety() {
             />
           </Reveal>
           <Reveal delay={140} className="mt-12">
-            <DiagramCard label="Constraint gates">
-              <ConstraintEngineDiagram />
-            </DiagramCard>
+            <ConstraintEngineDiagram />
           </Reveal>
         </Container>
       </Section>
@@ -148,9 +146,7 @@ export default function Safety() {
           </Reveal>
 
           <Reveal delay={140} className="mt-12">
-            <DiagramCard label="Data boundary">
-              <MetadataBoundaryDiagram />
-            </DiagramCard>
+            <MetadataBoundaryDiagram />
           </Reveal>
 
           {/* Allowed / blocked split */}

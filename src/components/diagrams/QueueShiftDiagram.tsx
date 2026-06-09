@@ -1,101 +1,95 @@
 import { AnimatePresence, motion } from "framer-motion";
-import { cn } from "@/lib/utils";
 import { useInView } from "@/hooks/useInView";
 import { useSequence } from "@/hooks/useSequence";
+import { TopologyPlate, Annotation, Tag, C, EASE } from "./plate";
 
-/* Problem-section visual — an energy-price curve over a queue of jobs.
-   Naive scheduling runs flexible jobs through the peak window; Aurelius
-   proposes safe shifts into the lower-cost window while locked jobs hold. */
+/* Plate 02 — Price / scheduling window.
+   One idea: schedulers place flexible work by availability, not future
+   economics, so it runs through peak pricing. Aurelius shifts only the
+   flexible, constraint-safe jobs into the low-cost window. */
 
-const EASE = [0.16, 1, 0.3, 1] as const;
-
-type Job = { label: string; locked: boolean; peak: number; low: number; width: number; row: number };
+type Job = { label: string; locked: boolean; peakX: number; lowX: number; w: number; y: number };
 
 const JOBS: Job[] = [
-  { label: "realtime", locked: true, peak: 8, low: 8, width: 18, row: 0 },
-  { label: "batch", locked: false, peak: 30, low: 66, width: 22, row: 1 },
-  { label: "training", locked: false, peak: 40, low: 72, width: 16, row: 2 },
-  { label: "fine-tune", locked: true, peak: 14, low: 14, width: 14, row: 3 },
+  { label: "realtime", locked: true, peakX: 250, lowX: 250, w: 70, y: 214 },
+  { label: "batch", locked: false, peakX: 300, lowX: 700, w: 130, y: 256 },
+  { label: "training", locked: false, peakX: 360, lowX: 760, w: 96, y: 298 },
+  { label: "fine-tune", locked: true, peakX: 300, lowX: 300, w: 60, y: 340 },
 ];
+
+const CURVE = "M60 132 C180 130 235 56 320 60 C430 66 520 150 700 150 C800 150 880 132 945 132";
+const CURVE_FILL = `${CURVE} L945 176 L60 176 Z`;
 
 export function QueueShiftDiagram() {
   const { ref, inView } = useInView();
-  // 0 = naive scheduler, 1 = Aurelius proposal
-  const mode = useSequence(2, { enabled: inView, interval: 5200, resting: 1 });
+  const mode = useSequence(2, { enabled: inView, interval: 4600, resting: 1 }); // 0 scheduler, 1 aurelius
 
   return (
-    <div ref={ref} className="w-full p-5 md:p-7">
-      {/* price curve */}
-      <svg viewBox="0 0 100 26" className="h-16 w-full" preserveAspectRatio="none" role="img" aria-label="Energy price across the scheduling window">
-        <defs>
-          <linearGradient id="peakfill" x1="0" x2="0" y1="0" y2="1">
-            <stop offset="0%" stopColor="hsl(0 0% 100% / 0.12)" />
-            <stop offset="100%" stopColor="hsl(0 0% 100% / 0)" />
-          </linearGradient>
-        </defs>
-        {/* expensive hump left-of-centre, cheap valley right */}
-        <path d="M0,18 C18,16 26,4 40,5 C54,6 60,20 74,20 C86,20 92,17 100,17 L100,26 L0,26 Z" fill="url(#peakfill)" />
-        <path d="M0,18 C18,16 26,4 40,5 C54,6 60,20 74,20 C86,20 92,17 100,17" fill="none" stroke="hsl(0 0% 100% / 0.35)" strokeWidth="0.6" vectorEffect="non-scaling-stroke" />
-        {/* low-cost window guide */}
-        <line x1="74" x2="74" y1="0" y2="26" stroke="hsl(214 22% 42% / 0.45)" strokeWidth="0.5" strokeDasharray="1.5 2" vectorEffect="non-scaling-stroke" />
-      </svg>
-      <div className="mb-3 flex justify-between font-mono text-[9.5px] uppercase tracking-[0.12em] text-white/35">
-        <span>peak pricing</span>
-        <span className="text-steel/80">low-cost window</span>
-      </div>
+    <div ref={ref}>
+      <TopologyPlate fig="fig.02" caption="economic scheduling window" vb={[1000, 410]} minWidth={760}>
+        {/* low-cost window zone */}
+        <rect x={640} y={40} width={250} height={350} fill={mode === 1 ? C.steelFillSoft : "hsl(0 0% 100% / 0.012)"} stroke="none" style={{ transition: "fill 0.6s" }} />
+        <line x1={640} y1={40} x2={640} y2={390} stroke={C.steelLine} strokeWidth="1" strokeDasharray="2 4" opacity={0.5} />
 
-      {/* job tracks */}
-      <div className="space-y-2">
+        {/* cost curve on recessed time plane */}
+        <path d={CURVE_FILL} fill="hsl(0 0% 100% / 0.03)" />
+        <path d={CURVE} fill="none" stroke={C.faint} strokeWidth="1.4" />
+        <Annotation x={300} y={74} anchor="middle" state="dim" size={11} track={0.8}>PEAK PRICING</Annotation>
+        <Annotation x={765} y={74} anchor="middle" state={mode === 1 ? "active" : "dim"} size={11} track={0.8}>LOW-COST WINDOW</Annotation>
+
+        {/* job tracks */}
         {JOBS.map((job) => {
-          const left = mode === 1 ? job.low : job.peak;
+          const x = mode === 1 ? job.lowX : job.peakX;
           const shifted = !job.locked && mode === 1;
+          const fill = job.locked ? "hsl(0 0% 100% / 0.05)" : shifted ? C.steelFill : "hsl(0 0% 100% / 0.07)";
+          const stroke = job.locked ? C.surfaceStroke : shifted ? C.steelStrong : C.faint;
           return (
-            <div key={job.label} className="relative h-7 rounded-sm border border-border bg-card-elevated">
-              <motion.div
-                className={cn(
-                  "absolute top-1/2 flex h-5 -translate-y-1/2 items-center justify-center rounded-[3px] font-mono text-[9px] uppercase tracking-wide",
-                  job.locked
-                    ? "border border-white/15 bg-white/[0.06] text-white/55"
-                    : shifted
-                      ? "border border-signal/50 bg-signal/15 text-steel"
-                      : "border border-white/20 bg-white/[0.08] text-white/70",
-                )}
-                style={{ width: `${job.width}%` }}
-                animate={{ left: `${left}%` }}
-                transition={{ duration: 0.9, ease: EASE }}
-              >
-                {job.label}
-              </motion.div>
-              {job.locked && (
-                <span className="absolute right-2 top-1/2 -translate-y-1/2 font-mono text-[8.5px] uppercase tracking-wide text-white/28">
-                  locked
-                </span>
+            <g key={job.label}>
+              <line x1={200} y1={job.y} x2={945} y2={job.y} stroke="hsl(0 0% 100% / 0.05)" strokeWidth="1" />
+              <Annotation x={44} y={job.y + 4} state="neutral" size={12}>{job.label}</Annotation>
+              <Tag x={150} y={job.y + 4} state="dim" anchor="end">{job.locked ? "LOCK" : "FLEX"}</Tag>
+              {!job.locked && (
+                <rect x={job.peakX} y={job.y - 11} width={job.w} height={22} rx={3} fill="none" stroke="hsl(0 0% 100% / 0.08)" strokeDasharray="2 3" />
               )}
-            </div>
+              <motion.rect
+                initial={false}
+                animate={{ x }}
+                transition={{ duration: 0.95, ease: EASE }}
+                y={job.y - 11}
+                width={job.w}
+                height={22}
+                rx={3}
+                fill={fill}
+                stroke={stroke}
+                strokeWidth="1"
+                style={{ transition: "fill 0.6s, stroke 0.6s" }}
+              />
+            </g>
           );
         })}
-      </div>
 
-      {/* mode readout */}
-      <div className="mt-4 flex items-center gap-2.5">
-        <span className={cn("inline-block h-1.5 w-1.5 rounded-full", mode === 1 ? "bg-signal" : "bg-white/40", "anim-breathe")} aria-hidden />
-        <div className="relative h-4 flex-1 overflow-hidden">
-          <AnimatePresence mode="wait">
-            <motion.span
-              key={mode}
-              initial={{ opacity: 0, y: 8 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -8 }}
-              transition={{ duration: 0.4, ease: EASE }}
-              className={cn("block font-mono text-[11px] tracking-[0.03em]", mode === 1 ? "text-steel" : "text-white/50")}
-            >
-              {mode === 1
-                ? "aurelius · flexible jobs shifted to low-cost window · locked jobs unchanged"
-                : "scheduler · flexible jobs run through peak pricing"}
-            </motion.span>
-          </AnimatePresence>
-        </div>
-      </div>
+        {/* mode readout */}
+        <circle cx={50} cy={384} r={3} fill={mode === 1 ? C.steelText : C.faint} />
+        <foreignObject x={68} y={372} width={830} height={26}>
+          <div className="h-full overflow-hidden">
+            <AnimatePresence mode="wait">
+              <motion.div
+                key={mode}
+                initial={{ opacity: 0, y: 6 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -6 }}
+                transition={{ duration: 0.4, ease: EASE }}
+                className="font-mono text-[12.5px]"
+                style={{ color: mode === 1 ? C.steelText : C.dim }}
+              >
+                {mode === 1
+                  ? "aurelius · flexible jobs shifted to low-cost window · shadow counterfactual"
+                  : "scheduler · flexible jobs run through peak pricing"}
+              </motion.div>
+            </AnimatePresence>
+          </div>
+        </foreignObject>
+      </TopologyPlate>
     </div>
   );
 }
