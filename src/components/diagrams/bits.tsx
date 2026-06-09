@@ -28,8 +28,8 @@ export function Node({
     <div
       className={cn(
         "relative rounded-md border bg-card-elevated px-3.5 py-3 transition-all duration-500 ease-premium",
-        active && gold && "border-signal/55 bg-signal/[0.05] shadow-[0_10px_34px_-24px_hsl(40_46%_58%/0.5)]",
-        active && !gold && "border-data/45 bg-data/[0.04] shadow-[0_10px_34px_-24px_hsl(213_100%_74%/0.4)]",
+        active && gold && "border-signal/55 bg-signal/[0.05] shadow-[0_10px_34px_-24px_hsl(41_47%_60%/0.5)]",
+        active && !gold && "border-white/22 bg-white/[0.035] shadow-[0_10px_34px_-24px_hsl(0_0%_100%/0.16)]",
         !active && "border-border",
         className,
       )}
@@ -37,7 +37,7 @@ export function Node({
       <div
         className={cn(
           "font-mono text-[10.5px] uppercase tracking-[0.16em]",
-          active ? (gold ? "text-signal" : "text-data") : "text-white/68",
+          active ? (gold ? "text-signal" : "text-white/85") : "text-white/68",
         )}
       >
         {label}
@@ -103,7 +103,7 @@ export function StatusTag({
   className?: string;
 }) {
   const styles: Record<GateState, string> = {
-    pass: "border-data/40 text-data",
+    pass: "border-white/20 text-white/65",
     gold: "border-signal/50 text-signal",
     fail: "border-destructive/50 text-destructive",
     idle: "border-border text-white/40",

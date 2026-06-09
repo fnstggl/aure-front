@@ -33,8 +33,8 @@ export function MiniForecastChart({
     >
       <defs>
         <linearGradient id="forecast-stroke" x1="0" x2="1" y1="0" y2="0">
-          <stop offset="0%" stopColor="hsl(213 100% 74%)" />
-          <stop offset="100%" stopColor="hsl(255 90% 76%)" />
+          <stop offset="0%" stopColor="hsl(219 16% 66%)" />
+          <stop offset="100%" stopColor="hsl(219 15% 52%)" />
         </linearGradient>
       </defs>
 
@@ -43,10 +43,10 @@ export function MiniForecastChart({
         <line key={y} x1="6" x2="254" y1={y} y2={y} stroke="hsl(0 0% 100% / 0.05)" strokeWidth="1" />
       ))}
 
-      {/* confidence band — blue/violet uncertainty */}
+      {/* confidence band — muted slate uncertainty */}
       <motion.path
         d={BAND}
-        fill="hsl(248 56% 60% / 0.1)"
+        fill="hsl(219 15% 52% / 0.14)"
         stroke="none"
         initial={{ opacity: 0 }}
         animate={{ opacity: active ? 1 : 0.25 }}
@@ -71,10 +71,10 @@ export function MiniForecastChart({
         animate={{ opacity: active ? 1 : 0.3 }}
         transition={{ duration: 0.6, delay: 0.9, ease: EASE }}
       >
-        <line x1={MARK_X} x2={MARK_X} y1="8" y2="88" stroke="hsl(40 46% 58% / 0.45)" strokeWidth="1" strokeDasharray="2 3" />
-        <circle cx={MARK_X} cy={MARK_Y} r="6" fill="hsl(40 46% 58% / 0.16)" className={active && !reduced ? "anim-breathe" : ""} />
-        <circle cx={MARK_X} cy={MARK_Y} r="2.5" fill="hsl(45 58% 78%)" />
-        <text x={MARK_X + 8} y="20" className="font-mono" fontSize="9" fill="hsl(45 58% 78%)">
+        <line x1={MARK_X} x2={MARK_X} y1="8" y2="88" stroke="hsl(41 47% 60% / 0.45)" strokeWidth="1" strokeDasharray="2 3" />
+        <circle cx={MARK_X} cy={MARK_Y} r="6" fill="hsl(41 47% 60% / 0.16)" className={active && !reduced ? "anim-breathe" : ""} />
+        <circle cx={MARK_X} cy={MARK_Y} r="2.5" fill="hsl(44 55% 76%)" />
+        <text x={MARK_X + 8} y="20" className="font-mono" fontSize="9" fill="hsl(44 55% 76%)">
           +38m
         </text>
       </motion.g>

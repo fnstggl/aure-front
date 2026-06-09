@@ -22,12 +22,11 @@ export default function Index() {
   return (
     <Layout>
       {/* ============================== Hero ============================== */}
-      <section className="relative flex min-h-[100dvh] flex-col justify-center overflow-hidden pb-20 pt-28 md:pt-32">
-        <div
-          className="pointer-events-none absolute inset-0 bg-cover bg-center bg-no-repeat"
-          style={{ backgroundImage: "url(/hero_background.png)" }}
-          aria-hidden
-        />
+      <section className="relative flex min-h-[100dvh] flex-col justify-center overflow-hidden pb-24 pt-28 md:pt-32">
+        {/* Quiet mathematical structure behind the claim — static PNG + subtle shimmer */}
+        <div className="hero-field" aria-hidden />
+        <div className="hero-field-shimmer" aria-hidden />
+        <div className="hero-field-vignette" aria-hidden />
 
         <Container className="relative">
           <div className="mx-auto max-w-3xl text-center">
@@ -35,27 +34,28 @@ export default function Index() {
               <SectionEyebrow className="justify-center">Aurelius Control Layer</SectionEyebrow>
             </Reveal>
             <Reveal delay={60}>
-              <h1 className="mt-7 text-balance text-[clamp(2.2rem,5.8vw,4rem)] font-medium leading-[1.02] tracking-[-0.025em] text-foreground">
-                The control layer for economically efficient GPU fleets
+              <h1 className="mt-7 text-balance text-[clamp(2rem,5.2vw,3.6rem)] font-medium leading-[1.05] tracking-[-0.025em]">
+                <span className="text-white/52">Your scheduler optimizes utilization.</span>
+                <br />
+                <span className="text-foreground">Aurelius optimizes economics.</span>
               </h1>
             </Reveal>
             <Reveal delay={120}>
-              <p className="mx-auto mt-6 max-w-2xl text-[15px] leading-relaxed text-white/62 md:text-lg">
-                Aurelius evaluates when workloads should run, where they should run, and when
-                optimization is safe — before execution.
+              <p className="mx-auto mt-6 max-w-2xl text-[15px] leading-relaxed text-white/68 md:text-[17px]">
+                Forecast cost, power, carbon, and capacity constraints before execution. Generate
+                safer workload decisions. Prove savings in shadow mode before deployment.
               </p>
             </Reveal>
             <Reveal delay={180}>
-              <p className="mx-auto mt-4 max-w-xl text-[13.5px] leading-relaxed text-white/46">
-                Shadow-mode first. Constraint-aware by default. Built for schedulers, platform
-                teams, and GPU fleet operators.
+              <p className="mx-auto mt-4 max-w-xl text-[13px] leading-relaxed text-white/42">
+                Metadata-only. Constraint-gated. Built for GPU fleet operators.
               </p>
             </Reveal>
 
             <Reveal delay={240}>
               <div className="mt-9 flex flex-col items-center justify-center gap-3 sm:flex-row">
-                <CTAButton to="/shadow-audit" variant="primary" withArrow>
-                  See what you would have saved
+                <CTAButton to="/contact" variant="primary" withArrow>
+                  Run a shadow-mode assessment
                 </CTAButton>
                 <CTAButton to="/how-it-works" variant="secondary">
                   View technical overview
@@ -78,15 +78,26 @@ export default function Index() {
               </p>
             </Reveal>
           </div>
+        </Container>
+      </section>
 
-          {/* Hero diagram — Scheduler Interception Layer */}
-          <Reveal delay={400} className="mt-14 md:mt-16">
+      {/* ===================== Scheduler interception ================== */}
+      <Section>
+        <Container>
+          <Reveal>
+            <SectionHeader
+              eyebrow="How it fits"
+              title="An advisory layer between your scheduler and execution"
+              intro="Aurelius reads scheduler metadata, forecasts conditions, and filters candidates before they run — then advises. Your scheduler stays in control and execution is unchanged."
+            />
+          </Reveal>
+          <Reveal delay={140} className="mt-12">
             <DiagramCard label="Scheduler interception layer">
               <SchedulerInterceptionDiagram />
             </DiagramCard>
           </Reveal>
         </Container>
-      </section>
+      </Section>
 
       {/* ============================ Problem ============================ */}
       <Section>
@@ -132,8 +143,9 @@ export default function Index() {
       <Section className="py-[120px] md:py-[180px] lg:py-[216px]">
         <Container>
           <Reveal className="mx-auto max-w-4xl text-center">
+            <div className="mx-auto mb-6 h-px w-10 bg-signal/70" aria-hidden />
             <div className="text-[clamp(4.5rem,15vw,11rem)] font-medium leading-[0.84] tracking-[-0.05em] text-foreground">
-              42<span className="text-signal">%</span>
+              42%
             </div>
             <p className="mt-5 text-[clamp(1.1rem,2.6vw,1.7rem)] font-medium tracking-tight text-white/72">
               higher goodput per dollar
@@ -363,7 +375,7 @@ export default function Index() {
               <div className="flex items-center justify-center gap-3 font-mono text-[11px] uppercase tracking-[0.16em] text-white/35">
                 <span>Workloads</span>
                 <span className="h-px w-8 rail-x" aria-hidden />
-                <span className="text-data/80">Shadow mode</span>
+                <span className="text-white/55">Shadow mode</span>
                 <span className="h-px w-8 rail-x" style={{ ["--rail-delay" as string]: "600ms" }} aria-hidden />
                 <span>Counterfactual report</span>
               </div>

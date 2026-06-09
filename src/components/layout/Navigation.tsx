@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { cn } from "@/lib/utils";
+import { ScrambleText } from "@/components/site/ScrambleText";
 
 const navItems = [
   { label: "Platform", href: "/" },
@@ -33,7 +34,7 @@ export function Navigation() {
                       active ? "text-foreground" : "text-white/48 hover:text-white/85",
                     )}
                   >
-                    {item.label}
+                    <ScrambleText text={item.label} />
                     {active && <span className="absolute -bottom-[7px] left-0 h-px w-full bg-signal/80" aria-hidden />}
                   </Link>
                 </li>

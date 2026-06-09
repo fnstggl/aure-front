@@ -23,7 +23,7 @@ const LINES: { segs: Seg[] }[] = [
 const colorClass: Record<NonNullable<Seg["c"]>, string> = {
   time: "text-white/28",
   key: "text-white/80",
-  blue: "text-data",
+  blue: "text-white/65",
   gold: "text-signal",
   body: "text-white/50",
 };
@@ -59,7 +59,7 @@ export function ShadowModeAuditDiagram() {
                     {s.t}
                   </span>
                 ))}
-                {i === visible.length - 1 && <span className="anim-cursor text-data/70">▍</span>}
+                {i === visible.length - 1 && <span className="anim-cursor text-white/45">▍</span>}
               </motion.div>
             ))}
           </AnimatePresence>
