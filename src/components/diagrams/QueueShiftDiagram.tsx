@@ -21,7 +21,7 @@ const JOBS: Job[] = [
 export function QueueShiftDiagram() {
   const { ref, inView } = useInView();
   // 0 = naive scheduler, 1 = Aurelius proposal
-  const mode = useSequence(2, { enabled: inView, interval: 3200, resting: 1 });
+  const mode = useSequence(2, { enabled: inView, interval: 5200, resting: 1 });
 
   return (
     <div ref={ref} className="w-full p-5 md:p-7">
@@ -37,7 +37,7 @@ export function QueueShiftDiagram() {
         <path d="M0,18 C18,16 26,4 40,5 C54,6 60,20 74,20 C86,20 92,17 100,17 L100,26 L0,26 Z" fill="url(#peakfill)" />
         <path d="M0,18 C18,16 26,4 40,5 C54,6 60,20 74,20 C86,20 92,17 100,17" fill="none" stroke="hsl(0 0% 100% / 0.35)" strokeWidth="0.6" vectorEffect="non-scaling-stroke" />
         {/* low-cost window guide */}
-        <line x1="74" x2="74" y1="0" y2="26" stroke="hsl(38 92% 50% / 0.4)" strokeWidth="0.5" strokeDasharray="1.5 2" vectorEffect="non-scaling-stroke" />
+        <line x1="74" x2="74" y1="0" y2="26" stroke="hsl(40 46% 58% / 0.4)" strokeWidth="0.5" strokeDasharray="1.5 2" vectorEffect="non-scaling-stroke" />
       </svg>
       <div className="mb-3 flex justify-between font-mono text-[9.5px] uppercase tracking-[0.12em] text-white/35">
         <span>peak pricing</span>

@@ -36,7 +36,7 @@ const strokeFor: Record<RegionState, string> = {
   idle: "hsl(0 0% 100% / 0.1)",
   considering: "hsl(0 0% 100% / 0.45)",
   rejected: "hsl(0 72% 51% / 0.4)",
-  selected: "hsl(38 92% 50% / 0.7)",
+  selected: "hsl(40 46% 58% / 0.7)",
 };
 
 function Region({
@@ -63,11 +63,11 @@ function Region({
         width="300"
         height="84"
         rx="5"
-        fill={state === "selected" ? "hsl(38 92% 50% / 0.05)" : "hsl(0 0% 6.5%)"}
+        fill={state === "selected" ? "hsl(40 46% 58% / 0.05)" : "hsl(0 0% 6.5%)"}
         stroke={strokeFor[state]}
         strokeWidth="1"
       />
-      <text x={x + 12} y={y + 18} className="font-mono" fontSize="10" letterSpacing="1.5" fill={state === "selected" ? "hsl(38 92% 50%)" : "hsl(0 0% 60%)"}>
+      <text x={x + 12} y={y + 18} className="font-mono" fontSize="10" letterSpacing="1.5" fill={state === "selected" ? "hsl(40 46% 58%)" : "hsl(0 0% 60%)"}>
         {code}
       </text>
       {state === "rejected" && (
@@ -80,7 +80,7 @@ function Region({
         const cx = x + 12 + ci * 142;
         return (
           <g key={c.name}>
-            <rect x={cx} y={y + 28} width="130" height="44" rx="3" fill="hsl(0 0% 4%)" stroke="hsl(0 0% 100% / 0.08)" />
+            <rect x={cx} y={y + 28} width="130" height="44" rx="3" fill="hsl(0 0% 100% / 0.018)" stroke="hsl(0 0% 100% / 0.04)" />
             <text x={cx + 8} y={y + 42} className="font-mono" fontSize="8.5" fill="hsl(0 0% 50%)">
               {c.name}
             </text>
@@ -95,8 +95,8 @@ function Region({
                       width="36"
                       height="14"
                       rx="2"
-                      fill={isSel ? "hsl(38 92% 50% / 0.18)" : "hsl(0 0% 100% / 0.04)"}
-                      stroke={isSel ? "hsl(38 92% 50% / 0.7)" : "hsl(0 0% 100% / 0.08)"}
+                      fill={isSel ? "hsl(40 46% 58% / 0.18)" : "hsl(0 0% 100% / 0.04)"}
+                      stroke={isSel ? "hsl(40 46% 58% / 0.7)" : "hsl(0 0% 100% / 0.08)"}
                     />
                     <text
                       x={cx + 8 + pi * 40 + 18}
@@ -104,7 +104,7 @@ function Region({
                       textAnchor="middle"
                       className="font-mono"
                       fontSize="7.5"
-                      fill={isSel ? "hsl(38 92% 50%)" : "hsl(0 0% 55%)"}
+                      fill={isSel ? "hsl(40 46% 58%)" : "hsl(0 0% 55%)"}
                     >
                       {p}
                     </text>
@@ -122,7 +122,7 @@ function Region({
 export function FleetTopologyDiagram() {
   const { ref, inView } = useInView();
   const reduced = usePrefersReducedMotion();
-  const step = useSequence(3, { enabled: inView, interval: 2800, resting: 2 });
+  const step = useSequence(3, { enabled: inView, interval: 3600, resting: 2 });
 
   return (
     <div ref={ref} className="w-full p-5 md:p-7">
@@ -131,12 +131,12 @@ export function FleetTopologyDiagram() {
           {/* candidate paths */}
           {PATHS.map((d, i) => {
             const active = step === i;
-            const stroke = i === 2 && step === 2 ? "hsl(38 92% 50% / 0.8)" : active ? "hsl(0 0% 100% / 0.4)" : "hsl(0 0% 100% / 0.12)";
+            const stroke = i === 2 && step === 2 ? "hsl(40 46% 58% / 0.8)" : active ? "hsl(0 0% 100% / 0.4)" : "hsl(0 0% 100% / 0.12)";
             return (
               <g key={d}>
                 <path id={`fleet-path-${i}`} d={d} fill="none" stroke={stroke} strokeWidth="1.5" style={{ transition: "stroke 0.5s" }} />
                 {((i === 2 && step === 2) || active) && (
-                  <path d={d} fill="none" stroke="hsl(38 92% 50% / 0.6)" strokeWidth="1.5" className="flow-dash" />
+                  <path d={d} fill="none" stroke="hsl(40 46% 58% / 0.6)" strokeWidth="1.5" className="flow-dash" />
                 )}
               </g>
             );
@@ -144,7 +144,7 @@ export function FleetTopologyDiagram() {
 
           {/* flowing packet on the selected path */}
           {step === 2 && !reduced && (
-            <circle r="4" fill="hsl(38 92% 50%)">
+            <circle r="4" fill="hsl(40 46% 58%)">
               <animateMotion dur="2.4s" repeatCount="indefinite" keyPoints="0;1" keyTimes="0;1" calcMode="linear">
                 <mpath href="#fleet-path-2" />
               </animateMotion>
@@ -160,7 +160,7 @@ export function FleetTopologyDiagram() {
             <text x="72" y="190" textAnchor="middle" className="font-mono" fontSize="9" letterSpacing="1" fill="hsl(0 0% 70%)">
               QUEUE
             </text>
-            <circle cx="120" cy="180" r="2.5" fill="hsl(38 92% 50%)" />
+            <circle cx="120" cy="180" r="2.5" fill="hsl(40 46% 58%)" />
           </g>
 
           <Region x={356} y={28} code="US-EAST" state={regionState(0, step)} clusters={[

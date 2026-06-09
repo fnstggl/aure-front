@@ -28,7 +28,7 @@ const colorClass: Record<NonNullable<Seg["c"]>, string> = {
 
 export function ShadowModeAuditDiagram() {
   const { ref, inView } = useInView();
-  const step = useSequence(LINES.length, { enabled: inView, interval: 1300, resting: LINES.length - 1 });
+  const step = useSequence(LINES.length, { enabled: inView, interval: 1700, resting: LINES.length - 1 });
   const visible = LINES.slice(0, step + 1);
 
   return (
@@ -41,7 +41,7 @@ export function ShadowModeAuditDiagram() {
             <span className="h-1.5 w-1.5 rounded-full bg-signal anim-breathe" /> append-only
           </span>
         </div>
-        <div className="min-h-[208px] space-y-1 p-4 font-mono text-[11.5px] leading-relaxed">
+        <div className="h-[208px] overflow-hidden space-y-1 p-4 font-mono text-[11.5px] leading-relaxed">
           <AnimatePresence initial={false}>
             {visible.map((line, i) => (
               <motion.div

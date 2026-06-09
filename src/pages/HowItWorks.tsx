@@ -39,24 +39,18 @@ export default function HowItWorks() {
       {/* Execution model */}
       <Section>
         <Container>
-          <div className="grid items-start gap-10 lg:grid-cols-12 lg:gap-14">
-            <div className="lg:col-span-5">
-              <Reveal>
-                <SectionHeader
-                  eyebrow="Execution model"
-                  title="Your scheduler stays in control"
-                  intro="Aurelius does not replace your scheduler, intercept payloads, or modify execution. It operates as an advisory layer: it observes job metadata, forecasts energy conditions, generates options, and filters risky decisions. Execution remains unchanged."
-                />
-              </Reveal>
-            </div>
-            <div className="lg:col-span-7">
-              <Reveal delay={140}>
-                <DiagramCard label="Scheduler interception layer">
-                  <SchedulerInterceptionDiagram />
-                </DiagramCard>
-              </Reveal>
-            </div>
-          </div>
+          <Reveal>
+            <SectionHeader
+              eyebrow="Execution model"
+              title="Your scheduler stays in control"
+              intro="Aurelius does not replace your scheduler, intercept payloads, or modify execution. It operates as an advisory layer: it observes job metadata, forecasts energy conditions, generates options, and filters risky decisions. Execution remains unchanged."
+            />
+          </Reveal>
+          <Reveal delay={140} className="mt-12">
+            <DiagramCard label="Scheduler interception layer">
+              <SchedulerInterceptionDiagram />
+            </DiagramCard>
+          </Reveal>
         </Container>
       </Section>
 

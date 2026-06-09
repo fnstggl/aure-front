@@ -38,7 +38,7 @@ function deriveFrame(f: number) {
 
 export function ConstraintEngineDiagram() {
   const { ref, inView } = useInView();
-  const f = useSequence(FRAMES, { enabled: inView, interval: 1100, resting: 7 });
+  const f = useSequence(FRAMES, { enabled: inView, interval: 1300, resting: 7 });
   const { gate, cleared, activeIndex, verdict } = deriveFrame(f);
 
   return (
@@ -157,7 +157,7 @@ export function ConstraintEngineDiagram() {
 
 function GateGlyph({ state }: { state: GateState }) {
   const color =
-    state === "pass" ? "hsl(38 92% 50%)" : state === "fail" ? "hsl(0 72% 51%)" : state === "active" ? "hsl(0 0% 85%)" : "hsl(0 0% 40%)";
+    state === "pass" ? "hsl(40 46% 58%)" : state === "fail" ? "hsl(0 72% 51%)" : state === "active" ? "hsl(0 0% 85%)" : "hsl(0 0% 40%)";
   if (state === "fail") {
     return (
       <svg width="12" height="12" viewBox="0 0 12 12" fill="none" aria-hidden>

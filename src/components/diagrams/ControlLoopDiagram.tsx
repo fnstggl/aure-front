@@ -21,7 +21,7 @@ const STEPS = [
 
 export function ControlLoopDiagram() {
   const { ref, inView } = useInView();
-  const step = useSequence(STEPS.length, { enabled: inView, interval: 2600, resting: 1 });
+  const step = useSequence(STEPS.length, { enabled: inView, interval: 3000, resting: 1 });
 
   return (
     <div ref={ref} className="w-full p-5 md:p-7">
@@ -74,7 +74,7 @@ export function ControlLoopDiagram() {
           <path
             d="M97,1 C97,5 97,5 50,5 C3,5 3,5 3,1"
             fill="none"
-            stroke="hsl(38 92% 50% / 0.5)"
+            stroke="hsl(40 46% 58% / 0.5)"
             strokeWidth="0.4"
             vectorEffect="non-scaling-stroke"
             className={inView ? "flow-dash" : ""}
@@ -88,7 +88,7 @@ export function ControlLoopDiagram() {
       </div>
 
       {/* Detail panel for the active stage */}
-      <div className="mt-5 min-h-[150px] rounded-md border border-border bg-card p-4">
+      <div className="mt-5 h-[176px] overflow-hidden rounded-md border border-border bg-card p-4">
         <div className="mb-3 flex items-center justify-between">
           <span className="font-mono text-[11px] uppercase tracking-[0.16em] text-signal">
             {STEPS[step].label}

@@ -31,6 +31,12 @@ export default {
           strong: "hsl(var(--signal-strong))",
           muted: "hsl(var(--signal-muted))",
         },
+        data: {
+          DEFAULT: "hsl(var(--data-blue))",
+          pale: "hsl(var(--data-pale))",
+          violet: "hsl(var(--data-violet))",
+          deep: "hsl(var(--data-deep))",
+        },
         primary: {
           DEFAULT: "hsl(var(--primary))",
           foreground: "hsl(var(--primary-foreground))",

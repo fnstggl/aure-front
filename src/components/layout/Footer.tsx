@@ -11,25 +11,26 @@ const footerLinks = [
 export function Footer() {
   return (
     <footer className="border-t border-border bg-background">
-      <div className="mx-auto max-w-content px-6 py-12 lg:px-8">
-        <div className="flex flex-col gap-8 sm:flex-row sm:items-start sm:justify-between">
+      <div className="mx-auto max-w-content px-6 py-14 lg:px-8">
+        <div className="flex flex-col gap-10 sm:flex-row sm:items-start sm:justify-between">
           <div className="max-w-xs">
-            <Link to="/" className="flex items-center" aria-label="Aurelius — home">
-              <img src="/aurelius_logo.png" alt="Aurelius" className="h-6 w-auto opacity-90" />
+            <Link to="/" className="flex items-center gap-2.5" aria-label="Aurelius — home">
+              <span className="brand-diamond block h-3 w-3 rotate-45 rounded-[2px]" aria-hidden />
+              <span className="text-[16px] font-medium tracking-tight text-foreground">Aurelius</span>
             </Link>
-            <p className="mt-4 text-[13px] leading-relaxed text-white/42">
+            <p className="mt-4 text-[13.5px] leading-relaxed text-white/42">
               The control layer for economically efficient GPU fleets. Shadow-mode first,
               constraint-aware by default.
             </p>
           </div>
 
           <nav aria-label="Footer">
-            <ul className="flex flex-wrap gap-x-7 gap-y-2.5">
+            <ul className="flex flex-wrap gap-x-8 gap-y-3">
               {footerLinks.map((item) => (
                 <li key={item.href}>
                   <Link
                     to={item.href}
-                    className="font-mono text-[12px] uppercase tracking-[0.08em] text-white/45 transition-colors duration-200 hover:text-white/80"
+                    className="text-[13.5px] tracking-tight text-white/48 transition-colors duration-200 hover:text-white/85"
                   >
                     {item.label}
                   </Link>
@@ -39,12 +40,10 @@ export function Footer() {
           </nav>
         </div>
 
-        <div className="mt-10 flex flex-col gap-2 border-t border-border pt-6 sm:flex-row sm:items-center sm:justify-between">
-          <span className="font-mono text-[11px] text-white/28">
-            © {new Date().getFullYear()} Aurelius
-          </span>
-          <span className="flex items-center gap-2 font-mono text-[11px] uppercase tracking-[0.14em] text-white/28">
-            <span className="inline-block h-1.5 w-1.5 rounded-full bg-signal anim-breathe" aria-hidden />
+        <div className="mt-12 flex flex-col gap-2 border-t border-border pt-6 sm:flex-row sm:items-center sm:justify-between">
+          <span className="font-mono text-[11px] text-white/28">© {new Date().getFullYear()} Aurelius</span>
+          <span className="flex items-center gap-2 font-mono text-[10.5px] uppercase tracking-[0.16em] text-white/30">
+            <span className="inline-block h-1 w-1 rounded-full bg-signal/80" aria-hidden />
             Shadow-mode · constraint-aware
           </span>
         </div>
