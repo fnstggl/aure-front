@@ -53,7 +53,7 @@ const trustCopy = [
 function Check() {
   return (
     <svg width="13" height="13" viewBox="0 0 14 14" fill="none" aria-hidden className="mt-0.5 shrink-0">
-      <path d="M2.5 7.5L5.5 10.5 11.5 3.5" stroke="hsl(41 47% 60%)" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round" />
+      <path d="M2.5 7.5L5.5 10.5 11.5 3.5" stroke="hsl(var(--steel))" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round" />
     </svg>
   );
 }

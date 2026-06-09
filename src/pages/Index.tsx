@@ -29,14 +29,8 @@ export default function Index() {
 
         <Container className="relative">
           <div className="mx-auto max-w-3xl text-center">
-            <Reveal>
-              <div className="flex items-center justify-center gap-2.5 font-mono text-[9.5px] uppercase tracking-[0.3em] text-white/22">
-                <span className="h-px w-5 bg-white/10" aria-hidden />
-                Aurelius Control Layer
-              </div>
-            </Reveal>
             <Reveal delay={60}>
-              <h1 className="mt-7 text-balance text-[clamp(2rem,5.2vw,3.6rem)] font-medium leading-[1.05] tracking-[-0.025em]">
+              <h1 className="text-balance text-[clamp(2rem,5.2vw,3.6rem)] font-medium leading-[1.05] tracking-[-0.025em]">
                 <span className="text-white/52">Your scheduler optimizes utilization.</span>
                 <br />
                 <span className="text-foreground">Aurelius optimizes economics.</span>

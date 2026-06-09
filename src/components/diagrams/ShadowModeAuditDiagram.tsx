@@ -1,5 +1,4 @@
-import { AnimatePresence, motion } from "framer-motion";
-import { cn } from "@/lib/utils";
+import { motion } from "framer-motion";
 import { useInView } from "@/hooks/useInView";
 import { useSequence } from "@/hooks/useSequence";
 import { Counter } from "@/components/site/Counter";
@@ -51,33 +50,33 @@ export function ShadowModeAuditDiagram() {
             <span>time</span><span>observed</span><span>counterfactual</span><span>Δ exp.</span><span>constraints</span><span className="text-right">status</span>
           </div>
 
-          {/* rows */}
+          {/* rows — all slots are always rendered so the ledger height is fixed
+              and the section never pushes the rest of the page as rows reveal */}
           <div className="px-5">
-            <AnimatePresence initial={false}>
-              {ROWS.slice(0, step + 1).map((r, i) => {
-                const st = statusStyle[r.status];
-                return (
-                  <motion.div
-                    key={r.t}
-                    initial={{ opacity: 0, y: 6 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.35, ease: EASE }}
-                    className={cn("grid items-center gap-x-4 border-b border-border/40 py-2.5 font-mono text-[12px]", i === step && "relative")}
-                    style={{ gridTemplateColumns: COLS }}
-                  >
-                    <span className="text-white/30 tabular-nums">{r.t}</span>
-                    <span className="text-white/55">{r.observed}</span>
-                    <span style={{ color: r.status === "selected" ? C.steelText : r.status === "rejected" ? C.red : "hsl(0 0% 100% / 0.78)" }}>{r.counter}</span>
-                    <span className="tabular-nums" style={{ color: r.status === "rejected" ? C.red : "hsl(0 0% 92%)" }}>{r.delta}</span>
-                    <span className="text-white/42">{r.constraints}</span>
-                    <span className="flex items-center justify-end gap-1.5 uppercase tracking-wider" style={{ color: st.color }}>
-                      <span className="inline-block h-1.5 w-1.5 rounded-full" style={{ background: st.color }} />
-                      {st.label}
-                    </span>
-                  </motion.div>
-                );
-              })}
-            </AnimatePresence>
+            {ROWS.map((r, i) => {
+              const st = statusStyle[r.status];
+              const visible = i <= step;
+              return (
+                <motion.div
+                  key={r.t}
+                  initial={false}
+                  animate={{ opacity: visible ? 1 : 0 }}
+                  transition={{ duration: 0.35, ease: EASE }}
+                  className="grid items-center gap-x-4 border-b border-border/40 py-2.5 font-mono text-[12px]"
+                  style={{ gridTemplateColumns: COLS }}
+                >
+                  <span className="text-white/30 tabular-nums">{r.t}</span>
+                  <span className="text-white/55">{r.observed}</span>
+                  <span style={{ color: r.status === "selected" ? C.steelText : r.status === "rejected" ? C.red : "hsl(0 0% 100% / 0.78)" }}>{r.counter}</span>
+                  <span className="tabular-nums" style={{ color: r.status === "rejected" ? C.red : "hsl(0 0% 92%)" }}>{r.delta}</span>
+                  <span className="text-white/42">{r.constraints}</span>
+                  <span className="flex items-center justify-end gap-1.5 uppercase tracking-wider" style={{ color: st.color }}>
+                    <span className="inline-block h-1.5 w-1.5 rounded-full" style={{ background: st.color }} />
+                    {st.label}
+                  </span>
+                </motion.div>
+              );
+            })}
           </div>
 
           {/* summary ledger strip */}
