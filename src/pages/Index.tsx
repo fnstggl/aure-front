@@ -17,6 +17,7 @@ import { OptimizationDecisionDiagram } from "@/components/diagrams/OptimizationD
 import { ConstraintEngineDiagram } from "@/components/diagrams/ConstraintEngineDiagram";
 import { ShadowModeAuditDiagram } from "@/components/diagrams/ShadowModeAuditDiagram";
 import { MetadataBoundaryDiagram } from "@/components/diagrams/MetadataBoundaryDiagram";
+import { HeroMetadata } from "@/components/site/HeroMetadata";
 
 export default function Index() {
   return (
@@ -26,6 +27,7 @@ export default function Index() {
         {/* Quiet mathematical structure behind the claim — static PNG + subtle shimmer */}
         <div className="hero-field" aria-hidden />
         <div className="hero-field-shimmer" aria-hidden />
+        <HeroMetadata />
         <div className="hero-field-vignette" aria-hidden />
 
         <Container className="relative">
@@ -92,7 +94,7 @@ export default function Index() {
             />
           </Reveal>
           <Reveal delay={140} className="mt-12">
-            <DiagramCard label="Scheduler interception layer">
+            <DiagramCard label="Scheduler interception layer" coord="fig.01">
               <SchedulerInterceptionDiagram />
             </DiagramCard>
           </Reveal>
@@ -130,7 +132,7 @@ export default function Index() {
             </div>
             <div className="lg:col-span-7">
               <Reveal delay={160}>
-                <DiagramCard label="Queue · energy price window">
+                <DiagramCard label="Queue · energy price window" coord="fig.02">
                   <QueueShiftDiagram />
                 </DiagramCard>
               </Reveal>
@@ -168,7 +170,7 @@ export default function Index() {
             />
           </Reveal>
           <Reveal delay={140} className="mt-12">
-            <DiagramCard label="Forecast / control loop">
+            <DiagramCard label="Forecast / control loop" coord="fig.03">
               <ControlLoopDiagram />
             </DiagramCard>
           </Reveal>
@@ -186,7 +188,7 @@ export default function Index() {
             />
           </Reveal>
           <Reveal delay={140} className="mt-12">
-            <DiagramCard label="Region · cluster · pool placement">
+            <DiagramCard label="Region · cluster · pool placement" coord="fig.04">
               <FleetTopologyDiagram />
             </DiagramCard>
           </Reveal>
@@ -199,7 +201,7 @@ export default function Index() {
           <div className="grid items-center gap-10 lg:grid-cols-12 lg:gap-14">
             <div className="order-2 lg:order-1 lg:col-span-7">
               <Reveal delay={120}>
-                <DiagramCard label="Live optimization decision">
+                <DiagramCard label="Live optimization decision" coord="fig.05">
                   <OptimizationDecisionDiagram />
                 </DiagramCard>
               </Reveal>
@@ -228,7 +230,7 @@ export default function Index() {
             />
           </Reveal>
           <Reveal delay={140} className="mt-12">
-            <DiagramCard label="Constraint gates">
+            <DiagramCard label="Constraint gates" coord="fig.06">
               <ConstraintEngineDiagram />
             </DiagramCard>
           </Reveal>
@@ -277,7 +279,7 @@ export default function Index() {
             />
           </Reveal>
           <Reveal delay={140} className="mt-12">
-            <DiagramCard label="Metadata boundary">
+            <DiagramCard label="Metadata boundary" coord="fig.07">
               <MetadataBoundaryDiagram />
             </DiagramCard>
           </Reveal>

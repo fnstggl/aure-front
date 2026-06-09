@@ -204,7 +204,7 @@ export function MetricChip({
         className,
       )}
     >
-      <span className={cn("font-mono text-[13px] tabular-nums", emphasis ? "text-signal" : "text-foreground/90")}>
+      <span className={cn("font-mono text-[13px] tabular-nums", emphasis ? "text-steel" : "text-foreground/90")}>
         {value}
       </span>
       <span className="text-[12px] tracking-tight text-white/42">{label}</span>
@@ -218,23 +218,57 @@ export function MetricChip({
 
 export function DiagramCard({
   label,
+  coord,
+  grid = true,
   children,
   className,
 }: {
   label?: string;
+  coord?: string;
+  grid?: boolean;
   children: React.ReactNode;
   className?: string;
 }) {
   return (
     <figure className={cn("relative overflow-hidden rounded-lg border border-border bg-card", className)}>
-      <div>{children}</div>
+      {grid && <DiagramGrid coord={coord} />}
+      <div className="relative">{children}</div>
       {label && (
-        <figcaption className="flex items-center gap-2.5 border-t border-border px-4 py-2.5 font-mono text-[10.5px] uppercase tracking-[0.2em] text-white/32">
-          <span className="h-px w-4 bg-white/20" aria-hidden />
-          {label}
+        <figcaption className="relative flex items-center justify-between gap-2.5 border-t border-border px-4 py-2.5 font-mono text-[10.5px] uppercase tracking-[0.2em] text-white/32">
+          <span className="flex items-center gap-2.5">
+            <span className="h-px w-4 bg-steel/40" aria-hidden />
+            {label}
+          </span>
+          <span className="hidden tabular-nums text-white/20 sm:inline">metadata_only</span>
         </figcaption>
       )}
     </figure>
+  );
+}
+
+/* A faint blueprint canvas behind every diagram: a coordinate grid that fades
+   toward the edges plus registration ticks in two corners — so each diagram
+   reads as an authored system schematic rather than floating UI boxes. */
+function DiagramGrid({ coord }: { coord?: string }) {
+  return (
+    <div aria-hidden className="pointer-events-none absolute inset-0 overflow-hidden">
+      <div className="diagram-grid absolute inset-0" />
+      <Tick className="left-3 top-3" />
+      <Tick className="bottom-3 right-3 rotate-180" />
+      {coord && (
+        <span className="absolute right-3 top-3 font-mono text-[9px] tabular-nums tracking-[0.18em] text-white/14">
+          {coord}
+        </span>
+      )}
+    </div>
+  );
+}
+
+function Tick({ className }: { className?: string }) {
+  return (
+    <svg width="9" height="9" viewBox="0 0 9 9" fill="none" className={cn("absolute text-white/18", className)} aria-hidden>
+      <path d="M0 0.5H4M0.5 0V4" stroke="currentColor" strokeWidth="1" />
+    </svg>
   );
 }
 

@@ -38,7 +38,7 @@ export default function Docs() {
             {docSections.map((section, i) => (
               <Reveal as="li" key={section.id} delay={i * 60}>
                 <div className="group flex items-center gap-5 py-6">
-                  <span className="font-mono text-[12px] tabular-nums text-signal/70">{section.id}</span>
+                  <span className="font-mono text-[12px] tabular-nums text-steel/70">{section.id}</span>
                   <div>
                     <h2 className="text-[16px] font-medium tracking-tight text-foreground">
                       {section.title}

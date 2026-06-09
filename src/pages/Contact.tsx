@@ -203,7 +203,7 @@ export default function Contact() {
                       />
 
                       {!isSupabaseConfigured && (
-                        <p className="rounded-sm border border-signal/30 bg-signal/[0.06] px-3 py-2 font-mono text-[11px] leading-relaxed text-signal/90">
+                        <p className="rounded-sm border border-signal/30 bg-signal/[0.06] px-3 py-2 font-mono text-[11px] leading-relaxed text-steel/90">
                           Submissions are disabled — set VITE_SUPABASE_URL and
                           VITE_SUPABASE_PUBLISHABLE_KEY to enable this form.
                         </p>

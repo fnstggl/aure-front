@@ -89,9 +89,9 @@ export default function ShadowAudit() {
                     counterfactual report
                   </div>
                   <div className="space-y-2.5">
-                    <KV k="energy delta" v="−12.4%" vClass="text-signal" />
-                    <KV k="cost delta" v="−$4,280 / mo" vClass="text-signal" />
-                    <KV k="carbon delta" v="−8.2 tCO₂e / mo" vClass="text-signal" />
+                    <KV k="energy delta" v="−12.4%" vClass="text-steel" />
+                    <KV k="cost delta" v="−$4,280 / mo" vClass="text-steel" />
+                    <KV k="carbon delta" v="−8.2 tCO₂e / mo" vClass="text-steel" />
                     <KV k="latency impact" v="none" />
                   </div>
                 </div>

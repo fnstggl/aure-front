@@ -101,14 +101,14 @@ export default function Safety() {
           </Reveal>
           <div className="mt-7 grid gap-px overflow-hidden rounded-md border border-border bg-border md:grid-cols-2">
             <Reveal className="bg-card p-7">
-              <div className="font-mono text-[12px] tabular-nums text-signal">01 / Operational safety</div>
+              <div className="font-mono text-[12px] tabular-nums text-steel">01 / Operational safety</div>
               <p className="mt-3 text-[14px] leading-relaxed text-white/68">
                 Candidates must pass hard constraints — SLA, capacity, power, residency, policy —
                 before they can ever be recommended.
               </p>
             </Reveal>
             <Reveal delay={120} className="bg-card p-7">
-              <div className="font-mono text-[12px] tabular-nums text-signal">02 / Data safety</div>
+              <div className="font-mono text-[12px] tabular-nums text-steel">02 / Data safety</div>
               <p className="mt-3 text-[14px] leading-relaxed text-white/68">
                 Aurelius evaluates scheduler metadata, not customer payloads. Workload data stays
                 inside your environment.
@@ -156,7 +156,7 @@ export default function Safety() {
           {/* Allowed / blocked split */}
           <div className="mt-10 grid gap-px overflow-hidden rounded-md border border-border bg-border md:grid-cols-2">
             <Reveal className="bg-card p-7">
-              <div className="mb-5 flex items-center gap-2.5 font-mono text-[11px] uppercase tracking-[0.16em] text-signal">
+              <div className="mb-5 flex items-center gap-2.5 font-mono text-[11px] uppercase tracking-[0.16em] text-steel">
                 <span className="h-px w-5 bg-signal/60" aria-hidden />
                 Allowed · metadata
               </div>
@@ -231,7 +231,7 @@ export default function Safety() {
           </Reveal>
           <div className="mt-10 grid gap-px overflow-hidden rounded-md border border-border bg-border md:grid-cols-2">
             <Reveal className="bg-card p-6">
-              <div className="mb-3 font-mono text-[11px] uppercase tracking-[0.16em] text-signal">
+              <div className="mb-3 font-mono text-[11px] uppercase tracking-[0.16em] text-steel">
                 Kill switch &amp; control
               </div>
               <p className="text-[13.5px] leading-relaxed text-white/60">

@@ -37,11 +37,11 @@ export function QueueShiftDiagram() {
         <path d="M0,18 C18,16 26,4 40,5 C54,6 60,20 74,20 C86,20 92,17 100,17 L100,26 L0,26 Z" fill="url(#peakfill)" />
         <path d="M0,18 C18,16 26,4 40,5 C54,6 60,20 74,20 C86,20 92,17 100,17" fill="none" stroke="hsl(0 0% 100% / 0.35)" strokeWidth="0.6" vectorEffect="non-scaling-stroke" />
         {/* low-cost window guide */}
-        <line x1="74" x2="74" y1="0" y2="26" stroke="hsl(218 45% 66% / 0.45)" strokeWidth="0.5" strokeDasharray="1.5 2" vectorEffect="non-scaling-stroke" />
+        <line x1="74" x2="74" y1="0" y2="26" stroke="hsl(214 22% 42% / 0.45)" strokeWidth="0.5" strokeDasharray="1.5 2" vectorEffect="non-scaling-stroke" />
       </svg>
       <div className="mb-3 flex justify-between font-mono text-[9.5px] uppercase tracking-[0.12em] text-white/35">
         <span>peak pricing</span>
-        <span className="text-signal/80">low-cost window</span>
+        <span className="text-steel/80">low-cost window</span>
       </div>
 
       {/* job tracks */}
@@ -57,7 +57,7 @@ export function QueueShiftDiagram() {
                   job.locked
                     ? "border border-white/15 bg-white/[0.06] text-white/55"
                     : shifted
-                      ? "border border-signal/50 bg-signal/15 text-signal"
+                      ? "border border-signal/50 bg-signal/15 text-steel"
                       : "border border-white/20 bg-white/[0.08] text-white/70",
                 )}
                 style={{ width: `${job.width}%` }}
@@ -87,7 +87,7 @@ export function QueueShiftDiagram() {
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -8 }}
               transition={{ duration: 0.4, ease: EASE }}
-              className={cn("block font-mono text-[11px] tracking-[0.03em]", mode === 1 ? "text-signal" : "text-white/50")}
+              className={cn("block font-mono text-[11px] tracking-[0.03em]", mode === 1 ? "text-steel" : "text-white/50")}
             >
               {mode === 1
                 ? "aurelius · flexible jobs shifted to low-cost window · locked jobs unchanged"

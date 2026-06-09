@@ -34,9 +34,9 @@ function regionState(index: number, step: number): RegionState {
 
 const strokeFor: Record<RegionState, string> = {
   idle: "hsl(0 0% 100% / 0.1)",
-  considering: "hsl(218 45% 66% / 0.55)",
-  rejected: "hsl(0 72% 51% / 0.4)",
-  selected: "hsl(218 45% 66% / 0.7)",
+  considering: "hsl(214 22% 42% / 0.55)",
+  rejected: "hsl(1 44% 44% / 0.4)",
+  selected: "hsl(214 22% 42% / 0.7)",
 };
 
 function Region({
@@ -63,15 +63,15 @@ function Region({
         width="300"
         height="84"
         rx="5"
-        fill={state === "selected" ? "hsl(218 45% 66% / 0.05)" : "hsl(0 0% 6.5%)"}
+        fill={state === "selected" ? "hsl(214 22% 42% / 0.05)" : "hsl(0 0% 6.5%)"}
         stroke={strokeFor[state]}
         strokeWidth="1"
       />
-      <text x={x + 12} y={y + 18} className="font-mono" fontSize="10" letterSpacing="1.5" fill={state === "selected" ? "hsl(218 45% 66%)" : "hsl(0 0% 60%)"}>
+      <text x={x + 12} y={y + 18} className="font-mono" fontSize="10" letterSpacing="1.5" fill={state === "selected" ? "hsl(216 24% 64%)" : "hsl(0 0% 60%)"}>
         {code}
       </text>
       {state === "rejected" && (
-        <g stroke="hsl(0 72% 51% / 0.8)" strokeWidth="1.4" strokeLinecap="round">
+        <g stroke="hsl(1 44% 44% / 0.8)" strokeWidth="1.4" strokeLinecap="round">
           <line x1={x + 280} y1={y + 8} x2={x + 290} y2={y + 18} />
           <line x1={x + 290} y1={y + 8} x2={x + 280} y2={y + 18} />
         </g>
@@ -95,8 +95,8 @@ function Region({
                       width="36"
                       height="14"
                       rx="2"
-                      fill={isSel ? "hsl(218 45% 66% / 0.18)" : "hsl(0 0% 100% / 0.04)"}
-                      stroke={isSel ? "hsl(218 45% 66% / 0.7)" : "hsl(0 0% 100% / 0.08)"}
+                      fill={isSel ? "hsl(214 22% 42% / 0.18)" : "hsl(0 0% 100% / 0.04)"}
+                      stroke={isSel ? "hsl(214 22% 42% / 0.7)" : "hsl(0 0% 100% / 0.08)"}
                     />
                     <text
                       x={cx + 8 + pi * 40 + 18}
@@ -104,7 +104,7 @@ function Region({
                       textAnchor="middle"
                       className="font-mono"
                       fontSize="7.5"
-                      fill={isSel ? "hsl(218 45% 66%)" : "hsl(0 0% 55%)"}
+                      fill={isSel ? "hsl(216 24% 64%)" : "hsl(0 0% 55%)"}
                     >
                       {p}
                     </text>
@@ -132,12 +132,12 @@ export function FleetTopologyDiagram() {
           {PATHS.map((d, i) => {
             const isSelected = i === 2 && step === 2;
             const active = step === i;
-            const stroke = isSelected ? "hsl(218 45% 66% / 0.85)" : active ? "hsl(218 45% 66% / 0.55)" : "hsl(0 0% 100% / 0.1)";
+            const stroke = isSelected ? "hsl(214 22% 42% / 0.85)" : active ? "hsl(214 22% 42% / 0.55)" : "hsl(0 0% 100% / 0.1)";
             return (
               <g key={d}>
                 <path id={`fleet-path-${i}`} d={d} fill="none" stroke={stroke} strokeWidth="1.5" style={{ transition: "stroke 0.5s" }} />
                 {(isSelected || active) && (
-                  <path d={d} fill="none" stroke={isSelected ? "hsl(218 45% 66% / 0.65)" : "hsl(218 45% 66% / 0.5)"} strokeWidth="1.5" className="flow-dash" />
+                  <path d={d} fill="none" stroke={isSelected ? "hsl(214 22% 42% / 0.65)" : "hsl(214 22% 42% / 0.5)"} strokeWidth="1.5" className="flow-dash" />
                 )}
               </g>
             );
@@ -145,7 +145,7 @@ export function FleetTopologyDiagram() {
 
           {/* flowing packet on the selected path */}
           {step === 2 && !reduced && (
-            <circle r="4" fill="hsl(218 45% 66%)">
+            <circle r="4" fill="hsl(214 22% 42%)">
               <animateMotion dur="2.4s" repeatCount="indefinite" keyPoints="0;1" keyTimes="0;1" calcMode="linear">
                 <mpath href="#fleet-path-2" />
               </animateMotion>
@@ -161,7 +161,7 @@ export function FleetTopologyDiagram() {
             <text x="72" y="190" textAnchor="middle" className="font-mono" fontSize="9" letterSpacing="1" fill="hsl(0 0% 70%)">
               QUEUE
             </text>
-            <circle cx="120" cy="180" r="2.5" fill="hsl(218 45% 66%)" />
+            <circle cx="120" cy="180" r="2.5" fill="hsl(214 22% 42%)" />
           </g>
 
           <Region x={356} y={28} code="US-EAST" state={regionState(0, step)} clusters={[
@@ -190,7 +190,7 @@ export function FleetTopologyDiagram() {
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -8 }}
               transition={{ duration: 0.4, ease: EASE }}
-              className={`block font-mono text-[11px] tracking-[0.04em] ${READOUT[step].tone === "pass" ? "text-signal" : "text-white/55"}`}
+              className={`block font-mono text-[11px] tracking-[0.04em] ${READOUT[step].tone === "pass" ? "text-steel" : "text-white/55"}`}
             >
               {READOUT[step].text}
             </motion.span>

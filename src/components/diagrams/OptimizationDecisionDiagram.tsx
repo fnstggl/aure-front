@@ -72,7 +72,7 @@ export function OptimizationDecisionDiagram() {
               className={cn(
                 "rounded-md border px-3 py-2.5 transition-all duration-500",
                 selected
-                  ? "border-signal/55 bg-signal/[0.05] shadow-[0_12px_36px_-24px_hsl(40_46%_58%/0.5)]"
+                  ? "border-signal/55 bg-signal/[0.05] shadow-[0_12px_36px_-24px_hsl(214_22%_39%/0.5)]"
                   : scanning
                     ? "border-signal/40 bg-signal/[0.04]"
                     : "border-border bg-card-elevated",
@@ -93,7 +93,7 @@ export function OptimizationDecisionDiagram() {
                     className={cn("h-full rounded-full", selected ? "bg-signal" : rejected ? "bg-destructive/40" : "bg-white/25")}
                   />
                 </div>
-                <span className={cn("w-12 shrink-0 text-right font-mono text-[11px] tabular-nums", selected ? "text-signal" : "text-white/55")}>
+                <span className={cn("w-12 shrink-0 text-right font-mono text-[11px] tabular-nums", selected ? "text-steel" : "text-white/55")}>
                   {c.cost.toFixed(2)}x
                 </span>
               </div>
@@ -137,7 +137,7 @@ export function OptimizationDecisionDiagram() {
           transition={{ duration: 0.45, ease: EASE }}
         >
           <span className="h-1.5 w-1.5 rounded-full bg-signal anim-breathe" aria-hidden />
-          <span className="font-mono text-[11px] uppercase tracking-[0.14em] text-signal/80">
+          <span className="font-mono text-[11px] uppercase tracking-[0.14em] text-steel/80">
             scanning candidates · gate checks running
           </span>
         </motion.div>
@@ -161,7 +161,7 @@ export function OptimizationDecisionDiagram() {
                 className="text-white/55"
               >
                 <span className="text-white/28">append · </span>
-                <span className="text-signal">{line}</span>
+                <span className="text-steel">{line}</span>
               </motion.div>
             ))}
           </div>
