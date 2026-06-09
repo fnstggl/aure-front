@@ -33,7 +33,7 @@ export function Section({
     <section
       id={id}
       className={cn(
-        "py-[76px] md:py-[108px] lg:py-[132px]",
+        "py-[88px] md:py-[128px] lg:py-[160px]",
         divider && "border-t border-border",
         alt && "bg-background-alt",
         className,
@@ -89,11 +89,11 @@ export function SectionEyebrow({
   return (
     <div
       className={cn(
-        "flex items-center gap-3 font-mono text-[10.5px] uppercase tracking-[0.24em] text-white/40",
+        "flex items-center gap-3 font-mono text-[10.5px] uppercase tracking-[0.24em] text-white/35",
         className,
       )}
     >
-      <span className="h-px w-7 bg-gradient-to-r from-signal/80 to-signal/0" aria-hidden />
+      <span className="h-px w-7 bg-white/15" aria-hidden />
       {children}
     </div>
   );
@@ -227,10 +227,10 @@ export function DiagramCard({
 }) {
   return (
     <figure className={cn("relative overflow-hidden rounded-lg border border-border bg-card", className)}>
-      <div className="bg-dotgrid">{children}</div>
+      <div>{children}</div>
       {label && (
-        <figcaption className="flex items-center gap-2.5 border-t border-border px-4 py-2.5 font-mono text-[10.5px] uppercase tracking-[0.2em] text-white/38">
-          <span className="h-px w-4 bg-signal/60" aria-hidden />
+        <figcaption className="flex items-center gap-2.5 border-t border-border px-4 py-2.5 font-mono text-[10.5px] uppercase tracking-[0.2em] text-white/32">
+          <span className="h-px w-4 bg-white/20" aria-hidden />
           {label}
         </figcaption>
       )}

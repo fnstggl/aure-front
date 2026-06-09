@@ -171,10 +171,10 @@
     text-wrap: pretty;
   }
 
-  /* Very subtle dot grid — infrastructure texture, almost invisible */
+  /* Very subtle dot grid — used sparingly behind the hero only */
   .bg-dotgrid {
-    background-image: radial-gradient(hsl(0 0% 100% / 0.045) 1px, transparent 1px);
-    background-size: 34px 34px;
+    background-image: radial-gradient(hsl(0 0% 100% / 0.03) 1px, transparent 1px);
+    background-size: 38px 38px;
     background-position: -1px -1px;
   }
 
@@ -259,27 +259,32 @@
     animation: dash-move 9s linear infinite;
   }
 
+  /* Connector rails default to BLUE — information being reasoned over.
+     Gold is reserved for the selected / approved path. */
   .rail-x {
     background-color: hsl(var(--border));
-    background-image: linear-gradient(90deg, transparent, hsl(var(--signal) / 0.85), transparent);
+    background-image: linear-gradient(90deg, transparent, hsl(var(--data-blue) / 0.7), transparent);
     background-size: 64px 100%;
     background-repeat: no-repeat;
     background-position: -64px 0;
-    animation: rail-sweep-x 5.5s linear infinite;
+    animation: rail-sweep-x 6s linear infinite;
     animation-delay: var(--rail-delay, 0ms);
   }
   .rail-y {
     background-color: hsl(var(--border));
-    background-image: linear-gradient(180deg, transparent, hsl(var(--signal) / 0.85), transparent);
+    background-image: linear-gradient(180deg, transparent, hsl(var(--data-blue) / 0.7), transparent);
     background-size: 100% 64px;
     background-repeat: no-repeat;
     background-position: 0 -64px;
-    animation: rail-sweep-y 5.5s linear infinite;
+    animation: rail-sweep-y 6s linear infinite;
     animation-delay: var(--rail-delay, 0ms);
   }
-  /* data-tinted rail variant for forecast flows */
-  .rail-x.rail-data {
-    background-image: linear-gradient(90deg, transparent, hsl(var(--data-blue) / 0.8), transparent);
+  /* gold rail — the committed / selected path only */
+  .rail-x.rail-gold {
+    background-image: linear-gradient(90deg, transparent, hsl(var(--signal) / 0.85), transparent);
+  }
+  .rail-y.rail-gold {
+    background-image: linear-gradient(180deg, transparent, hsl(var(--signal) / 0.85), transparent);
   }
 }
 

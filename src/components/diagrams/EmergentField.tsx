@@ -10,17 +10,19 @@ import { usePrefersReducedMotion } from "@/hooks/usePrefersReducedMotion";
    - Pauses when off-screen; renders one resolved frame under reduced motion.
    - Subtle by design so hero copy stays fully readable. */
 
-const CYCLE = 17000; // ms — slow, elegant loop
+const CYCLE = 18000; // ms — slow, elegant loop
 
-const SPINE: [number, number][] = [
-  [0.06, 0.66],
-  [0.2, 0.57],
-  [0.35, 0.63],
-  [0.5, 0.5],
-  [0.65, 0.56],
-  [0.8, 0.45],
-  [0.94, 0.53],
+// Fleet "regions": the points organize into these clusters, and the gold
+// decision path threads through their centers left → right.
+const CLUSTERS: [number, number][] = [
+  [0.1, 0.62],
+  [0.27, 0.4],
+  [0.43, 0.64],
+  [0.6, 0.41],
+  [0.77, 0.6],
+  [0.92, 0.44],
 ];
+const SPINE = CLUSTERS;
 
 function smoothstep(a: number, b: number, x: number) {
   const t = Math.min(1, Math.max(0, (x - a) / (b - a)));
@@ -55,31 +57,34 @@ export function EmergentField({ className }: { className?: string }) {
       return seed / 4294967296;
     };
 
-    type Pt = { nx: number; ny: number; tx: number; ty: number; ph: number; sp: number; cool: boolean };
+    type Pt = { nx: number; ny: number; tx: number; ty: number; ph: number; sp: number; cool: boolean; cl: number };
     let points: Pt[] = [];
     let edges: Array<[number, number]> = [];
 
     const buildModel = () => {
       seed = 20260608;
-      const count = W < 680 ? 120 : 210;
-      const cols = 20;
-      const rows = 11;
+      const count = W < 680 ? 130 : 230;
       points = [];
       for (let i = 0; i < count; i++) {
-        const c = i % cols;
-        const r = Math.floor(i / cols) % rows;
-        const tx = (c + 0.5) / cols + (rnd() - 0.5) * 0.03;
-        const ty = (r + 0.5) / rows + (rnd() - 0.5) * 0.06;
-        points.push({ nx: rnd(), ny: rnd(), tx, ty, ph: rnd() * Math.PI * 2, sp: 0.3 + rnd() * 0.7, cool: tx > 0.52 });
+        const cl = i % CLUSTERS.length;
+        const [ccx, ccy] = CLUSTERS[cl];
+        // tight gaussian-ish offset so distinct clusters resolve
+        const rad = Math.pow(rnd(), 0.65) * 0.085;
+        const ang = rnd() * Math.PI * 2;
+        const tx = ccx + Math.cos(ang) * rad * 1.5;
+        const ty = ccy + Math.sin(ang) * rad;
+        points.push({ nx: rnd(), ny: rnd(), tx, ty, ph: rnd() * Math.PI * 2, sp: 0.3 + rnd() * 0.7, cool: ccx > 0.5, cl });
       }
+      // intra-cluster edges → each region reads as a connected mesh
       edges = [];
-      for (let i = 0; i < points.length && edges.length < 90; i++) {
+      for (let i = 0; i < points.length && edges.length < 130; i++) {
         for (let j = i + 1; j < points.length; j++) {
+          if (points[i].cl !== points[j].cl) continue;
           const dx = points[i].tx - points[j].tx;
           const dy = points[i].ty - points[j].ty;
-          if (Math.hypot(dx, dy) < 0.085 && rnd() < 0.16) {
+          if (Math.hypot(dx, dy) < 0.07 && rnd() < 0.45) {
             edges.push([i, j]);
-            if (edges.length >= 90) break;
+            if (edges.length >= 130) break;
           }
         }
       }

@@ -38,7 +38,7 @@ export function ControlLoopDiagram() {
                 className={cn(
                   "min-w-0 flex-1 rounded-md border px-2 py-2.5 text-center transition-all duration-500",
                   active
-                    ? "border-signal/60 bg-signal/[0.07] shadow-[0_12px_36px_-22px_hsl(38_92%_50%/0.6)]"
+                    ? "border-data/45 bg-data/[0.06] shadow-[0_12px_36px_-24px_hsl(213_100%_74%/0.45)]"
                     : "border-border bg-card-elevated",
                 )}
               >
@@ -48,7 +48,7 @@ export function ControlLoopDiagram() {
                 <div
                   className={cn(
                     "mt-0.5 truncate font-mono text-[10.5px] uppercase tracking-[0.12em]",
-                    active ? "text-signal" : "text-white/72",
+                    active ? "text-data" : "text-white/72",
                   )}
                 >
                   {s.label}
@@ -74,7 +74,7 @@ export function ControlLoopDiagram() {
           <path
             d="M97,1 C97,5 97,5 50,5 C3,5 3,5 3,1"
             fill="none"
-            stroke="hsl(40 46% 58% / 0.5)"
+            stroke="hsl(213 100% 74% / 0.4)"
             strokeWidth="0.4"
             vectorEffect="non-scaling-stroke"
             className={inView ? "flow-dash" : ""}
@@ -90,7 +90,7 @@ export function ControlLoopDiagram() {
       {/* Detail panel for the active stage */}
       <div className="mt-5 h-[176px] overflow-hidden rounded-md border border-border bg-card p-4">
         <div className="mb-3 flex items-center justify-between">
-          <span className="font-mono text-[11px] uppercase tracking-[0.16em] text-signal">
+          <span className="font-mono text-[11px] uppercase tracking-[0.16em] text-data">
             {STEPS[step].label}
           </span>
           <span className="font-mono text-[10px] text-white/30">stage {step + 1}/5</span>
@@ -110,7 +110,7 @@ export function ControlLoopDiagram() {
                 <KV k="job" v="batch_inference" />
                 <KV k="gpus" v="128 × H100" />
                 <KV k="deadline" v="4h" />
-                <KV k="access" v="metadata only" vClass="text-signal" />
+                <KV k="access" v="metadata only" vClass="text-data" />
               </div>
             )}
             {step === 1 && <MiniForecastChart active className="h-[96px] w-full" />}

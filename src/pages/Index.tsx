@@ -6,7 +6,6 @@ import {
   SectionEyebrow,
   SectionHeader,
   CTAButton,
-  MetricChip,
   DiagramCard,
   Reveal,
 } from "@/components/site/primitives";
@@ -42,7 +41,7 @@ export default function Index() {
               <SectionEyebrow className="justify-center">Aurelius Control Layer</SectionEyebrow>
             </Reveal>
             <Reveal delay={60}>
-              <h1 className="mt-6 text-balance text-[clamp(2rem,5.2vw,3.4rem)] font-medium leading-[1.05] tracking-tight text-foreground">
+              <h1 className="mt-7 text-balance text-[clamp(2.2rem,5.8vw,4rem)] font-medium leading-[1.02] tracking-[-0.025em] text-foreground">
                 The control layer for economically efficient GPU fleets
               </h1>
             </Reveal>
@@ -71,13 +70,16 @@ export default function Index() {
             </Reveal>
 
             <Reveal delay={320}>
-              <div className="mt-10 flex flex-wrap items-center justify-center gap-2">
-                <MetricChip value="+42%" label="goodput / $" emphasis />
-                <MetricChip value="−21%" label="GPU-hours" emphasis />
-                <MetricChip value="Public" label="Azure traces" />
-                <MetricChip value="SLA-safe" label="benchmark" />
+              <div className="mt-11 flex flex-wrap items-center justify-center gap-x-5 gap-y-2 font-mono text-[12px] tracking-tight text-white/45">
+                <span><span className="text-signal">+42%</span> goodput / $</span>
+                <span className="text-white/15">·</span>
+                <span><span className="text-signal">−21%</span> GPU-hours</span>
+                <span className="text-white/15">·</span>
+                <span>public Azure traces</span>
+                <span className="text-white/15">·</span>
+                <span>SLA-safe benchmark</span>
               </div>
-              <p className="mt-3 font-mono text-[11px] text-white/28">
+              <p className="mt-3.5 font-mono text-[11px] text-white/26">
                 Benchmark evidence on public traces — not a guaranteed universal result.
               </p>
             </Reveal>
@@ -112,7 +114,7 @@ export default function Index() {
                     "Teams lack audit-grade counterfactuals before changing production behavior.",
                   ].map((point, i) => (
                     <li key={point} className="flex gap-4 py-4">
-                      <span className="font-mono text-[12px] tabular-nums text-signal/70">
+                      <span className="font-mono text-[12px] tabular-nums text-white/25">
                         {String(i + 1).padStart(2, "0")}
                       </span>
                       <span className="text-[14px] leading-relaxed text-white/62">{point}</span>
@@ -129,6 +131,23 @@ export default function Index() {
               </Reveal>
             </div>
           </div>
+        </Container>
+      </Section>
+
+      {/* ==================== Stat moment (typography) ================= */}
+      <Section className="py-[120px] md:py-[180px] lg:py-[216px]">
+        <Container>
+          <Reveal className="mx-auto max-w-4xl text-center">
+            <div className="text-[clamp(4.5rem,15vw,11rem)] font-medium leading-[0.84] tracking-[-0.05em] text-foreground">
+              42<span className="text-signal">%</span>
+            </div>
+            <p className="mt-5 text-[clamp(1.1rem,2.6vw,1.7rem)] font-medium tracking-tight text-white/72">
+              higher goodput per dollar
+            </p>
+            <p className="mt-7 font-mono text-[11px] uppercase tracking-[0.22em] text-white/32">
+              Measured on public Azure traces · SLA-safe · −21% GPU-hours
+            </p>
+          </Reveal>
         </Container>
       </Section>
 
@@ -171,7 +190,7 @@ export default function Index() {
       {/* ===================== Optimization Decision ==================== */}
       <Section alt>
         <Container>
-          <div className="grid items-start gap-10 lg:grid-cols-12 lg:gap-14">
+          <div className="grid items-center gap-10 lg:grid-cols-12 lg:gap-14">
             <div className="order-2 lg:order-1 lg:col-span-7">
               <Reveal delay={120}>
                 <DiagramCard label="Live optimization decision">
@@ -206,6 +225,21 @@ export default function Index() {
             <DiagramCard label="Constraint gates">
               <ConstraintEngineDiagram />
             </DiagramCard>
+          </Reveal>
+        </Container>
+      </Section>
+
+      {/* ==================== Statement (typography) =================== */}
+      <Section className="py-[110px] md:py-[160px] lg:py-[200px]">
+        <Container>
+          <Reveal>
+            <p className="max-w-4xl text-[clamp(1.9rem,5vw,3.5rem)] font-medium leading-[1.1] tracking-[-0.025em] text-foreground">
+              No payload access.
+              <br />
+              No execution risk.
+              <br />
+              <span className="text-white/38">No blind decisions.</span>
+            </p>
           </Reveal>
         </Container>
       </Section>
@@ -252,7 +286,7 @@ export default function Index() {
                 "Gradual rollout after validation",
               ].map((item) => (
                 <li key={item} className="flex items-center gap-3 font-mono text-[12px] text-white/55">
-                  <span className="inline-block h-1 w-1 shrink-0 bg-signal" aria-hidden />
+                  <span className="inline-block h-1 w-1 shrink-0 bg-white/25" aria-hidden />
                   {item}
                 </li>
               ))}
@@ -266,7 +300,7 @@ export default function Index() {
         <Container className="py-[76px] md:py-[108px] lg:py-[124px]">
           <Reveal>
             <div className="flex items-center gap-3 font-mono text-[10.5px] uppercase tracking-[0.24em] text-foreground/50">
-              <span className="h-px w-7 bg-gradient-to-r from-signal-strong to-transparent" aria-hidden />
+              <span className="h-px w-7 bg-black/20" aria-hidden />
               Adoption
             </div>
           </Reveal>
@@ -293,7 +327,7 @@ export default function Index() {
                 delay={i * 90}
                 className={cn("md:px-7", i > 0 && "md:border-l md:border-black/10", i === 0 && "md:pl-0")}
               >
-                <div className="font-mono text-[13px] tabular-nums text-signal-strong">{s.n}</div>
+                <div className="font-mono text-[13px] tabular-nums text-foreground/30">{s.n}</div>
                 <h3 className="mt-4 text-[17px] font-medium tracking-tight text-foreground">{s.t}</h3>
                 <p className="mt-2.5 text-[13.5px] leading-relaxed text-muted-foreground">{s.d}</p>
               </Reveal>
@@ -335,7 +369,7 @@ export default function Index() {
               <div className="flex items-center justify-center gap-3 font-mono text-[11px] uppercase tracking-[0.16em] text-white/35">
                 <span>Workloads</span>
                 <span className="h-px w-8 rail-x" aria-hidden />
-                <span className="text-signal">Shadow mode</span>
+                <span className="text-data/80">Shadow mode</span>
                 <span className="h-px w-8 rail-x" style={{ ["--rail-delay" as string]: "600ms" }} aria-hidden />
                 <span>Counterfactual report</span>
               </div>
