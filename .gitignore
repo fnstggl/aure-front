@@ -33,3 +33,7 @@ build
 .env
 .env.*
 !.env.example
+
+# Diagram QA artifacts (regenerate with scripts/qa.mjs)
+.qa/
+.diagram-preview.png
