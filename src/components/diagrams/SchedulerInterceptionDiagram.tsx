@@ -72,7 +72,7 @@ export function SchedulerInterceptionDiagram() {
 
         {/* Control layer — reserved-height decision panel, opacity crossfade */}
         <StageNode active={step === 2} dim={step < 2} className="lg:flex-[1.35]">
-          <Node label="Aurelius Control Layer" sub="forecast · decide · filter" active={step >= 2}>
+          <Node label="Aurelius Control Layer" sub="forecast · decide · filter" active={step >= 2} tone="gold">
             <div className="relative mt-3 h-[118px] overflow-hidden rounded-sm border border-signal/20 bg-background/50 p-2.5">
               {/* pending */}
               <motion.div
@@ -89,14 +89,14 @@ export function SchedulerInterceptionDiagram() {
                 animate={{ opacity: decided ? 1 : 0 }}
                 transition={{ duration: 0.5, ease: EASE }}
               >
-                <KV k="forecast" v="lower-cost +38m" vClass="text-data" />
+                <KV k="forecast" v="lower-cost +38m" vClass="text-white/70" />
                 <div className="flex items-center justify-between gap-3">
                   <span className="font-mono text-[11px] text-white/42">selected</span>
                   <span className="font-mono text-[11px] text-signal">delay batch job</span>
                 </div>
                 <div className="flex items-center justify-between gap-3">
                   <span className="font-mono text-[11px] text-white/42">rejected</span>
-                  <span className="font-mono text-[11px] text-white/35 line-through">delay 2h · sla</span>
+                  <span className="font-mono text-[11px] text-destructive/55 line-through">delay 2h · sla</span>
                 </div>
                 <div className="flex items-center justify-between gap-3 pt-0.5">
                   <span className="font-mono text-[11px] text-white/42">constraint</span>

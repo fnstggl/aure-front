@@ -52,7 +52,7 @@ export function OptimizationDecisionDiagram() {
           <KV k="duration" v="42m" />
           <KV k="region" v="us only" />
           <KV k="priority" v="flexible" />
-          <KV k="access" v="metadata only" vClass="text-data" />
+          <KV k="access" v="metadata only" vClass="text-white/65" />
         </div>
       </div>
 
@@ -74,7 +74,7 @@ export function OptimizationDecisionDiagram() {
                 selected
                   ? "border-signal/55 bg-signal/[0.05] shadow-[0_12px_36px_-24px_hsl(40_46%_58%/0.5)]"
                   : scanning
-                    ? "border-data/40 bg-data/[0.03]"
+                    ? "border-white/22 bg-white/[0.03]"
                     : "border-border bg-card-elevated",
               )}
             >
@@ -136,7 +136,7 @@ export function OptimizationDecisionDiagram() {
           animate={{ opacity: settled ? 0 : 1 }}
           transition={{ duration: 0.45, ease: EASE }}
         >
-          <span className="h-1.5 w-1.5 rounded-full bg-data anim-breathe" aria-hidden />
+          <span className="h-1.5 w-1.5 rounded-full bg-white/50 anim-breathe" aria-hidden />
           <span className="font-mono text-[11px] uppercase tracking-[0.14em] text-white/40">
             scanning candidates · gate checks running
           </span>

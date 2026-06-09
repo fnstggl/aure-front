@@ -19,6 +19,53 @@ const cannotDoList = [
   "Cannot execute commands on your infrastructure",
 ];
 
+const allowedMetadata = [
+  "Job timing windows",
+  "Requested resources",
+  "Workload class",
+  "Scheduler state",
+  "Capacity availability",
+  "Operator-defined constraints",
+  "Regional placement options",
+  "Historical run metadata",
+];
+
+const blockedData = [
+  "Prompts",
+  "Model outputs",
+  "Training data",
+  "Customer payloads",
+  "Source code",
+  "Secrets",
+  "User data",
+  "Proprietary datasets",
+  "Application contents",
+];
+
+const trustCopy = [
+  "Reads scheduler metadata only — never prompts, outputs, training data, payloads, or code.",
+  "Metadata is not sold, shared, or used to train external models.",
+  "Designed to deploy inside your environment, so workload data does not leave it.",
+  "Shadow mode is read-only by default.",
+  "Operators control thresholds, constraints, and rollout mode.",
+];
+
+function Check() {
+  return (
+    <svg width="13" height="13" viewBox="0 0 14 14" fill="none" aria-hidden className="mt-0.5 shrink-0">
+      <path d="M2.5 7.5L5.5 10.5 11.5 3.5" stroke="hsl(41 47% 60%)" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round" />
+    </svg>
+  );
+}
+
+function Cross() {
+  return (
+    <svg width="13" height="13" viewBox="0 0 14 14" fill="none" aria-hidden className="mt-0.5 shrink-0">
+      <path d="M3.5 3.5l7 7M10.5 3.5l-7 7" stroke="hsl(0 72% 55% / 0.85)" strokeWidth="1.4" strokeLinecap="round" />
+    </svg>
+  );
+}
+
 export default function Safety() {
   return (
     <Layout>
@@ -35,21 +82,48 @@ export default function Safety() {
             </h1>
           </Reveal>
           <Reveal delay={140}>
-            <p className="mt-5 max-w-2xl text-[15px] leading-relaxed text-white/62 md:text-base">
-              Security and operational constraints. Aurelius is constrained in what it can do —
-              deterministic, auditable, and reversible — so it can be deployed without risk to
-              production.
+            <p className="mt-5 max-w-2xl text-[15px] leading-relaxed text-white/68 md:text-base">
+              Operational and data boundaries. Aurelius is constrained in what it can do —
+              metadata-only, deterministic, auditable, and reversible — so teams can evaluate
+              savings without exposing payloads or risking production.
             </p>
           </Reveal>
         </Container>
       </section>
 
-      {/* Constraint boundary */}
+      {/* Safe by default = two things */}
       <Section>
         <Container>
           <Reveal>
+            <p className="font-mono text-[11px] uppercase tracking-[0.2em] text-white/42">
+              Safe by default means two things
+            </p>
+          </Reveal>
+          <div className="mt-7 grid gap-px overflow-hidden rounded-md border border-border bg-border md:grid-cols-2">
+            <Reveal className="bg-card p-7">
+              <div className="font-mono text-[12px] tabular-nums text-signal">01 / Operational safety</div>
+              <p className="mt-3 text-[14px] leading-relaxed text-white/68">
+                Candidates must pass hard constraints — SLA, capacity, power, residency, policy —
+                before they can ever be recommended.
+              </p>
+            </Reveal>
+            <Reveal delay={120} className="bg-card p-7">
+              <div className="font-mono text-[12px] tabular-nums text-signal">02 / Data safety</div>
+              <p className="mt-3 text-[14px] leading-relaxed text-white/68">
+                Aurelius evaluates scheduler metadata, not customer payloads. Workload data stays
+                inside your environment.
+              </p>
+            </Reveal>
+          </div>
+        </Container>
+      </Section>
+
+      {/* Operational safety — constraint engine */}
+      <Section alt>
+        <Container>
+          <Reveal>
             <SectionHeader
-              eyebrow="Constraint engine"
+              eyebrow="Operational safety"
               title="Optimization stops at the constraint boundary"
               intro="Every candidate is checked against hard operational gates. If it violates SLA, capacity, power, residency, or policy, it is rejected before execution — and the rejection is recorded."
             />
@@ -58,6 +132,69 @@ export default function Safety() {
             <DiagramCard label="Constraint gates">
               <ConstraintEngineDiagram />
             </DiagramCard>
+          </Reveal>
+        </Container>
+      </Section>
+
+      {/* Data boundary */}
+      <Section>
+        <Container>
+          <Reveal>
+            <SectionHeader
+              eyebrow="Data boundary"
+              title="Metadata only. Customer data stays inside your environment."
+              intro="Aurelius reads the scheduler metadata required to evaluate timing, placement, constraints, and expected economic outcome. It does not inspect prompts, model outputs, training data, customer payloads, or application code."
+            />
+          </Reveal>
+
+          <Reveal delay={140} className="mt-12">
+            <DiagramCard label="Data boundary">
+              <MetadataBoundaryDiagram />
+            </DiagramCard>
+          </Reveal>
+
+          {/* Allowed / blocked split */}
+          <div className="mt-10 grid gap-px overflow-hidden rounded-md border border-border bg-border md:grid-cols-2">
+            <Reveal className="bg-card p-7">
+              <div className="mb-5 flex items-center gap-2.5 font-mono text-[11px] uppercase tracking-[0.16em] text-signal">
+                <span className="h-px w-5 bg-signal/60" aria-hidden />
+                Allowed · metadata
+              </div>
+              <ul className="grid gap-2.5">
+                {allowedMetadata.map((item) => (
+                  <li key={item} className="flex items-start gap-2.5 text-[13.5px] text-white/68">
+                    <Check />
+                    {item}
+                  </li>
+                ))}
+              </ul>
+            </Reveal>
+            <Reveal delay={120} className="bg-card p-7">
+              <div className="mb-5 flex items-center gap-2.5 font-mono text-[11px] uppercase tracking-[0.16em] text-destructive/80">
+                <span className="h-px w-5 bg-destructive/50" aria-hidden />
+                Blocked · customer data
+              </div>
+              <ul className="grid gap-2.5">
+                {blockedData.map((item) => (
+                  <li key={item} className="flex items-start gap-2.5 text-[13.5px] text-white/55">
+                    <Cross />
+                    {item}
+                  </li>
+                ))}
+              </ul>
+            </Reveal>
+          </div>
+
+          {/* Trust posture */}
+          <Reveal delay={160}>
+            <ul className="mt-10 divide-y divide-border border-y border-border">
+              {trustCopy.map((item) => (
+                <li key={item} className="flex items-start gap-3 py-3.5 text-[14px] leading-relaxed text-white/68">
+                  <span className="mt-2 h-1 w-1 shrink-0 rounded-full bg-signal/80" aria-hidden />
+                  {item}
+                </li>
+              ))}
+            </ul>
           </Reveal>
         </Container>
       </Section>
@@ -82,39 +219,22 @@ export default function Safety() {
         </Container>
       </Section>
 
-      {/* Deterministic behavior */}
+      {/* Determinism + kill switch */}
       <Section>
         <Container>
-          <div className="grid items-start gap-10 lg:grid-cols-12 lg:gap-14">
-            <div className="lg:col-span-5">
-              <Reveal>
-                <SectionHeader
-                  eyebrow="Determinism"
-                  title="Same inputs, same decisions"
-                  intro="No randomness in the decision pipeline. No stochastic sampling. Every optimization recommendation, safety-gate trigger, and fallback activation is logged with full context — auditable and exportable. If you ask why a decision was made, the system provides a traceable answer."
-                />
-              </Reveal>
-            </div>
-            <div className="lg:col-span-7">
-              <Reveal delay={140}>
-                <DiagramCard label="Metadata boundary">
-                  <MetadataBoundaryDiagram />
-                </DiagramCard>
-              </Reveal>
-            </div>
-          </div>
-        </Container>
-      </Section>
-
-      {/* Kill switch & deployment */}
-      <Section alt>
-        <Container>
-          <div className="grid gap-px overflow-hidden rounded-md border border-border bg-border md:grid-cols-2">
+          <Reveal>
+            <SectionHeader
+              eyebrow="Determinism"
+              title="Same inputs, same decisions"
+              intro="No randomness in the decision pipeline. No stochastic sampling. Every optimization recommendation, safety-gate trigger, and fallback activation is logged with full context — auditable and exportable. If you ask why a decision was made, the system provides a traceable answer."
+            />
+          </Reveal>
+          <div className="mt-10 grid gap-px overflow-hidden rounded-md border border-border bg-border md:grid-cols-2">
             <Reveal className="bg-card p-6">
               <div className="mb-3 font-mono text-[11px] uppercase tracking-[0.16em] text-signal">
                 Kill switch &amp; control
               </div>
-              <p className="text-[13.5px] leading-relaxed text-white/55">
+              <p className="text-[13.5px] leading-relaxed text-white/60">
                 Aurelius can be disabled instantly via a single environment variable — no code
                 changes, no deployment. Dry-run mode is the default; live mode is opt-in, explicitly
                 enabled. Operators retain full ownership of every threshold and mode switch.
@@ -124,9 +244,9 @@ export default function Safety() {
               <div className="mb-3 font-mono text-[11px] uppercase tracking-[0.16em] text-white/50">
                 Deployment model
               </div>
-              <pre className="whitespace-pre-wrap font-mono text-[12px] leading-relaxed text-white/55">
+              <pre className="whitespace-pre-wrap font-mono text-[12px] leading-relaxed text-white/60">
 {`Aurelius (sidecar / control layer)
-  ├─ Reads scheduler state
+  ├─ Reads scheduler metadata
   ├─ Evaluates future conditions
   ├─ Produces decisions
   └─ Logs outcomes (append-only)`}

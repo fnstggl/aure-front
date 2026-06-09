@@ -57,14 +57,14 @@ export function ConstraintEngineDiagram() {
                       <motion.span
                         layoutId="constraint-packet"
                         transition={{ type: "spring", stiffness: 220, damping: 26 }}
-                        className="block h-2 w-2 rounded-full bg-data shadow-[0_0_10px_hsl(213_100%_74%/0.7)]"
+                        className="block h-2 w-2 rounded-full bg-white/85 shadow-[0_0_8px_hsl(0_0%_100%/0.45)]"
                       />
                     )}
                   </div>
                   <div
                     className={cn(
                       "flex h-12 w-full flex-col items-center justify-center rounded-md border px-1 text-center transition-all duration-500",
-                      state === "pass" && "border-data/35 bg-data/[0.04]",
+                      state === "pass" && "border-white/18 bg-white/[0.035]",
                       state === "fail" && "border-destructive/55 bg-destructive/[0.08]",
                       state === "active" && "border-white/40 bg-white/[0.04]",
                       state === "idle" && "border-border bg-card-elevated opacity-55",
@@ -74,7 +74,7 @@ export function ConstraintEngineDiagram() {
                     <span
                       className={cn(
                         "mt-1 truncate font-mono text-[9px] uppercase tracking-[0.08em]",
-                        state === "pass" ? "text-data" : state === "fail" ? "text-destructive" : "text-white/60",
+                        state === "pass" ? "text-white/72" : state === "fail" ? "text-destructive" : "text-white/60",
                       )}
                     >
                       {name}
@@ -88,7 +88,7 @@ export function ConstraintEngineDiagram() {
           {/* progress rail */}
           <div className="mt-2 h-px w-full bg-border">
             <motion.div
-              className={cn("h-full", verdict === "rejected" ? "bg-destructive/60" : verdict === "approved" ? "bg-signal" : "bg-data")}
+              className={cn("h-full", verdict === "rejected" ? "bg-destructive/60" : verdict === "approved" ? "bg-signal" : "bg-white/40")}
               animate={{ width: `${(cleared / GATES.length) * 100}%` }}
               transition={{ duration: 0.5, ease: EASE }}
             />
@@ -120,7 +120,7 @@ export function ConstraintEngineDiagram() {
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
-              className="font-mono text-[11px] uppercase tracking-[0.12em] text-data/75"
+              className="font-mono text-[11px] uppercase tracking-[0.12em] text-white/55"
             >
               evaluating · gate {Math.max(activeIndex, 0) + 1}/{GATES.length}
             </motion.div>
@@ -157,7 +157,7 @@ export function ConstraintEngineDiagram() {
 
 function GateGlyph({ state }: { state: GateState }) {
   const color =
-    state === "pass" ? "hsl(213 100% 74%)" : state === "fail" ? "hsl(0 72% 51%)" : state === "active" ? "hsl(0 0% 85%)" : "hsl(0 0% 40%)";
+    state === "pass" ? "hsl(0 0% 78%)" : state === "fail" ? "hsl(0 72% 51%)" : state === "active" ? "hsl(0 0% 85%)" : "hsl(0 0% 40%)";
   if (state === "fail") {
     return (
       <svg width="12" height="12" viewBox="0 0 12 12" fill="none" aria-hidden>

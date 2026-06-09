@@ -18,7 +18,7 @@
     --card: 0 0% 6.3%;              /* #101010 */
     --card-elevated: 0 0% 7.8%;     /* #141414 */
 
-    --foreground: 0 0% 93%;         /* off-white headline */
+    --foreground: 0 0% 94%;         /* off-white headline */
     --card-foreground: 0 0% 93%;
     --popover: 0 0% 6.3%;
     --popover-foreground: 0 0% 93%;
@@ -30,7 +30,7 @@
     --secondary-foreground: 0 0% 93%;
 
     --muted: 0 0% 11%;
-    --muted-foreground: 0 0% 64%;   /* body text */
+    --muted-foreground: 0 0% 68%;   /* body text */
 
     --accent: 0 0% 9%;
     --accent-foreground: 0 0% 93%;
@@ -42,20 +42,20 @@
     --border: 0 0% 100% / 0.08;
     --border-strong: 0 0% 100% / 0.16;
     --input: 0 0% 100% / 0.12;
-    --ring: 40 46% 58%;
+    --ring: 41 47% 60%;
 
     --radius: 0.3rem;
 
     /* Antique gold — the brand / safe-decision accent */
-    --signal: 40 46% 58%;           /* #C9A45C */
-    --signal-strong: 38 50% 36%;    /* #8A6A2E deep gold */
-    --signal-muted: 45 58% 78%;     /* #E8D7A2 pale gold */
+    --signal: 41 47% 60%;           /* #C9A45C */
+    --signal-strong: 39 42% 34%;    /* #8A6A2E deep gold */
+    --signal-muted: 44 55% 76%;     /* #E8D7A2 pale gold */
 
     /* Blue → violet — forecast / uncertainty / emergent intelligence */
-    --data-blue: 213 100% 74%;      /* #7DB7FF */
-    --data-pale: 205 100% 82%;      /* #A7D8FF */
-    --data-violet: 255 90% 76%;     /* #A78BFA */
-    --data-deep: 248 56% 60%;       /* #6D5DD3 */
+    --data-blue: 219 15% 51%;      /* #7DB7FF */
+    --data-pale: 219 16% 62%;      /* #A7D8FF */
+    --data-violet: 219 15% 51%;     /* #A78BFA */
+    --data-deep: 219 14% 42%;       /* #6D5DD3 */
 
     /* Legacy custom tokens kept for existing components */
     --surface-glass: 0 0% 100% / 0.025;
@@ -69,7 +69,7 @@
     --sidebar-accent: 0 0% 9%;
     --sidebar-accent-foreground: 0 0% 93%;
     --sidebar-border: 0 0% 100% / 0.08;
-    --sidebar-ring: 40 46% 58%;
+    --sidebar-ring: 41 47% 60%;
   }
 
   .dark {
@@ -77,7 +77,7 @@
     --background-alt: 0 0% 3.1%;
     --card: 0 0% 6.3%;
     --card-elevated: 0 0% 7.8%;
-    --foreground: 0 0% 93%;
+    --foreground: 0 0% 94%;
     --card-foreground: 0 0% 93%;
     --popover: 0 0% 6.3%;
     --popover-foreground: 0 0% 93%;
@@ -86,7 +86,7 @@
     --secondary: 0 0% 9%;
     --secondary-foreground: 0 0% 93%;
     --muted: 0 0% 11%;
-    --muted-foreground: 0 0% 64%;
+    --muted-foreground: 0 0% 68%;
     --accent: 0 0% 9%;
     --accent-foreground: 0 0% 93%;
     --destructive: 0 66% 52%;
@@ -94,14 +94,14 @@
     --border: 0 0% 100% / 0.08;
     --border-strong: 0 0% 100% / 0.16;
     --input: 0 0% 100% / 0.12;
-    --ring: 40 46% 58%;
-    --signal: 40 46% 58%;
-    --signal-strong: 38 50% 36%;
-    --signal-muted: 45 58% 78%;
-    --data-blue: 213 100% 74%;
-    --data-pale: 205 100% 82%;
-    --data-violet: 255 90% 76%;
-    --data-deep: 248 56% 60%;
+    --ring: 41 47% 60%;
+    --signal: 41 47% 60%;
+    --signal-strong: 39 42% 34%;
+    --signal-muted: 44 55% 76%;
+    --data-blue: 219 15% 51%;
+    --data-pale: 219 16% 62%;
+    --data-violet: 219 15% 51%;
+    --data-deep: 219 14% 42%;
   }
 
   /* Warm off-white section — editorial relief from the dark */
@@ -181,8 +181,8 @@
   /* Soft, rare vignette to compose the hero — gold + cool data tint */
   .hero-vignette {
     background:
-      radial-gradient(110% 80% at 50% 8%, hsl(40 46% 58% / 0.05), transparent 55%),
-      radial-gradient(90% 70% at 50% 40%, hsl(248 56% 60% / 0.045), transparent 62%);
+      radial-gradient(110% 80% at 50% 8%, hsl(41 47% 60% / 0.05), transparent 55%),
+      radial-gradient(90% 70% at 50% 40%, hsl(0 0% 10% / 0.5), transparent 62%);
   }
 
   .border-strong {
@@ -259,11 +259,11 @@
     animation: dash-move 9s linear infinite;
   }
 
-  /* Connector rails default to BLUE — information being reasoned over.
+  /* Connector rails default to a neutral white sweep — active flow.
      Gold is reserved for the selected / approved path. */
   .rail-x {
     background-color: hsl(var(--border));
-    background-image: linear-gradient(90deg, transparent, hsl(var(--data-blue) / 0.7), transparent);
+    background-image: linear-gradient(90deg, transparent, hsl(0 0% 100% / 0.5), transparent);
     background-size: 64px 100%;
     background-repeat: no-repeat;
     background-position: -64px 0;
@@ -272,7 +272,7 @@
   }
   .rail-y {
     background-color: hsl(var(--border));
-    background-image: linear-gradient(180deg, transparent, hsl(var(--data-blue) / 0.7), transparent);
+    background-image: linear-gradient(180deg, transparent, hsl(0 0% 100% / 0.5), transparent);
     background-size: 100% 64px;
     background-repeat: no-repeat;
     background-position: 0 -64px;
@@ -288,7 +288,63 @@
   }
 }
 
+/* ============================================================
+   Hero dot-field — layered over the static PNG. No transform on the
+   image; only brightness + a masked brightness band that sweeps across,
+   so individual dots appear to shimmer rather than the whole image moving.
+   ============================================================ */
+@keyframes hero-breathe {
+  0%, 100% { filter: brightness(0.93); }
+  50% { filter: brightness(1.07); }
+}
+@keyframes hero-shimmer {
+  0% { -webkit-mask-position: 135% 50%; mask-position: 135% 50%; }
+  100% { -webkit-mask-position: -35% 50%; mask-position: -35% 50%; }
+}
+
+@layer utilities {
+  .hero-field {
+    position: absolute;
+    inset: 0;
+    background-image: url("/hero_background.png");
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    opacity: 0.34;
+    animation: hero-breathe 26s ease-in-out infinite;
+  }
+  /* a brighter copy revealed only through a soft moving band → per-dot shimmer */
+  .hero-field-shimmer {
+    position: absolute;
+    inset: 0;
+    background-image: url("/hero_background.png");
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    opacity: 0.5;
+    mix-blend-mode: screen;
+    -webkit-mask-image: linear-gradient(100deg, transparent 38%, #000 50%, transparent 62%);
+    mask-image: linear-gradient(100deg, transparent 38%, #000 50%, transparent 62%);
+    -webkit-mask-size: 260% 100%;
+    mask-size: 260% 100%;
+    -webkit-mask-repeat: no-repeat;
+    mask-repeat: no-repeat;
+    animation: hero-shimmer 24s linear infinite;
+  }
+  .hero-field-vignette {
+    position: absolute;
+    inset: 0;
+    background:
+      radial-gradient(115% 80% at 50% 46%, transparent 32%, hsl(0 0% 2% / 0.55) 92%),
+      radial-gradient(60% 42% at 50% 50%, hsl(0 0% 2% / 0.55), transparent 70%);
+  }
+}
+
 /* Honor reduced motion across all decorative + ambient motion */
+@media (prefers-reduced-motion: reduce) {
+  .hero-field { animation: none !important; filter: none !important; }
+  .hero-field-shimmer { display: none !important; }
+}
 @media (prefers-reduced-motion: reduce) {
   *,
   *::before,
