@@ -14,9 +14,8 @@ export function Footer() {
       <div className="mx-auto max-w-content px-6 py-14 lg:px-8">
         <div className="flex flex-col gap-10 sm:flex-row sm:items-start sm:justify-between">
           <div className="max-w-xs">
-            <Link to="/" className="flex items-center gap-2.5" aria-label="Aurelius — home">
-              <span className="brand-diamond block h-3 w-3 rotate-45 rounded-[2px]" aria-hidden />
-              <span className="text-[16px] font-medium tracking-tight text-foreground">Aurelius</span>
+            <Link to="/" className="flex items-center" aria-label="Aurelius — home">
+              <img src="/aure_logo.png" alt="Aurelius" className="h-5 w-auto" />
             </Link>
             <p className="mt-4 text-[13.5px] leading-relaxed text-white/42">
               The control layer for economically efficient GPU fleets. Shadow-mode first,

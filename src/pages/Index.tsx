@@ -9,7 +9,6 @@ import {
   DiagramCard,
   Reveal,
 } from "@/components/site/primitives";
-import { EmergentField } from "@/components/diagrams/EmergentField";
 import { SchedulerInterceptionDiagram } from "@/components/diagrams/SchedulerInterceptionDiagram";
 import { QueueShiftDiagram } from "@/components/diagrams/QueueShiftDiagram";
 import { ControlLoopDiagram } from "@/components/diagrams/ControlLoopDiagram";
@@ -24,16 +23,11 @@ export default function Index() {
     <Layout>
       {/* ============================== Hero ============================== */}
       <section className="relative flex min-h-[100dvh] flex-col justify-center overflow-hidden pb-20 pt-28 md:pt-32">
-        <div className="pointer-events-none absolute inset-0 bg-dotgrid opacity-40" aria-hidden />
-        {/* Order emerging from complexity — fixed-height canvas, no layout impact */}
         <div
-          className="pointer-events-none absolute inset-x-0 top-0 h-[82vh]"
-          style={{ maskImage: "linear-gradient(to bottom, black 62%, transparent)", WebkitMaskImage: "linear-gradient(to bottom, black 62%, transparent)" }}
+          className="pointer-events-none absolute inset-0 bg-cover bg-center bg-no-repeat"
+          style={{ backgroundImage: "url(/hero_background.png)" }}
           aria-hidden
-        >
-          <EmergentField className="h-full w-full" />
-        </div>
-        <div className="pointer-events-none absolute inset-0 hero-vignette" aria-hidden />
+        />
 
         <Container className="relative">
           <div className="mx-auto max-w-3xl text-center">
