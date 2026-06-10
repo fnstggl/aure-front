@@ -11,10 +11,10 @@ import { Counter } from "@/components/site/Counter";
    recovers the metric. Monochrome + red only; outline-only; sharp corners. */
 
 const TILES = [
-  "Idle H100", "Peak pricing", "OOM kill", "Spot eviction",
-  "Stranded capacity", "Preemption", "Underutilized", "Queue backlog",
-  "SLA risk", "Power cap", "Thermal throttle", "Carbon spike",
-  "Fragmentation", "Cold start", "Overprovisioned", "Stale reservation",
+  "Idle GPUs", "Stranded capacity", "Fragmentation", "Underutilized clusters",
+  "Peak pricing", "Reservation waste", "Regional imbalance", "Overprovisioning",
+  "Queue backlog", "Forecasting errors", "Cold starts", "SLA risk",
+  "Capacity bottlenecks", "Demand spikes", "Placement mistakes", "Timing windows",
 ];
 
 function Triangle() {
@@ -57,7 +57,7 @@ export function ProblemSection() {
     <Section>
       <Container>
         <div ref={ref} className="mx-auto max-w-3xl text-center">
-          <h2 className="text-balance text-[clamp(1.9rem,4.6vw,3.1rem)] font-medium leading-[1.06] tracking-[-0.025em] text-foreground">
+          <h2 className="text-balance text-[clamp(1.8rem,3.8vw,2.75rem)] font-medium leading-[1.08] tracking-[-0.025em] text-foreground md:whitespace-nowrap">
             Your GPU fleet bleeds money.
             <br />
             <span className="text-white/50">Your scheduler wasn’t built to stop it.</span>
@@ -140,7 +140,7 @@ export function ProblemSection() {
         </div>
 
         <p className="mt-7 text-center font-mono text-[11px] uppercase tracking-[0.18em] text-white/30">
-          {on ? "Aurelius · failures filtered before they fire" : "Without Aurelius · waste fires faster than humans react"}
+          {on ? "Aurelius optimizes · cost · capacity · timing · constraints" : "Without Aurelius · cost is a side effect, not an objective"}
         </p>
       </Container>
     </Section>
