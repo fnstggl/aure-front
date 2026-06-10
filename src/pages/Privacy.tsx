@@ -217,22 +217,6 @@ const policySections: PolicySection[] = [
       </p>
     ),
   },
-  {
-    id: "13",
-    title: "Contact us",
-    body: (
-      <p>
-        If you have questions about this Privacy Policy or how we handle your information, reach us at{" "}
-        <a
-          href="mailto:privacy@aurelius.systems"
-          className="text-foreground/90 underline decoration-white/25 underline-offset-4 transition-colors hover:decoration-white/60"
-        >
-          privacy@aurelius.systems
-        </a>
-        .
-      </p>
-    ),
-  },
 ];
 
 export default function Privacy() {
