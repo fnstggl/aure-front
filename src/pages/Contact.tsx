@@ -91,7 +91,7 @@ export default function Contact() {
               </Reveal>
               <Reveal delay={140}>
                 <p className="mt-5 max-w-md text-[15px] leading-relaxed text-white/62">
-                  Start with a read-only shadow-mode evaluation using scheduler metadata. No payload access. No execution impact.
+                  Start with a read-only shadow-run evaluation using scheduler metadata. Historical replay and live shadow deployments supported. No payload access. No execution impact.
                 </p>
               </Reveal>
               <Reveal delay={200}>
