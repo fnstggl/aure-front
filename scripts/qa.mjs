@@ -1,9 +1,11 @@
 import { chromium } from "playwright";
 import { fileURLToPath } from "node:url";
 import { dirname, resolve } from "node:path";
+import { mkdirSync } from "node:fs";
 
 const __dir = dirname(fileURLToPath(import.meta.url));
 const OUT = resolve(__dir, "../.qa");
+mkdirSync(OUT, { recursive: true });
 const BASE = "http://127.0.0.1:5188/";
 const SEL = "[data-acp='schematic']";
 
@@ -15,7 +17,7 @@ const rect = (sel) => {
   return { x: Math.max(0, r.x), y: Math.max(0, r.y), width: r.width, height: r.height };
 };
 
-async function shoot({ name, width, height, reduced, query = "", waits = [3400] }) {
+async function shoot({ name, width, height, reduced, query = "", waits = [3200] }) {
   const ctx = await browser.newContext({ viewport: { width, height }, deviceScaleFactor: 2, reducedMotion: reduced ? "reduce" : "no-preference" });
   const page = await ctx.newPage();
   try {
@@ -38,11 +40,11 @@ async function shoot({ name, width, height, reduced, query = "", waits = [3400] 
   }
 }
 
-await shoot({ name: "flagship-desktop", width: 1440, height: 1100, reduced: false });
-await shoot({ name: "flagship-mobile", width: 390, height: 1400, reduced: false });
-await shoot({ name: "flagship-reduced", width: 1440, height: 1100, reduced: true, waits: [900] });
-await shoot({ name: "flagship-nolabels", width: 1440, height: 1100, reduced: false, query: "?nolabels=1" });
-await shoot({ name: "flagship-cycle", width: 1440, height: 1100, reduced: false, query: "?nolabels=1", waits: [2500, 4200, 5800, 7400, 9000] });
+await shoot({ name: "labeled", width: 1440, height: 1200, reduced: false });
+await shoot({ name: "nolabels", width: 1440, height: 1200, reduced: false, query: "?nolabels=1" });
+await shoot({ name: "reduced", width: 1440, height: 1200, reduced: true, waits: [900] });
+await shoot({ name: "mobile", width: 390, height: 1400, reduced: false });
+await shoot({ name: "cycle", width: 1440, height: 1200, reduced: false, query: "?nolabels=1", waits: [1500, 3300, 4600, 6300, 8200] });
 
 await browser.close();
 console.log("done");
