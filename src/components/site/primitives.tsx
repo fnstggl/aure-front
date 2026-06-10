@@ -1,7 +1,8 @@
 import { Link } from "react-router-dom";
-import { motion } from "framer-motion";
+import { motion, useTime, useTransform } from "framer-motion";
 import { cn } from "@/lib/utils";
 import { useInView } from "@/hooks/useInView";
+import { usePrefersReducedMotion } from "@/hooks/usePrefersReducedMotion";
 import { ScrollWordReveal } from "./ScrollWordReveal";
 
 /* ------------------------------------------------------------------ */
@@ -137,19 +138,39 @@ export function SectionHeader({
   );
 }
 
-/* RailFlow — a single dot that travels along a hairline connector. Replaces the
-   ambient glow sweep; transform-only so reduced motion holds it static. */
-export function RailFlow({ delay = 0, className }: { delay?: number; className?: string }) {
+/* ShadowFlow — ONE dot travels the whole path: Workloads → Shadow mode →
+   Counterfactual report. The two rail segments share a single clock so the dot
+   is only ever on one segment at a time (never two dots); it disappears at the
+   Shadow-mode stage and re-emerges on the far side. Transform/opacity only;
+   reduced motion holds a single static dot at the start. */
+const FLOW_T = 4200;
+
+function FlowRail({ phase }: { phase: 0 | 1 }) {
+  const reduced = usePrefersReducedMotion();
+  const time = useTime();
+  const cycle = useTransform(time, (t) => (t % FLOW_T) / FLOW_T);
+  const [a, b] = phase === 0 ? [0.06, 0.42] : [0.54, 0.9];
+  const x = useTransform(cycle, [a, b], [0, 38], { clamp: true });
+  const opacity = useTransform(cycle, [a - 0.02, a + 0.02, b - 0.01, b + 0.04], [0, 1, 1, 0]);
   return (
-    <span className={cn("relative inline-block h-px w-11 bg-white/15", className)} aria-hidden>
+    <span className="relative inline-block h-px w-11 bg-white/15" aria-hidden>
       <motion.span
         className="absolute left-0 top-1/2 h-1.5 w-1.5 rounded-full bg-white"
-        style={{ y: "-50%" }}
-        initial={{ x: 0 }}
-        animate={{ x: [0, 38] }}
-        transition={{ duration: 1.8, repeat: Infinity, ease: "linear", repeatDelay: 0.4, delay: delay / 1000 }}
+        style={reduced ? { x: 0, y: "-50%", opacity: phase === 0 ? 1 : 0 } : { x, y: "-50%", opacity }}
       />
     </span>
+  );
+}
+
+export function ShadowFlow() {
+  return (
+    <div className="flex items-center justify-center gap-3 font-mono text-[11px] uppercase tracking-[0.16em] text-white/35">
+      <span>Workloads</span>
+      <FlowRail phase={0} />
+      <span className="text-white/55">Shadow mode</span>
+      <FlowRail phase={1} />
+      <span>Counterfactual report</span>
+    </div>
   );
 }
 

@@ -7,7 +7,7 @@ import {
   SectionHeader,
   CTAButton,
   Reveal,
-  RailFlow,
+  ShadowFlow,
 } from "@/components/site/primitives";
 import { ScrollWordReveal } from "@/components/site/ScrollWordReveal";
 import { ProblemSection } from "@/components/site/ProblemSection";
@@ -135,7 +135,6 @@ export default function Index() {
       <Section className="py-[120px] md:py-[180px] lg:py-[216px]">
         <Container>
           <Reveal className="mx-auto max-w-4xl text-center">
-            <div className="mx-auto mb-6 h-px w-10 bg-signal/70" aria-hidden />
             <div className="text-[clamp(4.5rem,15vw,11rem)] font-medium leading-[0.84] tracking-[-0.05em] text-foreground">
               42%
             </div>
@@ -353,13 +352,7 @@ export default function Index() {
             </Reveal>
 
             <Reveal delay={260} className="mt-12">
-              <div className="flex items-center justify-center gap-3 font-mono text-[11px] uppercase tracking-[0.16em] text-white/35">
-                <span>Workloads</span>
-                <RailFlow />
-                <span className="text-white/55">Shadow mode</span>
-                <RailFlow delay={600} />
-                <span>Counterfactual report</span>
-              </div>
+              <ShadowFlow />
             </Reveal>
           </div>
         </Container>
