@@ -1,6 +1,8 @@
 import { Link } from "react-router-dom";
+import { motion } from "framer-motion";
 import { cn } from "@/lib/utils";
 import { useInView } from "@/hooks/useInView";
+import { ScrollWordReveal } from "./ScrollWordReveal";
 
 /* ------------------------------------------------------------------ */
 /* Layout                                                              */
@@ -105,13 +107,16 @@ export function SectionHeader({
   intro,
   className,
   align = "left",
+  revealIntro = false,
 }: {
   eyebrow?: string;
   title: React.ReactNode;
   intro?: React.ReactNode;
   className?: string;
   align?: "left" | "center";
+  revealIntro?: boolean;
 }) {
+  const introClass = "mt-5 max-w-xl text-pretty text-[15px] leading-relaxed text-white/64 md:text-[16px]";
   return (
     <div className={cn("max-w-2xl", align === "center" && "mx-auto text-center", className)}>
       {eyebrow && (
@@ -122,12 +127,29 @@ export function SectionHeader({
       <h2 className="text-balance text-[clamp(1.75rem,3.6vw,2.6rem)] font-medium leading-[1.08] tracking-[-0.02em] text-foreground">
         {title}
       </h2>
-      {intro && (
-        <p className="mt-5 max-w-xl text-pretty text-[15px] leading-relaxed text-white/64 md:text-[16px]">
-          {intro}
-        </p>
-      )}
+      {intro &&
+        (revealIntro && typeof intro === "string" ? (
+          <ScrollWordReveal as="p" text={intro} className={introClass} />
+        ) : (
+          <p className={introClass}>{intro}</p>
+        ))}
     </div>
+  );
+}
+
+/* RailFlow — a single dot that travels along a hairline connector. Replaces the
+   ambient glow sweep; transform-only so reduced motion holds it static. */
+export function RailFlow({ delay = 0, className }: { delay?: number; className?: string }) {
+  return (
+    <span className={cn("relative inline-block h-px w-11 bg-white/15", className)} aria-hidden>
+      <motion.span
+        className="absolute left-0 top-1/2 h-1.5 w-1.5 rounded-full bg-white"
+        style={{ y: "-50%" }}
+        initial={{ x: 0 }}
+        animate={{ x: [0, 38] }}
+        transition={{ duration: 1.8, repeat: Infinity, ease: "linear", repeatDelay: 0.4, delay: delay / 1000 }}
+      />
+    </span>
   );
 }
 

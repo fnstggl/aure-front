@@ -28,7 +28,7 @@ const contactSchema = z.object({
 type ContactFormValues = z.infer<typeof contactSchema>;
 
 const inputClass =
-  "bg-card border-input text-foreground placeholder:text-white/30 focus-visible:ring-signal/40 focus-visible:border-signal/40";
+  "bg-card rounded-none border-input text-foreground placeholder:text-white/30 focus-visible:ring-signal/40 focus-visible:border-signal/40";
 
 export default function Contact() {
   const { toast } = useToast();
@@ -110,7 +110,7 @@ export default function Contact() {
             {/* Form column */}
             <div className="lg:col-span-7">
               <Reveal delay={160}>
-                <div className="rounded-md border border-border bg-card p-6 md:p-8">
+                <div className="border border-border bg-card p-6 md:p-8">
                   <Form {...form}>
                     <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-5">
                       <div className="grid gap-5 sm:grid-cols-2">
@@ -203,7 +203,7 @@ export default function Contact() {
                       />
 
                       {!isSupabaseConfigured && (
-                        <p className="rounded-sm border border-signal/30 bg-signal/[0.06] px-3 py-2 font-mono text-[11px] leading-relaxed text-steel/90">
+                        <p className="border border-signal/30 bg-signal/[0.06] px-3 py-2 font-mono text-[11px] leading-relaxed text-steel/90">
                           Submissions are disabled — set VITE_SUPABASE_URL and
                           VITE_SUPABASE_PUBLISHABLE_KEY to enable this form.
                         </p>
@@ -211,7 +211,7 @@ export default function Contact() {
                       <button
                         type="submit"
                         disabled={isSubmitting}
-                        className="inline-flex h-11 w-full items-center justify-center rounded-md bg-foreground px-6 text-sm font-medium tracking-tight text-background transition-all duration-200 ease-premium hover:bg-white active:translate-y-px disabled:opacity-50"
+                        className="inline-flex h-11 w-full items-center justify-center bg-foreground px-6 text-sm font-medium tracking-tight text-background transition-all duration-200 ease-premium hover:bg-white active:translate-y-px disabled:opacity-50"
                       >
                         {isSubmitting ? "Submitting…" : submitted ? "Submitted — we'll be in touch" : "Submit request"}
                       </button>

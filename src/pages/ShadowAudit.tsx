@@ -52,6 +52,7 @@ export default function ShadowAudit() {
             <SectionHeader
               eyebrow="The report"
               title="A complete picture of savings and safety behavior"
+              revealIntro
               intro="Zero risk to your production environment. The output is a structured report designed for infrastructure teams."
             />
           </Reveal>

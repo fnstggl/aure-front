@@ -7,6 +7,7 @@ import {
   SectionHeader,
   CTAButton,
   Reveal,
+  RailFlow,
 } from "@/components/site/primitives";
 import { ScrollWordReveal } from "@/components/site/ScrollWordReveal";
 import { ProblemSection } from "@/components/site/ProblemSection";
@@ -155,6 +156,7 @@ export default function Index() {
             <SectionHeader
               eyebrow="System overview"
               title="A deterministic control loop"
+              revealIntro
               intro="Observe, forecast, decide, filter, log. Aurelius reads scheduler metadata, predicts conditions with uncertainty bounds, ranks options, rejects unsafe candidates under hard constraints, and records every outcome — append-only."
             />
           </Reveal>
@@ -253,6 +255,7 @@ export default function Index() {
             <SectionHeader
               eyebrow="Integration"
               title="Designed to integrate without seeing the work itself"
+              revealIntro
               intro="Aurelius reads job metadata only — no payloads, no model outputs, no customer code. It deploys as a sidecar control layer, runs read-only in shadow mode, and writes an append-only audit log."
             />
           </Reveal>
@@ -352,9 +355,9 @@ export default function Index() {
             <Reveal delay={260} className="mt-12">
               <div className="flex items-center justify-center gap-3 font-mono text-[11px] uppercase tracking-[0.16em] text-white/35">
                 <span>Workloads</span>
-                <span className="h-px w-8 rail-x" aria-hidden />
+                <RailFlow />
                 <span className="text-white/55">Shadow mode</span>
-                <span className="h-px w-8 rail-x" style={{ ["--rail-delay" as string]: "600ms" }} aria-hidden />
+                <RailFlow delay={600} />
                 <span>Counterfactual report</span>
               </div>
             </Reveal>
