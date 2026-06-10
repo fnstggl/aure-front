@@ -14,7 +14,7 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
-import { supabase, isSupabaseConfigured } from "@/integrations/supabase/safeClient";
+import { supabase } from "@/integrations/supabase/safeClient";
 import { Container, SectionEyebrow, Reveal } from "@/components/site/primitives";
 
 const contactSchema = z.object({
@@ -202,12 +202,6 @@ export default function Contact() {
                         )}
                       />
 
-                      {!isSupabaseConfigured && (
-                        <p className="border border-signal/30 bg-signal/[0.06] px-3 py-2 font-mono text-[11px] leading-relaxed text-steel/90">
-                          Submissions are disabled — set VITE_SUPABASE_URL and
-                          VITE_SUPABASE_PUBLISHABLE_KEY to enable this form.
-                        </p>
-                      )}
                       <button
                         type="submit"
                         disabled={isSubmitting}
