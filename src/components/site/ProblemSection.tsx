@@ -140,7 +140,7 @@ export function ProblemSection() {
         </div>
 
         <p className="mt-7 text-center font-mono text-[11px] uppercase tracking-[0.18em] text-white/30">
-          {on ? "Aurelius optimizes · cost · capacity · timing · constraints" : "Without Aurelius · cost is a side effect, not an objective"}
+          {on ? "Aurelius optimizes · cost · energy · capacity · timing · region · constraints" : "Without Aurelius · thousands of microdecisions compound into excess costs"}
         </p>
       </Container>
     </Section>
