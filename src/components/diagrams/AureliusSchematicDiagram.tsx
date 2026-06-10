@@ -51,7 +51,7 @@ const F_L = "#070a0e"; // left face
 const STEEL = "#6f7f9b"; // single accent — metadata / advisory
 const STEEL_DIM = "rgba(111,127,155,0.5)";
 const RED = "#9b3f3d"; // blocked payload only
-const RED_DIM = "rgba(155,63,61,0.5)";
+const RED_DIM = "rgba(155,63,61,0.62)";
 
 const EASE = [0.16, 1, 0.3, 1] as const;
 const T = 9000; // animation cycle (ms)
@@ -239,8 +239,8 @@ function Rails() {
       {arrowDown(bez(BLUE_IN, 0.62), STEEL)}
       {arrowDown(bez(BLUE_OUT, 0.6), STEEL)}
       {/* blocked payload rail, terminating at the gate with a persistent stop */}
-      <path d={pathD(RED_PATH)} fill="none" stroke={RED_DIM} strokeWidth={1.4} strokeDasharray="5 5" strokeLinecap="round" />
-      <circle cx={A.gateStop[0]} cy={A.gateStop[1]} r={8.5} fill={BG} stroke={RED} strokeWidth={1.5} />
+      <path d={pathD(RED_PATH)} fill="none" stroke={RED_DIM} strokeWidth={1.6} strokeDasharray="5 5" strokeLinecap="round" />
+      <circle cx={A.gateStop[0]} cy={A.gateStop[1]} r={9} fill={BG} stroke={RED} strokeWidth={1.7} />
       <path
         d={`M${A.gateStop[0] - 3.6},${A.gateStop[1] - 3.6} L${A.gateStop[0] + 3.6},${A.gateStop[1] + 3.6} M${A.gateStop[0] + 3.6},${A.gateStop[1] - 3.6} L${A.gateStop[0] - 3.6},${A.gateStop[1] + 3.6}`}
         stroke={RED}
