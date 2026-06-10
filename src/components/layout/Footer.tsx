@@ -40,7 +40,15 @@ export function Footer() {
         </div>
 
         <div className="mt-12 flex flex-col gap-2 border-t border-border pt-6 sm:flex-row sm:items-center sm:justify-between">
-          <span className="font-mono text-[11px] text-white/28">© {new Date().getFullYear()} Aurelius</span>
+          <span className="flex items-center gap-4 font-mono text-[11px] text-white/28">
+            <span>© {new Date().getFullYear()} Aurelius</span>
+            <Link
+              to="/privacy"
+              className="tracking-tight transition-colors duration-200 hover:text-white/60"
+            >
+              Privacy Policy
+            </Link>
+          </span>
           <span className="flex items-center gap-2 font-mono text-[10.5px] uppercase tracking-[0.16em] text-white/30">
             <span className="inline-block h-1 w-1 rounded-full bg-signal/80" aria-hidden />
             Shadow-mode · constraint-aware

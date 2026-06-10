@@ -13,6 +13,7 @@ const Safety = lazy(() => import("./pages/Safety"));
 const ShadowAudit = lazy(() => import("./pages/ShadowAudit"));
 const Docs = lazy(() => import("./pages/Docs"));
 const Contact = lazy(() => import("./pages/Contact"));
+const Privacy = lazy(() => import("./pages/Privacy"));
 const NotFound = lazy(() => import("./pages/NotFound"));
 
 const queryClient = new QueryClient();
@@ -34,6 +35,7 @@ const App = () => (
               <Route path="/shadow-audit" element={<ShadowAudit />} />
               <Route path="/docs" element={<Docs />} />
               <Route path="/contact" element={<Contact />} />
+              <Route path="/privacy" element={<Privacy />} />
               <Route path="*" element={<NotFound />} />
             </Routes>
           </Suspense>
