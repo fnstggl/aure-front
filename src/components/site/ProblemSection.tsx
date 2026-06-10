@@ -60,11 +60,11 @@ export function ProblemSection() {
           <h2 className="text-balance text-[clamp(1.9rem,4.6vw,3.1rem)] font-medium leading-[1.06] tracking-[-0.025em] text-foreground">
             Your GPU fleet bleeds money.
             <br />
-            <span className="text-white/50">Your team can’t catch it all.</span>
+            <span className="text-white/50">Your scheduler wasn’t built to stop it.</span>
           </h2>
           <p className="mx-auto mt-6 max-w-xl text-[15px] leading-relaxed text-white/60 md:text-[16px]">
-            Most tools surface the waste and stop there. Your team still chases it by hand —
-            cluster by cluster, window by window, at 3am.
+            Most schedulers optimize for availability, fairness, and latency. They don’t optimize for energy cost, regional economics, capacity fragmentation, or timing windows.
+            Aurelius finds the best economic outcome.
           </p>
         </div>
 
