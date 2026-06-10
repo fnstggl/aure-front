@@ -2,7 +2,7 @@ import { AnimatePresence, motion } from "framer-motion";
 import { useInView } from "@/hooks/useInView";
 import { useSequence } from "@/hooks/useSequence";
 import { usePrefersReducedMotion } from "@/hooks/usePrefersReducedMotion";
-import { TopologyPlate, Annotation, C, EASE } from "./plate";
+import { TopologyPlate, Annotation, C, EASE, RX } from "./plate";
 
 /* Plate 03 — Control loop.
    One idea: a deterministic closed loop. A single packet steps along a straight
@@ -73,10 +73,10 @@ export function ControlLoopDiagram() {
                 y={RAIL_Y - NH / 2}
                 width={NW}
                 height={NH}
-                rx={7}
+                rx={RX}
                 fill={active ? C.steelFill : C.surface}
                 stroke={active ? C.steelStrong : C.surfaceStroke}
-                strokeWidth="1"
+                strokeWidth={active ? 2 : 1.4}
                 style={{ transition: "fill 0.5s, stroke 0.5s" }}
               />
               <Annotation x={CX[i]} y={RAIL_Y - 4} anchor="middle" state="dim" size={10} track={0.6}>

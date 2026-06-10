@@ -33,7 +33,7 @@ export function ShadowModeAuditDiagram() {
   const step = useSequence(ROWS.length, { enabled: inView, interval: 1500, resting: ROWS.length - 1 });
 
   return (
-    <figure ref={ref} className="relative overflow-hidden rounded-lg border border-border bg-card">
+    <figure ref={ref} className="relative overflow-hidden rounded-md border border-border bg-card">
       <span className="pointer-events-none absolute right-4 top-3 z-10 font-mono text-[10px] tracking-[0.16em] text-white/22">fig.08</span>
       <div className="overflow-x-auto">
         <div className="min-w-[760px]">
@@ -41,7 +41,7 @@ export function ShadowModeAuditDiagram() {
           <div className="flex items-center justify-between border-b border-border px-5 py-3 pr-16">
             <span className="font-mono text-[11px] uppercase tracking-[0.18em] text-white/55">audit.log — counterfactual ledger</span>
             <span className="flex items-center gap-1.5 font-mono text-[10px] uppercase tracking-wider text-white/35">
-              <span className="h-1.5 w-1.5 rounded-full bg-white/30" /> append-only
+              <span className="h-1.5 w-1.5 bg-white/30" /> append-only
             </span>
           </div>
 
@@ -71,7 +71,7 @@ export function ShadowModeAuditDiagram() {
                   <span className="tabular-nums" style={{ color: r.status === "rejected" ? C.red : "hsl(0 0% 92%)" }}>{r.delta}</span>
                   <span className="text-white/42">{r.constraints}</span>
                   <span className="flex items-center justify-end gap-1.5 uppercase tracking-wider" style={{ color: st.color }}>
-                    <span className="inline-block h-1.5 w-1.5 rounded-full" style={{ background: st.color }} />
+                    <span className="inline-block h-1.5 w-1.5" style={{ background: st.color }} />
                     {st.label}
                   </span>
                 </motion.div>

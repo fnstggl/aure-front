@@ -1,51 +1,68 @@
-import { useId } from "react";
 import { cn } from "@/lib/utils";
 
 /* ============================================================================
-   Aurelius diagram language — authored infrastructure topology plates.
+   Aurelius diagram language — enterprise infrastructure schematics.
 
-   One coherent visual system across every diagram: a dark plate, a faint
-   reference plane, recessed system surfaces, precise rails and flow paths,
-   gates and boundaries, an audit ledger, and engineering annotations.
+   Design rules (anti-"vibe-coded"):
+     • Sharp corners. Square blocks read as engineered, not consumer UI.
+     • SOLID flat fills with real tonal steps — never a faint fill behind a
+       bright hairline (that "glass card" look is the giveaway).
+     • Confident, weighted strokes (2px primary flow, 1.4px structure) with
+       arrowheads for direction. No timid hairlines everywhere.
+     • High-contrast labels: crisp white truth, one decisive steel accent,
+       red only for blocked. No decorative blueprint grid or registration ticks.
 
-   Semantics (restrained):
-     white  = truth / primary
-     gray   = inactive / neutral
-     steel  = selected / approved / active control + metadata path
-     red    = rejected / blocked / unsafe
-   No gold, no glow, no bright blue, no decorative gradients.
+   Semantics:
+     white  = truth / primary       steel = selected / approved / active
+     gray   = neutral / inactive     red   = rejected / blocked / unsafe
    ============================================================================ */
 
 export const C = {
-  grid: "hsl(0 0% 100% / 0.038)",
-  gridStrong: "hsl(0 0% 100% / 0.07)",
-  plane: "hsl(0 0% 100% / 0.016)",
-  planeStroke: "hsl(0 0% 100% / 0.07)",
-  surface: "hsl(0 0% 100% / 0.028)",
-  surfaceStroke: "hsl(0 0% 100% / 0.10)",
-  rail: "hsl(0 0% 100% / 0.13)",
-  faint: "hsl(0 0% 100% / 0.22)",
-  dim: "hsl(0 0% 100% / 0.34)",
-  label: "hsl(0 0% 100% / 0.50)",
-  text: "hsl(0 0% 100% / 0.66)",
-  white: "hsl(0 0% 95%)",
-  /* deep navy steel — selected / active control path */
-  steelFill: "hsl(216 21% 29% / 0.5)",
-  steelFillSoft: "hsl(216 21% 29% / 0.22)",
-  steelLine: "hsl(216 23% 40%)",
-  steelStrong: "hsl(216 23% 46%)",
-  steelText: "hsl(217 16% 62%)",
-  /* muted red — rejected / blocked */
-  red: "hsl(1 44% 46%)",
-  redSoft: "hsl(1 44% 42% / 0.16)",
-  redLine: "hsl(1 44% 42% / 0.6)",
+  /* structure */
+  plate: "#0b0c0f",
+  rail: "hsl(220 8% 100% / 0.18)",
+  hair: "hsl(220 8% 100% / 0.10)",
+  faint: "hsl(0 0% 100% / 0.32)",
+  dim: "hsl(0 0% 100% / 0.46)",
+  label: "hsl(0 0% 100% / 0.66)",
+  text: "hsl(0 0% 100% / 0.80)",
+  white: "hsl(0 0% 97%)",
+
+  /* neutral solid blocks — flat fill, same-family edge (NOT a bright outline) */
+  surface: "hsl(222 9% 12%)",
+  surfaceStroke: "hsl(220 8% 24%)",
+  surfaceDim: "hsl(222 10% 8%)",
+
+  /* deep steel — selected / active control + metadata path. Solid fills. */
+  steelFill: "hsl(214 32% 32%)",
+  steelFillSoft: "hsl(216 26% 19%)",
+  steelLine: "hsl(214 30% 54%)",
+  steelStrong: "hsl(213 36% 64%)",
+  steelText: "hsl(212 34% 78%)",
+
+  /* muted red — rejected / blocked. Solid fill. */
+  red: "hsl(2 54% 58%)",
+  redSoft: "hsl(2 46% 17%)",
+  redLine: "hsl(2 50% 50%)",
+
+  /* legacy aliases (kept so older call sites keep compiling) */
+  grid: "hsl(220 8% 100% / 0.10)",
+  gridStrong: "hsl(220 8% 100% / 0.18)",
+  plane: "hsl(222 10% 8%)",
+  planeStroke: "hsl(220 8% 24%)",
 } as const;
 
 export const EASE = [0.16, 1, 0.3, 1] as const;
+export const RX = 2; // the only corner radius — sharp, deliberate
+
+/* markerEnd helper — fixed global ids so any diagram can point a connector. */
+export function arrow(tone: "steel" | "red" | "rail" = "steel") {
+  return `url(#ah-${tone})`;
+}
 
 /* ------------------------------------------------------------------ */
-/* TopologyPlate — figure wrapper: reference plane + figure label +    */
-/* caption strip. Children are SVG drawn in the given viewBox.         */
+/* TopologyPlate — flat figure wrapper. No grid, no ticks.            */
+/* Provides shared arrowhead markers scoped to this plate's id.        */
 /* ------------------------------------------------------------------ */
 
 export function TopologyPlate({
@@ -53,7 +70,6 @@ export function TopologyPlate({
   caption,
   vb,
   minWidth = 760,
-  plane = true,
   className,
   children,
 }: {
@@ -61,27 +77,30 @@ export function TopologyPlate({
   caption: string;
   vb: [number, number];
   minWidth?: number;
-  plane?: boolean;
+  plane?: boolean; // accepted for compat; intentionally unused
   className?: string;
   children: React.ReactNode;
 }) {
-  const id = useId().replace(/:/g, "");
   const [w, h] = vb;
   return (
-    <figure className={cn("relative overflow-hidden rounded-lg border border-border bg-card", className)}>
+    <figure className={cn("relative overflow-hidden rounded-md border border-border bg-card", className)}>
       <div className="relative overflow-x-auto">
-        <svg
-          viewBox={`0 0 ${w} ${h}`}
-          className="block w-full"
-          style={{ minWidth }}
-          role="img"
-          aria-label={caption}
-        >
-          {plane && <ReferencePlane id={id} w={w} h={h} />}
+        <svg viewBox={`0 0 ${w} ${h}`} className="block w-full" style={{ minWidth }} role="img" aria-label={caption}>
+          <defs>
+            <marker id="ah-steel" markerWidth="9" markerHeight="9" refX="6" refY="4.5" orient="auto">
+              <path d="M1 1L6.5 4.5L1 8" fill="none" stroke={C.steelStrong} strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" />
+            </marker>
+            <marker id="ah-red" markerWidth="9" markerHeight="9" refX="6" refY="4.5" orient="auto">
+              <path d="M1 1L6.5 4.5L1 8" fill="none" stroke={C.red} strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" />
+            </marker>
+            <marker id="ah-rail" markerWidth="9" markerHeight="9" refX="6" refY="4.5" orient="auto">
+              <path d="M1 1L6.5 4.5L1 8" fill="none" stroke={C.rail} strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" />
+            </marker>
+          </defs>
           {children}
         </svg>
       </div>
-      <span className="pointer-events-none absolute right-4 top-3 font-mono text-[10px] tabular-nums tracking-[0.16em] text-white/22">
+      <span className="pointer-events-none absolute right-4 top-3 font-mono text-[10px] tabular-nums tracking-[0.16em] text-white/30">
         {fig}
       </span>
       <CaptionStrip label={caption} />
@@ -91,43 +110,23 @@ export function TopologyPlate({
 
 export function CaptionStrip({ label }: { label: string }) {
   return (
-    <figcaption className="flex items-center justify-between gap-2.5 border-t border-border px-4 py-2.5 font-mono text-[10.5px] uppercase tracking-[0.2em] text-white/30">
+    <figcaption className="flex items-center justify-between gap-2.5 border-t border-border px-4 py-2.5 font-mono text-[10.5px] uppercase tracking-[0.2em] text-white/34">
       <span className="flex items-center gap-2.5">
-        <span className="h-px w-4 bg-steel/40" aria-hidden />
+        <span className="h-px w-4 bg-steel/50" aria-hidden />
         {label}
       </span>
-      <span className="hidden tabular-nums text-white/18 sm:inline">metadata_only</span>
+      <span className="hidden tabular-nums text-white/20 sm:inline">metadata_only</span>
     </figcaption>
   );
 }
 
-/* ------------------------------------------------------------------ */
-/* ReferencePlane — faint coordinate grid, fading toward the edges.    */
-/* ------------------------------------------------------------------ */
-
-export function ReferencePlane({ id, w, h }: { id: string; w: number; h: number }) {
-  return (
-    <g aria-hidden>
-      <defs>
-        <pattern id={`grid-${id}`} width="40" height="40" patternUnits="userSpaceOnUse">
-          <path d="M40 0H0V40" fill="none" stroke={C.grid} strokeWidth="1" />
-        </pattern>
-        <radialGradient id={`fade-${id}`} cx="50%" cy="42%" r="72%">
-          <stop offset="0%" stopColor="#fff" stopOpacity="0.9" />
-          <stop offset="62%" stopColor="#fff" stopOpacity="0.32" />
-          <stop offset="100%" stopColor="#fff" stopOpacity="0" />
-        </radialGradient>
-        <mask id={`mask-${id}`}>
-          <rect x="0" y="0" width={w} height={h} fill={`url(#fade-${id})`} />
-        </mask>
-      </defs>
-      <rect x="0" y="0" width={w} height={h} fill={`url(#grid-${id})`} mask={`url(#mask-${id})`} />
-    </g>
-  );
+/* Kept for compat — intentionally renders nothing (no blueprint grid). */
+export function ReferencePlane() {
+  return null;
 }
 
 /* ------------------------------------------------------------------ */
-/* SystemSurface — a recessed infrastructure plane (not a card).       */
+/* SystemSurface — a SOLID system block. State lives in the fill.      */
 /* ------------------------------------------------------------------ */
 
 export function SystemSurface({
@@ -136,7 +135,7 @@ export function SystemSurface({
   w,
   h,
   state = "neutral",
-  rx = 6,
+  rx = RX,
 }: {
   x: number;
   y: number;
@@ -146,11 +145,11 @@ export function SystemSurface({
   rx?: number;
 }) {
   const map = {
-    neutral: { fill: C.surface, stroke: C.surfaceStroke, opacity: 1 },
-    dim: { fill: C.plane, stroke: C.planeStroke, opacity: 0.5 },
-    active: { fill: C.steelFillSoft, stroke: C.steelLine, opacity: 1 },
-    selected: { fill: C.steelFill, stroke: C.steelStrong, opacity: 1 },
-    rejected: { fill: C.redSoft, stroke: C.redLine, opacity: 0.7 },
+    neutral: { fill: C.surface, stroke: C.surfaceStroke, sw: 1.4 },
+    dim: { fill: C.surfaceDim, stroke: C.surfaceStroke, sw: 1.2 },
+    active: { fill: C.steelFillSoft, stroke: C.steelLine, sw: 1.6 },
+    selected: { fill: C.steelFill, stroke: C.steelStrong, sw: 2 },
+    rejected: { fill: C.redSoft, stroke: C.redLine, sw: 1.6 },
   }[state];
   return (
     <rect
@@ -161,9 +160,8 @@ export function SystemSurface({
       rx={rx}
       fill={map.fill}
       stroke={map.stroke}
-      strokeWidth="1"
-      opacity={map.opacity}
-      style={{ transition: "opacity 0.5s, fill 0.5s, stroke 0.5s" }}
+      strokeWidth={map.sw}
+      style={{ transition: "fill 0.5s, stroke 0.5s" }}
     />
   );
 }
@@ -179,8 +177,9 @@ export function Annotation({
   anchor = "start",
   state = "neutral",
   size = 13,
-  track = 0.4,
+  track = 0.2,
   mono = true,
+  weight,
 }: {
   x: number;
   y: number;
@@ -190,6 +189,7 @@ export function Annotation({
   size?: number;
   track?: number;
   mono?: boolean;
+  weight?: number;
 }) {
   const fill = {
     neutral: C.text,
@@ -207,6 +207,7 @@ export function Annotation({
       fontSize={size}
       letterSpacing={track}
       fill={fill}
+      fontWeight={weight}
       className={mono ? "font-mono" : "font-sans"}
       style={{ transition: "fill 0.5s" }}
     >
@@ -215,29 +216,31 @@ export function Annotation({
   );
 }
 
-/* Tiny uppercase engineering tag on a plate (e.g. region code). */
+/* Tiny uppercase engineering tag (e.g. region code). */
 export function Tag({
   x,
   y,
   children,
   state = "neutral",
   anchor = "start",
+  size = 11,
 }: {
   x: number;
   y: number;
   children: React.ReactNode;
   state?: "neutral" | "active" | "selected" | "rejected" | "dim" | "white";
   anchor?: "start" | "middle" | "end";
+  size?: number;
 }) {
   return (
-    <Annotation x={x} y={y} anchor={anchor} state={state} size={11} track={1.4}>
+    <Annotation x={x} y={y} anchor={anchor} state={state} size={size} track={1.2}>
       {children}
     </Annotation>
   );
 }
 
 /* ------------------------------------------------------------------ */
-/* StatusMark — check / cross / dot                                    */
+/* StatusMark — check / cross / dot, drawn with confident weight.      */
 /* ------------------------------------------------------------------ */
 
 export function StatusMark({ x, y, kind, r = 7 }: { x: number; y: number; kind: "pass" | "fail" | "idle"; r?: number }) {
@@ -245,16 +248,16 @@ export function StatusMark({ x, y, kind, r = 7 }: { x: number; y: number; kind: 
     const k = r * 0.5;
     return (
       <g style={{ transition: "opacity 0.4s" }}>
-        <circle cx={x} cy={y} r={r} fill="none" stroke={C.red} strokeWidth="1.2" />
-        <path d={`M${x - k} ${y - k}L${x + k} ${y + k}M${x + k} ${y - k}L${x - k} ${y + k}`} stroke={C.red} strokeWidth="1.3" strokeLinecap="round" />
+        <circle cx={x} cy={y} r={r} fill="none" stroke={C.red} strokeWidth="1.6" />
+        <path d={`M${x - k} ${y - k}L${x + k} ${y + k}M${x + k} ${y - k}L${x - k} ${y + k}`} stroke={C.red} strokeWidth="1.7" strokeLinecap="round" />
       </g>
     );
   }
   if (kind === "pass") {
     return (
       <g style={{ transition: "opacity 0.4s" }}>
-        <circle cx={x} cy={y} r={r} fill="none" stroke={C.steelStrong} strokeWidth="1.2" />
-        <path d={`M${x - r * 0.42} ${y}L${x - r * 0.08} ${y + r * 0.4}L${x + r * 0.5} ${y - r * 0.42}`} fill="none" stroke={C.steelText} strokeWidth="1.3" strokeLinecap="round" strokeLinejoin="round" />
+        <circle cx={x} cy={y} r={r} fill="none" stroke={C.steelStrong} strokeWidth="1.6" />
+        <path d={`M${x - r * 0.42} ${y}L${x - r * 0.08} ${y + r * 0.4}L${x + r * 0.5} ${y - r * 0.42}`} fill="none" stroke={C.steelText} strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" />
       </g>
     );
   }

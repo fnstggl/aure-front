@@ -2,7 +2,7 @@ import { motion } from "framer-motion";
 import { useInView } from "@/hooks/useInView";
 import { useSequence } from "@/hooks/useSequence";
 import { usePrefersReducedMotion } from "@/hooks/usePrefersReducedMotion";
-import { TopologyPlate, SystemSurface, Annotation, Tag, StatusMark, C, EASE } from "./plate";
+import { TopologyPlate, SystemSurface, Annotation, Tag, StatusMark, C, EASE, arrow } from "./plate";
 
 /* Plate 01 — Scheduler Interception.
    One idea: Aurelius is a sidecar control plane, not a replacement. The
@@ -42,11 +42,11 @@ export function SchedulerInterceptionDiagram() {
         <Tag x={406} y={198} anchor="middle" state="dim">SCHEDULER REMAINS AUTHORITY</Tag>
 
         {/* ---- metadata branch (down to Aurelius) ---- */}
-        <path d={META_PATH} fill="none" stroke={C.steelLine} strokeWidth="1.4" opacity={decided ? 1 : 0.5} style={{ transition: "opacity 0.5s" }} />
+        <path d={META_PATH} fill="none" stroke={C.steelLine} strokeWidth="2" opacity={decided ? 1 : 0.5} markerEnd={arrow("steel")} style={{ transition: "opacity 0.5s" }} />
         <Annotation x={416} y={228} state="active" size={11} track={0.6}>metadata only</Annotation>
 
         {/* ---- advisory return (up to rail) ---- */}
-        <path d={ADVISORY_PATH} fill="none" stroke={C.steelLine} strokeWidth="1.4" strokeDasharray="3 4" opacity={step >= 3 ? 1 : 0.4} style={{ transition: "opacity 0.5s" }} />
+        <path d={ADVISORY_PATH} fill="none" stroke={C.steelLine} strokeWidth="2" strokeDasharray="3 4" opacity={step >= 3 ? 1 : 0.4} markerEnd={arrow("steel")} style={{ transition: "opacity 0.5s" }} />
         <Annotation x={648} y={196} state={step >= 3 ? "active" : "dim"} size={11} track={0.6}>advisory decision</Annotation>
 
         {/* ---- payload tap → blocked ---- */}
