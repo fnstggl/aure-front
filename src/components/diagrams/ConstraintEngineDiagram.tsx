@@ -93,7 +93,7 @@ export function ConstraintEngineDiagram() {
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: -5 }}
                 transition={{ duration: 0.35, ease: EASE }}
-                className="rounded-sm border px-2.5 py-1 font-mono text-[11px] uppercase tracking-[0.12em]"
+                className="border px-2.5 py-1 font-mono text-[11px] uppercase tracking-[0.12em]"
                 style={
                   verdict === "approved"
                     ? { borderColor: C.steelLine, color: C.steelText }

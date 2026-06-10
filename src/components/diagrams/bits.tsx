@@ -27,8 +27,8 @@ export function Node({
   return (
     <div
       className={cn(
-        "relative rounded-md border bg-card-elevated px-3.5 py-3 transition-all duration-500 ease-premium",
-        active && strong && "border-signal/55 bg-signal/[0.07] shadow-[0_10px_34px_-24px_hsl(218_45%_66%/0.45)]",
+        "relative border bg-card-elevated px-3.5 py-3 transition-all duration-500 ease-premium",
+        active && strong && "border-signal/55 bg-signal/[0.06] shadow-[0_10px_34px_-24px_hsl(0_0%_80%/0.3)]",
         active && !strong && "border-signal/35 bg-signal/[0.04]",
         !active && "border-border",
         className,
@@ -111,7 +111,7 @@ export function StatusTag({
   return (
     <span
       className={cn(
-        "inline-flex items-center gap-1.5 rounded-sm border px-1.5 py-0.5 font-mono text-[10px] uppercase tracking-wider",
+        "inline-flex items-center gap-1.5 border px-1.5 py-0.5 font-mono text-[10px] uppercase tracking-wider",
         styles[state],
         className,
       )}
@@ -137,7 +137,7 @@ function Glyph({ state }: { state: GateState }) {
       </svg>
     );
   }
-  return <span className="inline-block h-1 w-1 rounded-full bg-current opacity-60" />;
+  return <span className="inline-block h-1 w-1 bg-current opacity-60" />;
 }
 
 /** A small key/value line rendered in mono — for metadata + log readouts. */

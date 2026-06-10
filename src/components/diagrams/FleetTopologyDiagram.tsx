@@ -35,10 +35,11 @@ const REGIONS: {
 const RW = 408;
 const RH = 112;
 
+/* orthogonal fan-out from a single vertical bus at x=404 */
 const PATHS = [
-  "M236 250 C400 250 430 92 548 92",
-  "M236 250 C420 250 470 238 548 238",
-  "M236 250 C400 250 430 384 548 384",
+  "M236 250 H404 V92 H548",
+  "M236 250 H404 V238 H548",
+  "M236 250 H404 V384 H548",
 ];
 
 const READOUT = [
@@ -51,14 +52,14 @@ function Region({ r }: { r: (typeof REGIONS)[number] }) {
   const sel = r.state === "selected";
   return (
     <g style={{ transition: "opacity 0.5s" }} opacity={sel ? 1 : 0.72}>
-      <SystemSurface x={r.x} y={r.y} w={RW} h={RH} state={sel ? "active" : "neutral"} />
-      <Annotation x={r.x + 18} y={r.y + 28} state="white" size={13.5} track={1.2}>{r.code}</Annotation>
+      <SystemSurface x={r.x} y={r.y} w={RW} h={RH} state={sel ? "selected" : "rejected"} />
+      <Annotation x={r.x + 18} y={r.y + 28} state={sel ? "white" : "rejected"} size={13.5} track={1.2}>{r.code}</Annotation>
       <StatusMark x={r.x + RW - 20} y={r.y + 22} kind={sel ? "pass" : "fail"} r={8} />
       {r.clusters.map((c, ci) => {
         const cx = r.x + 18 + ci * 196;
         return (
           <g key={c.name}>
-            <rect x={cx} y={r.y + 42} width={180} height={56} rx={RX} fill={C.surfaceDim} stroke={C.surfaceStroke} strokeWidth="1.2" />
+            <rect x={cx} y={r.y + 42} width={180} height={56} rx={0} fill="none" stroke={sel ? C.surfaceStroke : C.lineFaint} strokeWidth="1.2" />
             <Annotation x={cx + 14} y={r.y + 60} state="dim" size={10.5} track={0.6}>{c.name}</Annotation>
             {c.pools.map((p, pi) => {
               const px = cx + 14 + pi * 58;
@@ -69,10 +70,10 @@ function Region({ r }: { r: (typeof REGIONS)[number] }) {
                     y={r.y + 68}
                     width={52}
                     height={20}
-                    rx={1}
-                    fill={p.sel ? C.steelFill : C.surface}
+                    rx={0}
+                    fill="none"
                     stroke={p.sel ? C.steelStrong : C.surfaceStroke}
-                    strokeWidth={p.sel ? 1.6 : 1.1}
+                    strokeWidth={p.sel ? 2 : 1.1}
                   />
                   <Annotation x={px + 26} y={r.y + 81} anchor="middle" state={p.sel ? "white" : "neutral"} size={10} track={0.4}>{p.id}</Annotation>
                 </g>

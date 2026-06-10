@@ -33,7 +33,7 @@ export function ShadowModeAuditDiagram() {
   const step = useSequence(ROWS.length, { enabled: inView, interval: 1500, resting: ROWS.length - 1 });
 
   return (
-    <figure ref={ref} className="relative overflow-hidden rounded-md border border-border bg-card">
+    <figure ref={ref} className="relative overflow-hidden border border-border bg-card">
       <span className="pointer-events-none absolute right-4 top-3 z-10 font-mono text-[10px] tracking-[0.16em] text-white/22">fig.08</span>
       <div className="overflow-x-auto">
         <div className="min-w-[760px]">

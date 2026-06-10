@@ -28,7 +28,7 @@ export function QueueShiftDiagram() {
     <div ref={ref}>
       <TopologyPlate fig="fig.02" caption="economic scheduling window" vb={[1000, 410]} minWidth={760}>
         {/* low-cost window zone */}
-        <rect x={640} y={40} width={250} height={350} fill={mode === 1 ? "hsl(214 30% 42% / 0.16)" : "hsl(0 0% 100% / 0.015)"} stroke="none" style={{ transition: "fill 0.6s" }} />
+        <rect x={640} y={40} width={250} height={350} fill={mode === 1 ? "hsl(0 0% 100% / 0.06)" : "hsl(0 0% 100% / 0.015)"} stroke="none" style={{ transition: "fill 0.6s" }} />
         <line x1={640} y1={40} x2={640} y2={390} stroke={C.steelLine} strokeWidth="1" strokeDasharray="2 4" opacity={0.5} />
 
         {/* cost curve on recessed time plane */}
@@ -50,11 +50,11 @@ export function QueueShiftDiagram() {
               <Tag x={150} y={job.y + 4} state={job.locked ? "dim" : "active"} anchor="end">{job.locked ? "LOCK" : "FLEX"}</Tag>
               {!job.locked && (
                 <>
-                  <rect x={job.peakX} y={job.y - 11} width={job.w} height={22} rx={1} fill="none" stroke="hsl(0 0% 100% / 0.14)" strokeWidth="1.2" strokeDasharray="2 3" />
+                  <rect x={job.peakX} y={job.y - 11} width={job.w} height={22} rx={0} fill="none" stroke="hsl(0 0% 100% / 0.14)" strokeWidth="1.2" strokeDasharray="2 3" />
                   {/* shift connector — flexible work moves into the cheap window */}
                   <motion.g initial={false} animate={{ opacity: shifted ? 1 : 0 }} transition={{ duration: 0.5, ease: EASE }}>
                     <line x1={job.peakX + job.w + 6} y1={job.y} x2={job.lowX - 8} y2={job.y} stroke={C.steelLine} strokeWidth="1" strokeDasharray="3 4" />
-                    <path d={`M${job.lowX - 14} ${job.y - 4} L${job.lowX - 6} ${job.y} L${job.lowX - 14} ${job.y + 4}`} fill="none" stroke={C.steelStrong} strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round" />
+                    <path d={`M${job.lowX - 14} ${job.y - 4} L${job.lowX - 6} ${job.y} L${job.lowX - 14} ${job.y + 4}`} fill="none" stroke={C.steelStrong} strokeWidth="1.3" strokeLinecap="square" strokeLinejoin="miter" />
                   </motion.g>
                 </>
               )}
@@ -65,7 +65,7 @@ export function QueueShiftDiagram() {
                 y={job.y - 11}
                 width={job.w}
                 height={22}
-                rx={1}
+                rx={0}
                 fill={fill}
                 stroke={stroke}
                 strokeWidth="1.5"

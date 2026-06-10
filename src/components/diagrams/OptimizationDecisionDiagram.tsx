@@ -15,8 +15,6 @@ const CANDS = [
   { id: "D", action: "delay 2h", cost: 0.62, y: 272, verdict: "fail" as const },
 ];
 
-const NECK = [620, 178];
-
 export function OptimizationDecisionDiagram() {
   const { ref, inView } = useInView();
   const reduced = usePrefersReducedMotion();
@@ -47,36 +45,38 @@ export function OptimizationDecisionDiagram() {
           );
         })}
 
-        {/* convergence streams to the neck */}
+        {/* straight streams — every candidate runs into the constraint filter */}
         {CANDS.map((c) => {
-          if (c.verdict === "fail") return null;
           const sel = settled && c.verdict === "select";
+          const fail = c.verdict === "fail";
           return (
-            <path
+            <line
               key={c.id}
-              d={`M250 ${c.y} C440 ${c.y} 470 ${NECK[1]} ${NECK[0]} ${NECK[1]}`}
-              fill="none"
-              stroke={sel ? C.steelStrong : "hsl(0 0% 100% / 0.22)"}
-              strokeWidth={sel ? 2.4 : 1.3}
-              opacity={settled && !sel ? 0.4 : 0.85}
+              x1={250}
+              y1={c.y}
+              x2={fail ? 598 : 606}
+              y2={c.y}
+              stroke={fail ? C.redLine : sel ? C.steelStrong : "hsl(0 0% 100% / 0.26)"}
+              strokeWidth={sel ? 2.4 : fail ? 1.8 : 1.3}
+              strokeDasharray={fail ? "2 5" : undefined}
+              opacity={settled && !sel && !fail ? 0.45 : 0.9}
               style={{ transition: "stroke 0.5s, opacity 0.5s" }}
             />
           );
         })}
-        {/* rejected stream diverts down to the sink */}
-        <path d="M250 272 C380 272 430 318 510 332" fill="none" stroke={C.redLine} strokeWidth="1.8" strokeDasharray="2 5" opacity={settled ? 0.85 : 0.3} markerEnd={arrow("red")} style={{ transition: "opacity 0.5s" }} />
-        <StatusMark x={532} y={336} kind="fail" r={7} />
-        <Annotation x={548} y={340} state="rejected" size={11}>rejected unsafe · sla</Annotation>
+        {/* unsafe candidate is stopped at the filter */}
+        <StatusMark x={600} y={272} kind="fail" r={7} />
+        <Annotation x={620} y={306} anchor="middle" state="rejected" size={11}>rejected unsafe · sla</Annotation>
 
-        {/* constraint filter gate (the neck) */}
-        <rect x={606} y={84} width={28} height={188} rx={RX} fill={C.steelFillSoft} stroke={C.steelLine} strokeWidth="1.6" />
-        <Annotation x={620} y={300} anchor="middle" state="active" size={10.5} track={0.6}>FILTER</Annotation>
+        {/* constraint filter gate — outline bar */}
+        <rect x={606} y={72} width={28} height={210} rx={RX} fill="none" stroke={C.steelLine} strokeWidth="2" />
+        <Annotation x={620} y={60} anchor="middle" state="active" size={10.5} track={0.6}>FILTER</Annotation>
 
-        {/* selected output → recommendation plate */}
-        <path d={`M634 178 C678 178 688 184 716 184`} fill="none" stroke={C.steelStrong} strokeWidth="2.4" opacity={settled ? 1 : 0.3} markerEnd={arrow("steel")} style={{ transition: "opacity 0.5s" }} />
+        {/* selected output → recommendation plate, straight across */}
+        <line x1={634} y1={144} x2={716} y2={144} stroke={C.steelStrong} strokeWidth="2.4" opacity={settled ? 1 : 0.3} markerEnd={arrow("steel")} style={{ transition: "opacity 0.5s" }} />
         {!reduced && inView && settled && (
           <circle r="3.5" fill={C.steelText}>
-            <animateMotion dur="1.6s" repeatCount="indefinite" path="M634 178 C680 178 690 184 720 184" />
+            <animateMotion dur="1.6s" repeatCount="indefinite" path="M634 144 H716" />
           </circle>
         )}
 

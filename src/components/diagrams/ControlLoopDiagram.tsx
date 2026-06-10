@@ -22,7 +22,9 @@ const CX = [104, 302, 500, 698, 896];
 const RAIL_Y = 104;
 const NW = 154;
 const NH = 56;
-const RETURN = `M${CX[4]} ${RAIL_Y + NH / 2 + 6} C${CX[4]} 218, ${CX[0]} 218, ${CX[0]} ${RAIL_Y + NH / 2 + 6}`;
+const RB = RAIL_Y + NH / 2; // block bottom
+/* orthogonal return: down from LOG, straight across, up into OBSERVE */
+const RETURN = `M${CX[4]} ${RB} V206 H${CX[0]} V${RB}`;
 
 export function ControlLoopDiagram() {
   const { ref, inView } = useInView();
@@ -53,13 +55,13 @@ export function ControlLoopDiagram() {
           <path d={RETURN} fill="none" stroke={C.steelLine} strokeWidth="1.2" strokeDasharray="3 9" className="flow-dash" opacity={0.55} />
         )}
         <path
-          d={`M${CX[0] - 5} ${RAIL_Y + NH / 2 + 16} L${CX[0]} ${RAIL_Y + NH / 2 + 6} L${CX[0] + 5} ${RAIL_Y + NH / 2 + 16}`}
+          d={`M${CX[0] - 5} ${RB + 12} L${CX[0]} ${RB + 2} L${CX[0] + 5} ${RB + 12}`}
           fill="none"
           stroke={C.steelLine}
-          strokeWidth="1.3"
-          strokeLinecap="round"
-          strokeLinejoin="round"
-          opacity={0.7}
+          strokeWidth="1.4"
+          strokeLinecap="square"
+          strokeLinejoin="miter"
+          opacity={0.8}
         />
 
         {/* stations */}
