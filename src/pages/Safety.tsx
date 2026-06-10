@@ -53,7 +53,7 @@ const trustCopy = [
 function Check() {
   return (
     <svg width="13" height="13" viewBox="0 0 14 14" fill="none" aria-hidden className="mt-0.5 shrink-0">
-      <path d="M2.5 7.5L5.5 10.5 11.5 3.5" stroke="hsl(var(--steel))" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round" />
+      <path d="M2 7.5L5.5 11 12 3.5" stroke="hsl(var(--steel))" strokeWidth="1.6" strokeLinecap="square" strokeLinejoin="miter" />
     </svg>
   );
 }
@@ -61,7 +61,7 @@ function Check() {
 function Cross() {
   return (
     <svg width="13" height="13" viewBox="0 0 14 14" fill="none" aria-hidden className="mt-0.5 shrink-0">
-      <path d="M3.5 3.5l7 7M10.5 3.5l-7 7" stroke="hsl(0 72% 55% / 0.85)" strokeWidth="1.4" strokeLinecap="round" />
+      <path d="M3.5 3.5L10.5 10.5M10.5 3.5L3.5 10.5" stroke="hsl(var(--destructive))" strokeWidth="1.6" strokeLinecap="square" />
     </svg>
   );
 }
@@ -99,7 +99,7 @@ export default function Safety() {
               Safe by default means two things
             </p>
           </Reveal>
-          <div className="mt-7 grid gap-px overflow-hidden rounded-md border border-border bg-border md:grid-cols-2">
+          <div className="mt-7 grid gap-px overflow-hidden border border-border bg-border md:grid-cols-2">
             <Reveal className="bg-card p-7">
               <div className="font-mono text-[12px] tabular-nums text-steel">01 / Operational safety</div>
               <p className="mt-3 text-[14px] leading-relaxed text-white/68">
@@ -141,6 +141,7 @@ export default function Safety() {
             <SectionHeader
               eyebrow="Data boundary"
               title="Metadata only. Customer data stays inside your environment."
+              revealIntro
               intro="Aurelius reads the scheduler metadata required to evaluate timing, placement, constraints, and expected economic outcome. It does not inspect prompts, model outputs, training data, customer payloads, or application code."
             />
           </Reveal>
@@ -150,7 +151,7 @@ export default function Safety() {
           </Reveal>
 
           {/* Allowed / blocked split */}
-          <div className="mt-10 grid gap-px overflow-hidden rounded-md border border-border bg-border md:grid-cols-2">
+          <div className="mt-10 grid gap-px overflow-hidden border border-border bg-border md:grid-cols-2">
             <Reveal className="bg-card p-7">
               <div className="mb-5 flex items-center gap-2.5 font-mono text-[11px] uppercase tracking-[0.16em] text-steel">
                 <span className="h-px w-5 bg-signal/60" aria-hidden />
@@ -225,7 +226,7 @@ export default function Safety() {
               intro="No randomness in the decision pipeline. No stochastic sampling. Every optimization recommendation, safety-gate trigger, and fallback activation is logged with full context — auditable and exportable. If you ask why a decision was made, the system provides a traceable answer."
             />
           </Reveal>
-          <div className="mt-10 grid gap-px overflow-hidden rounded-md border border-border bg-border md:grid-cols-2">
+          <div className="mt-10 grid gap-px overflow-hidden border border-border bg-border md:grid-cols-2">
             <Reveal className="bg-card p-6">
               <div className="mb-3 font-mono text-[11px] uppercase tracking-[0.16em] text-steel">
                 Kill switch &amp; control

@@ -59,6 +59,7 @@ export default function HowItWorks() {
             <SectionHeader
               eyebrow="Forecasting layer"
               title="Short-horizon forecasts with explicit uncertainty"
+              revealIntro
               intro="Aurelius predicts energy cost and carbon intensity using lag-based signals derived from historical patterns and real-time grid data. Every forecast carries uncertainty bounds — and when uncertainty exceeds threshold, a deterministic conservative fallback applies. No black-box models."
             />
           </Reveal>

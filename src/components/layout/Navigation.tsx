@@ -46,7 +46,7 @@ export function Navigation() {
         <div className="flex items-center gap-2">
           <Link
             to="/contact"
-            className="inline-flex h-9 items-center rounded-md border border-border-strong px-4 text-[13px] tracking-tight text-foreground/90 transition-all duration-200 ease-premium hover:border-signal/45 hover:text-foreground active:translate-y-px"
+            className="inline-flex h-9 items-center border border-border-strong px-4 text-[13px] tracking-tight text-foreground/90 transition-all duration-200 ease-premium hover:border-signal/45 hover:text-foreground active:translate-y-px"
           >
             Request access
           </Link>
