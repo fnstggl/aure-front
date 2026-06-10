@@ -86,13 +86,12 @@ export default function Contact() {
               </Reveal>
               <Reveal delay={80}>
                 <h1 className="mt-6 text-balance text-[clamp(1.9rem,4vw,2.8rem)] font-medium leading-[1.08] tracking-tight text-foreground">
-                  Start with a shadow-mode analysis
+                  See how much Aurelius could save
                 </h1>
               </Reveal>
               <Reveal delay={140}>
                 <p className="mt-5 max-w-md text-[15px] leading-relaxed text-white/62">
-                  Tell us about your fleet. We run against scheduler metadata only — no payload
-                  access, no execution impact — and return a counterfactual savings report.
+                  Start with a read-only shadow-mode evaluation using scheduler metadata. No payload access. No execution impact.
                 </p>
               </Reveal>
               <Reveal delay={200}>
