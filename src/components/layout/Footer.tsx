@@ -11,13 +11,18 @@ const footerLinks = [
 export function Footer() {
   return (
     <footer className="border-t border-border bg-background">
-      <div className="mx-auto max-w-content px-6 lg:px-8">
-        {/* Links row */}
-        <div className="flex flex-col gap-8 py-12 sm:flex-row sm:items-start sm:justify-between">
-          <p className="max-w-xs text-[13.5px] leading-relaxed text-white/42">
-            The control layer for economically efficient GPU fleets. Shadow-mode first,
-            constraint-gated by default.
-          </p>
+      <div className="mx-auto max-w-content px-6 py-14 lg:px-8">
+        <div className="flex flex-col gap-10 sm:flex-row sm:items-start sm:justify-between">
+          <div className="max-w-xs">
+            <Link to="/" className="flex items-center" aria-label="Aurelius — home">
+              <img src="/aure_logo.png" alt="Aurelius" className="h-5 w-auto" />
+            </Link>
+            <p className="mt-4 text-[13.5px] leading-relaxed text-white/42">
+              The control layer for economically efficient GPU fleets. Shadow-mode first,
+              constraint-aware by default.
+            </p>
+          </div>
+
           <nav aria-label="Footer">
             <ul className="flex flex-wrap gap-x-8 gap-y-3">
               {footerLinks.map((item) => (
@@ -34,22 +39,11 @@ export function Footer() {
           </nav>
         </div>
 
-        {/* Brand moment — huge restrained wordmark */}
-        <div className="relative border-t border-border pb-8 pt-14 md:pt-20">
-          <Link to="/" aria-label="Aurelius — home" className="block">
-            <span className="block select-none text-[clamp(3.5rem,15vw,12rem)] font-medium leading-[0.82] tracking-[-0.04em] text-white/[0.92]">
-              Aurelius
-            </span>
-          </Link>
-          <p className="mt-6 font-mono text-[11px] uppercase tracking-[0.22em] text-white/30">
-            Shadow-mode · metadata-only · constraint-gated
-          </p>
-        </div>
-
-        <div className="flex flex-col gap-2 border-t border-border py-6 sm:flex-row sm:items-center sm:justify-between">
+        <div className="mt-12 flex flex-col gap-2 border-t border-border pt-6 sm:flex-row sm:items-center sm:justify-between">
           <span className="font-mono text-[11px] text-white/28">© {new Date().getFullYear()} Aurelius</span>
-          <span className="font-mono text-[10.5px] uppercase tracking-[0.16em] text-white/26">
-            Built for GPU fleet operators
+          <span className="flex items-center gap-2 font-mono text-[10.5px] uppercase tracking-[0.16em] text-white/30">
+            <span className="inline-block h-1 w-1 rounded-full bg-signal/80" aria-hidden />
+            Shadow-mode · constraint-aware
           </span>
         </div>
       </div>

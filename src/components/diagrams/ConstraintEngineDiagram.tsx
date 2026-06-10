@@ -2,7 +2,7 @@ import { AnimatePresence, motion } from "framer-motion";
 import { useInView } from "@/hooks/useInView";
 import { useSequence } from "@/hooks/useSequence";
 import { usePrefersReducedMotion } from "@/hooks/usePrefersReducedMotion";
-import { TopologyPlate, Annotation, StatusMark, C, EASE } from "./plate";
+import { TopologyPlate, Annotation, StatusMark, C, EASE, RX } from "./plate";
 
 /* Plate 06 — Hard constraint gates.
    One idea: safety is structural. A candidate passes physically through a row
@@ -50,7 +50,7 @@ export function ConstraintEngineDiagram() {
     <div ref={ref}>
       <TopologyPlate fig="fig.06" caption="hard constraint gates" vb={[1000, 320]} minWidth={760}>
         {/* rail */}
-        <line x1={70} y1={RAIL_Y} x2={GX[N - 1] + 76} y2={RAIL_Y} stroke={C.rail} strokeWidth="1.3" />
+        <line x1={70} y1={RAIL_Y} x2={GX[N - 1] + 76} y2={RAIL_Y} stroke={C.rail} strokeWidth="1.6" />
 
         {/* gates as vertical boundary plates */}
         {GATES.map((name, i) => {
@@ -58,14 +58,14 @@ export function ConstraintEngineDiagram() {
           return (
             <g key={name} style={{ transition: "opacity 0.4s" }} opacity={s === "idle" ? 0.55 : 1}>
               <rect
-                x={GX[i] - 10}
+                x={GX[i] - 11}
                 y={RAIL_Y - 66}
-                width={20}
+                width={22}
                 height={132}
-                rx={5}
+                rx={RX}
                 fill={FILL[s]}
                 stroke={STROKE[s]}
-                strokeWidth="1"
+                strokeWidth={s === "idle" ? 1.2 : 1.8}
                 style={{ transition: "fill 0.4s, stroke 0.4s" }}
               />
               {s === "pass" && <StatusMark x={GX[i]} y={RAIL_Y - 84} kind="pass" r={6} />}

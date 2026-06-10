@@ -2,52 +2,85 @@ import { AnimatePresence, motion } from "framer-motion";
 import { useInView } from "@/hooks/useInView";
 import { useSequence } from "@/hooks/useSequence";
 import { usePrefersReducedMotion } from "@/hooks/usePrefersReducedMotion";
-import { TopologyPlate, SystemSurface, Annotation, Tag, StatusMark, C, EASE } from "./plate";
+import { TopologyPlate, SystemSurface, Annotation, StatusMark, C, EASE, RX, arrow } from "./plate";
 
 /* Plate 04 — Fleet topology.
-   One idea: one workload, three candidate regions. Aurelius selects the single
-   safe lower-cost placement and rejects the rest with a reason. No tiny pool
-   tables — region, result, and one selected path is the whole story. */
+   One idea: candidate placements are explored across real fleet topology —
+   region → cluster → GPU pool. Invalid regions are rejected with a reason; one
+   safe lower-cost placement is selected and carried through to a single pool. */
 
 type RState = "rejected" | "selected";
 
-const REGIONS: { code: string; sub: string; result: string; state: RState; y: number; py: number }[] = [
-  { code: "US-EAST", sub: "4 GPU clusters · H100 / A100", result: "capacity insufficient", state: "rejected", y: 44, py: 92 },
-  { code: "US-WEST", sub: "3 GPU clusters · H100 / spot", result: "−18% cost · SLA pass", state: "selected", y: 172, py: 220 },
-  { code: "EU-CENTRAL", sub: "5 GPU clusters · A100", result: "data residency blocked", state: "rejected", y: 300, py: 348 },
+const REGIONS: {
+  code: string;
+  x: number;
+  y: number;
+  state: RState;
+  clusters: { name: string; pools: { id: string; sel?: boolean }[] }[];
+}[] = [
+  {
+    code: "US-EAST", x: 552, y: 36, state: "rejected",
+    clusters: [{ name: "cluster-a", pools: [{ id: "A100" }, { id: "L40S" }] }, { name: "cluster-b", pools: [{ id: "H100" }] }],
+  },
+  {
+    code: "US-WEST", x: 552, y: 182, state: "selected",
+    clusters: [{ name: "cluster-a", pools: [{ id: "A100" }] }, { name: "cluster-b", pools: [{ id: "H100", sel: true }, { id: "spot" }] }],
+  },
+  {
+    code: "EU-CENTRAL", x: 552, y: 328, state: "rejected",
+    clusters: [{ name: "cluster-a", pools: [{ id: "H100" }] }, { name: "cluster-b", pools: [{ id: "A100" }, { id: "rsv" }] }],
+  },
 ];
 
-const RW = 340;
-const RH = 96;
-const RX = 620;
+const RW = 408;
+const RH = 112;
 
 const PATHS = [
-  "M244 228 C420 228 440 92 620 92",
-  "M244 228 C430 228 470 220 620 220",
-  "M244 228 C420 228 440 348 620 348",
+  "M236 250 C400 250 430 92 548 92",
+  "M236 250 C420 250 470 238 548 238",
+  "M236 250 C400 250 430 384 548 384",
 ];
 
 const READOUT = [
   { t: "candidate · US-EAST — capacity insufficient", sel: false },
   { t: "candidate · EU-CENTRAL — data residency blocked", sel: false },
-  { t: "selected · US-WEST · H100 pool — −18% · SLA pass", sel: true },
+  { t: "selected · US-WEST / cluster-b / H100 — −18% · SLA pass", sel: true },
 ];
 
 function Region({ r }: { r: (typeof REGIONS)[number] }) {
   const sel = r.state === "selected";
   return (
-    <g style={{ transition: "opacity 0.5s" }} opacity={sel ? 1 : 0.66}>
-      <SystemSurface x={RX} y={r.y} w={RW} h={RH} state={r.state} />
-      <Tag x={RX + 20} y={r.y + 30} state={sel ? "selected" : "rejected"}>
-        {r.code}
-      </Tag>
-      <StatusMark x={RX + RW - 22} y={r.y + 24} kind={sel ? "pass" : "fail"} r={8} />
-      <Annotation x={RX + 20} y={r.y + 54} state="dim" size={11.5}>
-        {r.sub}
-      </Annotation>
-      <Annotation x={RX + 20} y={r.y + 76} state={sel ? "selected" : "rejected"} size={11.5} track={0.4}>
-        {r.result}
-      </Annotation>
+    <g style={{ transition: "opacity 0.5s" }} opacity={sel ? 1 : 0.72}>
+      <SystemSurface x={r.x} y={r.y} w={RW} h={RH} state={sel ? "active" : "neutral"} />
+      <Annotation x={r.x + 18} y={r.y + 28} state="white" size={13.5} track={1.2}>{r.code}</Annotation>
+      <StatusMark x={r.x + RW - 20} y={r.y + 22} kind={sel ? "pass" : "fail"} r={8} />
+      {r.clusters.map((c, ci) => {
+        const cx = r.x + 18 + ci * 196;
+        return (
+          <g key={c.name}>
+            <rect x={cx} y={r.y + 42} width={180} height={56} rx={RX} fill={C.surfaceDim} stroke={C.surfaceStroke} strokeWidth="1.2" />
+            <Annotation x={cx + 14} y={r.y + 60} state="dim" size={10.5} track={0.6}>{c.name}</Annotation>
+            {c.pools.map((p, pi) => {
+              const px = cx + 14 + pi * 58;
+              return (
+                <g key={p.id}>
+                  <rect
+                    x={px}
+                    y={r.y + 68}
+                    width={52}
+                    height={20}
+                    rx={1}
+                    fill={p.sel ? C.steelFill : C.surface}
+                    stroke={p.sel ? C.steelStrong : C.surfaceStroke}
+                    strokeWidth={p.sel ? 1.6 : 1.1}
+                  />
+                  <Annotation x={px + 26} y={r.y + 81} anchor="middle" state={p.sel ? "white" : "neutral"} size={10} track={0.4}>{p.id}</Annotation>
+                </g>
+              );
+            })}
+          </g>
+        );
+      })}
     </g>
   );
 }
@@ -59,8 +92,8 @@ export function FleetTopologyDiagram() {
 
   return (
     <div ref={ref}>
-      <TopologyPlate fig="fig.04" caption="region placement · one selected path" vb={[1000, 444]} minWidth={820}>
-        {/* candidate paths */}
+      <TopologyPlate fig="fig.04" caption="region · cluster · pool placement" vb={[1000, 490]} minWidth={920}>
+        {/* candidate paths — selected steel, rejected red, all with arrowheads */}
         {PATHS.map((d, i) => {
           const isSel = i === 1;
           return (
@@ -69,9 +102,10 @@ export function FleetTopologyDiagram() {
               d={d}
               fill="none"
               stroke={isSel ? C.steelStrong : C.redLine}
-              strokeWidth={isSel ? 1.8 : 1.2}
-              strokeDasharray={isSel ? undefined : "3 5"}
-              opacity={isSel ? 0.95 : 0.45}
+              strokeWidth={isSel ? 2.4 : 1.8}
+              strokeDasharray={isSel ? undefined : "2 6"}
+              opacity={isSel ? 1 : 0.55}
+              markerEnd={arrow(isSel ? "steel" : "red")}
             />
           );
         })}
@@ -85,50 +119,26 @@ export function FleetTopologyDiagram() {
         <path id="fleet-sel" d={PATHS[1]} fill="none" stroke="none" />
 
         {/* workload source plate */}
-        <SystemSurface x={44} y={168} w={200} h={120} state="active" />
-        <Annotation x={64} y={196} state="active" size={13.5} track={0.8}>
-          WORKLOAD
-        </Annotation>
-        <line x1={64} y1={208} x2={224} y2={208} stroke={C.steelLine} strokeWidth="1" opacity={0.35} />
-        {[
-          ["job", "batch_infer"],
-          ["gpus", "128×H100"],
-          ["deadline", "4h"],
-          ["region", "us only"],
-        ].map(([k, v], i) => (
+        <SystemSurface x={36} y={182} w={200} h={136} state="neutral" />
+        <Annotation x={56} y={210} state="white" size={13} track={1}>WORKLOAD QUEUE</Annotation>
+        <line x1={56} y1={222} x2={216} y2={222} stroke={C.rail} strokeWidth="1.2" />
+        {[["job", "batch_infer"], ["gpus", "128×H100"], ["deadline", "4h"], ["region", "us only"]].map(([k, v], i) => (
           <g key={k}>
-            <Annotation x={64} y={230 + i * 18} state="neutral" size={11}>
-              {k}
-            </Annotation>
-            <Annotation x={224} y={230 + i * 18} anchor="end" state="neutral" size={11}>
-              {v}
-            </Annotation>
+            <Annotation x={56} y={245 + i * 18} state="dim" size={11}>{k}</Annotation>
+            <Annotation x={216} y={245 + i * 18} anchor="end" state="neutral" size={11}>{v}</Annotation>
           </g>
         ))}
-        <circle cx={244} cy={228} r={3} fill={C.steelText} />
+        <circle cx={236} cy={250} r={3.5} fill={C.steelText} />
 
-        {REGIONS.map((r) => (
-          <Region key={r.code} r={r} />
-        ))}
+        {REGIONS.map((r) => <Region key={r.code} r={r} />)}
 
         {/* readout */}
-        <foreignObject x={44} y={418} width={912} height={24}>
+        <foreignObject x={36} y={460} width={928} height={24}>
           <div className="flex h-full items-center gap-2.5">
-            <span
-              className="inline-block h-1.5 w-1.5 rounded-full"
-              style={{ background: READOUT[step].sel ? C.steelText : C.red }}
-            />
+            <span className="inline-block h-1.5 w-1.5" style={{ background: READOUT[step].sel ? C.steelText : C.red }} />
             <div className="relative h-4 flex-1 overflow-hidden">
               <AnimatePresence mode="wait">
-                <motion.span
-                  key={step}
-                  initial={{ opacity: 0, y: 6 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: -6 }}
-                  transition={{ duration: 0.4, ease: EASE }}
-                  className="block font-mono text-[11.5px]"
-                  style={{ color: READOUT[step].sel ? C.steelText : "hsl(0 0% 100% / 0.5)" }}
-                >
+                <motion.span key={step} initial={{ opacity: 0, y: 6 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -6 }} transition={{ duration: 0.4, ease: EASE }} className="block font-mono text-[11.5px]" style={{ color: READOUT[step].sel ? C.steelText : "hsl(0 0% 100% / 0.56)" }}>
                   {READOUT[step].t}
                 </motion.span>
               </AnimatePresence>
