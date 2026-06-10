@@ -54,7 +54,7 @@ export default function Index() {
             <Reveal delay={240}>
               <div className="mt-9 flex flex-col items-center justify-center gap-3 sm:flex-row">
                 <CTAButton to="/contact" variant="primary" withArrow>
-                  Run a shadow-mode assessment
+                  See how much you could save
                 </CTAButton>
                 <CTAButton to="/how-it-works" variant="secondary">
                   View technical overview
