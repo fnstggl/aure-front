@@ -1,3 +1,4 @@
+import { useLayoutEffect, useRef, useState } from "react";
 import { motion } from "framer-motion";
 import { useInView } from "@/hooks/useInView";
 import { useSequence } from "@/hooks/useSequence";
@@ -35,8 +36,7 @@ export function ShadowModeAuditDiagram() {
   return (
     <figure ref={ref} className="relative overflow-hidden border border-border bg-card">
       <span className="pointer-events-none absolute right-4 top-3 z-10 font-mono text-[10px] tracking-[0.16em] text-white/22">fig.08</span>
-      <div className="overflow-x-auto">
-        <div className="min-w-[760px]">
+      <MobileScaleFit width={760}>
           {/* header */}
           <div className="flex items-center justify-between border-b border-border px-5 py-3 pr-16">
             <span className="font-mono text-[11px] uppercase tracking-[0.18em] text-white/55">audit.log — counterfactual ledger</span>
@@ -86,10 +86,70 @@ export function ShadowModeAuditDiagram() {
             <Stat label="SLA violations avoided" value={<Counter to={6} enabled={inView} />} />
             <Stat label="Forecast confidence" value={<span style={{ color: C.steelText }}><Counter to={0.91} enabled={inView} decimals={2} /></span>} />
           </div>
-        </div>
-      </div>
+      </MobileScaleFit>
       <CaptionStrip label="shadow-mode counterfactual audit" />
     </figure>
+  );
+}
+
+/* The ledger needs a fixed pixel width to keep its columns legible. On desktop
+   (md+) it keeps that width and the row scrolls if the viewport is narrower.
+   On mobile we scale the whole block down to the available width so it fits the
+   screen with no side-scroll, and collapse the wrapper height to match. The
+   desktop DOM (overflow-x-auto + fixed min-width) is left exactly as before. */
+function MobileScaleFit({ width, children }: { width: number; children: React.ReactNode }) {
+  const outerRef = useRef<HTMLDivElement>(null);
+  const innerRef = useRef<HTMLDivElement>(null);
+  const [fit, setFit] = useState<{ scale: number; height: number } | null>(null);
+
+  useLayoutEffect(() => {
+    const outer = outerRef.current;
+    const inner = innerRef.current;
+    if (!outer || !inner) return;
+
+    const measure = () => {
+      const isMobile = window.matchMedia("(max-width: 767px)").matches;
+      if (!isMobile) {
+        setFit((prev) => (prev === null ? prev : null));
+        return;
+      }
+      const scale = Math.min(1, outer.clientWidth / width);
+      const height = inner.offsetHeight * scale;
+      setFit((prev) =>
+        prev && Math.abs(prev.scale - scale) < 0.001 && Math.abs(prev.height - height) < 0.5
+          ? prev
+          : { scale, height },
+      );
+    };
+
+    measure();
+    const ro = new ResizeObserver(measure);
+    ro.observe(outer);
+    ro.observe(inner);
+    window.addEventListener("resize", measure);
+    return () => {
+      ro.disconnect();
+      window.removeEventListener("resize", measure);
+    };
+  }, [width]);
+
+  return (
+    <div
+      ref={outerRef}
+      className={fit ? "overflow-hidden" : "overflow-x-auto"}
+      style={fit ? { height: fit.height } : undefined}
+    >
+      <div
+        ref={innerRef}
+        style={
+          fit
+            ? { width, transformOrigin: "top left", transform: `scale(${fit.scale})` }
+            : { minWidth: width }
+        }
+      >
+        {children}
+      </div>
+    </div>
   );
 }
 

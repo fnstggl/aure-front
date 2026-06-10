@@ -80,7 +80,16 @@ export function TopologyPlate({
   return (
     <figure className={cn("relative overflow-hidden border border-border bg-card", className)}>
       <div className="relative overflow-x-auto">
-        <svg viewBox={`0 0 ${w} ${h}`} className="block w-full" style={{ minWidth }} role="img" aria-label={caption}>
+        {/* On desktop (md+) the SVG holds its authored min-width and the row
+            scrolls if needed. On mobile we drop the min-width so the SVG scales
+            down to the screen width (viewBox keeps it crisp) — no side-scroll. */}
+        <svg
+          viewBox={`0 0 ${w} ${h}`}
+          className="block w-full md:[min-width:var(--plate-min-w)]"
+          style={{ "--plate-min-w": `${minWidth}px` } as React.CSSProperties}
+          role="img"
+          aria-label={caption}
+        >
           <defs>
             <marker id="ah-steel" markerWidth="9" markerHeight="9" refX="6.5" refY="4.5" orient="auto">
               <path d="M1 1L7 4.5L1 8" fill="none" stroke={C.steelStrong} strokeWidth="1.6" strokeLinecap="square" strokeLinejoin="miter" />
