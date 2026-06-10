@@ -353,6 +353,29 @@
   }
 }
 
+/* Privacy / legal prose — restrained lists that read as part of the system,
+   not browser-default bullets. Hairline markers, generous leading. */
+@layer components {
+  .policy-prose ul {
+    margin-top: 0.25rem;
+    display: grid;
+    gap: 0.625rem;
+  }
+  .policy-prose li {
+    position: relative;
+    padding-left: 1.1rem;
+  }
+  .policy-prose li::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    top: 0.6em;
+    height: 1px;
+    width: 0.5rem;
+    background-color: hsl(var(--steel) / 0.4);
+  }
+}
+
 /* Honor reduced motion across all decorative + ambient motion */
 @media (prefers-reduced-motion: reduce) {
   .hero-field { animation: none !important; filter: none !important; }
