@@ -108,17 +108,17 @@
     --data-deep: 0 0% 46%;
   }
 
-  /* Warm off-white section — editorial relief from the dark */
+  /* Off-white-gray section — neutral editorial relief from the dark (no beige) */
   .section-light {
-    --background-local: 40 30% 95%;
-    --foreground: 30 8% 12%;
-    --muted-foreground: 30 6% 34%;
-    --border: 30 10% 0% / 0.1;
-    --border-strong: 30 10% 0% / 0.18;
-    --card: 40 24% 97%;
-    --card-elevated: 40 24% 99%;
-    background-color: hsl(40 30% 95%);
-    color: hsl(30 8% 12%);
+    --background-local: 0 0% 97%;
+    --foreground: 0 0% 12%;
+    --muted-foreground: 0 0% 34%;
+    --border: 0 0% 0% / 0.1;
+    --border-strong: 0 0% 0% / 0.18;
+    --card: 0 0% 98%;
+    --card-elevated: 0 0% 99%;
+    background-color: hsl(0 0% 97%);
+    color: hsl(0 0% 12%);
   }
 }
 
