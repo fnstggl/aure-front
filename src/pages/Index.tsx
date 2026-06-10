@@ -8,6 +8,7 @@ import {
   CTAButton,
   Reveal,
 } from "@/components/site/primitives";
+import { ScrollWordReveal } from "@/components/site/ScrollWordReveal";
 import { AureliusSchematicDiagram } from "@/components/diagrams/AureliusSchematicDiagram";
 import { QueueShiftDiagram } from "@/components/diagrams/QueueShiftDiagram";
 import { ControlLoopDiagram } from "@/components/diagrams/ControlLoopDiagram";
@@ -207,18 +208,21 @@ export default function Index() {
         </Container>
       </Section>
 
-      {/* ==================== Statement (typography) =================== */}
-      <Section className="py-[110px] md:py-[160px] lg:py-[200px]">
+      {/* ============== Manifesto — Apple-style scroll word reveal ============= */}
+      <Section className="py-[120px] md:py-[172px] lg:py-[212px]">
         <Container>
-          <Reveal>
-            <p className="max-w-4xl text-[clamp(1.9rem,5vw,3.5rem)] font-medium leading-[1.1] tracking-[-0.025em] text-foreground">
-              No payload access.
-              <br />
-              No execution risk.
-              <br />
-              <span className="text-white/38">No blind decisions.</span>
-            </p>
-          </Reveal>
+          <ScrollWordReveal
+            as="h2"
+            text={"No payload access.\nNo execution risk.\nNo blind decisions."}
+            className="max-w-4xl text-[clamp(1.9rem,5vw,3.5rem)] font-medium leading-[1.12] tracking-[-0.025em] text-foreground"
+          />
+          <ScrollWordReveal
+            as="p"
+            text={
+              "Aurelius reads only the metadata a scheduler already exposes, proves every decision against hard constraints, and records the counterfactual before anything runs."
+            }
+            className="mt-11 max-w-2xl text-[clamp(1rem,2.1vw,1.4rem)] font-medium leading-[1.5] tracking-[-0.01em] text-foreground"
+          />
         </Container>
       </Section>
 

@@ -34,22 +34,29 @@ export function QueueShiftDiagram() {
         {/* cost curve on recessed time plane */}
         <path d={CURVE_FILL} fill="hsl(0 0% 100% / 0.03)" />
         <path d={CURVE} fill="none" stroke={C.faint} strokeWidth="1.4" />
-        <Annotation x={300} y={74} anchor="middle" state="dim" size={11} track={0.8}>PEAK PRICING</Annotation>
-        <Annotation x={765} y={74} anchor="middle" state={mode === 1 ? "active" : "dim"} size={11} track={0.8}>LOW-COST WINDOW</Annotation>
+        <Annotation x={300} y={42} anchor="middle" state="dim" size={11} track={0.8}>PEAK PRICING</Annotation>
+        <Annotation x={765} y={42} anchor="middle" state={mode === 1 ? "active" : "dim"} size={11} track={0.8}>LOW-COST WINDOW</Annotation>
 
         {/* job tracks */}
         {JOBS.map((job) => {
           const x = mode === 1 ? job.lowX : job.peakX;
           const shifted = !job.locked && mode === 1;
-          const fill = job.locked ? "hsl(0 0% 100% / 0.05)" : shifted ? C.steelFill : "hsl(0 0% 100% / 0.07)";
-          const stroke = job.locked ? C.surfaceStroke : shifted ? C.steelStrong : C.faint;
+          const fill = job.locked ? "hsl(0 0% 100% / 0.08)" : shifted ? C.steelFill : "hsl(0 0% 100% / 0.1)";
+          const stroke = job.locked ? C.dim : shifted ? C.steelStrong : C.faint;
           return (
             <g key={job.label}>
               <line x1={200} y1={job.y} x2={945} y2={job.y} stroke="hsl(0 0% 100% / 0.05)" strokeWidth="1" />
-              <Annotation x={44} y={job.y + 4} state="neutral" size={12}>{job.label}</Annotation>
-              <Tag x={150} y={job.y + 4} state="dim" anchor="end">{job.locked ? "LOCK" : "FLEX"}</Tag>
+              <Annotation x={44} y={job.y + 4} state={job.locked ? "neutral" : "white"} size={12}>{job.label}</Annotation>
+              <Tag x={150} y={job.y + 4} state={job.locked ? "dim" : "active"} anchor="end">{job.locked ? "LOCK" : "FLEX"}</Tag>
               {!job.locked && (
-                <rect x={job.peakX} y={job.y - 11} width={job.w} height={22} rx={3} fill="none" stroke="hsl(0 0% 100% / 0.08)" strokeDasharray="2 3" />
+                <>
+                  <rect x={job.peakX} y={job.y - 11} width={job.w} height={22} rx={3} fill="none" stroke="hsl(0 0% 100% / 0.1)" strokeDasharray="2 3" />
+                  {/* shift connector — flexible work moves into the cheap window */}
+                  <motion.g initial={false} animate={{ opacity: shifted ? 1 : 0 }} transition={{ duration: 0.5, ease: EASE }}>
+                    <line x1={job.peakX + job.w + 6} y1={job.y} x2={job.lowX - 8} y2={job.y} stroke={C.steelLine} strokeWidth="1" strokeDasharray="3 4" />
+                    <path d={`M${job.lowX - 14} ${job.y - 4} L${job.lowX - 6} ${job.y} L${job.lowX - 14} ${job.y + 4}`} fill="none" stroke={C.steelStrong} strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round" />
+                  </motion.g>
+                </>
               )}
               <motion.rect
                 initial={false}
