@@ -3,57 +3,53 @@ import { cn } from "@/lib/utils";
 /* ============================================================================
    Aurelius diagram language — enterprise infrastructure schematics.
 
-   Design rules (anti-"vibe-coded"):
-     • Sharp corners. Square blocks read as engineered, not consumer UI.
-     • SOLID flat fills with real tonal steps — never a faint fill behind a
-       bright hairline (that "glass card" look is the giveaway).
-     • Confident, weighted strokes (2px primary flow, 1.4px structure) with
-       arrowheads for direction. No timid hairlines everywhere.
-     • High-contrast labels: crisp white truth, one decisive steel accent,
-       red only for blocked. No decorative blueprint grid or registration ticks.
-
-   Semantics:
-     white  = truth / primary       steel = selected / approved / active
-     gray   = neutral / inactive     red   = rejected / blocked / unsafe
+   HARD RULES (monochrome):
+     • Color is ONLY black / white / red. White = structure + active/selected.
+       Red = error / rejected / blocked. Nothing else.
+     • OUTLINE ONLY. No fill backgrounds on boxes — ever. State is carried by
+       stroke brightness + weight, not by fill.
+     • 100% sharp corners (rx = 0). No rounding anywhere.
+     • Straight / orthogonal connectors only. No curved lines (the single
+       exception across the whole site is the fig.02 price curve).
    ============================================================================ */
 
 export const C = {
-  /* structure */
-  plate: "#0b0c0f",
-  rail: "hsl(220 8% 100% / 0.18)",
-  hair: "hsl(220 8% 100% / 0.10)",
+  /* monochrome line system */
+  line: "hsl(0 0% 100% / 0.56)",
+  lineDim: "hsl(0 0% 100% / 0.34)",
+  lineFaint: "hsl(0 0% 100% / 0.16)",
+  rail: "hsl(0 0% 100% / 0.24)",
+  hair: "hsl(0 0% 100% / 0.1)",
   faint: "hsl(0 0% 100% / 0.32)",
-  dim: "hsl(0 0% 100% / 0.46)",
-  label: "hsl(0 0% 100% / 0.66)",
-  text: "hsl(0 0% 100% / 0.80)",
-  white: "hsl(0 0% 97%)",
+  dim: "hsl(0 0% 100% / 0.5)",
+  label: "hsl(0 0% 100% / 0.7)",
+  text: "hsl(0 0% 100% / 0.84)",
+  white: "hsl(0 0% 99%)",
 
-  /* neutral solid blocks — flat fill, same-family edge (NOT a bright outline) */
-  surface: "hsl(222 9% 12%)",
-  surfaceStroke: "hsl(220 8% 24%)",
-  surfaceDim: "hsl(222 10% 8%)",
+  /* "selected / active" == bright white. Fills are none (outline only). */
+  steelFill: "none",
+  steelFillSoft: "none",
+  steelLine: "hsl(0 0% 100% / 0.9)",
+  steelStrong: "hsl(0 0% 100%)",
+  steelText: "hsl(0 0% 100%)",
 
-  /* deep steel — selected / active control + metadata path. Solid fills. */
-  steelFill: "hsl(214 32% 32%)",
-  steelFillSoft: "hsl(216 26% 19%)",
-  steelLine: "hsl(214 30% 54%)",
-  steelStrong: "hsl(213 36% 64%)",
-  steelText: "hsl(212 34% 78%)",
+  /* red — error / rejected / blocked */
+  red: "hsl(2 62% 58%)",
+  redSoft: "none",
+  redLine: "hsl(2 60% 56%)",
 
-  /* muted red — rejected / blocked. Solid fill. */
-  red: "hsl(2 54% 58%)",
-  redSoft: "hsl(2 46% 17%)",
-  redLine: "hsl(2 50% 50%)",
-
-  /* legacy aliases (kept so older call sites keep compiling) */
-  grid: "hsl(220 8% 100% / 0.10)",
-  gridStrong: "hsl(220 8% 100% / 0.18)",
-  plane: "hsl(222 10% 8%)",
-  planeStroke: "hsl(220 8% 24%)",
+  /* legacy structural aliases — all fills collapse to none */
+  surface: "none",
+  surfaceStroke: "hsl(0 0% 100% / 0.34)",
+  surfaceDim: "none",
+  plane: "none",
+  planeStroke: "hsl(0 0% 100% / 0.2)",
+  grid: "hsl(0 0% 100% / 0.1)",
+  gridStrong: "hsl(0 0% 100% / 0.2)",
 } as const;
 
 export const EASE = [0.16, 1, 0.3, 1] as const;
-export const RX = 2; // the only corner radius — sharp, deliberate
+export const RX = 0; // 100% sharp — no rounding anywhere
 
 /* markerEnd helper — fixed global ids so any diagram can point a connector. */
 export function arrow(tone: "steel" | "red" | "rail" = "steel") {
@@ -61,8 +57,7 @@ export function arrow(tone: "steel" | "red" | "rail" = "steel") {
 }
 
 /* ------------------------------------------------------------------ */
-/* TopologyPlate — flat figure wrapper. No grid, no ticks.            */
-/* Provides shared arrowhead markers scoped to this plate's id.        */
+/* TopologyPlate — flat figure wrapper. No grid, no ticks, no fills.   */
 /* ------------------------------------------------------------------ */
 
 export function TopologyPlate({
@@ -83,18 +78,18 @@ export function TopologyPlate({
 }) {
   const [w, h] = vb;
   return (
-    <figure className={cn("relative overflow-hidden rounded-md border border-border bg-card", className)}>
+    <figure className={cn("relative overflow-hidden border border-border bg-card", className)}>
       <div className="relative overflow-x-auto">
         <svg viewBox={`0 0 ${w} ${h}`} className="block w-full" style={{ minWidth }} role="img" aria-label={caption}>
           <defs>
-            <marker id="ah-steel" markerWidth="9" markerHeight="9" refX="6" refY="4.5" orient="auto">
-              <path d="M1 1L6.5 4.5L1 8" fill="none" stroke={C.steelStrong} strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" />
+            <marker id="ah-steel" markerWidth="9" markerHeight="9" refX="6.5" refY="4.5" orient="auto">
+              <path d="M1 1L7 4.5L1 8" fill="none" stroke={C.steelStrong} strokeWidth="1.6" strokeLinecap="square" strokeLinejoin="miter" />
             </marker>
-            <marker id="ah-red" markerWidth="9" markerHeight="9" refX="6" refY="4.5" orient="auto">
-              <path d="M1 1L6.5 4.5L1 8" fill="none" stroke={C.red} strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" />
+            <marker id="ah-red" markerWidth="9" markerHeight="9" refX="6.5" refY="4.5" orient="auto">
+              <path d="M1 1L7 4.5L1 8" fill="none" stroke={C.red} strokeWidth="1.6" strokeLinecap="square" strokeLinejoin="miter" />
             </marker>
-            <marker id="ah-rail" markerWidth="9" markerHeight="9" refX="6" refY="4.5" orient="auto">
-              <path d="M1 1L6.5 4.5L1 8" fill="none" stroke={C.rail} strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" />
+            <marker id="ah-rail" markerWidth="9" markerHeight="9" refX="6.5" refY="4.5" orient="auto">
+              <path d="M1 1L7 4.5L1 8" fill="none" stroke={C.rail} strokeWidth="1.6" strokeLinecap="square" strokeLinejoin="miter" />
             </marker>
           </defs>
           {children}
@@ -110,9 +105,9 @@ export function TopologyPlate({
 
 export function CaptionStrip({ label }: { label: string }) {
   return (
-    <figcaption className="flex items-center justify-between gap-2.5 border-t border-border px-4 py-2.5 font-mono text-[10.5px] uppercase tracking-[0.2em] text-white/34">
+    <figcaption className="flex items-center justify-between gap-2.5 border-t border-border px-4 py-2.5 font-mono text-[10.5px] uppercase tracking-[0.2em] text-white/40">
       <span className="flex items-center gap-2.5">
-        <span className="h-px w-4 bg-steel/50" aria-hidden />
+        <span className="h-px w-4 bg-white/40" aria-hidden />
         {label}
       </span>
       <span className="hidden tabular-nums text-white/20 sm:inline">metadata_only</span>
@@ -126,7 +121,8 @@ export function ReferencePlane() {
 }
 
 /* ------------------------------------------------------------------ */
-/* SystemSurface — a SOLID system block. State lives in the fill.      */
+/* SystemSurface — an OUTLINE-ONLY block. No fill, sharp corners.      */
+/* State lives entirely in stroke brightness + weight.                 */
 /* ------------------------------------------------------------------ */
 
 export function SystemSurface({
@@ -135,7 +131,6 @@ export function SystemSurface({
   w,
   h,
   state = "neutral",
-  rx = RX,
 }: {
   x: number;
   y: number;
@@ -145,11 +140,11 @@ export function SystemSurface({
   rx?: number;
 }) {
   const map = {
-    neutral: { fill: C.surface, stroke: C.surfaceStroke, sw: 1.4 },
-    dim: { fill: C.surfaceDim, stroke: C.surfaceStroke, sw: 1.2 },
-    active: { fill: C.steelFillSoft, stroke: C.steelLine, sw: 1.6 },
-    selected: { fill: C.steelFill, stroke: C.steelStrong, sw: 2 },
-    rejected: { fill: C.redSoft, stroke: C.redLine, sw: 1.6 },
+    neutral: { stroke: C.lineDim, sw: 1.4 },
+    dim: { stroke: C.lineFaint, sw: 1.2 },
+    active: { stroke: C.steelLine, sw: 1.8 },
+    selected: { stroke: C.steelStrong, sw: 2.4 },
+    rejected: { stroke: C.redLine, sw: 1.8 },
   }[state];
   return (
     <rect
@@ -157,11 +152,11 @@ export function SystemSurface({
       y={y}
       width={w}
       height={h}
-      rx={rx}
-      fill={map.fill}
+      rx={0}
+      fill="none"
       stroke={map.stroke}
       strokeWidth={map.sw}
-      style={{ transition: "fill 0.5s, stroke 0.5s" }}
+      style={{ transition: "stroke 0.5s, stroke-width 0.5s" }}
     />
   );
 }
@@ -194,8 +189,8 @@ export function Annotation({
   const fill = {
     neutral: C.text,
     dim: C.dim,
-    active: C.steelText,
-    selected: C.steelText,
+    active: C.white,
+    selected: C.white,
     rejected: C.red,
     white: C.white,
   }[state];
@@ -240,7 +235,7 @@ export function Tag({
 }
 
 /* ------------------------------------------------------------------ */
-/* StatusMark — check / cross / dot, drawn with confident weight.      */
+/* StatusMark — check (white) / cross (red). Sharp, square caps.       */
 /* ------------------------------------------------------------------ */
 
 export function StatusMark({ x, y, kind, r = 7 }: { x: number; y: number; kind: "pass" | "fail" | "idle"; r?: number }) {
@@ -248,18 +243,18 @@ export function StatusMark({ x, y, kind, r = 7 }: { x: number; y: number; kind: 
     const k = r * 0.5;
     return (
       <g style={{ transition: "opacity 0.4s" }}>
-        <circle cx={x} cy={y} r={r} fill="none" stroke={C.red} strokeWidth="1.6" />
-        <path d={`M${x - k} ${y - k}L${x + k} ${y + k}M${x + k} ${y - k}L${x - k} ${y + k}`} stroke={C.red} strokeWidth="1.7" strokeLinecap="round" />
+        <rect x={x - r} y={y - r} width={r * 2} height={r * 2} fill="none" stroke={C.red} strokeWidth="1.6" />
+        <path d={`M${x - k} ${y - k}L${x + k} ${y + k}M${x + k} ${y - k}L${x - k} ${y + k}`} stroke={C.red} strokeWidth="1.7" strokeLinecap="square" />
       </g>
     );
   }
   if (kind === "pass") {
     return (
       <g style={{ transition: "opacity 0.4s" }}>
-        <circle cx={x} cy={y} r={r} fill="none" stroke={C.steelStrong} strokeWidth="1.6" />
-        <path d={`M${x - r * 0.42} ${y}L${x - r * 0.08} ${y + r * 0.4}L${x + r * 0.5} ${y - r * 0.42}`} fill="none" stroke={C.steelText} strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" />
+        <rect x={x - r} y={y - r} width={r * 2} height={r * 2} fill="none" stroke={C.steelStrong} strokeWidth="1.6" />
+        <path d={`M${x - r * 0.42} ${y}L${x - r * 0.06} ${y + r * 0.4}L${x + r * 0.5} ${y - r * 0.44}`} fill="none" stroke={C.steelStrong} strokeWidth="1.7" strokeLinecap="square" strokeLinejoin="miter" />
       </g>
     );
   }
-  return <circle cx={x} cy={y} r={2} fill={C.dim} />;
+  return <rect x={x - 2} y={y - 2} width={4} height={4} fill={C.dim} />;
 }

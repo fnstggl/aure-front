@@ -27,7 +27,7 @@ export function MetadataBoundaryDiagram() {
     <div ref={ref}>
       <TopologyPlate fig="fig.07" caption="customer environment · metadata boundary" vb={[1000, 440]} minWidth={900}>
         {/* customer environment boundary */}
-        <rect x={40} y={44} width={556} height={356} rx={RX} fill="hsl(0 0% 100% / 0.014)" stroke="hsl(0 0% 100% / 0.18)" strokeWidth="1.4" strokeDasharray="5 4" />
+        <rect x={40} y={44} width={556} height={356} rx={RX} fill="none" stroke="hsl(0 0% 100% / 0.26)" strokeWidth="1.4" strokeDasharray="5 4" />
         <Annotation x={62} y={74} state="white" size={12.5} track={0.8}>CUSTOMER SECURE ENVIRONMENT</Annotation>
 
         {ENV.map((n) => (
@@ -52,20 +52,20 @@ export function MetadataBoundaryDiagram() {
         })}
 
         {/* boundary line */}
-        <line x1={BX} y1={44} x2={BX} y2={400} stroke="hsl(0 0% 100% / 0.16)" strokeWidth="1.2" strokeDasharray="3 4" />
+        <line x1={BX} y1={44} x2={BX} y2={400} stroke="hsl(0 0% 100% / 0.22)" strokeWidth="1.2" strokeDasharray="3 4" />
 
-        {/* metadata bridge — the only crossing */}
-        <path d={`M526 122 C580 122 600 110 696 110`} fill="none" stroke={C.steelStrong} strokeWidth="2.4" markerEnd={arrow("steel")} />
-        <Annotation x={610} y={95} anchor="middle" state="active" size={10.5} track={0.5}>METADATA BRIDGE</Annotation>
+        {/* metadata bridge — the only crossing, straight across */}
+        <line x1={526} y1={126} x2={696} y2={126} stroke={C.steelStrong} strokeWidth="2.4" markerEnd={arrow("steel")} />
+        <Annotation x={611} y={114} anchor="middle" state="active" size={10.5} track={0.5}>METADATA BRIDGE</Annotation>
         {!reduced && inView && (
           <circle r="3.5" fill={C.steelText}>
-            <animateMotion dur="2.4s" repeatCount="indefinite" path="M526 122 C580 122 600 110 700 110" />
+            <animateMotion dur="2.4s" repeatCount="indefinite" path="M526 126 H696" />
           </circle>
         )}
 
-        {/* blocked payload attempt at the boundary */}
-        <path d={`M276 206 C420 206 500 212 ${BX - 14} 212`} fill="none" stroke={C.redLine} strokeWidth="1.8" strokeDasharray="2 5" opacity={0.85} />
-        <StatusMark x={BX} y={212} kind="fail" r={8} />
+        {/* blocked payload attempt — straight, stopped at the boundary */}
+        <line x1={276} y1={210} x2={BX - 12} y2={210} stroke={C.redLine} strokeWidth="1.8" strokeDasharray="2 5" opacity={0.9} />
+        <StatusMark x={BX} y={210} kind="fail" r={8} />
         <Annotation x={430} y={196} state="rejected" size={10.5}>payload blocked</Annotation>
 
         {/* Aurelius control plane */}

@@ -41,17 +41,17 @@ const oM: O = { ox: OX, oy: 366 }; // aurelius (largest)
 const oB: O = { ox: OX, oy: 686 }; // gpu execution
 
 /* ---- palette ------------------------------------------------------------- */
-const BG = "#07090d";
-const INK = "#e3e7ed"; // primary stroke
-const INK2 = "rgba(227,231,237,0.46)"; // secondary edges
-const INK3 = "rgba(227,231,237,0.22)"; // faint detail
-const F_TOP = "#0d1117"; // top face (occlusion)
-const F_R = "#0a0e13"; // right face
-const F_L = "#070a0e"; // left face
-const STEEL = "#6f7f9b"; // single accent — metadata / advisory
-const STEEL_DIM = "rgba(111,127,155,0.5)";
-const RED = "#9b3f3d"; // blocked payload only
-const RED_DIM = "rgba(155,63,61,0.62)";
+const BG = "#080808";
+const INK = "#e8e8e8"; // primary stroke
+const INK2 = "rgba(232,232,232,0.46)"; // secondary edges
+const INK3 = "rgba(232,232,232,0.22)"; // faint detail
+const F_TOP = "#101010"; // top face (occlusion — near-black, necessary for 3D)
+const F_R = "#0b0b0b"; // right face
+const F_L = "#070707"; // left face
+const STEEL = "#ededed"; // metadata / advisory — white
+const STEEL_DIM = "rgba(237,237,237,0.5)";
+const RED = "#c24d49"; // blocked payload only
+const RED_DIM = "rgba(194,77,73,0.62)";
 
 const EASE = [0.16, 1, 0.3, 1] as const;
 const T = 9000; // animation cycle (ms)
@@ -196,10 +196,11 @@ const A = {
   redStart: iso(oT, 3.1, 2.6, 0.9), // unsafe payload origin (offset)
   gateStop: iso(oM, 5.0, 4.5, 1.15), // top of the solid gate post
 };
-/* quadratic control points for each traveling packet */
-const BLUE_IN: Pt[] = [A.schedExit, [(A.schedExit[0] + A.aurTop[0]) / 2 - 4, (A.schedExit[1] + A.aurTop[1]) / 2], A.aurTop];
-const BLUE_OUT: Pt[] = [A.aurOut, [A.gap[0] - 2, (A.aurOut[1] + A.gpuTop[1]) / 2], A.gpuTop];
-const RED_PATH: Pt[] = [A.redStart, [A.redStart[0] + 30, (A.redStart[1] + A.gateStop[1]) / 2], A.gateStop];
+/* straight flows — control point is the exact midpoint, so each quadratic
+   degenerates to a straight line (no curves, per the diagram rules) */
+const BLUE_IN: Pt[] = [A.schedExit, [(A.schedExit[0] + A.aurTop[0]) / 2, (A.schedExit[1] + A.aurTop[1]) / 2], A.aurTop];
+const BLUE_OUT: Pt[] = [A.aurOut, [(A.aurOut[0] + A.gpuTop[0]) / 2, (A.aurOut[1] + A.gpuTop[1]) / 2], A.gpuTop];
+const RED_PATH: Pt[] = [A.redStart, [(A.redStart[0] + A.gateStop[0]) / 2, (A.redStart[1] + A.gateStop[1]) / 2], A.gateStop];
 
 const bez = (p: Pt[], t: number): Pt => {
   const u = 1 - t;
@@ -324,7 +325,7 @@ const TAGS: Tag[] = [
 ];
 const toneClass: Record<NonNullable<Tag["tone"]>, string> = {
   white: "text-white/80 border-white/15",
-  steel: "text-[hsl(218_22%_70%)] border-[hsl(218_18%_50%/0.45)]",
+  steel: "text-white/85 border-white/30",
   red: "text-[hsl(2_42%_58%)] border-[hsl(2_42%_44%/0.5)]",
   dim: "text-white/40 border-white/10",
 };
@@ -343,7 +344,7 @@ export function AureliusSchematicDiagram() {
   const nameIdx = useSequence(SCHEDULERS.length, { enabled: inView, interval: 2800 });
 
   return (
-    <figure data-acp="schematic" className="relative mx-auto max-w-[600px] overflow-hidden rounded-xl border border-border" style={{ background: BG }}>
+    <figure data-acp="schematic" className="relative mx-auto max-w-[600px] overflow-hidden border border-border" style={{ background: BG }}>
       <div ref={ref} className="relative aspect-[920/1000] w-full [container-type:inline-size]">
         <motion.svg
           viewBox={`0 0 ${W} ${H}`}
@@ -393,7 +394,7 @@ export function AureliusSchematicDiagram() {
                 transition={{ duration: 0.5, delay: 0.7, ease: EASE }}
               >
                 <div
-                  className={`whitespace-nowrap rounded-[2px] border bg-[hsl(0_0%_3%/0.72)] font-mono uppercase leading-none ${toneClass[t.tone ?? "white"]}`}
+                  className={`whitespace-nowrap border bg-[hsl(0_0%_3%/0.72)] font-mono uppercase leading-none ${toneClass[t.tone ?? "white"]}`}
                   style={{ fontSize: "clamp(6px,0.85cqw,10px)", padding: "0.42em 0.6em", letterSpacing: "0.18em" }}
                 >
                   {t.text}
@@ -406,7 +407,7 @@ export function AureliusSchematicDiagram() {
 
       <figcaption className="flex items-center justify-between gap-2.5 border-t border-border px-4 py-2.5 font-mono text-[10.5px] uppercase tracking-[0.2em] text-white/30">
         <span className="flex items-center gap-2.5">
-          <span className="h-px w-4 bg-[hsl(218_18%_52%/0.5)]" aria-hidden />
+          <span className="h-px w-4 bg-white/40" aria-hidden />
           advisory layer · scheduler → aurelius → execution
         </span>
         <span className="hidden tabular-nums text-white/18 sm:inline">metadata_only</span>

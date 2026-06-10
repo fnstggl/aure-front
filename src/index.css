@@ -35,30 +35,30 @@
     --accent: 0 0% 9%;
     --accent-foreground: 0 0% 93%;
 
-    --destructive: 1 44% 42%;        /* #9B3F3D — muted red, blocked/rejected */
+    --destructive: 2 58% 54%;        /* #9B3F3D — muted red, blocked/rejected */
     --destructive-foreground: 0 0% 96%;
 
     /* Hairline borders carry their own alpha */
     --border: 0 0% 100% / 0.08;
     --border-strong: 0 0% 100% / 0.16;
     --input: 0 0% 100% / 0.12;
-    --ring: 216 20% 44%;
+    --ring: 0 0% 80%;
 
     --radius: 0.3rem;
 
     /* Deep navy steel — selected / approved / active control path.
        Very muted, like steel, never SaaS-blue. --signal drives fills /
        borders / rails; --steel is the only color for active TEXT labels. */
-    --signal: 216 21% 29%;           /* #3A4658 — selected / approved */
-    --signal-strong: 216 23% 34%;    /* #42526A — active emphasis */
-    --signal-muted: 216 15% 42%;     /* quiet active */
-    --steel: 217 16% 57%;            /* #7F8DA3 — active technical labels */
+    --signal: 0 0% 82%;
+    --signal-strong: 0 0% 94%;
+    --signal-muted: 0 0% 60%;
+    --steel: 0 0% 86%;
 
     /* Forecast / confidence slate (kept within the navy steel family) */
-    --data-blue: 216 16% 50%;
-    --data-pale: 217 16% 57%;
-    --data-violet: 216 14% 44%;
-    --data-deep: 216 18% 33%;
+    --data-blue: 0 0% 70%;
+    --data-pale: 0 0% 82%;
+    --data-violet: 0 0% 58%;
+    --data-deep: 0 0% 46%;
 
     /* Legacy custom tokens kept for existing components */
     --surface-glass: 0 0% 100% / 0.025;
@@ -72,7 +72,7 @@
     --sidebar-accent: 0 0% 9%;
     --sidebar-accent-foreground: 0 0% 93%;
     --sidebar-border: 0 0% 100% / 0.08;
-    --sidebar-ring: 216 21% 29%;
+    --sidebar-ring: 0 0% 80%;
   }
 
   .dark {
@@ -92,20 +92,20 @@
     --muted-foreground: 0 0% 68%;
     --accent: 0 0% 9%;
     --accent-foreground: 0 0% 93%;
-    --destructive: 1 44% 42%;
+    --destructive: 2 58% 54%;
     --destructive-foreground: 0 0% 96%;
     --border: 0 0% 100% / 0.08;
     --border-strong: 0 0% 100% / 0.16;
     --input: 0 0% 100% / 0.12;
-    --ring: 216 20% 44%;
-    --signal: 216 21% 29%;
-    --signal-strong: 216 23% 34%;
-    --signal-muted: 216 15% 42%;
-    --steel: 217 16% 57%;
-    --data-blue: 216 16% 50%;
-    --data-pale: 217 16% 57%;
-    --data-violet: 216 14% 44%;
-    --data-deep: 216 18% 33%;
+    --ring: 0 0% 80%;
+    --signal: 0 0% 82%;
+    --signal-strong: 0 0% 94%;
+    --signal-muted: 0 0% 60%;
+    --steel: 0 0% 86%;
+    --data-blue: 0 0% 70%;
+    --data-pale: 0 0% 82%;
+    --data-violet: 0 0% 58%;
+    --data-deep: 0 0% 46%;
   }
 
   /* Warm off-white section — editorial relief from the dark */
@@ -197,7 +197,7 @@
   /* Soft, rare vignette to compose the hero — steel + neutral depth */
   .hero-vignette {
     background:
-      radial-gradient(110% 80% at 50% 8%, hsl(216 21% 29% / 0.05), transparent 55%),
+      radial-gradient(110% 80% at 50% 8%, hsl(0 0% 40% / 0.05), transparent 55%),
       radial-gradient(90% 70% at 50% 40%, hsl(0 0% 10% / 0.5), transparent 62%);
   }
 

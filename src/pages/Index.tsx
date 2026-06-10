@@ -9,6 +9,7 @@ import {
   Reveal,
 } from "@/components/site/primitives";
 import { ScrollWordReveal } from "@/components/site/ScrollWordReveal";
+import { ProblemSection } from "@/components/site/ProblemSection";
 import { AureliusSchematicDiagram } from "@/components/diagrams/AureliusSchematicDiagram";
 import { QueueShiftDiagram } from "@/components/diagrams/QueueShiftDiagram";
 import { ControlLoopDiagram } from "@/components/diagrams/ControlLoopDiagram";
@@ -77,6 +78,9 @@ export default function Index() {
           </div>
         </Container>
       </section>
+
+      {/* ================= The cost reality (scary problem grid) ============== */}
+      <ProblemSection />
 
       {/* ===================== Scheduler interception ================== */}
       <Section>

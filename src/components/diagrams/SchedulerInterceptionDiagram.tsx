@@ -10,8 +10,8 @@ import { TopologyPlate, SystemSurface, Annotation, Tag, StatusMark, C, EASE, arr
    only metadata branches down to Aurelius, which returns an advisory
    decision. Payload never crosses. Outcomes append to a lower ledger. */
 
-const META_PATH = "M406 182 C406 214 406 214 406 246";
-const ADVISORY_PATH = "M598 250 C660 250 636 142 690 142";
+const META_PATH = "M406 182 V246";
+const ADVISORY_PATH = "M600 250 H690 V148";
 
 export function SchedulerInterceptionDiagram() {
   const { ref, inView } = useInView();
