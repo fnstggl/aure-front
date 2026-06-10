@@ -329,9 +329,21 @@ const meta = {
   envTag: pt(ENV.gx + 0.6, ENV.gy + ENV.b - 0.5, 0),
   paths: { bridge: BR_D, advisory: ADV_D, blocked: BP_D },
   packet: { from: SCHED_OUT, mid: BR_MID, to: AUR_TOP },
+  advisory: { from: ADV_FROM, mid: ADV_MID, to: SCHED_BACK },
+  blocked: { from: EXEC_OUT, mid: BP_MID, to: BAR },
   barrier: BAR,
   metaTag: [BR_MID[0], BR_MID[1] - 8],
   payloadTag: [BAR[0] + 16, BAR[1]],
+  // anchors for looped motion (forecast/rank/filter stages on the Aurelius top)
+  stages: [
+    sc(S.aurelius, SIDE_GZ + 0.55 + S.aurelius.riser + S.aurelius.c + 0.4),
+    [sc(S.aurelius, SIDE_GZ + 0.55 + S.aurelius.riser + S.aurelius.c + 0.4)[0] - 34, sc(S.aurelius, SIDE_GZ + 0.55 + S.aurelius.riser + S.aurelius.c + 0.4)[1] + 8],
+    [sc(S.aurelius, SIDE_GZ + 0.55 + S.aurelius.riser + S.aurelius.c + 0.4)[0] + 34, sc(S.aurelius, SIDE_GZ + 0.55 + S.aurelius.riser + S.aurelius.c + 0.4)[1] + 8],
+  ],
+  aureliusTop: sc(S.aurelius, SIDE_GZ + 0.55 + S.aurelius.riser + S.aurelius.c),
+  constraintTop: sc(S.constraint, SIDE_GZ + 0.55 + S.constraint.c),
+  ledgerTop: sc(S.ledger, SIDE_GZ + 0.55 + 7 * 0.42),
+  queueTop: sc(S.queue, 6 * 0.62),
 };
 
 const PH = "<!-- Authored translucent-glass isometric source asset. Swap with a Spline/Figma render of the same layer at 1440x900 to upgrade fidelity; the React wrapper treats each layer as opaque. -->\n";
