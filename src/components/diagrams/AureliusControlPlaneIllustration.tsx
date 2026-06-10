@@ -1,23 +1,24 @@
-import { motion } from "framer-motion";
+import { useMemo } from "react";
+import { motion, useTime, useTransform, type MotionValue } from "framer-motion";
 import { useInView } from "@/hooks/useInView";
 import { usePrefersReducedMotion } from "@/hooks/usePrefersReducedMotion";
 import meta from "./aurelius-control-plane/meta.json";
 
 /* ============================================================================
-   Aurelius Control Plane — flagship layered isometric illustration (v2).
+   Aurelius Control Plane — flagship layered isometric illustration (v3: story).
 
-   Two stacked planes tell the architecture at a glance: the SECURE ENVIRONMENT
-   (workload queue -> scheduler -> execution) and the AURELIUS CONTROL PLANE
-   sidecar (core + constraint gate + audit ledger), joined only by a thin steel
-   METADATA-ONLY bridge. Payloads are blocked at the boundary; an advisory
-   recommendation returns to the scheduler.
+   Rendering is the authored translucent-glass art (unchanged). This wrapper adds
+   a subtle, looping ~10s transformation cycle that makes the architecture legible
+   even with labels hidden:
 
-   Each layer is an opaque asset under /public/diagrams/aurelius-control-plane/.
-   Swap any file for a Spline/Figma render at the same 1440x900 canvas and this
-   component is unchanged. Flow paths are drawn/animated in an overlay SVG (so
-   the bridge can "draw in", the packet can travel, the payload can flash once)
-   and fall back to the static exported path layers under reduced motion.
-   Only opacity / transform / SVG pathLength animate — no layout shift.
+     workload pulses → metadata extracted → travels the metadata-only bridge →
+     Aurelius brightens → forecast/rank/filter stages fire → constraint gate scans
+     → payload path flashes red and stays blocked → safe advisory returns to the
+     scheduler → a new record lands on the audit ledger → settle → repeat.
+
+   Each visual layer is an opaque asset (1440x900); swap any file for a Spline/
+   Figma render with no code change. Motion animates only opacity / transform —
+   no layout shift, no scroll. prefers-reduced-motion shows the resolved state.
    ========================================================================== */
 
 const SRC = "/diagrams/aurelius-control-plane";
@@ -25,29 +26,39 @@ const [VW, VH] = meta.viewBox as [number, number];
 const px = (x: number) => `${(x / VW) * 100}%`;
 const py = (y: number) => `${(y / VH) * 100}%`;
 const EASE = [0.16, 1, 0.3, 1] as const;
+const T = 10000; // cycle length (ms)
 
-/* opaque object/floor layers, back -> front; `rest` = settled opacity */
+type Pt = [number, number];
+const bez = (p: number[][], t: number): Pt => {
+  const u = 1 - t;
+  return [u * u * p[0][0] + 2 * u * t * p[1][0] + t * t * p[2][0], u * u * p[0][1] + 2 * u * t * p[1][1] + t * t * p[2][1]];
+};
+
+/* static object/floor/path layers (one-time reveal, then held) */
 type Layer = { id: string; rest: number; delay: number; fromY?: number };
 const LAYERS: Layer[] = [
   { id: "base_plane", rest: 1, delay: 0 },
   { id: "background_grid", rest: 0.72, delay: 0.1 },
   { id: "customer_environment", rest: 0.95, delay: 0.26 },
-  { id: "execution_layer", rest: 0.6, delay: 0.74 }, // downstream, settles dim
-  { id: "scheduler", rest: 1, delay: 0.52 },
-  { id: "workload_queue", rest: 0.86, delay: 0.4 },
-  { id: "sidecar_boundary", rest: 0.95, delay: 0.92 },
-  { id: "aurelius_control_plane", rest: 1, delay: 1.06, fromY: 16 },
-  { id: "constraint_engine", rest: 0.95, delay: 1.5 },
-  { id: "audit_ledger", rest: 0.95, delay: 1.66 },
+  { id: "execution_layer", rest: 0.58, delay: 0.74 },
+  { id: "scheduler", rest: 1, delay: 0.5 },
+  { id: "workload_queue", rest: 0.9, delay: 0.4 },
+  { id: "sidecar_boundary", rest: 0.95, delay: 0.9 },
+  { id: "metadata_bridge", rest: 0.85, delay: 1.05 },
+  { id: "advisory_return_path", rest: 0.6, delay: 1.2 },
+  { id: "aurelius_control_plane", rest: 1, delay: 1.0, fromY: 16 },
+  { id: "constraint_engine", rest: 0.95, delay: 1.35 },
+  { id: "audit_ledger", rest: 0.95, delay: 1.5 },
+  { id: "blocked_payload", rest: 0.85, delay: 1.65 },
 ];
 const layerVariants = {
   hidden: (c: Layer) => ({ opacity: 0, y: c.fromY ?? 6 }),
-  shown: (c: Layer) => ({ opacity: c.rest, y: 0, transition: { duration: 0.75, delay: c.delay, ease: EASE } }),
+  shown: (c: Layer) => ({ opacity: c.rest, y: 0, transition: { duration: 0.7, delay: c.delay, ease: EASE } }),
 };
 
-/* HTML technical tags (crisp + accessible); positions in 1440x900 canvas space */
-type Tag = { text: string; sub?: string; at: [number, number]; place: "above" | "below" | "left" | "right"; tone?: "default" | "steel" | "red" | "dim"; primary?: boolean; mobileHide?: boolean };
-const C = meta.centers as Record<string, [number, number]>;
+/* HTML technical tags */
+type Tag = { text: string; sub?: string; at: Pt; place: "above" | "below" | "left" | "right"; tone?: "default" | "steel" | "red" | "dim"; primary?: boolean; mobileHide?: boolean };
+const C = meta.centers as Record<string, Pt>;
 const TAGS: Tag[] = [
   { text: "EXISTING SCHEDULER", sub: "scheduler remains authority", at: [C.scheduler[0], C.scheduler[1] - 14], place: "above" },
   { text: "EXECUTION LAYER", sub: "execution unchanged", at: [C.execution[0] + 12, C.execution[1] - 12], place: "above" },
@@ -55,8 +66,8 @@ const TAGS: Tag[] = [
   { text: "AURELIUS CONTROL PLANE", sub: "forecast · rank · filter · log", at: [C.aurelius[0], C.aurelius[1] + 36], place: "below", primary: true },
   { text: "CONSTRAINT ENGINE", at: [C.constraint[0] + 10, C.constraint[1] + 24], place: "below", mobileHide: true },
   { text: "APPEND-ONLY AUDIT LEDGER", at: [C.ledger[0] - 8, C.ledger[1] + 26], place: "below", mobileHide: true },
-  { text: "METADATA ONLY", at: meta.metaTag as [number, number], place: "above", tone: "steel" },
-  { text: "PAYLOAD BLOCKED", at: meta.payloadTag as [number, number], place: "right", tone: "red" },
+  { text: "METADATA ONLY", at: meta.metaTag as Pt, place: "above", tone: "steel" },
+  { text: "PAYLOAD BLOCKED", at: meta.payloadTag as Pt, place: "right", tone: "red" },
   { text: "YOUR SECURE ENVIRONMENT", at: [84, 808], place: "right", tone: "dim", mobileHide: true },
 ];
 const toneClass: Record<NonNullable<Tag["tone"]>, string> = {
@@ -72,30 +83,131 @@ const placeStyle: Record<Tag["place"], React.CSSProperties> = {
   right: { transform: "translate(0, -50%)" },
 };
 
-function sampleBezier([P0, P1, P2]: number[][], n = 20) {
-  const xs: number[] = [], ys: number[] = [];
-  for (let i = 0; i <= n; i++) { const t = i / n, u = 1 - t; xs.push(u * u * P0[0] + 2 * u * t * P1[0] + t * t * P2[0]); ys.push(u * u * P0[1] + 2 * u * t * P1[1] + t * t * P2[1]); }
-  return { xs, ys };
+/* ---- the looping transformation cycle (mounted only when active) ---- */
+function FlowCycle() {
+  const time = useTime();
+  const cycle = useTransform(time, (t) => (t % T) / T);
+
+  const packetPts = [meta.packet.from, meta.packet.mid, meta.packet.to];
+  const advPts = [meta.advisory.from, meta.advisory.mid, meta.advisory.to];
+  const blkPts = [meta.blocked.from, meta.blocked.mid, meta.blocked.to];
+  const stages = meta.stages as Pt[];
+  const [ax, ay] = meta.aureliusTop as Pt;
+  const [cx, cy] = meta.constraintTop as Pt;
+  const [lx, ly] = meta.ledgerTop as Pt;
+  const [qx, qy] = meta.queueTop as Pt;
+  const [barX, barY] = meta.barrier as Pt;
+
+  // helpers: progress -> x/y along a quad bezier; opacity window
+  const useTravel = (pts: number[][], inR: [number, number]) => {
+    const prog = useTransform(cycle, inR, [0, 1], { clamp: true });
+    return { x: useTransform(prog, (p) => bez(pts, p)[0]), y: useTransform(prog, (p) => bez(pts, p)[1]) };
+  };
+  const useWin = (a: number, b: number, c: number, d: number, hi = 1): MotionValue<number> =>
+    useTransform(cycle, [a, b, c, d], [0, hi, hi, 0]);
+
+  // continuous directional flow along the metadata bridge (forward) + advisory (back)
+  const bridgeFlow = useTransform(time, (t) => -((t / 26) % 16));
+  const advFlow = useTransform(time, (t) => (t / 42) % 14);
+
+  const metaT = useTravel(packetPts, [0.06, 0.22]);
+  const metaHead = useTransform(cycle, [0.04, 0.07, 0.2, 0.23], [0, 1, 1, 0]);
+  const metaTrail = useTransform(cycle, [0.05, 0.09, 0.2, 0.23], [0, 0.5, 0.5, 0]);
+  const advT = useTravel(advPts, [0.6, 0.75]);
+  const advO = useWin(0.59, 0.63, 0.72, 0.76);
+  const blkT = useTravel(blkPts, [0.47, 0.56]);
+  const blkO = useWin(0.46, 0.49, 0.54, 0.57);
+
+  const queuePulse = useTransform(cycle, [0, 0.06, 0.13, 0.5, 0.56, 1], [0.08, 0.32, 0.08, 0.08, 0.24, 0.08]);
+  const aurGlow = useTransform(cycle, [0.18, 0.26, 0.48, 0.64], [0.08, 0.7, 0.55, 0.16]);
+  const st0 = useWin(0.26, 0.29, 0.34, 0.38);
+  const st1 = useWin(0.32, 0.35, 0.4, 0.44);
+  const st2 = useWin(0.38, 0.41, 0.46, 0.5);
+  const scanX = useTransform(cycle, [0.42, 0.52], [cx - 30, cx + 30], { clamp: true });
+  const scanO = useTransform(cycle, [0.41, 0.44, 0.5, 0.53], [0, 0.95, 0.95, 0]);
+  const flashO = useTransform(cycle, [0.54, 0.58, 0.66], [0, 1, 0]);
+  const plateO = useTransform(cycle, [0.72, 0.8, 0.95, 0.99], [0, 1, 1, 0]);
+  const plateY = useTransform(cycle, [0.72, 0.8], [11, 0], { clamp: true });
+
+  const dot = (p: Pt, o: MotionValue<number>, r = 6, fill = "#aebfe0") => (
+    <g>
+      <motion.circle cx={p[0]} cy={p[1]} r={r + 6} fill="rgba(174,191,224,0.26)" style={{ opacity: o }} />
+      <motion.circle cx={p[0]} cy={p[1]} r={r} fill={fill} style={{ opacity: o }} />
+    </g>
+  );
+  const plate = (cx0: number, cy0: number, w = 40, h = 20) => (
+    <polygon points={`${cx0},${cy0 - h} ${cx0 + w},${cy0} ${cx0},${cy0 + h} ${cx0 - w},${cy0}`} />
+  );
+  const chip = (fill: string, stroke: string, s = 8) => (
+    <>
+      <path d={`M0,${-s * 0.7} L${s},0 L0,${s * 0.7} L${-s},0 Z`} fill={fill} stroke={stroke} strokeWidth={0.8} />
+      <circle r={s * 0.32} fill="#eef3fc" />
+    </>
+  );
+
+  return (
+    <svg viewBox={`0 0 ${VW} ${VH}`} className="pointer-events-none absolute inset-0 h-full w-full" aria-hidden>
+      <defs>
+        <radialGradient id="acp-g" cx="50%" cy="50%" r="50%"><stop offset="0%" stopColor="#7f9bd0" stopOpacity="0.95" /><stop offset="100%" stopColor="#41557a" stopOpacity="0" /></radialGradient>
+        <radialGradient id="acp-r" cx="50%" cy="50%" r="50%"><stop offset="0%" stopColor="#c45b57" stopOpacity="0.95" /><stop offset="100%" stopColor="#b5524f" stopOpacity="0" /></radialGradient>
+      </defs>
+
+      {/* continuous directional flow: metadata in (steel, forward), advisory out (back) */}
+      <motion.path d={meta.paths.bridge} fill="none" stroke="#aebfe0" strokeWidth={2.4} strokeDasharray="2 12" strokeLinecap="round" opacity={0.85} style={{ strokeDashoffset: bridgeFlow }} />
+      <motion.path d={meta.paths.advisory} fill="none" stroke="#6f82a8" strokeWidth={1.8} strokeDasharray="2 11" strokeLinecap="round" opacity={0.6} style={{ strokeDashoffset: advFlow }} />
+
+      {/* 1. workload pulse */}
+      <motion.ellipse cx={qx} cy={qy} rx={74} ry={38} fill="url(#acp-g)" style={{ opacity: queuePulse }} />
+
+      {/* 3. Aurelius brightens through processing */}
+      <motion.ellipse cx={ax} cy={ay - 4} rx={132} ry={74} fill="url(#acp-g)" style={{ opacity: aurGlow }} />
+      {/* 4. forecast / rank / filter stage dots fire in sequence */}
+      {dot(stages[1], st0)}{dot(stages[2], st1)}{dot(stages[0], st2, 7, "#dbe5f7")}
+
+      {/* 5. constraint gate scan */}
+      <motion.g style={{ x: scanX, opacity: scanO }}>
+        <line x1={0} y1={cy - 24} x2={0} y2={cy + 26} stroke="#bccbe8" strokeWidth={2.5} strokeLinecap="round" />
+      </motion.g>
+
+      {/* 2. metadata packet extracted, travels the bridge (with trail) */}
+      <motion.g style={{ x: metaT.x, y: metaT.y }}>
+        <motion.circle r={14} fill="url(#acp-g)" style={{ opacity: metaTrail }} />
+        <motion.g style={{ opacity: metaHead }}>{chip("#4a608c", "#cdd9f1", 9)}</motion.g>
+      </motion.g>
+
+      {/* 6. payload attempts, hits boundary, flashes once, stays blocked */}
+      <motion.g style={{ x: blkT.x, y: blkT.y, opacity: blkO }}>
+        <circle r={11} fill="url(#acp-r)" />
+        <circle r={6} fill="#c45b57" />
+      </motion.g>
+      <motion.circle cx={barX} cy={barY} r={26} fill="url(#acp-r)" style={{ opacity: flashO }} />
+
+      {/* 7. safe advisory decision returns to scheduler */}
+      <motion.g style={{ x: advT.x, y: advT.y, opacity: advO }}>
+        <circle r={11} fill="url(#acp-g)" />
+        {chip("#6f82a8", "#cdd9f1", 7)}
+      </motion.g>
+
+      {/* 8. audit ledger receives a new record plate */}
+      <motion.g style={{ opacity: plateO, y: plateY }}>
+        <g fill="rgba(90,114,160,0.62)" stroke="#aebfe0" strokeWidth={1.2}>{plate(lx, ly)}</g>
+      </motion.g>
+    </svg>
+  );
 }
 
 export function AureliusControlPlaneIllustration() {
   const { ref, inView } = useInView<HTMLDivElement>({ threshold: 0.25, rootMargin: "0px 0px -10% 0px" });
   const reduced = usePrefersReducedMotion();
   const animate = inView ? "shown" : "hidden";
-  const on = inView; // animation gate
-
-  const packet = sampleBezier([meta.packet.from, meta.packet.mid, meta.packet.to]);
-  const start = meta.packet.from as [number, number];
-  const [bx, by] = meta.barrier as [number, number];
-  const bridgeD = meta.paths.bridge as string;
-  const advD = meta.paths.advisory as string;
-  const blkD = meta.paths.blocked as string;
+  const hideLabels = useMemo(() => typeof window !== "undefined" && new URLSearchParams(window.location.search).has("nolabels"), []);
+  const looping = inView && !reduced;
 
   return (
-    <figure className="relative overflow-hidden rounded-xl border border-border bg-card">
+    <figure data-acp="flagship" className="relative overflow-hidden rounded-xl border border-border bg-card">
       <div className="relative overflow-x-auto">
         <div ref={ref} className="relative aspect-[1440/900] w-full min-w-[700px] [container-type:inline-size]">
-          {/* ---- stacked authored layers ---- */}
+          {/* ---- stacked authored layers (one-time reveal, then held) ---- */}
           {LAYERS.map((l) =>
             reduced ? (
               <img key={l.id} src={`${SRC}/${l.id}.svg`} alt="" aria-hidden draggable={false} className="pointer-events-none absolute inset-0 h-full w-full select-none" style={{ opacity: l.rest }} />
@@ -104,84 +216,45 @@ export function AureliusControlPlaneIllustration() {
             ),
           )}
 
-          {/* ---- flow paths ---- */}
-          {reduced ? (
-            <>
-              {["metadata_bridge", "advisory_return_path", "blocked_payload"].map((id) => (
-                <img key={id} src={`${SRC}/${id}.svg`} alt="" aria-hidden draggable={false} className="pointer-events-none absolute inset-0 h-full w-full select-none" style={{ opacity: id === "blocked_payload" ? 0.5 : 1 }} />
+          {/* ---- looping transformation cycle ---- */}
+          {looping && <FlowCycle />}
+
+          {/* ---- HTML technical tags (hidden for the no-labels legibility test) ---- */}
+          {!hideLabels && (
+            <div className="pointer-events-none absolute inset-0">
+              {TAGS.map((t) => (
+                <motion.div key={t.text} className={`absolute ${t.mobileHide ? "hidden md:block" : ""}`} style={{ left: px(t.at[0]), top: py(t.at[1]), ...placeStyle[t.place] }}
+                  initial={reduced ? false : { opacity: 0 }} animate={reduced ? { opacity: 1 } : inView ? { opacity: 1 } : { opacity: 0 }} transition={{ duration: 0.5, delay: t.primary ? 1.2 : 1.0, ease: EASE }}>
+                  <div className={`whitespace-nowrap rounded-[3px] border bg-[hsl(0_0%_4%/0.76)] font-mono uppercase leading-none backdrop-blur-[1px] ${toneClass[t.tone ?? "default"]} ${t.primary ? "shadow-[0_0_0_1px_hsl(216_28%_52%/0.2)]" : ""}`} style={{ fontSize: "clamp(6px, 0.95cqw, 11px)", padding: "0.5em 0.66em", letterSpacing: "0.16em" }}>
+                    {t.text}
+                  </div>
+                  {t.sub && (
+                    <div className={`mt-1 hidden whitespace-nowrap font-mono tracking-[0.08em] text-white/34 lg:block ${t.place === "left" ? "text-right" : t.place === "right" ? "text-left" : "text-center"}`} style={{ fontSize: "clamp(6px, 0.78cqw, 9.5px)" }}>
+                      {t.sub}
+                    </div>
+                  )}
+                </motion.div>
               ))}
-            </>
-          ) : (
-            <svg viewBox={`0 0 ${VW} ${VH}`} className="pointer-events-none absolute inset-0 h-full w-full" aria-hidden>
-              <defs>
-                <filter id="acp-soft" x="-30%" y="-30%" width="160%" height="160%"><feGaussianBlur stdDeviation="6" /></filter>
-              </defs>
-
-              {/* metadata bridge: glow + draw-in line + dashed */}
-              <motion.path d={bridgeD} fill="none" stroke="#41557a" strokeWidth={14} strokeLinecap="round" filter="url(#acp-soft)" initial={{ opacity: 0 }} animate={on ? { opacity: 0.28 } : { opacity: 0 }} transition={{ duration: 0.6, delay: 1.12 }} />
-              <motion.path d={bridgeD} fill="none" stroke="#56688f" strokeWidth={3.4} strokeLinecap="round" initial={{ pathLength: 0 }} animate={on ? { pathLength: 1 } : { pathLength: 0 }} transition={{ duration: 0.7, delay: 1.12, ease: EASE }} />
-              <motion.path d={bridgeD} fill="none" stroke="#cdd9f1" strokeWidth={1.3} strokeDasharray="1.5 7" strokeLinecap="round" initial={{ pathLength: 0, opacity: 0 }} animate={on ? { pathLength: 1, opacity: 1 } : { pathLength: 0, opacity: 0 }} transition={{ duration: 0.7, delay: 1.2, ease: EASE }} />
-              {[meta.packet.from, meta.packet.to].map((e, i) => (
-                <motion.circle key={i} cx={e[0]} cy={e[1]} r={4.4} fill="#41557a" stroke="#9fb1d0" strokeWidth={1.3} initial={{ opacity: 0 }} animate={on ? { opacity: 1 } : { opacity: 0 }} transition={{ duration: 0.4, delay: i === 0 ? 1.12 : 1.7 }} />
-              ))}
-
-              {/* constraint engine: brief activation ring */}
-              <motion.circle cx={C.constraint[0]} cy={C.constraint[1]} r={20} fill="none" stroke="#7488ad" strokeWidth={2}
-                initial={{ opacity: 0, scale: 0.4 }} animate={on ? { opacity: [0, 0.7, 0], scale: [0.4, 1.2, 1.5] } : { opacity: 0 }}
-                transition={{ duration: 1.0, delay: 1.55, ease: "easeOut" }} style={{ transformOrigin: "center", transformBox: "fill-box" } as React.CSSProperties} />
-
-              {/* metadata packet travels the bridge */}
-              <motion.g initial={{ x: start[0], y: start[1], opacity: 0 }} animate={on ? { x: packet.xs, y: packet.ys, opacity: [0, 1, 1, 1, 0] } : { x: start[0], y: start[1], opacity: 0 }} transition={{ duration: 1.4, delay: 1.5, ease: "easeInOut", opacity: { duration: 1.4, delay: 1.5, times: [0, 0.12, 0.5, 0.85, 1] } }}>
-                <circle r={9} fill="#7f93b6" opacity={0.26} />
-                <path d="M0,-5.5 L7,0 L0,5.5 L-7,0 Z" fill="#4a608c" stroke="#9fb1d0" strokeWidth={0.8} />
-                <circle r={2.2} fill="#e6eefb" />
-              </motion.g>
-
-              {/* blocked payload: draws then flashes red once, stops at barrier */}
-              <motion.path d={blkD} fill="none" stroke="rgba(170,72,69,0.85)" strokeWidth={2.4} strokeDasharray="7 5" strokeLinecap="round" initial={{ pathLength: 0, opacity: 0 }} animate={on ? { pathLength: 1, opacity: [0, 1, 1, 0.5] } : { pathLength: 0, opacity: 0 }} transition={{ duration: 0.9, delay: 1.95, times: [0, 0.5, 0.75, 1], ease: "easeOut" }} />
-              <motion.g initial={{ opacity: 0 }} animate={on ? { opacity: [0, 1, 1, 0.6] } : { opacity: 0 }} transition={{ duration: 0.9, delay: 2.1, times: [0, 0.4, 0.7, 1] }}>
-                <polygon points={`${bx - 6},${by - 26} ${bx + 13},${by - 15} ${bx + 13},${by + 15} ${bx - 6},${by + 6}`} fill="rgba(170,72,69,0.16)" stroke="rgba(170,72,69,0.85)" strokeWidth={1.5} />
-                <circle cx={bx} cy={by} r={12.5} fill="rgba(10,11,14,0.92)" stroke="#b5524f" strokeWidth={1.8} />
-                <path d={`M${bx - 5.2},${by - 5.2} L${bx + 5.2},${by + 5.2} M${bx + 5.2},${by - 5.2} L${bx - 5.2},${by + 5.2}`} stroke="#b5524f" strokeWidth={2} strokeLinecap="round" />
-              </motion.g>
-
-              {/* advisory recommendation returns to scheduler */}
-              <motion.path d={advD} fill="none" stroke="#56688f" strokeWidth={1.8} strokeDasharray="2 5" strokeLinecap="round" initial={{ pathLength: 0, opacity: 0 }} animate={on ? { pathLength: 1, opacity: 0.9 } : { pathLength: 0, opacity: 0 }} transition={{ duration: 0.7, delay: 2.5, ease: EASE }} />
-            </svg>
+            </div>
           )}
 
-          {/* ---- HTML technical tags (type scales with canvas via cqw) ---- */}
-          <div className="pointer-events-none absolute inset-0">
-            {TAGS.map((t) => (
-              <motion.div key={t.text} className={`absolute ${t.mobileHide ? "hidden md:block" : ""}`} style={{ left: px(t.at[0]), top: py(t.at[1]), ...placeStyle[t.place] }}
-                initial={reduced ? false : { opacity: 0 }} animate={reduced ? { opacity: 1 } : on ? { opacity: 1 } : { opacity: 0 }} transition={{ duration: 0.5, delay: t.primary ? 1.2 : 1.0, ease: EASE }}>
-                <div className={`whitespace-nowrap rounded-[3px] border bg-[hsl(0_0%_4%/0.76)] font-mono uppercase leading-none backdrop-blur-[1px] ${toneClass[t.tone ?? "default"]} ${t.primary ? "shadow-[0_0_0_1px_hsl(216_28%_52%/0.2)]" : ""}`} style={{ fontSize: "clamp(6px, 0.95cqw, 11px)", padding: "0.5em 0.66em", letterSpacing: "0.16em" }}>
-                  {t.text}
-                </div>
-                {t.sub && (
-                  <div className={`mt-1 hidden whitespace-nowrap font-mono tracking-[0.08em] text-white/34 lg:block ${t.place === "left" ? "text-right" : t.place === "right" ? "text-left" : "text-center"}`} style={{ fontSize: "clamp(6px, 0.78cqw, 9.5px)" }}>
-                    {t.sub}
-                  </div>
-                )}
-              </motion.div>
-            ))}
-          </div>
-
           {/* ---- right-side explanation panel ---- */}
-          <motion.aside className="absolute right-[4.5%] top-[6%] hidden w-[24%] max-w-[300px] lg:block"
-            initial={reduced ? false : { opacity: 0, y: 8 }} animate={reduced ? { opacity: 1, y: 0 } : on ? { opacity: 1, y: 0 } : { opacity: 0, y: 8 }} transition={{ duration: 0.7, delay: 0.4, ease: EASE }}>
-            <h3 className="text-[clamp(1.05rem,1.5vw,1.4rem)] font-medium tracking-tight text-foreground">The Control Plane</h3>
-            <p className="mt-3 text-[12.5px] leading-relaxed text-white/55">
-              Aurelius runs beside your scheduler as a sidecar. Only metadata crosses the boundary —
-              never payloads, prompts, model outputs, training data, or source code. It forecasts,
-              ranks, and filters candidates, returns an advisory decision, and appends every
-              counterfactual to a tamper-evident ledger.
-            </p>
-            <div className="mt-4 flex items-center gap-2 font-mono text-[10px] uppercase tracking-[0.18em] text-[hsl(217_30%_72%)]">
-              <span className="h-px w-4 bg-[hsl(216_28%_52%/0.6)]" aria-hidden />
-              Metadata-only · advisory
-            </div>
-          </motion.aside>
+          {!hideLabels && (
+            <motion.aside className="absolute right-[4.5%] top-[6%] hidden w-[24%] max-w-[300px] lg:block"
+              initial={reduced ? false : { opacity: 0, y: 8 }} animate={reduced ? { opacity: 1, y: 0 } : inView ? { opacity: 1, y: 0 } : { opacity: 0, y: 8 }} transition={{ duration: 0.7, delay: 0.4, ease: EASE }}>
+              <h3 className="text-[clamp(1.05rem,1.5vw,1.4rem)] font-medium tracking-tight text-foreground">The Control Plane</h3>
+              <p className="mt-3 text-[12.5px] leading-relaxed text-white/55">
+                Aurelius runs beside your scheduler as a sidecar. Only metadata crosses the boundary —
+                never payloads, prompts, model outputs, training data, or source code. It forecasts,
+                ranks, and filters candidates, returns an advisory decision, and appends every
+                counterfactual to a tamper-evident ledger.
+              </p>
+              <div className="mt-4 flex items-center gap-2 font-mono text-[10px] uppercase tracking-[0.18em] text-[hsl(217_30%_72%)]">
+                <span className="h-px w-4 bg-[hsl(216_28%_52%/0.6)]" aria-hidden />
+                Metadata-only · advisory
+              </div>
+            </motion.aside>
+          )}
         </div>
       </div>
 
