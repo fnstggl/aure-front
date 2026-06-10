@@ -5,7 +5,7 @@ import { dirname, resolve } from "node:path";
 const __dir = dirname(fileURLToPath(import.meta.url));
 const OUT = resolve(__dir, "../.qa");
 const BASE = "http://127.0.0.1:5188/";
-const SEL = "[data-acp='flagship']";
+const SEL = "[data-acp='schematic']";
 
 const browser = await chromium.launch();
 const rect = (sel) => {
