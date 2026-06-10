@@ -63,7 +63,7 @@ export function ProblemSection() {
             <span className="text-white/50">Your scheduler wasn’t built to stop it.</span>
           </h2>
           <p className="mx-auto mt-6 max-w-xl text-[15px] leading-relaxed text-white/60 md:text-[16px]">
-            Most schedulers optimize for availability, fairness, and latency. They don’t optimize for energy cost, regional economics, capacity fragmentation, or timing windows.
+            Most schedulers optimize for availability, fairness, and latency.
             Aurelius finds the best economic outcome.
           </p>
         </div>
