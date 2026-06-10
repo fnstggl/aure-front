@@ -1,15 +1,18 @@
 /**
- * Aurelius Control Plane — flagship isometric diagram generator.
+ * Aurelius Control Plane — flagship isometric diagram generator (v2: glass + story).
  *
- * Authors a layered, true-2:1-isometric technical illustration and writes one
- * SVG per named layer into /public/diagrams/aurelius-control-plane/, plus a
- * meta.json (label anchors + animation paths) consumed by the React wrapper.
+ * Two clear planes tell the architecture in 3 seconds:
+ *   - SECURE ENVIRONMENT floor (back): workload queue -> scheduler -> execution.
+ *   - AURELIUS CONTROL PLANE floor (front, elevated): the sidecar core, the
+ *     constraint gate, and the append-only audit ledger.
+ * A thin steel metadata bridge is the ONLY thing crossing between them; the
+ * payload path is blocked at the boundary; an advisory recommendation returns.
  *
- * These SVGs are the *source assets* for the layered illustration. They are
- * authored geometry (isometric objects with depth + lighting), not flat
- * dashboard rectangles, and are mirrored into the Figma file as named layers.
- * The React wrapper treats each file as an opaque layer, so authored
- * Figma/Spline renders can later replace any file with no component changes.
+ * Objects are authored as translucent / frosted glass (semi-transparent faces,
+ * bright glass rims, soft frost halos, a glowing steel core) — the closest a
+ * vector pipeline gets to Applied-Compute rendered material. Each layer is an
+ * opaque asset on a shared 1440x900 canvas, so a Spline/Figma render can replace
+ * any single file with no React change.
  *
  *   node scripts/gen-aurelius-diagram.mjs
  */
@@ -23,517 +26,333 @@ const META_DIR = resolve(__dir, "../src/components/diagrams/aurelius-control-pla
 mkdirSync(OUT, { recursive: true });
 mkdirSync(META_DIR, { recursive: true });
 
-/* ----------------------------------------------------------------------- */
-/* Canvas + isometric projection (2:1 dimetric)                            */
-/* ----------------------------------------------------------------------- */
-const W = 1440, H = 900;
-const TILE = 32;   // screen px per grid unit along each ground axis (x half = TILE)
-const ZU = 21;     // screen px per unit of height
-const OX = 588, OY = 262;
-
+/* ---- canvas + 2:1 isometric projection ---- */
+const W = 1440, H = 900, TILE = 44, ZU = 24, OX = 566, OY = 188;
 const r = (n) => Math.round(n * 10) / 10;
-/** grid (gx along +x→right-down, gy along +y→left-down, gz up) → [sx, sy] */
 const pt = (gx, gy, gz = 0) => [OX + (gx - gy) * TILE, OY + (gx + gy) * (TILE / 2) - gz * ZU];
 const P = (pts) => pts.map(([x, y]) => `${r(x)},${r(y)}`).join(" ");
+const mid = (a, b) => [(a[0] + b[0]) / 2, (a[1] + b[1]) / 2];
 
-/* ----------------------------------------------------------------------- */
-/* Palettes — off-white / gray / silver infrastructure; steel-blue accent  */
-/* light reads from upper-left: top brightest, +Y (left) face mid, +X dark */
-/* ----------------------------------------------------------------------- */
-const EDGE_D = "rgba(9,11,15,0.55)";       // dark facet seam
-const EDGE_L = "rgba(255,255,255,0.16)";   // top rim highlight
-const PAL = {
-  silver:  { top: "#e7eaef", left: "#bdc4cd", right: "#8a919c" },
-  pale:    { top: "#dde2e9", left: "#b1b9c3", right: "#838b96" },
-  gray:    { top: "#c6ccd3", left: "#979ea8", right: "#6b727e" }, // execution (slightly cooler/back)
-  body:    { top: "#dfe4ea", left: "#b4bcc6", right: "#868e99" }, // aurelius body
-  steel:   { top: "#5a6f95", left: "#46587a", right: "#36455f" }, // aurelius accent panel
-  ledger:  { top: "#dde2e9", left: "#aeb6c1", right: "#828a95" },
-};
-const STEEL = { line: "#4d6088", glow: "#3a4658", edge: "#6479a0", text: "#8b97ab" };
-const RED = { core: "#b5524f", line: "rgba(155,63,61,0.78)", glow: "rgba(165,70,68,0.30)" };
-const GRID_LINE = "rgba(255,255,255,0.05)";
-const PLANE = { top: "#0f1218", left: "#0a0c11", right: "#070a0e", edge: "rgba(120,140,170,0.10)" };
+/* ---- glass palette (translucent over charcoal) ---- */
+const GLASS = "226,232,242";        // cool off-white glass tint (rgb)
+const GLASS_DIM = "150,160,176";     // dimmed/inactive glass
+const STEEL_RGB = "74,96,140";       // deep muted steel-blue
+const STEEL = { line: "#56688f", edge: "#7488ad", bright: "#9fb1d0", core: "#41557a" };
+const RED = { core: "#b5524f", line: "rgba(170,72,69,0.85)", glow: "rgba(170,72,69,0.34)" };
+const GRID = "rgba(150,170,200,0.06)";
 
-/* ----------------------------------------------------------------------- */
-/* Primitives                                                              */
-/* ----------------------------------------------------------------------- */
-function polygon(points, fill, stroke, sw = 1, opacity = 1) {
-  return `<polygon points="${P(points)}" fill="${fill}"${stroke ? ` stroke="${stroke}" stroke-width="${sw}"` : ""}${opacity !== 1 ? ` opacity="${opacity}"` : ""} stroke-linejoin="round"/>`;
+/* shared defs reused by every layer (frost blur, glows, gradients) */
+const DEFS = `
+<filter id="frost" x="-40%" y="-40%" width="180%" height="180%"><feGaussianBlur stdDeviation="9"/></filter>
+<filter id="soft" x="-60%" y="-60%" width="220%" height="220%"><feGaussianBlur stdDeviation="16"/></filter>
+<radialGradient id="shadow" cx="50%" cy="50%" r="50%"><stop offset="0%" stop-color="#000" stop-opacity="0.5"/><stop offset="70%" stop-color="#000" stop-opacity="0.18"/><stop offset="100%" stop-color="#000" stop-opacity="0"/></radialGradient>
+<radialGradient id="steelcore" cx="50%" cy="42%" r="60%"><stop offset="0%" stop-color="#6f8bbd" stop-opacity="0.95"/><stop offset="45%" stop-color="#41557a" stop-opacity="0.8"/><stop offset="100%" stop-color="#2a3550" stop-opacity="0.2"/></radialGradient>
+<radialGradient id="steelhalo" cx="50%" cy="50%" r="50%"><stop offset="0%" stop-color="#4a6090" stop-opacity="0.5"/><stop offset="100%" stop-color="#4a6090" stop-opacity="0"/></radialGradient>
+<linearGradient id="gtop" x1="0" y1="0" x2="0.5" y2="1"><stop offset="0" stop-color="rgba(255,255,255,0.34)"/><stop offset="1" stop-color="rgba(255,255,255,0.08)"/></linearGradient>`;
+
+function doc(body, extraDefs = "") {
+  return `<svg xmlns="http://www.w3.org/2000/svg" width="${W}" height="${H}" viewBox="0 0 ${W} ${H}" fill="none"><defs>${DEFS}${extraDefs}</defs>${body}</svg>\n`;
 }
+function polygon(points, fill, stroke, sw = 1) {
+  return `<polygon points="${P(points)}" fill="${fill}"${stroke ? ` stroke="${stroke}" stroke-width="${sw}"` : ""} stroke-linejoin="round"/>`;
+}
+function shadow(cx, cy, rx, ry, op = 0.5) { return `<ellipse cx="${r(cx)}" cy="${r(cy)}" rx="${r(rx)}" ry="${r(ry)}" fill="url(#shadow)" opacity="${op}"/>`; }
 
-/** A cuboid from base corner (gx,gy) at height gz, footprint a×b, height c. */
-function cuboid(gx, gy, a, b, c, pal, gz = 0, { rim = true } = {}) {
+/* ---- translucent glass cuboid ---- */
+function glass(gx, gy, a, b, c, o = {}) {
+  const tint = o.tint || GLASS, al = o.al == null ? 1 : o.al, gz = o.gz || 0;
+  const ta = (o.topA ?? 0.45) * al, la = (o.leftA ?? 0.27) * al, ra = (o.rightA ?? 0.18) * al, rim = (o.rim ?? 0.72) * al;
   const T0 = pt(gx, gy, gz + c), T1 = pt(gx + a, gy, gz + c), T2 = pt(gx + a, gy + b, gz + c), T3 = pt(gx, gy + b, gz + c);
-  const Lb0 = pt(gx, gy + b, gz), Lb1 = pt(gx + a, gy + b, gz);
-  const Rb0 = pt(gx + a, gy, gz), Rb1 = pt(gx + a, gy + b, gz);
+  const Lb0 = pt(gx, gy + b, gz), Lb1 = pt(gx + a, gy + b, gz), Rb0 = pt(gx + a, gy, gz), Rb1 = pt(gx + a, gy + b, gz);
   let s = "";
-  s += polygon([T3, T2, Lb1, Lb0], pal.left, EDGE_D, 1);    // +Y face (left, mid)
-  s += polygon([T1, T2, Rb1, Rb0], pal.right, EDGE_D, 1);   // +X face (right, dark)
-  s += polygon([T0, T1, T2, T3], pal.top, EDGE_D, 1);       // top
-  if (rim) s += `<polyline points="${P([T3, T0, T1])}" fill="none" stroke="${EDGE_L}" stroke-width="1.1"/>`;
+  s += polygon([T3, T2, Lb1, Lb0], `rgba(${tint},${la})`, `rgba(255,255,255,${0.10 * al})`, 1);
+  s += polygon([T1, T2, Rb1, Rb0], `rgba(${tint},${ra})`, `rgba(255,255,255,${0.07 * al})`, 1);
+  s += polygon([T0, T1, T2, T3], `rgba(${tint},${ta})`, `rgba(255,255,255,${0.13 * al})`, 1);
+  s += `<polyline points="${P([T3, T0, T1])}" fill="none" stroke="rgba(255,255,255,${rim})" stroke-width="1.2"/>`;
+  s += `<line x1="${r(T2[0])}" y1="${r(T2[1])}" x2="${r(Rb1[0])}" y2="${r(Rb1[1])}" stroke="rgba(255,255,255,${0.18 * al})" stroke-width="1"/>`;
   return s;
 }
-
-/** thin contact shadow under an object footprint center */
-function contactShadow(cx, cy, rx, ry, op = 0.45, id) {
-  return `<ellipse cx="${r(cx)}" cy="${r(cy)}" rx="${r(rx)}" ry="${r(ry)}" fill="url(#${id})" opacity="${op}"/>`;
+/* thin glass plate / floor slab */
+function slab(gx, gy, a, b, o = {}) {
+  return glass(gx, gy, a, b, o.c ?? 0.28, { topA: o.topA ?? 0.07, leftA: 0.05, rightA: 0.035, rim: o.rim ?? 0.18, tint: o.tint || GLASS, al: o.al ?? 1, gz: o.gz || 0 });
 }
-const shadowGrad = (id) =>
-  `<radialGradient id="${id}" cx="50%" cy="50%" r="50%"><stop offset="0%" stop-color="#000" stop-opacity="0.55"/><stop offset="70%" stop-color="#000" stop-opacity="0.22"/><stop offset="100%" stop-color="#000" stop-opacity="0"/></radialGradient>`;
-
-/** stacked thin cards (workload queue) */
-function cardStack(gx, gy, a, b, n, pal) {
-  let s = "";
-  const h = 0.32, gap = 0.5;
-  for (let i = 0; i < n; i++) {
-    const fade = 1 - (n - 1 - i) * 0.05;
-    const p = {
-      top: shade(pal.top, fade), left: shade(pal.left, fade), right: shade(pal.right, fade),
-    };
-    s += cuboid(gx, gy, a, b, h, p, i * gap);
-  }
-  return s;
+function discTop(gx, gy, rg, z, fill, stroke, sw = 1) {
+  const [cx, cy] = pt(gx, gy, z); const rx = rg * TILE * 1.414, ry = rx / 2;
+  return `<ellipse cx="${r(cx)}" cy="${r(cy)}" rx="${r(rx)}" ry="${r(ry)}" fill="${fill}"${stroke ? ` stroke="${stroke}" stroke-width="${sw}"` : ""}/>`;
 }
 
-/** iso disc (axis-aligned ellipse): ground circle radius rg at height z */
-function disc(gx, gy, rg, z, fill, stroke, sw = 1, op = 1) {
-  const [cx, cy] = pt(gx, gy, z);
-  const rx = rg * TILE * 1.414, ry = rx / 2;
-  return `<ellipse cx="${r(cx)}" cy="${r(cy)}" rx="${r(rx)}" ry="${r(ry)}" fill="${fill}"${stroke ? ` stroke="${stroke}" stroke-width="${sw}"` : ""}${op !== 1 ? ` opacity="${op}"` : ""}/>`;
-}
-
-/** iso cylinder / drum (audit ledger). center (gx,gy), radius rg, height hg */
-function cylinder(gx, gy, rg, hg, pal, { rings = 3 } = {}) {
-  const [cxT, cyT] = pt(gx, gy, hg);
-  const [cxB, cyB] = pt(gx, gy, 0);
-  const rx = rg * TILE * 1.414, ry = rx / 2;
-  let s = "";
-  // body
-  s += `<path d="M${r(cxT - rx)},${r(cyT)} L${r(cxB - rx)},${r(cyB)} A${r(rx)},${r(ry)} 0 0 0 ${r(cxB + rx)},${r(cyB)} L${r(cxT + rx)},${r(cyT)} A${r(rx)},${r(ry)} 0 0 1 ${r(cxT - rx)},${r(cyT)} Z" fill="${pal.right}" stroke="${EDGE_D}" stroke-width="1"/>`;
-  // lit left half of body
-  s += `<path d="M${r(cxT - rx)},${r(cyT)} L${r(cxB - rx)},${r(cyB)} A${r(rx)},${r(ry)} 0 0 0 ${r(cxB)},${r(cyB + ry)} L${r(cxT)},${r(cyT + ry)} A${r(rx)},${r(ry)} 0 0 1 ${r(cxT - rx)},${r(cyT)} Z" fill="${pal.left}" opacity="0.9"/>`;
-  // ring grooves (the append-only stacked records)
-  for (let i = 1; i < rings; i++) {
-    const z = (hg * i) / rings;
-    const [, cyR] = pt(gx, gy, z);
-    s += `<path d="M${r(cxB - rx)},${r(cyR)} A${r(rx)},${r(ry)} 0 0 0 ${r(cxB + rx)},${r(cyR)}" fill="none" stroke="${STEEL.line}" stroke-width="1" opacity="0.5"/>`;
-  }
-  // top disc + steel rim
-  s += disc(gx, gy, rg, hg, pal.top, EDGE_D, 1);
-  s += disc(gx, gy, rg * 0.62, hg, "none", STEEL.edge, 1.2, 0.7);
-  s += disc(gx, gy, rg * 0.28, hg, STEEL.glow, STEEL.edge, 1, 0.85);
-  return s;
-}
-
-/** rack with horizontal slot detail on the +X (right) face */
-function rackDetail(gx, gy, a, b, c, count = 4) {
-  let s = "";
-  for (let i = 1; i <= count; i++) {
-    const z = (c * i) / (count + 1);
-    const A = pt(gx + a, gy + 0.18, z), B = pt(gx + a, gy + b - 0.18, z);
-    s += `<line x1="${r(A[0])}" y1="${r(A[1])}" x2="${r(B[0])}" y2="${r(B[1])}" stroke="rgba(8,10,14,0.42)" stroke-width="1.4"/>`;
-    const A2 = pt(gx + 0.18, gy + b, z), B2 = pt(gx + a - 0.18, gy + b, z);
-    s += `<line x1="${r(A2[0])}" y1="${r(A2[1])}" x2="${r(B2[0])}" y2="${r(B2[1])}" stroke="rgba(8,10,14,0.3)" stroke-width="1.2"/>`;
-  }
-  return s;
-}
-
-/** small status node light */
-function led(gx, gy, z, color, r0 = 3) {
-  const [x, y] = pt(gx, gy, z);
-  return `<circle cx="${r(x)}" cy="${r(y)}" r="${r0}" fill="${color}"/>`;
-}
-
-/** color shade helper: scale a #rrggbb by factor (1=unchanged), clamped */
-function shade(hex, f) {
-  const n = parseInt(hex.slice(1), 16);
-  const c = (v) => Math.max(0, Math.min(255, Math.round(v * f)));
-  const R = c((n >> 16) & 255), G = c((n >> 8) & 255), B = c(n & 255);
-  return `#${((1 << 24) + (R << 16) + (G << 8) + B).toString(16).slice(1)}`;
-}
-const lighten = (hex, f) => shade(hex, f);
-
-/** Build per-face gradients for a palette so faces read as rendered, not flat.
- *  Returns { defs, top, left, right } where fills are url() refs. */
-let GID = 0;
-function gradPal(pal) {
-  const id = `g${GID++}`;
-  const defs =
-    `<linearGradient id="${id}t" x1="0" y1="0" x2="0.65" y2="1"><stop offset="0" stop-color="${lighten(pal.top, 1.05)}"/><stop offset="1" stop-color="${shade(pal.top, 0.95)}"/></linearGradient>` +
-    `<linearGradient id="${id}l" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="${pal.left}"/><stop offset="1" stop-color="${shade(pal.left, 0.8)}"/></linearGradient>` +
-    `<linearGradient id="${id}r" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="${pal.right}"/><stop offset="1" stop-color="${shade(pal.right, 0.74)}"/></linearGradient>`;
-  return { defs, top: `url(#${id}t)`, left: `url(#${id}l)`, right: `url(#${id}r)` };
-}
-
-/* ----------------------------------------------------------------------- */
-/* Scene layout (grid coordinates)                                         */
-/* ----------------------------------------------------------------------- */
+/* ---- scene layout: two horizontal bands stacked in depth, shared x-center.
+   place(diff, sum, ...) sets screen position directly: diff = horizontal
+   (gx-gy), sum = depth (gx+gy). Back band = secure env, front band = Aurelius. */
+const place = (diff, sum, a, b, ex = {}) => { const gx = (sum + diff) / 2, gy = (sum - diff) / 2; return { gx: gx - a / 2, gy: gy - b / 2, a, b, ...ex }; };
+const BACK = 6.6, FRONT = 15.6;
 const S = {
-  plane:    { gx: -2, gy: -2, a: 16, b: 15 },
-  queue:    { gx: 0.6, gy: 8.4, a: 3.2, b: 3.8, n: 7 },
-  scheduler:{ gx: 5.6, gy: 3.8, a: 3.9, b: 3.9, c: 4.3 },
-  exec:     { gx: 10.6, gy: -0.4, racks: 3, a: 1.5, b: 2.0, c: 5.6, gap: 2.5 },
-  aurelius: { gx: 7.3, gy: 7.0, a: 4.5, b: 3.5, c: 3.1, riser: 0.34 },
-  constraint:{ gx: 12.9, gy: 6.2, a: 2.1, b: 2.1, c: 2.5 },
-  ledger:   { gx: 5.2, gy: 11.0, rg: 1.5, hg: 2.7 },
+  queue: place(-6.4, BACK, 2.7, 3.0, { n: 6 }),
+  scheduler: place(-0.2, BACK, 3.4, 3.4, { c: 4.4 }),
+  exec: { ...place(6.0, BACK + 0.4, 1.35, 1.7), racks: 3, gap: 1.55, c: 4.7 },
+  aurelius: place(0, FRONT, 4.7, 3.7, { c: 3.4, riser: 0.6 }),
+  ledger: place(-6.2, FRONT, 2.4, 2.3, { plates: 7 }),
+  constraint: place(5.8, FRONT, 2.2, 2.3, { c: 2.7 }),
 };
-/** screen center of an object footprint at a given height */
-const centerTop = (o, c) => pt(o.gx + o.a / 2, o.gy + o.b / 2, c ?? o.c ?? 0);
-const footCenter = (o) => pt(o.gx + (o.a ?? 0) / 2, o.gy + (o.b ?? 0) / 2, 0);
-
-/* ----------------------------------------------------------------------- */
-/* SVG document wrapper                                                    */
-/* ----------------------------------------------------------------------- */
-function doc(defs, body) {
-  return `<svg xmlns="http://www.w3.org/2000/svg" width="${W}" height="${H}" viewBox="0 0 ${W} ${H}" fill="none">\n${defs ? `<defs>${defs}</defs>\n` : ""}${body}\n</svg>\n`;
+// center the 3-rack execution cluster on its placement point
+S.exec.gy -= ((S.exec.racks - 1) * S.exec.gap) / 2;
+const sc = (o, z = 0) => pt(o.gx + o.a / 2, o.gy + o.b / 2, z);
+const execSpan = () => ({ gx: S.exec.gx, gy: S.exec.gy, a: S.exec.a, b: S.exec.b + (S.exec.racks - 1) * S.exec.gap });
+function bbox(objs, m) {
+  let x0 = 1e9, y0 = 1e9, x1 = -1e9, y1 = -1e9;
+  for (const o of objs) { x0 = Math.min(x0, o.gx); y0 = Math.min(y0, o.gy); x1 = Math.max(x1, o.gx + o.a); y1 = Math.max(y1, o.gy + o.b); }
+  return { gx: x0 - m, gy: y0 - m, a: x1 - x0 + 2 * m, b: y1 - y0 + 2 * m };
 }
-const PLACEHOLDER_NOTE = "<!-- Authored isometric source asset. Swap with a Figma/Spline render of the same layer + canvas (1440x900) to upgrade fidelity with no component change. -->\n";
+const ENV = bbox([S.queue, S.scheduler, execSpan()], 0.6);
+const SIDE = bbox([S.ledger, S.aurelius, S.constraint], 0.6);
+const SIDE_GZ = 0.0;
 
-/* ===================== base_plane (only opaque layer) ==================== */
+/* dashed iso boundary around a floor */
+function boundary(f, gz, color, label) {
+  const m = 0.25;
+  const pts = [pt(f.gx + m, f.gy + m, gz), pt(f.gx + f.a - m, f.gy + m, gz), pt(f.gx + f.a - m, f.gy + f.b - m, gz), pt(f.gx + m, f.gy + f.b - m, gz)];
+  let s = `<polygon points="${P(pts)}" fill="none" stroke="${color}" stroke-width="1.5" stroke-dasharray="4 7" opacity="0.8"/>`;
+  pts.forEach((p) => { s += `<circle cx="${r(p[0])}" cy="${r(p[1])}" r="2.4" fill="none" stroke="${color}" stroke-width="1.2" opacity="0.85"/>`; });
+  return s;
+}
+
+/* =================== layers =================== */
 function basePlane() {
-  // full-canvas charcoal backdrop + isometric platform slab with thickness
-  const { gx, gy, a, b } = S.plane;
-  const thick = 0.55;
-  let body = `<rect x="0" y="0" width="${W}" height="${H}" fill="#070a0e"/>`;
-  body += `<rect x="0" y="0" width="${W}" height="${H}" fill="url(#vign)"/>`;
-  // platform cuboid (top surface = ground z0)
-  body += cuboid(gx, gy, a, b, thick, PLANE, -thick, { rim: false });
-  // soft pool of light on the platform top, under the control-plane cluster —
-  // grounds the scene and gives it rendered depth instead of flat void.
-  const [hx, hy] = pt(S.aurelius.gx + S.aurelius.a / 2, S.aurelius.gy + S.aurelius.b / 2, 0);
-  body += `<ellipse cx="${r(hx)}" cy="${r(hy)}" rx="430" ry="215" fill="url(#floorlit)"/>`;
-  // faint top edge of platform
-  const T0 = pt(gx, gy, 0), T1 = pt(gx + a, gy, 0), T2 = pt(gx + a, gy + b, 0), T3 = pt(gx, gy + b, 0);
-  body += `<polygon points="${P([T0, T1, T2, T3])}" fill="none" stroke="${PLANE.edge}" stroke-width="1.2"/>`;
-  const defs =
-    `<radialGradient id="vign" cx="46%" cy="40%" r="75%"><stop offset="0%" stop-color="#0d1016" stop-opacity="0.9"/><stop offset="55%" stop-color="#090c11" stop-opacity="0.4"/><stop offset="100%" stop-color="#04060a" stop-opacity="0.9"/></radialGradient>` +
-    `<radialGradient id="floorlit" cx="50%" cy="50%" r="50%"><stop offset="0%" stop-color="#1b2230" stop-opacity="0.9"/><stop offset="55%" stop-color="#12161d" stop-opacity="0.5"/><stop offset="100%" stop-color="#0b0e13" stop-opacity="0"/></radialGradient>`;
-  return doc(defs, body);
+  let b = `<rect x="0" y="0" width="${W}" height="${H}" fill="#06080b"/>`;
+  // faint diagonal pinstripe texture (Applied-Compute-style)
+  b += `<rect x="0" y="0" width="${W}" height="${H}" fill="url(#stripe)"/>`;
+  b += `<rect x="0" y="0" width="${W}" height="${H}" fill="url(#vign)"/>`;
+  const extra = `<pattern id="stripe" width="7" height="7" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><line x1="0" y1="0" x2="0" y2="7" stroke="rgba(255,255,255,0.012)" stroke-width="2"/></pattern><radialGradient id="vign" cx="44%" cy="40%" r="78%"><stop offset="0%" stop-color="#0c0f15" stop-opacity="0.85"/><stop offset="55%" stop-color="#080b10" stop-opacity="0.35"/><stop offset="100%" stop-color="#04060a" stop-opacity="0.92"/></radialGradient>`;
+  return doc(b, extra);
 }
-
-/* ===================== background_grid ==================== */
 function backgroundGrid() {
-  const { gx, gy, a, b } = S.plane;
-  let body = "";
-  for (let i = 0; i <= a; i++) {
-    const A = pt(gx + i, gy, 0), B = pt(gx + i, gy + b, 0);
-    body += `<line x1="${r(A[0])}" y1="${r(A[1])}" x2="${r(B[0])}" y2="${r(B[1])}" stroke="${GRID_LINE}" stroke-width="1"/>`;
+  let b = "";
+  for (const f of [ENV, SIDE]) {
+    const gz = f === SIDE ? SIDE_GZ : 0;
+    for (let i = 0; i <= Math.round(f.a); i++) { const A = pt(f.gx + i, f.gy, gz), B = pt(f.gx + i, f.gy + f.b, gz); b += `<line x1="${r(A[0])}" y1="${r(A[1])}" x2="${r(B[0])}" y2="${r(B[1])}" stroke="${GRID}" stroke-width="1"/>`; }
+    for (let j = 0; j <= Math.round(f.b); j++) { const A = pt(f.gx, f.gy + j, gz), B = pt(f.gx + f.a, f.gy + j, gz); b += `<line x1="${r(A[0])}" y1="${r(A[1])}" x2="${r(B[0])}" y2="${r(B[1])}" stroke="${GRID}" stroke-width="1"/>`; }
   }
-  for (let j = 0; j <= b; j++) {
-    const A = pt(gx, gy + j, 0), B = pt(gx + a, gy + j, 0);
-    body += `<line x1="${r(A[0])}" y1="${r(A[1])}" x2="${r(B[0])}" y2="${r(B[1])}" stroke="${GRID_LINE}" stroke-width="1"/>`;
-  }
-  // fade mask toward edges
-  const defs = `<radialGradient id="gfade" cx="48%" cy="44%" r="60%"><stop offset="0%" stop-color="#fff" stop-opacity="0.9"/><stop offset="70%" stop-color="#fff" stop-opacity="0.25"/><stop offset="100%" stop-color="#fff" stop-opacity="0"/></radialGradient><mask id="gmask"><rect x="0" y="0" width="${W}" height="${H}" fill="url(#gfade)"/></mask>`;
-  return doc(defs, `<g mask="url(#gmask)">${body}</g>`);
+  const extra = `<radialGradient id="gf" cx="48%" cy="46%" r="62%"><stop offset="0%" stop-color="#fff" stop-opacity="0.85"/><stop offset="72%" stop-color="#fff" stop-opacity="0.18"/><stop offset="100%" stop-color="#fff" stop-opacity="0"/></radialGradient><mask id="gm"><rect width="${W}" height="${H}" fill="url(#gf)"/></mask>`;
+  return doc(`<g mask="url(#gm)">${b}</g>`, extra);
 }
-
-/* ===================== customer_environment (secure boundary) =========== */
 function customerEnvironment() {
-  // Two nested dashed iso regions define the system like a real schematic:
-  //  - outer = YOUR SECURE ENVIRONMENT (encloses every subsystem)
-  //  - inner = the Aurelius control zone (sidecar)
-  // A faint fill lifts the regions off the void so the scene reads as contained.
-  const z = 0.04;
-  const region = (x0, y0, x1, y1, { fill, stroke, dash, op, brackets }) => {
-    const a = pt(x0, y0, z), b = pt(x1, y0, z), c = pt(x1, y1, z), d = pt(x0, y1, z);
-    let s = "";
-    if (fill) s += `<polygon points="${P([a, b, c, d])}" fill="${fill}"/>`;
-    s += `<polygon points="${P([a, b, c, d])}" fill="none" stroke="${stroke}" stroke-width="1.4" stroke-dasharray="${dash}" opacity="${op}"/>`;
-    if (brackets) {
-      const L = 0.9;
-      const bracket = (cx, cy, ex, ey) => {
-        const o = pt(cx, cy, z), h = pt(cx + ex * L, cy, z), v = pt(cx, cy + ey * L, z);
-        return `<polyline points="${P([h, o, v])}" fill="none" stroke="${stroke}" stroke-width="1.6" opacity="${Math.min(1, op + 0.3)}"/>`;
-      };
-      s += bracket(x0, y0, 1, 1) + bracket(x1, y0, -1, 1) + bracket(x1, y1, -1, -1) + bracket(x0, y1, 1, -1);
-    }
-    return s;
-  };
-  let body = "";
-  // outer secure environment
-  body += region(-0.4, -1.4, 15.6, 13.2, { fill: "rgba(150,170,200,0.018)", stroke: "rgba(170,185,210,0.34)", dash: "5 6", op: 0.6, brackets: true });
-  // inner control-plane zone (steel)
-  body += region(6.4, 5.6, 15.4, 11.6, { fill: "rgba(74,91,120,0.05)", stroke: STEEL.line, dash: "3 6", op: 0.55, brackets: true });
-  return doc("", body);
+  // back floor slab + dashed secure boundary
+  let b = slab(ENV.gx, ENV.gy, ENV.a, ENV.b, { topA: 0.085, rim: 0.22 });
+  b += boundary(ENV, 0.3, "rgba(168,186,212,0.6)");
+  return doc(b);
 }
+function sidecarBoundary() {
+  // front floor on a thin elevated plinth + dashed Aurelius boundary (steel)
+  let b = shadow(...sc(S.aurelius, 0).map((v, i) => i === 1 ? v + 40 : v).slice(0, 2), 250, 70, 0.5);
+  // plinth
+  b += glass(SIDE.gx, SIDE.gy, SIDE.a, SIDE.b, 0.55, { topA: 0.05, leftA: 0.04, rightA: 0.03, rim: 0.1 });
+  // floor top
+  b += slab(SIDE.gx, SIDE.gy, SIDE.a, SIDE.b, { gz: 0.55, topA: 0.1, rim: 0.26 });
+  b += boundary({ gx: SIDE.gx, gy: SIDE.gy, a: SIDE.a, b: SIDE.b }, 0.55 + 0.3, "rgba(126,148,185,0.66)");
+  return doc(b);
+}
+function frostHalo(cx, cy, rx, ry, fill = "rgba(224,232,246,0.22)") { return `<ellipse cx="${r(cx)}" cy="${r(cy)}" rx="${r(rx)}" ry="${r(ry)}" fill="${fill}" filter="url(#frost)"/>`; }
 
-/* ===================== workload_queue ==================== */
 function workloadQueue() {
-  const o = S.queue;
-  const [cx, cy] = footCenter(o);
-  let body = contactShadow(cx, cy + 6, 78, 30, 0.5, "qs");
-  body += cardStack(o.gx, o.gy, o.a, o.b, o.n, PAL.pale);
-  return doc(shadowGrad("qs"), body);
+  const o = S.queue; const [cx, cy] = sc(o);
+  let b = shadow(cx, cy + 6, 72, 28, 0.45);
+  b += frostHalo(cx, cy - 6, 78, 42);
+  // stacked translucent job cards
+  const h = 0.34, gap = 0.62;
+  for (let i = 0; i < o.n; i++) b += glass(o.gx, o.gy, o.a, o.b, h, { gz: i * gap, topA: 0.16 + i * 0.02, leftA: 0.1, rightA: 0.07, rim: 0.4 });
+  // a couple of steel accent cards (active jobs)
+  b += glass(o.gx + 0.15, o.gy + 0.15, o.a - 0.3, o.b - 0.3, h, { gz: (o.n - 1) * gap + 0.05, tint: STEEL_RGB, topA: 0.5, leftA: 0.32, rightA: 0.22, rim: 0.5 });
+  return doc(b);
 }
-
-/* ===================== scheduler ==================== */
 function scheduler() {
-  const o = S.scheduler;
-  const [cx, cy] = footCenter(o);
-  const g = gradPal(PAL.silver), gc = gradPal(PAL.silver);
-  let body = contactShadow(cx, cy + 10, 96, 38, 0.6, "ss");
-  body += cuboid(o.gx, o.gy, o.a, o.b, o.c, g);
-  body += rackDetail(o.gx, o.gy, o.a, o.b, o.c, 4);
-  // authority crown: a slim lit bar on top
-  body += cuboid(o.gx + 0.5, o.gy + 0.5, o.a - 1, o.b - 1, 0.3, gc, o.c);
-  body += led(o.gx + 0.95, o.gy + 0.95, o.c + 0.34, STEEL.edge, 3.2);
-  body += led(o.gx + 1.6, o.gy + 0.95, o.c + 0.34, "rgba(255,255,255,0.6)", 2.6);
-  return doc(shadowGrad("ss") + g.defs + gc.defs, body);
+  const o = S.scheduler; const [cx, cy] = sc(o);
+  let b = shadow(cx, cy + 8, 92, 36, 0.5);
+  b += frostHalo(cx, cy - 18, 96, 60);
+  b += glass(o.gx, o.gy, o.a, o.b, o.c, { topA: 0.32, leftA: 0.18, rightA: 0.11, rim: 0.6 });
+  // internal routing slats on the +X face (authority detail)
+  for (let i = 1; i <= 4; i++) { const z = o.c * i / 5; const A = pt(o.gx + o.a, o.gy + 0.2, z), B = pt(o.gx + o.a, o.gy + o.b - 0.2, z); b += `<line x1="${r(A[0])}" y1="${r(A[1])}" x2="${r(B[0])}" y2="${r(B[1])}" stroke="rgba(255,255,255,0.14)" stroke-width="1.2"/>`; }
+  // routing core on top (steel) — it directs the flow
+  b += glass(o.gx + 0.7, o.gy + 0.7, o.a - 1.4, o.b - 1.4, 0.5, { gz: o.c, tint: STEEL_RGB, topA: 0.5, leftA: 0.34, rightA: 0.24, rim: 0.55 });
+  b += discTop(o.gx + o.a / 2, o.gy + o.b / 2, 0.34, o.c + 0.5, "rgba(159,177,208,0.9)", null);
+  return doc(b);
 }
-
-/* ===================== execution_layer ==================== */
 function executionLayer() {
-  const o = S.exec;
-  const g = gradPal(PAL.gray);
-  let body = "";
-  // back-to-front
+  // downstream compute — dimmer (inactive but visible)
+  const o = S.exec; let b = "";
+  for (let i = 0; i < o.racks; i++) { const gy = o.gy + i * o.gap; const [cx, cy] = pt(o.gx + o.a / 2, gy + o.b / 2, 0); b += shadow(cx, cy + 6, 40, 16, 0.4); }
   for (let i = 0; i < o.racks; i++) {
     const gy = o.gy + i * o.gap;
-    const [cx, cy] = pt(o.gx + o.a / 2, gy + o.b / 2, 0);
-    body += contactShadow(cx, cy + 8, 42, 18, 0.55, "es");
+    b += glass(o.gx, gy, o.a, o.b, o.c, { tint: GLASS_DIM, al: 0.7, topA: 0.34, leftA: 0.2, rightA: 0.13, rim: 0.5 });
+    for (let k = 1; k <= 5; k++) { const z = o.c * k / 6; const A = pt(o.gx + o.a, gy + 0.18, z), B = pt(o.gx + o.a, gy + o.b - 0.18, z); b += `<line x1="${r(A[0])}" y1="${r(A[1])}" x2="${r(B[0])}" y2="${r(B[1])}" stroke="rgba(180,195,215,0.16)" stroke-width="1"/>`; }
   }
-  for (let i = 0; i < o.racks; i++) {
-    const gy = o.gy + i * o.gap;
-    body += cuboid(o.gx, gy, o.a, o.b, o.c, g);
-    body += rackDetail(o.gx, gy, o.a, o.b, o.c, 6);
-    body += led(o.gx + o.a / 2, gy + 0.4, o.c + 0.12, "rgba(140,170,210,0.6)", 2.2);
-  }
-  return doc(shadowGrad("es") + g.defs, body);
+  return doc(b);
 }
-
-/* ===================== aurelius_control_plane (sidecar) ================== */
 function aureliusControlPlane() {
-  const o = S.aurelius;
-  const [cx, cy] = footCenter(o);
-  const g = gradPal(PAL.body), gs = gradPal(PAL.steel);
-  const riser = o.riser || 0;
-  let body = contactShadow(cx, cy + 12, 104, 40, 0.66, "as");
-  // soft steel halo (restrained, not neon)
-  body += `<ellipse cx="${r(cx)}" cy="${r(cy - 40)}" rx="150" ry="78" fill="url(#halo)" opacity="0.55"/>`;
-  // riser plinth — marks it as a deliberate control plane, slightly lifted
-  if (riser) body += cuboid(o.gx - 0.3, o.gy - 0.3, o.a + 0.6, o.b + 0.6, riser, gradPal(PAL.gray), 0, { rim: false });
-  body += cuboid(o.gx, o.gy, o.a, o.b, o.c, g, riser);
-  // steel accent panel on top — a lit control surface, framed by the white body
-  const topZ = riser + o.c;
-  body += cuboid(o.gx + 0.55, o.gy + 0.55, o.a - 1.1, o.b - 1.1, 0.34, gs, topZ);
-  // top face glow + bright rim
-  const tp = (gx, gy) => pt(gx, gy, topZ + 0.34);
-  const tA = tp(o.gx + 0.55, o.gy + 0.55), tB = tp(o.gx + o.a - 0.55, o.gy + 0.55), tC = tp(o.gx + o.a - 0.55, o.gy + o.b - 0.55), tD = tp(o.gx + 0.55, o.gy + o.b - 0.55);
-  body += `<polygon points="${P([tA, tB, tC, tD])}" fill="url(#auglow)"/>`;
-  body += `<polygon points="${P([tA, tB, tC, tD])}" fill="none" stroke="#7d92b8" stroke-width="1.1" opacity="0.85"/>`;
-  // emblem: minimal keystone mark in lit steel on the top accent
-  const [ex, ey] = pt(o.gx + o.a / 2, o.gy + o.b / 2, topZ + 0.34);
-  body += `<g opacity="0.98"><polygon points="${P([[ex, ey - 14], [ex + 12, ey - 1], [ex + 6.5, ey - 1], [ex, ey - 8.5], [ex - 6.5, ey - 1], [ex - 12, ey - 1]])}" fill="#aebbd2"/><polygon points="${P([[ex, ey - 1], [ex + 6.5, ey + 6], [ex - 6.5, ey + 6]])}" fill="#d7dfec"/></g>`;
-  // front-face seam detailing
-  body += rackDetail(o.gx, o.gy, o.a, o.b, o.c + riser, 2);
-  return doc(shadowGrad("as") + g.defs + gs.defs +
-    `<radialGradient id="halo" cx="50%" cy="50%" r="50%"><stop offset="0%" stop-color="${STEEL.glow}" stop-opacity="0.6"/><stop offset="100%" stop-color="${STEEL.glow}" stop-opacity="0"/></radialGradient>` +
-    `<radialGradient id="auglow" cx="50%" cy="38%" r="62%"><stop offset="0%" stop-color="#9fb2d4" stop-opacity="0.5"/><stop offset="100%" stop-color="#9fb2d4" stop-opacity="0"/></radialGradient>`, body);
+  // dominant elevated glass module with a glowing steel core seen through frosted walls
+  const o = S.aurelius; const gz = SIDE_GZ + 0.55; const [cx, cy] = sc(o, gz);
+  let b = shadow(cx, cy + 14, 118, 44, 0.6);
+  b += `<ellipse cx="${r(cx)}" cy="${r(cy - 34)}" rx="200" ry="108" fill="url(#steelhalo)" opacity="0.8"/>`;
+  // riser plinth
+  b += glass(o.gx - 0.25, o.gy - 0.25, o.a + 0.5, o.b + 0.5, o.riser, { gz, topA: 0.1, leftA: 0.07, rightA: 0.05, rim: 0.3 });
+  const bz = gz + o.riser;
+  // glowing steel core (drawn first, shows through frosted top)
+  b += `<ellipse cx="${r(sc(o, bz + o.c)[0])}" cy="${r(sc(o, bz + o.c)[1])}" rx="86" ry="46" fill="url(#steelcore)"/>`;
+  // frosted glass shell (low-alpha so the core glows through)
+  b += glass(o.gx, o.gy, o.a, o.b, o.c, { gz: bz, topA: 0.2, leftA: 0.13, rightA: 0.09, rim: 0.62 });
+  // embedded steel control surface on top
+  b += glass(o.gx + 0.6, o.gy + 0.6, o.a - 1.2, o.b - 1.2, 0.36, { gz: bz + o.c, tint: STEEL_RGB, topA: 0.62, leftA: 0.42, rightA: 0.3, rim: 0.6 });
+  // keystone emblem
+  const [ex, ey] = sc(o, bz + o.c + 0.36);
+  b += `<g opacity="0.98"><polygon points="${P([[ex, ey - 15], [ex + 13, ey - 1], [ex + 7, ey - 1], [ex, ey - 9], [ex - 7, ey - 1], [ex - 13, ey - 1]])}" fill="#cdd8ec"/><polygon points="${P([[ex, ey - 1], [ex + 7, ey + 6.5], [ex - 7, ey + 6.5]])}" fill="#eaf0fa"/></g>`;
+  return doc(b);
 }
-
-/* ===================== constraint_engine ==================== */
 function constraintEngine() {
-  const o = S.constraint;
-  const [cx, cy] = footCenter(o);
-  const g = gradPal(PAL.body);
-  let body = contactShadow(cx, cy + 8, 56, 24, 0.55, "cs");
-  body += cuboid(o.gx, o.gy, o.a, o.b, o.c, g);
-  // four vertical constraint "gates" on the +X face (SLA / capacity / residency / power)
-  const gates = 4;
-  for (let i = 0; i < gates; i++) {
-    const gyi = o.gy + 0.3 + (i * (o.b - 0.6)) / (gates - 1);
-    const A = pt(o.gx + o.a, gyi, o.c * 0.85), B = pt(o.gx + o.a, gyi, o.c * 0.15);
-    const col = i === gates - 1 ? RED.line : STEEL.edge;
-    body += `<line x1="${r(A[0])}" y1="${r(A[1])}" x2="${r(B[0])}" y2="${r(B[1])}" stroke="${col}" stroke-width="2" opacity="0.85"/>`;
+  // a filter GATE: an open frame with vertical filter slats, one rejected (red)
+  const o = S.constraint; const gz = SIDE_GZ + 0.55; const [cx, cy] = sc(o, gz);
+  let b = shadow(cx, cy + 8, 56, 24, 0.45);
+  b += frostHalo(cx, cy - 8, 56, 34);
+  // two glass side posts
+  b += glass(o.gx, o.gy, 0.5, o.b, o.c, { gz, topA: 0.3, leftA: 0.18, rightA: 0.12, rim: 0.55 });
+  b += glass(o.gx + o.a - 0.5, o.gy, 0.5, o.b, o.c, { gz, topA: 0.3, leftA: 0.18, rightA: 0.12, rim: 0.55 });
+  // top lintel
+  b += glass(o.gx, o.gy, o.a, 0.5, o.c * 0.32, { gz: gz + o.c * 0.78, topA: 0.32, leftA: 0.2, rightA: 0.13, rim: 0.55 });
+  // vertical filter slats inside the gate (last one red = rejected)
+  const n = 5;
+  for (let i = 0; i < n; i++) {
+    const gyi = o.gy + 0.5 + i * (o.b - 1) / (n - 1);
+    const top = pt(o.gx + o.a / 2, gyi, gz + o.c * 0.74), bot = pt(o.gx + o.a / 2, gyi, gz + 0.1);
+    const col = i === n - 1 ? RED.line : "rgba(120,140,175,0.7)";
+    b += `<line x1="${r(top[0])}" y1="${r(top[1])}" x2="${r(bot[0])}" y2="${r(bot[1])}" stroke="${col}" stroke-width="2" opacity="0.85"/>`;
   }
-  // steel top indicator
-  body += disc(o.gx + o.a / 2, o.gy + o.b / 2, 0.5, o.c, STEEL.glow, STEEL.edge, 1.2, 0.9);
-  return doc(shadowGrad("cs") + g.defs, body);
+  return doc(b);
 }
-
-/* ===================== audit_ledger ==================== */
 function auditLedger() {
-  const o = S.ledger;
-  const [cx, cy] = pt(o.gx, o.gy, 0);
-  let body = contactShadow(cx, cy + 6, 64, 26, 0.5, "ls");
-  body += cylinder(o.gx, o.gy, o.rg, o.hg, PAL.ledger, { rings: 4 });
-  return doc(shadowGrad("ls"), body);
+  // append-only stacked translucent log plates (evidence)
+  const o = S.ledger; const gz = SIDE_GZ + 0.55; const [cx, cy] = sc(o, gz);
+  let b = shadow(cx, cy + 7, 60, 25, 0.45);
+  b += frostHalo(cx, cy - 4, 58, 36);
+  const h = 0.22, gap = 0.42;
+  for (let i = 0; i < o.plates; i++) {
+    const lit = i >= o.plates - 2; // newest entries lit steel
+    b += glass(o.gx, o.gy, o.a, o.b, h, { gz: gz + i * gap, tint: lit ? STEEL_RGB : GLASS, topA: lit ? 0.46 : 0.18, leftA: lit ? 0.3 : 0.11, rightA: lit ? 0.2 : 0.07, rim: 0.45 });
+  }
+  return doc(b);
 }
 
-/* ===================== metadata_bridge ==================== */
-// shared bridge geometry (used by bridge layer, packet path, and meta)
-const BR_A = pt(S.scheduler.gx + S.scheduler.a - 0.4, S.scheduler.gy + S.scheduler.b / 2, S.scheduler.c * 0.5);
-const BR_B = pt(S.aurelius.gx + S.aurelius.a / 2 + 0.4, S.aurelius.gy + 0.4, (S.aurelius.riser || 0) + S.aurelius.c + 0.34);
-const BR_MID = [(BR_A[0] + BR_B[0]) / 2 + 6, Math.min(BR_A[1], BR_B[1]) - 52];
-const BR_D = `M${r(BR_A[0])},${r(BR_A[1])} Q${r(BR_MID[0])},${r(BR_MID[1])} ${r(BR_B[0])},${r(BR_B[1])}`;
+/* ---- flow paths (geometry shared with meta.json) ---- */
+const SCHED_OUT = pt(S.scheduler.gx + S.scheduler.a / 2, S.scheduler.gy + S.scheduler.b - 0.2, S.scheduler.c * 0.5);
+const AUR_TOP = pt(S.aurelius.gx + S.aurelius.a / 2, S.aurelius.gy + 0.3, SIDE_GZ + 0.55 + S.aurelius.riser + S.aurelius.c + 0.36);
+const AUR_BACK = pt(S.aurelius.gx + S.aurelius.a / 2 + 1.0, S.aurelius.gy + 0.2, SIDE_GZ + 0.55 + S.aurelius.riser + S.aurelius.c * 0.5);
+const BR_MID = [mid(SCHED_OUT, AUR_TOP)[0] - 8, Math.min(SCHED_OUT[1], AUR_TOP[1]) - 30];
+const BR_D = `M${r(SCHED_OUT[0])},${r(SCHED_OUT[1])} Q${r(BR_MID[0])},${r(BR_MID[1])} ${r(AUR_TOP[0])},${r(AUR_TOP[1])}`;
+
+const EXEC_OUT = pt(S.exec.gx, S.exec.gy + (S.exec.racks * S.exec.gap) / 2, S.exec.c * 0.45);
+const BAR = pt(S.aurelius.gx + S.aurelius.a + 0.1, S.aurelius.gy + 0.6, SIDE_GZ + 0.55 + S.aurelius.riser + S.aurelius.c * 0.6);
+const BP_MID = [mid(EXEC_OUT, BAR)[0] + 18, mid(EXEC_OUT, BAR)[1] - 26];
+const BP_D = `M${r(EXEC_OUT[0])},${r(EXEC_OUT[1])} Q${r(BP_MID[0])},${r(BP_MID[1])} ${r(BAR[0])},${r(BAR[1])}`;
+
+const ADV_FROM = pt(S.aurelius.gx + 0.4, S.aurelius.gy + 0.4, SIDE_GZ + 0.55 + S.aurelius.riser + S.aurelius.c + 0.36);
+const SCHED_BACK = pt(S.scheduler.gx + 0.5, S.scheduler.gy + S.scheduler.b - 0.4, S.scheduler.c * 0.42);
+const ADV_MID = [mid(ADV_FROM, SCHED_BACK)[0] - 36, mid(ADV_FROM, SCHED_BACK)[1] - 10];
+const ADV_D = `M${r(ADV_FROM[0])},${r(ADV_FROM[1])} Q${r(ADV_MID[0])},${r(ADV_MID[1])} ${r(SCHED_BACK[0])},${r(SCHED_BACK[1])}`;
 
 function metadataBridge() {
-  // elevated steel conduit arcing from scheduler over to the Aurelius control surface
-  let body = `<path d="${BR_D}" fill="none" stroke="${STEEL.glow}" stroke-width="13" opacity="0.22" stroke-linecap="round"/>`;
-  body += `<path d="${BR_D}" fill="none" stroke="${STEEL.line}" stroke-width="3" stroke-linecap="round"/>`;
-  body += `<path d="${BR_D}" fill="none" stroke="#a8b8d2" stroke-width="1.1" stroke-dasharray="1.5 6" stroke-linecap="round" opacity="0.95"/>`;
-  // node endpoints + small collars
-  for (const e of [BR_A, BR_B]) {
-    body += `<circle cx="${r(e[0])}" cy="${r(e[1])}" r="4.2" fill="${STEEL.glow}" stroke="${STEEL.edge}" stroke-width="1.2"/>`;
-    body += `<circle cx="${r(e[0])}" cy="${r(e[1])}" r="1.6" fill="#cdd7e6"/>`;
-  }
-  return doc("", body);
+  let b = `<path d="${BR_D}" fill="none" stroke="${STEEL.core}" stroke-width="16" opacity="0.26" stroke-linecap="round" filter="url(#frost)"/>`;
+  b += `<path d="${BR_D}" fill="none" stroke="${STEEL.line}" stroke-width="3.6" stroke-linecap="round"/>`;
+  b += `<path d="${BR_D}" fill="none" stroke="#cdd9f1" stroke-width="1.3" stroke-dasharray="1.5 7" stroke-linecap="round" opacity="1"/>`;
+  for (const e of [SCHED_OUT, AUR_TOP]) b += `<circle cx="${r(e[0])}" cy="${r(e[1])}" r="4.6" fill="${STEEL.core}" stroke="${STEEL.bright}" stroke-width="1.4"/><circle cx="${r(e[0])}" cy="${r(e[1])}" r="1.8" fill="#e6eefb"/>`;
+  return doc(b);
 }
-
-/* ===================== active_paths (execution flow + advisory return) === */
-function activePaths() {
-  const railTo = (A, B, color, w = 2, dash = null, op = 1) =>
-    `<line x1="${r(A[0])}" y1="${r(A[1])}" x2="${r(B[0])}" y2="${r(B[1])}" stroke="${color}" stroke-width="${w}"${dash ? ` stroke-dasharray="${dash}"` : ""} opacity="${op}" stroke-linecap="round"/>`;
-  const chevron = (B, dir, color) => {
-    const [x, y] = B; const s = 6;
-    const sign = dir;
-    return `<polyline points="${r(x - s * sign)},${r(y - s * 0.6)} ${r(x)},${r(y)} ${r(x - s * sign)},${r(y + s * 0.6)}" fill="none" stroke="${color}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>`;
-  };
-  const qC = pt(S.queue.gx + S.queue.a, S.queue.gy + S.queue.b / 2, 0.9);
-  const sIn = pt(S.scheduler.gx, S.scheduler.gy + S.scheduler.b / 2, 0.9);
-  const sOut = pt(S.scheduler.gx + S.scheduler.a, S.scheduler.gy + S.scheduler.b / 2, 1.2);
-  const eIn = pt(S.exec.gx, S.exec.gy + (S.exec.racks * S.exec.gap) / 2, 1.2);
-  const WHITE = "rgba(232,236,240,0.62)";
-  // connector bead: a small node sitting on a rail, ties the flow together
-  const bead = (A, B, t, color) => {
-    const x = A[0] + (B[0] - A[0]) * t, y = A[1] + (B[1] - A[1]) * t;
-    return `<circle cx="${r(x)}" cy="${r(y)}" r="2.6" fill="${color}"/><circle cx="${r(x)}" cy="${r(y)}" r="5.5" fill="none" stroke="${color}" stroke-width="1" opacity="0.35"/>`;
-  };
-  let body = "";
-  body += railTo(qC, sIn, WHITE, 2);
-  body += bead(qC, sIn, 0.5, "rgba(232,236,240,0.7)");
-  body += chevron(sIn, 1, WHITE);
-  body += railTo(sOut, eIn, WHITE, 2);
-  body += bead(sOut, eIn, 0.5, "rgba(232,236,240,0.7)");
-  body += chevron(eIn, 1, WHITE);
-  // advisory decision returns: aurelius -> scheduler (steel, dashed)
-  const aTop = pt(S.aurelius.gx + S.aurelius.a / 2 - 0.6, S.aurelius.gy + 0.3, S.aurelius.c + 0.4);
-  const sBot = pt(S.scheduler.gx + S.scheduler.a / 2 - 0.6, S.scheduler.gy + S.scheduler.b - 0.3, S.scheduler.c * 0.4);
-  body += railTo(aTop, sBot, STEEL.line, 1.8, "1 5", 0.9);
-  body += bead(aTop, sBot, 0.5, STEEL.edge);
-  body += chevron(sBot, 1, STEEL.edge);
-  // aurelius -> audit ledger (steel append flow)
-  const aBot = pt(S.aurelius.gx + 0.4, S.aurelius.gy + S.aurelius.b - 0.2, S.aurelius.c * 0.4);
-  const lTop = pt(S.ledger.gx, S.ledger.gy, S.ledger.hg);
-  body += railTo(aBot, lTop, STEEL.line, 1.6, "1 5", 0.75);
-  body += chevron(lTop, 1, STEEL.edge);
-  return doc("", body);
+function advisoryReturnPath() {
+  let b = `<path d="${ADV_D}" fill="none" stroke="${STEEL.line}" stroke-width="1.8" stroke-dasharray="2 5" stroke-linecap="round" opacity="0.9"/>`;
+  // arrowhead into scheduler
+  const a = SCHED_BACK, s = 7;
+  b += `<polyline points="${r(a[0] + s)},${r(a[1] - s * 0.5)} ${r(a[0])},${r(a[1])} ${r(a[0] + s)},${r(a[1] + s * 0.6)}" fill="none" stroke="${STEEL.bright}" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>`;
+  b += `<circle cx="${r(ADV_FROM[0])}" cy="${r(ADV_FROM[1])}" r="2.6" fill="${STEEL.bright}"/>`;
+  return doc(b);
 }
-
-/* ===================== blocked_payload ==================== */
-// shared blocked-payload geometry (payloads/prompts/outputs/data/code → blocked)
-const BP_FROM = pt(S.exec.gx + 0.2, S.exec.gy + S.exec.racks * S.exec.gap * 0.5, 1.8);
-const BP_GATE = pt(S.aurelius.gx + S.aurelius.a, S.aurelius.gy + S.aurelius.b / 2, (S.aurelius.riser || 0) + S.aurelius.c * 0.55);
-const BP_BAR = [BP_GATE[0] + 38, BP_GATE[1] + 18];
-const BP_MID = [(BP_FROM[0] + BP_BAR[0]) / 2 + 6, (BP_FROM[1] + BP_BAR[1]) / 2 - 18];
-const BP_D = `M${r(BP_FROM[0])},${r(BP_FROM[1])} Q${r(BP_MID[0])},${r(BP_MID[1])} ${r(BP_BAR[0])},${r(BP_BAR[1])}`;
-
 function blockedPayload() {
-  const [bx, by] = BP_BAR;
-  let body = `<path d="${BP_D}" fill="none" stroke="${RED.glow}" stroke-width="11" opacity="0.55" stroke-linecap="round"/>`;
-  body += `<path d="${BP_D}" fill="none" stroke="${RED.line}" stroke-width="2.6" stroke-dasharray="7 5" stroke-linecap="round"/>`;
-  // payload origin tick
-  body += `<circle cx="${r(BP_FROM[0])}" cy="${r(BP_FROM[1])}" r="2.6" fill="${RED.core}" opacity="0.8"/>`;
-  // barrier wall (a small iso shield plane) at the boundary
-  body += `<polygon points="${P([[bx - 5, by - 26], [bx + 14, by - 16], [bx + 14, by + 14], [bx - 5, by + 5]])}" fill="rgba(155,63,61,0.18)" stroke="${RED.line}" stroke-width="1.5"/>`;
-  // blocked X token
-  body += `<circle cx="${r(bx)}" cy="${r(by)}" r="12.5" fill="rgba(10,11,14,0.92)" stroke="${RED.core}" stroke-width="1.8"/>`;
+  const [bx, by] = BAR;
+  let b = `<path d="${BP_D}" fill="none" stroke="${RED.glow}" stroke-width="10" opacity="0.5" stroke-linecap="round" filter="url(#frost)"/>`;
+  b += `<path d="${BP_D}" fill="none" stroke="${RED.line}" stroke-width="2.4" stroke-dasharray="7 5" stroke-linecap="round"/>`;
+  b += `<circle cx="${r(EXEC_OUT[0])}" cy="${r(EXEC_OUT[1])}" r="2.6" fill="${RED.core}" opacity="0.85"/>`;
+  // red barrier shield at the boundary
+  b += `<polygon points="${P([[bx - 6, by - 26], [bx + 13, by - 15], [bx + 13, by + 15], [bx - 6, by + 6]])}" fill="rgba(170,72,69,0.16)" stroke="${RED.line}" stroke-width="1.5"/>`;
+  b += `<circle cx="${r(bx)}" cy="${r(by)}" r="12.5" fill="rgba(10,11,14,0.92)" stroke="${RED.core}" stroke-width="1.8"/>`;
   const k = 5.2;
-  body += `<path d="M${r(bx - k)},${r(by - k)} L${r(bx + k)},${r(by + k)} M${r(bx + k)},${r(by - k)} L${r(bx - k)},${r(by + k)}" stroke="${RED.core}" stroke-width="2" stroke-linecap="round"/>`;
-  return doc("", body);
+  b += `<path d="M${r(bx - k)},${r(by - k)} L${r(bx + k)},${r(by + k)} M${r(bx + k)},${r(by - k)} L${r(bx - k)},${r(by + k)}" stroke="${RED.core}" stroke-width="2" stroke-linecap="round"/>`;
+  return doc(b);
 }
-
-/* ===================== metadata_packet ==================== */
 function metadataPacket() {
-  // a small steel chip; positioned at origin then translated by the component
   const s = 7;
-  const top = [[0, -s * 0.5], [s, 0], [0, s * 0.5], [-s, 0]];
-  const left = [[-s, 0], [0, s * 0.5], [0, s * 0.5 + s], [-s, s]];
-  const right = [[s, 0], [0, s * 0.5], [0, s * 0.5 + s], [s, s]];
-  let body = `<g transform="translate(${W / 2},${H / 2})">`;
-  body += `<ellipse cx="0" cy="0" rx="22" ry="22" fill="url(#pglow)" opacity="0.8"/>`;
-  body += `<polygon points="${P(left)}" fill="${STEEL.left}" stroke="${STEEL.edge}" stroke-width="0.8"/>`;
-  body += `<polygon points="${P(right)}" fill="${STEEL.right}" stroke="${STEEL.edge}" stroke-width="0.8"/>`;
-  body += `<polygon points="${P(top)}" fill="${STEEL.edge}" stroke="#9fb0cb" stroke-width="0.8"/>`;
-  body += `</g>`;
-  const defs = `<radialGradient id="pglow" cx="50%" cy="50%" r="50%"><stop offset="0%" stop-color="#7f93b6" stop-opacity="0.7"/><stop offset="100%" stop-color="#7f93b6" stop-opacity="0"/></radialGradient>`;
-  return doc(defs, body);
+  let b = `<g transform="translate(${W / 2},${H / 2})"><ellipse rx="20" ry="20" fill="url(#steelhalo)"/>`;
+  b += `<polygon points="${P([[-s, 0], [0, s * 0.5], [0, s * 1.5], [-s, s]])}" fill="rgba(74,96,140,0.92)"/>`;
+  b += `<polygon points="${P([[s, 0], [0, s * 0.5], [0, s * 1.5], [s, s]])}" fill="rgba(54,70,102,0.92)"/>`;
+  b += `<polygon points="${P([[0, -s * 0.5], [s, 0], [0, s * 0.5], [-s, 0]])}" fill="#7488ad" stroke="#aebdda" stroke-width="0.8"/></g>`;
+  return doc(b);
 }
-// expose steel sub-tones for packet
-STEEL.left = "#3c4a63"; STEEL.right = "#2c374a";
 
-/* ----------------------------------------------------------------------- */
-/* Label + annotation anchors (screen coords)                              */
-/* ----------------------------------------------------------------------- */
-const labels = [
-  { id: "workload_queue", text: "WORKLOAD QUEUE", at: footCenter(S.queue), dy: 64, anchor: "middle", sub: "job metadata · timing" },
-  { id: "scheduler", text: "EXISTING SCHEDULER", at: centerTop(S.scheduler, S.scheduler.c), dy: -22, anchor: "middle", sub: "availability · fairness", authority: true },
-  { id: "execution", text: "EXECUTION LAYER", at: pt(S.exec.gx + S.exec.a / 2, S.exec.gy + (S.exec.racks * S.exec.gap) / 2, S.exec.c), dy: -20, anchor: "middle", sub: "execution unchanged" },
-  { id: "aurelius", text: "AURELIUS CONTROL PLANE", at: centerTop(S.aurelius, S.aurelius.c), dy: 70, anchor: "middle", primary: true, sub: "forecast · rank · filter · log" },
-  { id: "constraint", text: "CONSTRAINT ENGINE", at: footCenter(S.constraint), dy: 60, anchor: "middle" },
-  { id: "ledger", text: "APPEND-ONLY AUDIT LEDGER", at: pt(S.ledger.gx, S.ledger.gy, 0), dy: 58, anchor: "middle" },
-];
-
-const meta = {
-  viewBox: [W, H],
-  labels,
-  metaOnlyTag: { at: BR_MID, text: "METADATA ONLY" },
-  payloadTag: { at: [BP_BAR[0] + 18, BP_BAR[1]], text: "PAYLOAD BLOCKED" },
-  envTag: { at: pt(S.plane.gx + 0.8, S.plane.gy + S.plane.b - 0.8, 0), text: "YOUR SECURE ENVIRONMENT" },
-  notes: ["SCHEDULER REMAINS AUTHORITY", "EXECUTION UNCHANGED"],
-  packet: { from: BR_A, mid: BR_MID, to: BR_B },
-  blocked: { from: BP_FROM, mid: BP_MID, to: BP_BAR },
-  shadowBadge: { at: pt(S.aurelius.gx + S.aurelius.a / 2, S.aurelius.gy + S.aurelius.b / 2, (S.aurelius.riser || 0) + S.aurelius.c + 2.0) },
-};
-
-/* ----------------------------------------------------------------------- */
-/* labels.svg + annotations.svg (asset-complete; live labels are HTML)     */
-/* ----------------------------------------------------------------------- */
-function chip(x, y, text, anchor, { accent } = {}) {
-  const padX = 9, fs = 13, w = text.length * fs * 0.62 + padX * 2, h = 22;
-  const tx = anchor === "middle" ? x : anchor === "end" ? x - w + padX : x + padX;
+/* labels.svg + annotations.svg (asset-complete; live tags are HTML from meta) */
+function chip(x, y, text, anchor, accent) {
+  const fs = 13, w = text.length * fs * 0.64 + 18, h = 22;
   const rx = anchor === "middle" ? x - w / 2 : anchor === "end" ? x - w : x;
-  const fill = accent === "steel" ? STEEL.text : accent === "red" ? RED.core : "#e6e8ea";
-  return `<g><rect x="${r(rx)}" y="${r(y - h / 2)}" width="${r(w)}" height="${h}" rx="3" fill="rgba(8,10,13,0.72)" stroke="rgba(255,255,255,0.12)" stroke-width="1"/><text x="${r(anchor === "middle" ? x : tx)}" y="${r(y + 4)}" text-anchor="${anchor}" font-family="ui-monospace, 'SF Mono', Menlo, monospace" font-size="${fs}" letter-spacing="1.2" fill="${fill}">${text}</text></g>`;
+  const tx = anchor === "middle" ? x : anchor === "end" ? x - 9 : x + 9;
+  const fill = accent === "steel" ? "#9fb1d0" : accent === "red" ? RED.core : "#e6e8ea";
+  return `<g><rect x="${r(rx)}" y="${r(y - h / 2)}" width="${r(w)}" height="${h}" rx="3" fill="rgba(8,10,13,0.74)" stroke="rgba(255,255,255,0.13)" stroke-width="1"/><text x="${r(tx)}" y="${r(y + 4)}" text-anchor="${anchor}" font-family="Inter" font-size="${fs}" letter-spacing="1.2" fill="${fill}">${text}</text></g>`;
 }
+const CENTERS = {
+  queue: sc(S.queue), scheduler: sc(S.scheduler, S.scheduler.c), execution: pt(S.exec.gx + S.exec.a / 2, S.exec.gy + (S.exec.racks * S.exec.gap) / 2, S.exec.c),
+  aurelius: sc(S.aurelius, SIDE_GZ + 0.55 + S.aurelius.riser + S.aurelius.c), constraint: sc(S.constraint, SIDE_GZ + 0.55 + S.constraint.c), ledger: sc(S.ledger, SIDE_GZ + 0.55),
+};
 function labelsSvg() {
-  let body = "";
-  for (const l of labels) body += chip(l.at[0], l.at[1] + l.dy, l.text, l.anchor, { accent: l.primary ? "steel" : null });
-  return doc("", body);
+  let b = "";
+  b += chip(CENTERS.queue[0], CENTERS.queue[1] + 70, "WORKLOAD QUEUE", "middle");
+  b += chip(CENTERS.scheduler[0], CENTERS.scheduler[1] - 26, "EXISTING SCHEDULER", "middle");
+  b += chip(CENTERS.execution[0] + 30, CENTERS.execution[1] - 24, "EXECUTION LAYER", "middle");
+  b += chip(CENTERS.aurelius[0], CENTERS.aurelius[1] + 96, "AURELIUS CONTROL PLANE", "middle", "steel");
+  b += chip(CENTERS.constraint[0] + 10, CENTERS.constraint[1] + 70, "CONSTRAINT ENGINE", "middle");
+  b += chip(CENTERS.ledger[0] - 6, CENTERS.ledger[1] + 64, "APPEND-ONLY AUDIT LEDGER", "middle");
+  return doc(b);
 }
 function annotationsSvg() {
-  let body = "";
-  body += chip(meta.metaOnlyTag.at[0], meta.metaOnlyTag.at[1], meta.metaOnlyTag.text, "middle", { accent: "steel" });
-  body += chip(meta.payloadTag.at[0], meta.payloadTag.at[1], meta.payloadTag.text, "start", { accent: "red" });
-  body += chip(meta.envTag.at[0], meta.envTag.at[1], meta.envTag.text, "start", {});
-  return doc("", body);
+  let b = "";
+  b += chip(BR_MID[0], BR_MID[1] - 14, "METADATA ONLY", "middle", "steel");
+  b += chip(BAR[0] + 20, BAR[1], "PAYLOAD BLOCKED", "start", "red");
+  b += chip(ENV.gx * 0 + pt(ENV.gx + 0.6, ENV.gy + ENV.b - 0.6, 0)[0], pt(ENV.gx + 0.6, ENV.gy + ENV.b - 0.6, 0)[1], "YOUR SECURE ENVIRONMENT", "start");
+  return doc(b);
 }
 
-/* ----------------------------------------------------------------------- */
-/* write all layers                                                        */
-/* ----------------------------------------------------------------------- */
+/* ---- meta for the React wrapper ---- */
+const meta = {
+  viewBox: [W, H],
+  centers: CENTERS,
+  envTag: pt(ENV.gx + 0.6, ENV.gy + ENV.b - 0.5, 0),
+  paths: { bridge: BR_D, advisory: ADV_D, blocked: BP_D },
+  packet: { from: SCHED_OUT, mid: BR_MID, to: AUR_TOP },
+  barrier: BAR,
+  metaTag: [BR_MID[0], BR_MID[1] - 8],
+  payloadTag: [BAR[0] + 16, BAR[1]],
+};
+
+const PH = "<!-- Authored translucent-glass isometric source asset. Swap with a Spline/Figma render of the same layer at 1440x900 to upgrade fidelity; the React wrapper treats each layer as opaque. -->\n";
 const layers = {
   base_plane: basePlane(),
   background_grid: backgroundGrid(),
   customer_environment: customerEnvironment(),
-  workload_queue: workloadQueue(),
-  scheduler: scheduler(),
+  sidecar_boundary: sidecarBoundary(),
   execution_layer: executionLayer(),
+  scheduler: scheduler(),
+  workload_queue: workloadQueue(),
+  metadata_bridge: metadataBridge(),
+  advisory_return_path: advisoryReturnPath(),
   aurelius_control_plane: aureliusControlPlane(),
   constraint_engine: constraintEngine(),
   audit_ledger: auditLedger(),
-  metadata_bridge: metadataBridge(),
-  active_paths: activePaths(),
   blocked_payload: blockedPayload(),
   metadata_packet: metadataPacket(),
   labels: labelsSvg(),
   annotations: annotationsSvg(),
 };
-for (const [name, svg] of Object.entries(layers)) {
-  writeFileSync(resolve(OUT, `${name}.svg`), name === "base_plane" ? svg : PLACEHOLDER_NOTE + svg);
-}
+for (const [name, svg] of Object.entries(layers)) writeFileSync(resolve(OUT, `${name}.svg`), name === "base_plane" ? svg : PH + svg);
 writeFileSync(resolve(META_DIR, "meta.json"), JSON.stringify(meta, null, 2));
-console.log(`Wrote ${Object.keys(layers).length} layers to ${OUT}`);
-console.log(`Wrote meta.json to ${META_DIR}`);
+console.log(`Wrote ${Object.keys(layers).length} layers + meta.json`);
