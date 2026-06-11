@@ -53,7 +53,7 @@ export default function Docs() {
           <Reveal delay={200} className="mt-12 flex items-center gap-3 rounded-md border border-border bg-card px-5 py-4">
             <span className="inline-block h-1.5 w-1.5 rounded-full bg-signal anim-breathe" aria-hidden />
             <p className="font-mono text-[12px] text-white/55">
-              Documentation coming soon — pilot participants receive early technical docs.
+              Pilot participants receive early technical docs.
             </p>
           </Reveal>
         </Container>
