@@ -73,7 +73,7 @@ export default function Index() {
                 <span>SLA-safe benchmark</span>
               </div>
               <p className="mt-3.5 font-mono text-[11px] text-white/26">
-                Benchmark evidence on public traces — not a guaranteed universal result.
+                Benchmark evidence on public traces (not a guaranteed universal result).
               </p>
             </Reveal>
           </div>
