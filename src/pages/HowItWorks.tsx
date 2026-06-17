@@ -22,7 +22,7 @@ export default function HowItWorks() {
             <SectionEyebrow>How it works</SectionEyebrow>
           </Reveal>
           <Reveal delay={80}>
-            <h1 className="mt-6 max-w-3xl text-balance font-display text-[clamp(1.9rem,4.4vw,3rem)] font-medium leading-[1.08] tracking-[-0.025em] text-foreground">
+            <h1 className="mt-6 max-w-3xl text-balance text-[clamp(1.9rem,4.4vw,3rem)] font-medium leading-[1.08] tracking-tight text-foreground">
               An advisory control layer, not a scheduler replacement
             </h1>
           </Reveal>
@@ -133,7 +133,7 @@ export default function HowItWorks() {
             />
           </Reveal>
           <Reveal delay={140}>
-            <p className="mt-8 max-w-2xl border-l border-signal/40 pl-6 font-serif text-[clamp(1.05rem,1.8vw,1.35rem)] font-normal italic leading-[1.5] tracking-[-0.005em] text-white/72">
+            <p className="mt-8 max-w-2xl border-l border-signal/40 pl-5 text-[14px] leading-relaxed text-white/55">
               Most savings come from time-shifting batch and training workloads away from peak
               pricing windows — not from throttling or resource reduction.
             </p>

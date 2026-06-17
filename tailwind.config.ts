@@ -15,8 +15,6 @@ export default {
     extend: {
       fontFamily: {
         sans: ["Geist", "Inter", "system-ui", "-apple-system", "BlinkMacSystemFont", "sans-serif"],
-        display: ["Space Grotesk", "Geist", "system-ui", "sans-serif"],
-        serif: ["Newsreader", "Georgia", "Cambria", "Times New Roman", "serif"],
         mono: ["Geist Mono", "IBM Plex Mono", "ui-monospace", "SFMono-Regular", "Menlo", "monospace"],
       },
       colors: {

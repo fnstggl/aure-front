@@ -5,7 +5,6 @@ import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
-import { SmoothScroll } from "./components/site/SmoothScroll";
 import Index from "./pages/Index";
 
 // Code-split secondary routes so the landing page ships less JS up front.
@@ -28,7 +27,6 @@ const App = () => (
         <Toaster />
         <Sonner />
         <BrowserRouter>
-          <SmoothScroll />
           <Suspense fallback={<RouteFallback />}>
             <Routes>
               <Route path="/" element={<Index />} />
