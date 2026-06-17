@@ -41,16 +41,19 @@ function Server() {
 export function ProblemSection() {
   const { ref, inView } = useInView();
   const reduced = usePrefersReducedMotion();
-  const mode = useSequence(2, { enabled: inView, interval: 5200, resting: 0 }); // 0 without · 1 with Aurelius
+  // null = no user interaction yet (auto-cycles as an attract loop). Once the
+  // user clicks the toggle, their choice takes over and the auto-cycle stops.
+  const [userOn, setUserOn] = useState<boolean | null>(null);
+  const auto = useSequence(2, { enabled: inView && userOn === null, interval: 5200, resting: 0 }); // 0 without · 1 with Aurelius
+  const on = userOn === null ? auto === 1 : userOn;
   const [frame, setFrame] = useState(0);
 
   useEffect(() => {
-    if (reduced || !inView || mode !== 0) return;
+    if (reduced || !inView || on) return;
     const id = window.setInterval(() => setFrame((f) => f + 1), 1300);
     return () => window.clearInterval(id);
-  }, [reduced, inView, mode]);
+  }, [reduced, inView, on]);
 
-  const on = mode === 1;
   const fires = (i: number) => !on && (i * 7 + frame * 3) % 5 < 3; // ~60% firing, shuffles per frame
 
   return (
@@ -83,7 +86,7 @@ export function ProblemSection() {
             >
               <AnimatePresence mode="wait">
                 <motion.span
-                  key={mode}
+                  key={String(on)}
                   initial={{ opacity: 0, y: 4 }}
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0, y: -4 }}
@@ -96,8 +99,15 @@ export function ProblemSection() {
             </span>
           </div>
 
-          <div className="inline-flex items-center gap-2.5 border border-border px-4 py-2.5">
-            <span className={`relative h-4 w-7 border transition-colors duration-500 ${on ? "border-white/80" : "border-white/30"}`} aria-hidden>
+          <button
+            type="button"
+            role="switch"
+            aria-checked={on}
+            aria-label="Toggle Aurelius"
+            onClick={() => setUserOn(!on)}
+            className="group inline-flex cursor-pointer items-center gap-2.5 border border-border px-4 py-2.5 transition-colors duration-200 hover:border-white/30 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-signal/60"
+          >
+            <span className={`relative h-4 w-7 border transition-colors duration-500 ${on ? "border-white/80" : "border-white/30 group-hover:border-white/50"}`} aria-hidden>
               <motion.span
                 className="absolute top-1/2 h-2.5 w-2.5"
                 initial={false}
@@ -107,7 +117,7 @@ export function ProblemSection() {
               />
             </span>
             <span className="font-mono text-[13px] text-white/70">Aurelius</span>
-          </div>
+          </button>
         </div>
 
         {/* failure grid */}
