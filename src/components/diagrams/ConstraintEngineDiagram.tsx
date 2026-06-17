@@ -40,7 +40,7 @@ function frame(f: number) {
 const FILL: Record<GS, string> = { idle: C.surface, active: C.steelFillSoft, pass: C.steelFill, fail: C.redSoft };
 const STROKE: Record<GS, string> = { idle: C.surfaceStroke, active: C.steelLine, pass: C.steelStrong, fail: C.redLine };
 
-export function ConstraintEngineDiagram() {
+export function ConstraintEngineDiagram({ fig = "fig.06", title = "constraint gates" }: { fig?: string; title?: string } = {}) {
   const { ref, inView } = useInView();
   const reduced = usePrefersReducedMotion();
   const f = useSequence(FRAMES, { enabled: inView, interval: 1250, resting: N });
@@ -48,7 +48,7 @@ export function ConstraintEngineDiagram() {
 
   return (
     <div ref={ref}>
-      <TopologyPlate fig="fig.06" caption="hard constraint gates" vb={[1000, 320]} minWidth={760}>
+      <TopologyPlate fig={fig} title={title} caption="hard constraint gates" vb={[1000, 320]} minWidth={760}>
         {/* rail */}
         <line x1={70} y1={RAIL_Y} x2={GX[N - 1] + 76} y2={RAIL_Y} stroke={C.rail} strokeWidth="1.6" />
 

@@ -26,14 +26,14 @@ const RB = RAIL_Y + NH / 2; // block bottom
 /* orthogonal return: down from LOG, straight across, up into OBSERVE */
 const RETURN = `M${CX[4]} ${RB} V206 H${CX[0]} V${RB}`;
 
-export function ControlLoopDiagram() {
+export function ControlLoopDiagram({ fig = "fig.03", title = "control loop" }: { fig?: string; title?: string } = {}) {
   const { ref, inView } = useInView();
   const reduced = usePrefersReducedMotion();
   const step = useSequence(STATIONS.length, { enabled: inView, interval: 2000, resting: 2 });
 
   return (
     <div ref={ref}>
-      <TopologyPlate fig="fig.03" caption="deterministic control loop" vb={[1000, 268]} minWidth={720}>
+      <TopologyPlate fig={fig} title={title} caption="deterministic control loop" vb={[1000, 268]} minWidth={720}>
         {/* base rail through every station */}
         <line x1={CX[0]} y1={RAIL_Y} x2={CX[4]} y2={RAIL_Y} stroke={C.rail} strokeWidth="1.4" />
         {/* completed portion of the rail, up to the active station */}

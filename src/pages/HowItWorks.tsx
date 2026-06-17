@@ -64,7 +64,7 @@ export default function HowItWorks() {
             />
           </Reveal>
           <Reveal delay={140} className="mt-12">
-            <ControlLoopDiagram />
+            <ControlLoopDiagram fig="fig.02" />
           </Reveal>
         </Container>
       </Section>

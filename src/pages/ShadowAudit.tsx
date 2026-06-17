@@ -40,7 +40,7 @@ export default function ShadowAudit() {
             </p>
           </Reveal>
           <Reveal delay={220} className="mt-10">
-            <ShadowModeAuditDiagram />
+            <ShadowModeAuditDiagram fig="fig.01" />
           </Reveal>
         </Container>
       </section>

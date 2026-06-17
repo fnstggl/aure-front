@@ -36,7 +36,7 @@ export function Section({
     <section
       id={id}
       className={cn(
-        "py-[88px] md:py-[128px] lg:py-[160px]",
+        "py-[60px] md:py-[84px] lg:py-[104px]",
         divider && "border-t border-border",
         alt && "bg-background-alt",
         className,
