@@ -13,7 +13,7 @@ import { TopologyPlate, SystemSurface, Annotation, Tag, StatusMark, C, EASE, arr
 const META_PATH = "M406 182 V246";
 const ADVISORY_PATH = "M600 250 H690 V148";
 
-export function SchedulerInterceptionDiagram() {
+export function SchedulerInterceptionDiagram({ fig = "fig.01", title = "scheduler interception" }: { fig?: string; title?: string } = {}) {
   const { ref, inView } = useInView();
   const reduced = usePrefersReducedMotion();
   const step = useSequence(5, { enabled: inView, interval: 2600, resting: 2 });
@@ -21,7 +21,7 @@ export function SchedulerInterceptionDiagram() {
 
   return (
     <div ref={ref}>
-      <TopologyPlate fig="fig.01" caption="scheduler interception · control plane" vb={[1000, 466]} minWidth={820}>
+      <TopologyPlate fig={fig} title={title} caption="scheduler interception · control plane" vb={[1000, 466]} minWidth={820}>
         {/* ---- execution rail (top) ---- */}
         <line x1="232" y1="142" x2="300" y2="142" stroke={C.rail} strokeWidth="1.4" />
         <line x1="512" y1="142" x2="690" y2="142" stroke={C.rail} strokeWidth="1.4" />

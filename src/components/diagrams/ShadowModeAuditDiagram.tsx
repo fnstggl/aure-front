@@ -1,9 +1,8 @@
 import { useLayoutEffect, useRef, useState } from "react";
 import { motion } from "framer-motion";
 import { useInView } from "@/hooks/useInView";
-import { useSequence } from "@/hooks/useSequence";
 import { Counter } from "@/components/site/Counter";
-import { CaptionStrip, C, EASE } from "./plate";
+import { CaptionStrip, PlateHeader, C, EASE } from "./plate";
 
 /* Plate 08 — Shadow audit ledger.
    One idea: an append-only, timestamped record of what Aurelius would have
@@ -29,16 +28,15 @@ const statusStyle: Record<Status, { label: string; color: string }> = {
   logged: { label: "logged", color: "hsl(0 0% 100% / 0.5)" },
 };
 
-export function ShadowModeAuditDiagram() {
+export function ShadowModeAuditDiagram({ fig = "fig.07", title = "shadow audit" }: { fig?: string; title?: string } = {}) {
   const { ref, inView } = useInView();
-  const step = useSequence(ROWS.length, { enabled: inView, interval: 1500, resting: ROWS.length - 1 });
 
   return (
-    <figure ref={ref} className="relative overflow-hidden border border-border bg-card">
-      <span className="pointer-events-none absolute right-4 top-3 z-10 font-mono text-[10px] tracking-[0.16em] text-white/22">fig.08</span>
+    <figure ref={ref} className="relative overflow-hidden border border-strong bg-card">
+      <PlateHeader fig={fig} title={title} />
       <MobileScaleFit width={760}>
-          {/* header */}
-          <div className="flex items-center justify-between border-b border-border px-5 py-3 pr-16">
+          {/* ledger header */}
+          <div className="flex items-center justify-between border-b border-border px-5 py-3">
             <span className="font-mono text-[11px] uppercase tracking-[0.18em] text-white/55">audit.log — counterfactual ledger</span>
             <span className="flex items-center gap-1.5 font-mono text-[10px] uppercase tracking-wider text-white/35">
               <span className="h-1.5 w-1.5 bg-white/30" /> append-only
@@ -55,13 +53,12 @@ export function ShadowModeAuditDiagram() {
           <div className="px-5">
             {ROWS.map((r, i) => {
               const st = statusStyle[r.status];
-              const visible = i <= step;
               return (
                 <motion.div
                   key={r.t}
-                  initial={false}
-                  animate={{ opacity: visible ? 1 : 0 }}
-                  transition={{ duration: 0.35, ease: EASE }}
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: inView ? 1 : 0 }}
+                  transition={{ duration: 0.4, delay: i * 0.12, ease: EASE }}
                   className="grid items-center gap-x-4 border-b border-border/40 py-2.5 font-mono text-[12px]"
                   style={{ gridTemplateColumns: COLS }}
                 >

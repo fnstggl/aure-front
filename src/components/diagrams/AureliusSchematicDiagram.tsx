@@ -3,6 +3,7 @@ import { motion, AnimatePresence, useTime, useTransform, type MotionValue } from
 import { useInView } from "@/hooks/useInView";
 import { useSequence } from "@/hooks/useSequence";
 import { usePrefersReducedMotion } from "@/hooks/usePrefersReducedMotion";
+import { PlateHeader } from "./plate";
 
 /* ============================================================================
    Aurelius advisory layer — strict isometric LINE ART (no images, no glow).
@@ -312,10 +313,15 @@ function FlowCycle() {
   );
 }
 
+/* The viewBox is extended upward (negative top) so the cycling scheduler-name
+   label above the top plate has headroom and never clips at the figure edge. */
+const VB_TOP = -72;
+const VB_H = H - VB_TOP; // 1072
+
 /* ---- label overlay (HTML, optional — the drawing passes the no-label test) */
 type Tag = { text: string; at: Pt; place: "above" | "below" | "left" | "right"; tone?: "white" | "steel" | "red" | "dim"; mobileHide?: boolean };
 const px = (x: number) => `${(x / W) * 100}%`;
-const py = (y: number) => `${(y / H) * 100}%`;
+const py = (y: number) => `${((y - VB_TOP) / VB_H) * 100}%`;
 const TAGS: Tag[] = [
   { text: "AURELIUS CONTROL", at: [iso(oM, 6.4, 0, 0)[0] + 10, iso(oM, 6.4, 0, 0)[1] + 18], place: "right", tone: "steel", mobileHide: true },
   { text: "CONSTRAINT GATE", at: [A.gateStop[0] + 52, A.gateStop[1] + 26], place: "right", tone: "dim", mobileHide: true },
@@ -336,7 +342,7 @@ const placeStyle: Record<Tag["place"], React.CSSProperties> = {
   right: { transform: "translate(0,-50%)" },
 };
 
-export function AureliusSchematicDiagram() {
+export function AureliusSchematicDiagram({ fig = "fig.01", title = "advisory layer" }: { fig?: string; title?: string } = {}) {
   const { ref, inView } = useInView<HTMLDivElement>({ threshold: 0.2, rootMargin: "0px 0px -10% 0px" });
   const reduced = usePrefersReducedMotion();
   const hideLabels = useMemo(() => typeof window !== "undefined" && new URLSearchParams(window.location.search).has("nolabels"), []);
@@ -344,10 +350,11 @@ export function AureliusSchematicDiagram() {
   const nameIdx = useSequence(SCHEDULERS.length, { enabled: inView, interval: 2800 });
 
   return (
-    <figure data-acp="schematic" className="relative mx-auto max-w-[600px] overflow-hidden border border-border" style={{ background: BG }}>
-      <div ref={ref} className="relative aspect-[920/1000] w-full [container-type:inline-size]">
+    <figure data-acp="schematic" className="relative mx-auto max-w-[600px] overflow-hidden border border-strong" style={{ background: BG }}>
+      <PlateHeader fig={fig} title={title} />
+      <div ref={ref} className="relative aspect-[920/1072] w-full [container-type:inline-size]">
         <motion.svg
-          viewBox={`0 0 ${W} ${H}`}
+          viewBox={`0 ${VB_TOP} ${W} ${VB_H}`}
           className="absolute inset-0 h-full w-full"
           role="img"
           aria-label="Aurelius advisory layer: scheduler metadata passes through Aurelius before GPU execution; unsafe payload is blocked at the constraint gate."
@@ -405,14 +412,13 @@ export function AureliusSchematicDiagram() {
         )}
       </div>
 
-      <figcaption className="flex items-center justify-between gap-2.5 border-t border-border px-4 py-2.5 font-mono text-[10.5px] uppercase tracking-[0.2em] text-white/30">
+      <figcaption className="flex items-center justify-between gap-2.5 border-t border-border px-4 py-2.5 font-mono text-[10.5px] uppercase tracking-[0.2em] text-white/42">
         <span className="flex items-center gap-2.5">
           <span className="h-px w-4 bg-white/40" aria-hidden />
-          advisory layer · scheduler → aurelius → execution
+          scheduler → aurelius → execution
         </span>
-        <span className="hidden tabular-nums text-white/18 sm:inline">metadata_only</span>
+        <span className="hidden tabular-nums text-white/22 sm:inline">metadata_only</span>
       </figcaption>
-      <span className="pointer-events-none absolute right-4 top-3 font-mono text-[10px] tabular-nums tracking-[0.16em] text-white/22">fig.00</span>
     </figure>
   );
 }

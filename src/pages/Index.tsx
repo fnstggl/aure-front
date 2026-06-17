@@ -132,7 +132,7 @@ export default function Index() {
       </Section>
 
       {/* ==================== Stat moment (typography) ================= */}
-      <Section className="py-[120px] md:py-[180px] lg:py-[216px]">
+      <Section className="py-[84px] md:py-[124px] lg:py-[148px]">
         <Container>
           <Reveal className="mx-auto max-w-4xl text-center">
             <div className="text-[clamp(4.5rem,15vw,11rem)] font-medium leading-[0.84] tracking-[-0.05em] text-foreground">
@@ -214,7 +214,7 @@ export default function Index() {
       </Section>
 
       {/* ============== Manifesto — Apple-style scroll word reveal ============= */}
-      <Section className="py-[120px] md:py-[172px] lg:py-[212px]">
+      <Section className="py-[84px] md:py-[120px] lg:py-[144px]">
         <Container>
           <ScrollWordReveal
             as="h2"

@@ -35,11 +35,15 @@ const REGIONS: {
 const RW = 408;
 const RH = 112;
 
-/* orthogonal fan-out from a single vertical bus at x=404 */
-const PATHS = [
-  "M236 250 H404 V92 H548",
-  "M236 250 H404 V238 H548",
-  "M236 250 H404 V384 H548",
+/* The selected region (US-WEST) is level with the queue, so its path is a
+   single straight line — no mid-line kink. Rejected regions branch cleanly
+   off one vertical bus that leaves the selected line at a marked node. */
+const BUS_X = 404;
+const QY = 238; // queue exit + selected path Y == US-WEST row center
+const SEL_PATH = `M236 ${QY} H548`;
+const REJ_PATHS = [
+  `M236 ${QY} H${BUS_X} V92 H548`,
+  `M236 ${QY} H${BUS_X} V384 H548`,
 ];
 
 const READOUT = [
@@ -86,30 +90,22 @@ function Region({ r }: { r: (typeof REGIONS)[number] }) {
   );
 }
 
-export function FleetTopologyDiagram() {
+export function FleetTopologyDiagram({ fig = "fig.04", title = "fleet topology" }: { fig?: string; title?: string } = {}) {
   const { ref, inView } = useInView();
   const reduced = usePrefersReducedMotion();
   const step = useSequence(3, { enabled: inView, interval: 2600, resting: 2 });
 
   return (
     <div ref={ref}>
-      <TopologyPlate fig="fig.04" caption="region · cluster · pool placement" vb={[1000, 490]} minWidth={920}>
-        {/* candidate paths — selected steel, rejected red, all with arrowheads */}
-        {PATHS.map((d, i) => {
-          const isSel = i === 1;
-          return (
-            <path
-              key={d}
-              d={d}
-              fill="none"
-              stroke={isSel ? C.steelStrong : C.redLine}
-              strokeWidth={isSel ? 2.4 : 1.8}
-              strokeDasharray={isSel ? undefined : "2 6"}
-              opacity={isSel ? 1 : 0.55}
-              markerEnd={arrow(isSel ? "steel" : "red")}
-            />
-          );
-        })}
+      <TopologyPlate fig={fig} title={title} caption="region · cluster · pool placement" vb={[1000, 490]} minWidth={920}>
+        {/* rejected candidate paths — dim red, drawn first so the selected line sits on top */}
+        {REJ_PATHS.map((d) => (
+          <path key={d} d={d} fill="none" stroke={C.redLine} strokeWidth={1.6} strokeDasharray="2 6" opacity={0.5} markerEnd={arrow("red")} />
+        ))}
+        {/* selected path — bright, straight, on top */}
+        <path d={SEL_PATH} fill="none" stroke={C.steelStrong} strokeWidth={2.4} markerEnd={arrow("steel")} />
+        {/* branch node where the rejected bus leaves the selected line */}
+        <circle cx={BUS_X} cy={QY} r={3} fill={C.steelText} />
         {!reduced && inView && (
           <circle r="4.5" fill={C.steelText}>
             <animateMotion dur="2.6s" repeatCount="indefinite" keyPoints="0;1" keyTimes="0;1" calcMode="linear">
@@ -117,19 +113,19 @@ export function FleetTopologyDiagram() {
             </animateMotion>
           </circle>
         )}
-        <path id="fleet-sel" d={PATHS[1]} fill="none" stroke="none" />
+        <path id="fleet-sel" d={SEL_PATH} fill="none" stroke="none" />
 
-        {/* workload source plate */}
-        <SystemSurface x={36} y={182} w={200} h={136} state="neutral" />
-        <Annotation x={56} y={210} state="white" size={13} track={1}>WORKLOAD QUEUE</Annotation>
-        <line x1={56} y1={222} x2={216} y2={222} stroke={C.rail} strokeWidth="1.2" />
+        {/* workload source plate — centered on the selected (US-WEST) row */}
+        <SystemSurface x={36} y={170} w={200} h={136} state="neutral" />
+        <Annotation x={56} y={198} state="white" size={13} track={1}>WORKLOAD QUEUE</Annotation>
+        <line x1={56} y1={210} x2={216} y2={210} stroke={C.rail} strokeWidth="1.2" />
         {[["job", "batch_infer"], ["gpus", "128×H100"], ["deadline", "4h"], ["region", "us only"]].map(([k, v], i) => (
           <g key={k}>
-            <Annotation x={56} y={245 + i * 18} state="dim" size={11}>{k}</Annotation>
-            <Annotation x={216} y={245 + i * 18} anchor="end" state="neutral" size={11}>{v}</Annotation>
+            <Annotation x={56} y={233 + i * 18} state="dim" size={11}>{k}</Annotation>
+            <Annotation x={216} y={233 + i * 18} anchor="end" state="neutral" size={11}>{v}</Annotation>
           </g>
         ))}
-        <circle cx={236} cy={250} r={3.5} fill={C.steelText} />
+        <circle cx={236} cy={238} r={3.5} fill={C.steelText} />
 
         {REGIONS.map((r) => <Region key={r.code} r={r} />)}
 

@@ -19,13 +19,13 @@ const BLOCKED = ["prompts", "model outputs", "training data", "source code"];
 
 const BX = 596; // boundary x
 
-export function MetadataBoundaryDiagram() {
+export function MetadataBoundaryDiagram({ fig = "fig.08", title = "data boundary" }: { fig?: string; title?: string } = {}) {
   const { ref, inView } = useInView();
   const reduced = usePrefersReducedMotion();
 
   return (
     <div ref={ref}>
-      <TopologyPlate fig="fig.07" caption="customer environment · metadata boundary" vb={[1000, 440]} minWidth={900}>
+      <TopologyPlate fig={fig} title={title} caption="customer environment · metadata boundary" vb={[1000, 440]} minWidth={900}>
         {/* customer environment boundary */}
         <rect x={40} y={44} width={556} height={356} rx={RX} fill="none" stroke="hsl(0 0% 100% / 0.26)" strokeWidth="1.4" strokeDasharray="5 4" />
         <Annotation x={62} y={74} state="white" size={12.5} track={0.8}>CUSTOMER SECURE ENVIRONMENT</Annotation>
@@ -63,10 +63,11 @@ export function MetadataBoundaryDiagram() {
           </circle>
         )}
 
-        {/* blocked payload attempt — straight, stopped at the boundary */}
-        <line x1={276} y1={210} x2={BX - 12} y2={210} stroke={C.redLine} strokeWidth="1.8" strokeDasharray="2 5" opacity={0.9} />
-        <StatusMark x={BX} y={210} kind="fail" r={8} />
-        <Annotation x={430} y={196} state="rejected" size={10.5}>payload blocked</Annotation>
+        {/* blocked payload attempt — routed in the clear lane below the boxes so
+            it never crosses a node; stopped at the boundary */}
+        <line x1={276} y1={256} x2={BX - 12} y2={256} stroke={C.redLine} strokeWidth="1.8" strokeDasharray="2 5" opacity={0.9} />
+        <StatusMark x={BX} y={256} kind="fail" r={8} />
+        <Annotation x={286} y={246} state="rejected" size={10.5}>payload blocked at boundary</Annotation>
 
         {/* Aurelius control plane */}
         <rect x={680} y={44} width={280} height={356} rx={RX} fill={C.steelFillSoft} stroke={C.steelLine} strokeWidth="1.4" />
