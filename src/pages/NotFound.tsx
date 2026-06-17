@@ -16,7 +16,7 @@ const NotFound = () => {
         <div className="font-mono text-[11px] uppercase tracking-[0.22em] text-steel">
           404 · route not found
         </div>
-        <h1 className="mt-5 text-[clamp(2.5rem,8vw,4rem)] font-medium tracking-tight text-foreground">
+        <h1 className="mt-5 font-display text-[clamp(2.5rem,8vw,4rem)] font-normal tracking-[-0.03em] text-foreground">
           No decision path here
         </h1>
         <p className="mx-auto mt-4 max-w-sm text-[14px] text-white/55">

@@ -85,7 +85,7 @@ export default function Contact() {
                 <SectionEyebrow>Request access</SectionEyebrow>
               </Reveal>
               <Reveal delay={80}>
-                <h1 className="mt-6 text-balance text-[clamp(1.9rem,4vw,2.8rem)] font-medium leading-[1.08] tracking-tight text-foreground">
+                <h1 className="mt-6 text-balance font-display text-[clamp(1.9rem,4vw,2.8rem)] font-medium leading-[1.08] tracking-[-0.025em] text-foreground">
                   See how much Aurelius could save
                 </h1>
               </Reveal>

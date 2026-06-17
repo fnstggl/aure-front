@@ -28,7 +28,7 @@ export default function ShadowAudit() {
             <SectionEyebrow>Shadow audit</SectionEyebrow>
           </Reveal>
           <Reveal delay={80}>
-            <h1 className="mt-6 max-w-3xl text-balance text-[clamp(1.9rem,4.4vw,3rem)] font-medium leading-[1.08] tracking-tight text-foreground">
+            <h1 className="mt-6 max-w-3xl text-balance font-display text-[clamp(1.9rem,4.4vw,3rem)] font-medium leading-[1.08] tracking-[-0.025em] text-foreground">
               See what would happen — without changing anything
             </h1>
           </Reveal>
@@ -107,7 +107,7 @@ export default function ShadowAudit() {
         <Container>
           <div className="mx-auto max-w-2xl text-center">
             <Reveal>
-              <h2 className="text-balance text-[clamp(1.5rem,3.2vw,2.2rem)] font-medium tracking-tight text-foreground">
+              <h2 className="text-balance font-display text-[clamp(1.5rem,3.2vw,2.2rem)] font-medium tracking-[-0.025em] text-foreground">
                 Run your shadow audit
               </h2>
             </Reveal>
