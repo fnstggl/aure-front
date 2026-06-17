@@ -57,7 +57,7 @@ export function ProblemSection() {
     <Section>
       <Container>
         <div ref={ref} className="mx-auto max-w-3xl text-center">
-          <h2 className="text-balance text-[clamp(1.8rem,3.8vw,2.75rem)] font-medium leading-[1.08] tracking-[-0.025em] text-foreground md:whitespace-nowrap">
+          <h2 className="text-balance font-display text-[clamp(1.8rem,3.8vw,2.75rem)] font-medium leading-[1.08] tracking-[-0.03em] text-foreground md:whitespace-nowrap">
             Your GPU fleet bleeds money.
             <br />
             <span className="text-white/50">Your scheduler wasn’t built to stop it.</span>
