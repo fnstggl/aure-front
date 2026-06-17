@@ -135,21 +135,8 @@
     @apply bg-background text-foreground antialiased;
     font-family: "Geist", "Inter", system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
     font-feature-settings: "ss01", "cv01";
-    font-optical-sizing: auto; /* drives Newsreader's optical-size axis */
     -webkit-font-smoothing: antialiased;
     text-rendering: optimizeLegibility;
-  }
-
-  /* Editorial serif (Newsreader) — used for manifesto + large statement copy.
-     Slightly tightened, optical sizing on, for a refined high-end reading feel. */
-  .font-serif {
-    font-optical-sizing: auto;
-    font-feature-settings: "kern";
-    letter-spacing: -0.005em;
-  }
-  /* Display grotesque (Space Grotesk) — headline identity. */
-  .font-display {
-    font-feature-settings: "ss01";
   }
 
   ::selection {
@@ -387,27 +374,6 @@
     width: 0.5rem;
     background-color: hsl(var(--steel) / 0.4);
   }
-}
-
-/* ============================================================
-   Lenis smooth scroll — premium scroll inertia. Only active when
-   the Lenis class is present (it is not added under reduced motion).
-   ============================================================ */
-html.lenis,
-html.lenis body {
-  height: auto;
-}
-.lenis.lenis-smooth {
-  scroll-behavior: auto !important;
-}
-.lenis.lenis-smooth [data-lenis-prevent] {
-  overscroll-behavior: contain;
-}
-.lenis.lenis-stopped {
-  overflow: hidden;
-}
-.lenis.lenis-smooth iframe {
-  pointer-events: none;
 }
 
 /* Honor reduced motion across all decorative + ambient motion */

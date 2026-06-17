@@ -71,7 +71,7 @@ function DocSection({ id, n, title, lead, children }: { id: string; n: string; t
     <section id={id} className="scroll-mt-28 border-t border-border pt-12 first:border-t-0 first:pt-0">
       <div className="flex items-baseline gap-3">
         <span className="font-mono text-[12px] tabular-nums text-white/28">{n}</span>
-        <h2 className="font-display text-[clamp(1.25rem,2.4vw,1.6rem)] font-medium tracking-[-0.02em] text-foreground">{title}</h2>
+        <h2 className="text-[clamp(1.25rem,2.4vw,1.6rem)] font-medium tracking-tight text-foreground">{title}</h2>
       </div>
       {lead && <p className="mt-3 max-w-2xl text-[14.5px] leading-relaxed text-white/64">{lead}</p>}
       <div className="mt-6">{children}</div>
@@ -138,7 +138,7 @@ export default function Docs() {
             <SectionEyebrow>Documentation</SectionEyebrow>
           </Reveal>
           <Reveal delay={80}>
-            <h1 className="mt-6 max-w-3xl text-balance font-display text-[clamp(1.9rem,4.4vw,3rem)] font-medium leading-[1.08] tracking-[-0.025em] text-foreground">
+            <h1 className="mt-6 max-w-3xl text-balance text-[clamp(1.9rem,4.4vw,3rem)] font-medium leading-[1.08] tracking-tight text-foreground">
               Technical reference for Aurelius
             </h1>
           </Reveal>

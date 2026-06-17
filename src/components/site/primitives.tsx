@@ -125,7 +125,7 @@ export function SectionHeader({
           {eyebrow}
         </SectionEyebrow>
       )}
-      <h2 className="text-balance font-display text-[clamp(1.75rem,3.6vw,2.6rem)] font-medium leading-[1.08] tracking-[-0.025em] text-foreground">
+      <h2 className="text-balance text-[clamp(1.75rem,3.6vw,2.6rem)] font-medium leading-[1.08] tracking-[-0.02em] text-foreground">
         {title}
       </h2>
       {intro &&
