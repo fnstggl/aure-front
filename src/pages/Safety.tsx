@@ -77,7 +77,7 @@ export default function Safety() {
             <SectionEyebrow>Safety</SectionEyebrow>
           </Reveal>
           <Reveal delay={80}>
-            <h1 className="mt-6 max-w-3xl text-balance text-[clamp(1.9rem,4.4vw,3rem)] font-medium leading-[1.08] tracking-tight text-foreground">
+            <h1 className="mt-6 max-w-3xl text-balance font-display text-[clamp(1.9rem,4.4vw,3rem)] font-medium leading-[1.08] tracking-[-0.025em] text-foreground">
               Safe by default, by construction
             </h1>
           </Reveal>

@@ -33,8 +33,8 @@ export default function Index() {
         <Container className="relative">
           <div className="mx-auto max-w-3xl text-center">
             <Reveal delay={60}>
-              <h1 className="text-balance text-[clamp(2rem,5.2vw,3.6rem)] font-medium leading-[1.05] tracking-[-0.025em]">
-                <span className="text-white/52">Your scheduler optimizes utilization.</span>
+              <h1 className="text-balance font-display text-[clamp(2rem,5.4vw,3.75rem)] font-normal leading-[1.04] tracking-[-0.035em]">
+                <span className="text-white/50">Your scheduler optimizes utilization.</span>
                 <br />
                 <span className="text-foreground">Aurelius optimizes economics.</span>
               </h1>
@@ -135,10 +135,10 @@ export default function Index() {
       <Section className="py-[84px] md:py-[124px] lg:py-[148px]">
         <Container>
           <Reveal className="mx-auto max-w-4xl text-center">
-            <div className="text-[clamp(4.5rem,15vw,11rem)] font-medium leading-[0.84] tracking-[-0.05em] text-foreground">
+            <div className="font-display text-[clamp(4.5rem,15vw,11rem)] font-normal leading-[0.84] tracking-[-0.055em] text-foreground">
               42%
             </div>
-            <p className="mt-5 text-[clamp(1.1rem,2.6vw,1.7rem)] font-medium tracking-tight text-white/72">
+            <p className="mt-5 font-serif text-[clamp(1.2rem,2.8vw,1.9rem)] font-normal italic leading-snug tracking-[-0.005em] text-white/74">
               higher goodput per dollar
             </p>
             <p className="mt-7 font-mono text-[11px] uppercase tracking-[0.22em] text-white/32">
@@ -219,14 +219,14 @@ export default function Index() {
           <ScrollWordReveal
             as="h2"
             text={"No payload access.\nNo execution risk.\nNo blind decisions."}
-            className="max-w-4xl text-[clamp(1.9rem,5vw,3.5rem)] font-medium leading-[1.12] tracking-[-0.025em] text-foreground"
+            className="max-w-4xl font-serif text-[clamp(2rem,5.2vw,3.7rem)] font-normal leading-[1.14] tracking-[-0.01em] text-foreground"
           />
           <ScrollWordReveal
             as="p"
             text={
               "Aurelius reads only the metadata a scheduler already exposes, proves every decision against hard constraints, and records the counterfactual before anything runs."
             }
-            className="mt-11 max-w-2xl text-[clamp(1rem,2.1vw,1.4rem)] font-medium leading-[1.5] tracking-[-0.01em] text-foreground"
+            className="mt-10 max-w-2xl font-serif text-[clamp(1.05rem,2.1vw,1.45rem)] font-normal leading-[1.5] tracking-[-0.005em] text-white/80"
           />
         </Container>
       </Section>
@@ -291,7 +291,7 @@ export default function Index() {
             </div>
           </Reveal>
           <Reveal delay={80}>
-            <h2 className="mt-6 max-w-2xl text-balance text-[clamp(1.7rem,3.4vw,2.5rem)] font-medium leading-[1.08] tracking-[-0.02em] text-foreground">
+            <h2 className="mt-6 max-w-2xl text-balance font-display text-[clamp(1.7rem,3.4vw,2.5rem)] font-medium leading-[1.08] tracking-[-0.025em] text-foreground">
               From metadata to validated savings, in three steps
             </h2>
           </Reveal>
@@ -330,7 +330,7 @@ export default function Index() {
               <SectionEyebrow className="justify-center">Get started</SectionEyebrow>
             </Reveal>
             <Reveal delay={80}>
-              <h2 className="mt-5 text-balance text-[clamp(1.6rem,3.4vw,2.5rem)] font-medium leading-tight tracking-tight text-foreground">
+              <h2 className="mt-5 text-balance font-display text-[clamp(1.6rem,3.4vw,2.5rem)] font-medium leading-tight tracking-[-0.025em] text-foreground">
                 See what Aurelius would have saved on your fleet
               </h2>
             </Reveal>
