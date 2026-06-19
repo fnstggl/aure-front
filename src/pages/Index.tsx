@@ -41,8 +41,7 @@ export default function Index() {
             </Reveal>
             <Reveal delay={120}>
               <p className="mx-auto mt-6 max-w-2xl text-[15px] leading-relaxed text-white/68 md:text-[17px]">
-                Forecast cost, power, carbon, and capacity constraints before execution. Generate
-                safer workload decisions. Prove savings in shadow mode before deployment.
+                Forecast power, capacity, congestion, memory, and demand before execution. Generate safer workload decisions. Prove savings in shadow mode before deployment.
               </p>
             </Reveal>
             <Reveal delay={180}>
