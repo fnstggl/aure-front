@@ -12,6 +12,7 @@ import Index from "./pages/Index";
 // lazyWithReload auto-recovers when a deploy invalidates the previous build's
 // hashed chunks — otherwise the page would sit broken until a manual refresh.
 const HowItWorks = lazyWithReload(() => import("./pages/HowItWorks"));
+const Benchmark = lazyWithReload(() => import("./pages/Benchmark"));
 const Safety = lazyWithReload(() => import("./pages/Safety"));
 const ShadowAudit = lazyWithReload(() => import("./pages/ShadowAudit"));
 const Docs = lazyWithReload(() => import("./pages/Docs"));
@@ -34,6 +35,7 @@ const App = () => (
             <Routes>
               <Route path="/" element={<Index />} />
               <Route path="/how-it-works" element={<HowItWorks />} />
+              <Route path="/benchmark" element={<Benchmark />} />
               <Route path="/safety" element={<Safety />} />
               <Route path="/shadow-audit" element={<ShadowAudit />} />
               <Route path="/docs" element={<Docs />} />

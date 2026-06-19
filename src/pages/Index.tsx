@@ -37,7 +37,7 @@ export default function Index() {
           <div className="mx-auto max-w-3xl text-center">
             <Reveal delay={20}>
               <div className="mb-7 flex justify-center">
-                <AnnouncementPill to="/how-it-works" label="New">
+                <AnnouncementPill to="/benchmark" label="New">
                   Shadow-mode results on public Azure traces
                 </AnnouncementPill>
               </div>
