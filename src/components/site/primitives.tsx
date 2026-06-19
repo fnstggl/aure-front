@@ -85,20 +85,94 @@ export function Reveal({
 export function SectionEyebrow({
   children,
   className,
+  tone = "default",
 }: {
   children: React.ReactNode;
   className?: string;
+  /* "spectrum" lights the leading tick with the gradient — reserved for the
+     two or three peak sections so the accent stays rare. */
+  tone?: "default" | "spectrum";
 }) {
   return (
     <div
       className={cn(
-        "flex items-center gap-3 font-mono text-[10.5px] uppercase tracking-[0.24em] text-white/35",
+        "flex items-center gap-3 font-mono text-[10.5px] uppercase tracking-[0.24em]",
+        tone === "spectrum" ? "text-white/55" : "text-white/35",
         className,
       )}
     >
-      <span className="h-px w-7 bg-white/15" aria-hidden />
+      <span className={cn("h-px w-7", tone === "spectrum" ? "spectrum-line" : "bg-white/15")} aria-hidden />
       {children}
     </div>
+  );
+}
+
+/* SpectrumUnderline — the signature accent. Draws a thin, end-faded spectral
+   rule under a single word, with a soft bloom beneath. Spend it on the one
+   word that carries a section's meaning; the text itself stays monochrome. */
+export function SpectrumUnderline({
+  children,
+  className,
+  delay,
+}: {
+  children: React.ReactNode;
+  className?: string;
+  delay?: number;
+}) {
+  return (
+    <span className={cn("relative inline-block", className)}>
+      <span className="relative z-10">{children}</span>
+      <span
+        aria-hidden
+        className="rule-draw pointer-events-none absolute inset-x-0 -bottom-[0.04em] h-[2px]"
+        style={delay != null ? ({ "--rule-delay": `${delay}ms` } as React.CSSProperties) : undefined}
+      >
+        <span className="spectrum-bloom absolute -left-2 -right-2 -top-[7px] h-[16px] opacity-70" />
+        <span className="spectrum-rule absolute inset-0" />
+      </span>
+    </span>
+  );
+}
+
+/* SpectrumRule — a standalone centered accent line + bloom, for the stat
+   moment beneath a headline number. */
+export function SpectrumRule({ className }: { className?: string }) {
+  return (
+    <span aria-hidden className={cn("relative block h-[2px]", className)}>
+      <span className="spectrum-bloom absolute -left-3 -right-3 -top-2 h-5 opacity-55" />
+      <span className="spectrum-rule absolute inset-0" />
+    </span>
+  );
+}
+
+/* AnnouncementPill — square-cornered (our enterprise tell vs. x.ai's rounded
+   pill), led by a small spectral mark. One per page, above the hero claim. */
+export function AnnouncementPill({
+  to,
+  label,
+  children,
+  className,
+}: {
+  to: string;
+  label?: string;
+  children: React.ReactNode;
+  className?: string;
+}) {
+  return (
+    <Link
+      to={to}
+      className={cn(
+        "group inline-flex items-center gap-2.5 border border-border bg-white/[0.02] px-3 py-1.5 text-[12.5px] tracking-tight text-white/62 transition-colors duration-200 hover:border-white/22 hover:text-white/82",
+        className,
+      )}
+    >
+      <span className="spectrum-dot h-1.5 w-1.5" aria-hidden />
+      {label && (
+        <span className="font-mono text-[10px] uppercase tracking-[0.2em] text-white/80">{label}</span>
+      )}
+      <span>{children}</span>
+      <Arrow className="text-white/40 transition-transform duration-200 group-hover:translate-x-0.5" />
+    </Link>
   );
 }
 
@@ -109,6 +183,7 @@ export function SectionHeader({
   className,
   align = "left",
   revealIntro = false,
+  eyebrowTone = "default",
 }: {
   eyebrow?: string;
   title: React.ReactNode;
@@ -116,12 +191,13 @@ export function SectionHeader({
   className?: string;
   align?: "left" | "center";
   revealIntro?: boolean;
+  eyebrowTone?: "default" | "spectrum";
 }) {
   const introClass = "mt-5 max-w-xl text-pretty text-[15px] leading-relaxed text-white/64 md:text-[16px]";
   return (
     <div className={cn("max-w-2xl", align === "center" && "mx-auto text-center", className)}>
       {eyebrow && (
-        <SectionEyebrow className={cn("mb-6", align === "center" && "justify-center")}>
+        <SectionEyebrow tone={eyebrowTone} className={cn("mb-6", align === "center" && "justify-center")}>
           {eyebrow}
         </SectionEyebrow>
       )}

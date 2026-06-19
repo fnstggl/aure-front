@@ -8,6 +8,9 @@ import {
   CTAButton,
   Reveal,
   ShadowFlow,
+  SpectrumUnderline,
+  SpectrumRule,
+  AnnouncementPill,
 } from "@/components/site/primitives";
 import { ScrollWordReveal } from "@/components/site/ScrollWordReveal";
 import { ProblemSection } from "@/components/site/ProblemSection";
@@ -32,11 +35,20 @@ export default function Index() {
 
         <Container className="relative">
           <div className="mx-auto max-w-3xl text-center">
+            <Reveal delay={20}>
+              <div className="mb-7 flex justify-center">
+                <AnnouncementPill to="/how-it-works" label="New">
+                  Shadow-mode results on public Azure traces
+                </AnnouncementPill>
+              </div>
+            </Reveal>
             <Reveal delay={60}>
               <h1 className="text-balance text-[clamp(2rem,5.2vw,3.6rem)] font-medium leading-[1.05] tracking-[-0.025em]">
                 <span className="text-white/52">Your scheduler optimizes utilization.</span>
                 <br />
-                <span className="text-foreground">Aurelius optimizes economics.</span>
+                <span className="text-foreground">
+                  Aurelius optimizes <SpectrumUnderline delay={620}>economics</SpectrumUnderline>.
+                </span>
               </h1>
             </Reveal>
             <Reveal delay={120}>
@@ -134,13 +146,23 @@ export default function Index() {
       <Section className="py-[84px] md:py-[124px] lg:py-[148px]">
         <Container>
           <Reveal className="mx-auto max-w-4xl text-center">
-            <div className="text-[clamp(4.5rem,15vw,11rem)] font-medium leading-[0.84] tracking-[-0.05em] text-foreground">
-              42%
+            {/* Square grid + a faint spectral floor sit behind the number — the
+                proven result, lit. The figure stays white; the spectrum is the
+                horizon it rests on. */}
+            <div className="relative mx-auto w-fit">
+              <div aria-hidden className="stat-grid pointer-events-none absolute -inset-x-20 -inset-y-12" />
+              <div aria-hidden className="stat-spectrum-floor pointer-events-none absolute -inset-x-20 -inset-y-12" />
+              <div className="relative text-[clamp(4.5rem,15vw,11rem)] font-medium leading-[0.84] tracking-[-0.05em] text-foreground">
+                42%
+              </div>
             </div>
-            <p className="mt-5 text-[clamp(1.1rem,2.6vw,1.7rem)] font-medium tracking-tight text-white/72">
+            <div className="mx-auto mt-8 flex justify-center">
+              <SpectrumRule className="w-40" />
+            </div>
+            <p className="mt-7 text-[clamp(1.1rem,2.6vw,1.7rem)] font-medium tracking-tight text-white/72">
               higher goodput per dollar
             </p>
-            <p className="mt-7 font-mono text-[11px] uppercase tracking-[0.22em] text-white/32">
+            <p className="mt-6 font-mono text-[11px] uppercase tracking-[0.22em] text-white/32">
               Measured on public Azure traces · SLA-safe · −21% GPU-hours
             </p>
           </Reveal>
@@ -153,6 +175,7 @@ export default function Index() {
           <Reveal>
             <SectionHeader
               eyebrow="System overview"
+              eyebrowTone="spectrum"
               title="A deterministic control loop"
               revealIntro
               intro="Observe, forecast, decide, filter, log. Aurelius reads scheduler metadata, predicts conditions with uncertainty bounds, ranks options, rejects unsafe candidates under hard constraints, and records every outcome — append-only."
@@ -326,7 +349,7 @@ export default function Index() {
         <Container>
           <div className="mx-auto max-w-2xl text-center">
             <Reveal>
-              <SectionEyebrow className="justify-center">Get started</SectionEyebrow>
+              <SectionEyebrow tone="spectrum" className="justify-center">Get started</SectionEyebrow>
             </Reveal>
             <Reveal delay={80}>
               <h2 className="mt-5 text-balance text-[clamp(1.6rem,3.4vw,2.5rem)] font-medium leading-tight tracking-tight text-foreground">
