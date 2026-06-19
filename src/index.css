@@ -231,19 +231,11 @@
     background-image: var(--gradient-spectrum);
   }
 
-  /* The signature underline: a thin spectral rule faded at both ends so it
-     reads as a lit horizon under a word, never a hard bar. */
+  /* The signature accent: a thin spectral streak faded at both ends so it
+     terminates cleanly into the off-black, never a hard bar. No glow — the
+     line itself carries the color. */
   .spectrum-rule {
     background-image: var(--gradient-spectrum);
-    -webkit-mask-image: linear-gradient(90deg, transparent, #000 16%, #000 84%, transparent);
-    mask-image: linear-gradient(90deg, transparent, #000 16%, #000 84%, transparent);
-  }
-
-  /* Soft bloom set beneath a rule — on off-black we want the glow, not the
-     line, to carry the color. Always paired with a crisp .spectrum-rule above. */
-  .spectrum-bloom {
-    background-image: var(--gradient-spectrum);
-    filter: blur(13px);
     -webkit-mask-image: linear-gradient(90deg, transparent, #000 16%, #000 84%, transparent);
     mask-image: linear-gradient(90deg, transparent, #000 16%, #000 84%, transparent);
   }

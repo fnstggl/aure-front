@@ -108,8 +108,8 @@ export function SectionEyebrow({
 }
 
 /* SpectrumUnderline — the signature accent. Draws a thin, end-faded spectral
-   rule under a single word, with a soft bloom beneath. Spend it on the one
-   word that carries a section's meaning; the text itself stays monochrome. */
+   rule under a single word. Spend it on the one word that carries a section's
+   meaning; the text itself stays monochrome. */
 export function SpectrumUnderline({
   children,
   className,
@@ -124,25 +124,17 @@ export function SpectrumUnderline({
       <span className="relative z-10">{children}</span>
       <span
         aria-hidden
-        className="rule-draw pointer-events-none absolute inset-x-0 -bottom-[0.04em] h-[2px]"
+        className="rule-draw spectrum-rule pointer-events-none absolute inset-x-0 -bottom-[0.04em] h-[2px]"
         style={delay != null ? ({ "--rule-delay": `${delay}ms` } as React.CSSProperties) : undefined}
-      >
-        <span className="spectrum-bloom absolute -left-2 -right-2 -top-[7px] h-[16px] opacity-70" />
-        <span className="spectrum-rule absolute inset-0" />
-      </span>
+      />
     </span>
   );
 }
 
-/* SpectrumRule — a standalone centered accent line + bloom, for the stat
-   moment beneath a headline number. */
+/* SpectrumRule — a standalone centered accent line, for the stat moment
+   beneath a headline number. */
 export function SpectrumRule({ className }: { className?: string }) {
-  return (
-    <span aria-hidden className={cn("relative block h-[2px]", className)}>
-      <span className="spectrum-bloom absolute -left-3 -right-3 -top-2 h-5 opacity-55" />
-      <span className="spectrum-rule absolute inset-0" />
-    </span>
-  );
+  return <span aria-hidden className={cn("spectrum-rule block h-[2px]", className)} />;
 }
 
 /* AnnouncementPill — square-cornered (our enterprise tell vs. x.ai's rounded
