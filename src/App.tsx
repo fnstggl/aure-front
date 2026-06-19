@@ -1,20 +1,23 @@
-import { lazy, Suspense } from "react";
+import { Suspense } from "react";
 import { MotionConfig } from "framer-motion";
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { lazyWithReload } from "@/lib/lazyWithReload";
 import Index from "./pages/Index";
 
 // Code-split secondary routes so the landing page ships less JS up front.
-const HowItWorks = lazy(() => import("./pages/HowItWorks"));
-const Safety = lazy(() => import("./pages/Safety"));
-const ShadowAudit = lazy(() => import("./pages/ShadowAudit"));
-const Docs = lazy(() => import("./pages/Docs"));
-const Contact = lazy(() => import("./pages/Contact"));
-const Privacy = lazy(() => import("./pages/Privacy"));
-const NotFound = lazy(() => import("./pages/NotFound"));
+// lazyWithReload auto-recovers when a deploy invalidates the previous build's
+// hashed chunks — otherwise the page would sit broken until a manual refresh.
+const HowItWorks = lazyWithReload(() => import("./pages/HowItWorks"));
+const Safety = lazyWithReload(() => import("./pages/Safety"));
+const ShadowAudit = lazyWithReload(() => import("./pages/ShadowAudit"));
+const Docs = lazyWithReload(() => import("./pages/Docs"));
+const Contact = lazyWithReload(() => import("./pages/Contact"));
+const Privacy = lazyWithReload(() => import("./pages/Privacy"));
+const NotFound = lazyWithReload(() => import("./pages/NotFound"));
 
 const queryClient = new QueryClient();
 
