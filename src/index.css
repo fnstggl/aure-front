@@ -62,17 +62,13 @@
 
     /* ── Spectrum ──────────────────────────────────────────────────────
        The full range of fleet conditions Aurelius reasons across — power,
-       capacity, congestion, demand, region, timing. The line runs warm→cool:
-       amber (left) through a dim indigo core to cornflower blue (right).
-       Monochrome is the system at rest; the spectrum is the system seeing.
-       Spent only at peak moments — never as body text, never as a fill. */
+       capacity, congestion, demand, region, timing. Rendered as an iridescent
+       holographic loop (seamless: first stop == last) so a streak reads like
+       light on a prismatic surface, not a flat rainbow. Monochrome is the
+       system at rest; the spectrum is the system seeing. Peak moments only. */
     --gradient-spectrum: linear-gradient(
       90deg,
-      #ea9740 0%,
-      #a06b79 30%,
-      #524d7e 50%,
-      #4a7fc2 73%,
-      #57a6ea 100%
+      #ff63d1, #b06cff, #5f9cff, #4fe1e0, #6dffae, #f3ff7d, #ffac6b, #ff63d1
     );
 
     /* Legacy custom tokens kept for existing components */
@@ -221,10 +217,12 @@
   }
 
   /* ── Spectrum accents ───────────────────────────────────────────────
-     Sharp gradient fill — no fade, no glow, square 90° ends. The exact
-     line. Used for every spectral streak and tick. */
+     Sharp iridescent fill — no fade, no glow, square 90° ends. Oversized so
+     the holographic loop can drift (see .streak-in). Every streak and tick. */
   .spectrum-line {
     background-image: var(--gradient-spectrum);
+    background-size: 200% 100%;
+    background-position: 0 50%;
   }
 
   /* Tiny spectral dot — announcement pills, footer mark. */
@@ -255,15 +253,23 @@
   }
 }
 
-/* Every spectral streak draws in left → right each time it enters view. The
-   colors stay fixed; a clip wipe reveals the line from its left edge. */
+/* Every spectral streak draws in left → right each time it enters view (a clip
+   wipe, colors fixed), then drifts: the iridescent loop shifts continuously so
+   the line shimmers like a holographic surface rather than a flat rainbow. */
 @keyframes spectrum-wipe {
   from { clip-path: inset(0 100% 0 0); }
   to   { clip-path: inset(0 0 0 0); }
 }
+@keyframes iridescent-shift {
+  to { background-position: 200% 50%; }
+}
 @layer utilities {
   .streak-idle { clip-path: inset(0 100% 0 0); }            /* hidden, pre-reveal */
-  .streak-in   { animation: spectrum-wipe 0.85s cubic-bezier(0.4, 0, 0.2, 1) both; }
+  .streak-in {
+    animation:
+      spectrum-wipe 0.85s cubic-bezier(0.4, 0, 0.2, 1) both,
+      iridescent-shift 7s linear 0.85s infinite;
+  }
 }
 
 /* ============================================================
