@@ -29,29 +29,29 @@ export default function Index() {
         <div className="hero-field" aria-hidden />
         <div className="hero-field-shimmer" aria-hidden />
         <div className="hero-field-vignette" aria-hidden />
+        <div className="hero-glow" aria-hidden />
 
         <Container className="relative">
-          <div className="mx-auto max-w-3xl text-center">
-            <Reveal delay={60}>
-              <h1 className="text-balance text-[clamp(2rem,5.2vw,3.6rem)] font-medium leading-[1.05] tracking-[-0.025em]">
-                <span className="text-white/52">Your scheduler optimizes utilization.</span>
-                <br />
-                <span className="text-foreground">Aurelius optimizes economics.</span>
+          <div className="mx-auto max-w-2xl text-center">
+            <Reveal delay={80}>
+              <h1 className="text-balance text-[clamp(2.4rem,6vw,4.25rem)] font-medium leading-[1.02] tracking-[-0.035em] text-foreground">
+                Supercharge your scheduler.
               </h1>
             </Reveal>
-            <Reveal delay={120}>
-              <p className="mx-auto mt-6 max-w-2xl text-[15px] leading-relaxed text-white/68 md:text-[17px]">
-                Forecast power, capacity, congestion, and demand constraints before execution. Generate safer workload decisions. Prove savings in shadow mode before deployment.
+            <Reveal delay={200}>
+              <p className="mx-auto mt-7 max-w-xl text-balance text-[clamp(1.05rem,2.4vw,1.4rem)] leading-snug tracking-[-0.01em]">
+                <span className="text-white/45">Your scheduler places workloads. </span>
+                <span className="text-white/85">Aurelius helps it make more profitable decisions.</span>
               </p>
             </Reveal>
-            <Reveal delay={180}>
-              <p className="mx-auto mt-4 max-w-xl text-[13px] leading-relaxed text-white/42">
-                Metadata-only. Constraint-gated. Built for GPU fleet operators.
+            <Reveal delay={320}>
+              <p className="mx-auto mt-6 max-w-md font-mono text-[11.5px] leading-relaxed tracking-tight text-white/38">
+                Metadata-only. Constraint-gated. Shadow-mode first. Your scheduler stays in control.
               </p>
             </Reveal>
 
-            <Reveal delay={240}>
-              <div className="mt-9 flex flex-col items-center justify-center gap-3 sm:flex-row">
+            <Reveal delay={440}>
+              <div className="mt-10 flex flex-col items-center justify-center gap-3 sm:flex-row">
                 <CTAButton to="/contact" variant="primary" withArrow>
                   See how much you could save
                 </CTAButton>
@@ -60,39 +60,30 @@ export default function Index() {
                 </CTAButton>
               </div>
             </Reveal>
-
-            <Reveal delay={320}>
-              <div className="mt-11 flex flex-wrap items-center justify-center gap-x-5 gap-y-2 font-mono text-[12px] tracking-tight text-white/45">
-                <span><span className="text-foreground">+42%</span> goodput / $</span>
-                <span className="text-white/15">·</span>
-                <span><span className="text-foreground">−21%</span> GPU-hours</span>
-                <span className="text-white/15">·</span>
-                <span>public Azure traces</span>
-                <span className="text-white/15">·</span>
-                <span>SLA-safe benchmark</span>
-              </div>
-              <p className="mt-3.5 font-mono text-[11px] text-white/26">
-                Benchmark evidence on public traces (not a guaranteed universal result).
-              </p>
-            </Reveal>
           </div>
         </Container>
       </section>
 
-      {/* ================= The cost reality (scary problem grid) ============== */}
+      {/* ============ The economic gap — overspending + positive proof ========= */}
       <ProblemSection />
 
-      {/* ===================== Scheduler interception ================== */}
+      {/* ===================== How it fits (sits beside) ================== */}
       <Section>
         <Container>
           <Reveal>
             <SectionHeader
               eyebrow="How it fits"
-              title="An advisory layer between your scheduler and execution"
-              intro="Aurelius reads scheduler metadata, forecasts conditions, and filters candidates before they run — then advises. Your scheduler stays in control and execution is unchanged."
+              title="Aurelius sits beside your scheduler, not in place of it."
+              intro="Aurelius reads scheduler metadata, forecasts cost and constraint conditions, ranks candidate decisions, and recommends the option with the best economics that still clears every hard gate. Your scheduler remains the system of record for execution."
             />
           </Reveal>
-          <Reveal delay={140} className="mt-12">
+          <Reveal delay={100}>
+            <p className="mt-6 max-w-2xl text-[15px] leading-relaxed text-white/70 md:text-[16px]">
+              Your scheduler decides where workloads run.{" "}
+              <span className="text-foreground">Aurelius decides which decisions make the most economic sense.</span>
+            </p>
+          </Reveal>
+          <Reveal delay={160} className="mt-12">
             <AureliusSchematicDiagram />
           </Reveal>
         </Container>
@@ -104,16 +95,16 @@ export default function Index() {
           <Reveal>
             <SectionHeader
               eyebrow="The problem"
-              title="Your scheduler is costing you money"
-              intro="Modern schedulers optimize for availability, fairness, and latency — not economic outcome. Once a job is placed, its energy cost, regional constraints, and timing tradeoffs are often locked in."
+              title="What your scheduler can't see"
+              intro="Modern schedulers optimize availability, fairness, and latency — not economic outcome. Once a job is placed, its energy cost, regional constraints, and timing tradeoffs are often locked in before anyone weighs the economics."
             />
           </Reveal>
           <Reveal delay={120}>
             <ul className="mt-10 grid gap-px overflow-hidden rounded-md border border-border bg-border md:grid-cols-3">
               {[
-                "Schedulers do not see future grid conditions.",
-                "Utilization does not equal economic efficiency.",
-                "Teams lack audit-grade counterfactuals before changing production behavior.",
+                "Schedulers see placement. They rarely see future economic conditions.",
+                "Utilization is not the same as economic efficiency.",
+                "Without counterfactuals, teams cannot prove which scheduling decisions would have created more value.",
               ].map((point, i) => (
                 <li key={point} className="bg-background p-5">
                   <span className="font-mono text-[12px] tabular-nums text-white/25">
@@ -186,8 +177,8 @@ export default function Index() {
           <Reveal>
             <SectionHeader
               eyebrow="Decision logic"
-              title="Every optimization is ranked, filtered, and explainable"
-              intro="For each workload, Aurelius generates candidate decisions — run now, delay, or relocate — scores each on expected cost, and filters anything that violates a constraint. The selected candidate comes with its reasons, not a black-box verdict."
+              title="Every recommendation is ranked, filtered, and explainable"
+              intro="For each workload, Aurelius evaluates candidate decisions — run now, delay, relocate, or leave unchanged — then scores each against expected economics and hard constraints. Unsafe savings are rejected. The selected recommendation includes the reason, the tradeoff, and the audit trail."
             />
           </Reveal>
           <Reveal delay={140} className="mt-12">
@@ -203,7 +194,7 @@ export default function Index() {
             <SectionHeader
               eyebrow="Safety"
               title="Optimization stops at the constraint boundary"
-              intro="Aurelius only recommends actions that pass hard operational constraints. If a candidate violates SLA, residency, capacity, power, or policy boundaries, it is rejected before execution — and the rejection is recorded."
+              intro="Aurelius only recommends actions that pass hard operational constraints. SLA, residency, capacity, policy, and confidence gates are enforced before any recommendation is accepted. In shadow mode, these decisions are logged without changing execution."
             />
           </Reveal>
           <Reveal delay={140} className="mt-12">
@@ -236,8 +227,8 @@ export default function Index() {
           <Reveal>
             <SectionHeader
               eyebrow="Shadow mode"
-              title="Prove savings before changing execution"
-              intro="Run Aurelius in shadow mode to compare actual scheduler behavior against counterfactual decisions. Aurelius records what it would have done, why, and whether the decision stayed safe — with no execution impact."
+              title="Prove the economics before changing execution"
+              intro="Run Aurelius in shadow mode against real scheduler metadata. Aurelius compares what happened against what it would have recommended, showing where lower-cost, SLA-safe decisions were available — without touching production behavior."
             />
           </Reveal>
           <Reveal delay={140} className="mt-12">
@@ -252,9 +243,9 @@ export default function Index() {
           <Reveal>
             <SectionHeader
               eyebrow="Integration"
-              title="Designed to integrate without seeing the work itself"
+              title="Designed to improve scheduler decisions without seeing the work itself"
               revealIntro
-              intro="Aurelius reads job metadata only — no payloads, no model outputs, no customer code. It deploys as a sidecar control layer, runs read-only in shadow mode, and writes an append-only audit log."
+              intro="Aurelius reads job and scheduler metadata only — no prompts, payloads, model outputs, training data, or customer code. It can start read-only, produce an append-only counterfactual audit, and graduate to advisory or gated execution only after validation."
             />
           </Reveal>
           <Reveal delay={140} className="mt-12">
@@ -263,11 +254,11 @@ export default function Index() {
           <Reveal delay={200}>
             <ul className="mt-8 grid gap-x-10 gap-y-2.5 sm:grid-cols-2">
               {[
-                "Reads job metadata only",
+                "Reads job and scheduler metadata only",
                 "No payload or model-output access",
                 "Runs read-only in shadow mode",
                 "Append-only audit logs",
-                "Deploys as sidecar / control layer",
+                "Sits beside your scheduler as a sidecar / control layer",
                 "Gradual rollout after validation",
               ].map((item) => (
                 <li key={item} className="flex items-center gap-3 font-mono text-[12px] text-white/55">
@@ -296,16 +287,16 @@ export default function Index() {
           </Reveal>
           <Reveal delay={130}>
             <p className="mt-5 max-w-xl text-[15px] leading-relaxed text-muted-foreground">
-              No execution risk to start. Aurelius proves its economics against your real scheduler
-              behavior before it ever changes a decision.
+              No scheduler migration. No payload access. No production behavior change until the
+              economics and constraints are proven against your real scheduler metadata.
             </p>
           </Reveal>
 
           <div className="mt-12 grid gap-y-10 md:grid-cols-3 md:gap-0">
             {[
-              { n: "01", t: "Connect metadata", d: "Aurelius reads scheduler metadata only — job timing, resources, constraints. No payloads, no model outputs, no customer code." },
-              { n: "02", t: "Run shadow mode", d: "Counterfactual decisions are recorded read-only, in parallel with your scheduler, with zero execution impact." },
-              { n: "03", t: "Review the report", d: "Audit-grade counterfactual savings, rejected unsafe candidates, and proof that SLAs would have held." },
+              { n: "01", t: "Connect scheduler metadata", d: "Aurelius reads scheduler metadata only — job timing, resources, constraints. No payloads, no model outputs, no customer code." },
+              { n: "02", t: "Run shadow-mode economics", d: "Counterfactual decisions are recorded read-only, in parallel with your scheduler, with zero execution impact." },
+              { n: "03", t: "Review validated decision lift", d: "Audit-grade counterfactual savings, rejected unsafe candidates, and proof that SLAs would have held." },
             ].map((s, i) => (
               <Reveal
                 key={s.n}
@@ -330,12 +321,13 @@ export default function Index() {
             </Reveal>
             <Reveal delay={80}>
               <h2 className="mt-5 text-balance text-[clamp(1.6rem,3.4vw,2.5rem)] font-medium leading-tight tracking-tight text-foreground">
-                See what Aurelius would have saved on your fleet
+                See what better scheduler decisions would have saved
               </h2>
             </Reveal>
             <Reveal delay={140}>
               <p className="mx-auto mt-5 max-w-xl text-[15px] leading-relaxed text-white/62">
-                Start with shadow-mode analysis against scheduler metadata. No execution impact
+                Start with a shadow-mode analysis against your existing scheduler metadata. Aurelius
+                shows which decisions could have improved fleet economics — with no execution impact
                 required.
               </p>
             </Reveal>
