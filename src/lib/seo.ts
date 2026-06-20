@@ -31,6 +31,23 @@ export interface RouteMeta {
   changefreq: "always" | "hourly" | "daily" | "weekly" | "monthly" | "yearly" | "never";
 }
 
+/**
+ * A private, unlisted page — e.g. a personalized company research memo at
+ * `/{company}-FH37X`. These are deliberately kept OUT of `ROUTES`, so they are
+ * never added to the sitemap, never get index-permitting meta, and never appear
+ * in JSON-LD. They are prerendered with a hard `noindex, nofollow` directive
+ * (see `injectPrivateSeoIntoHtml`) so the static HTML Netlify serves carries the
+ * directive even before the SPA boots. They are reachable only by direct link.
+ */
+export interface PrivateRoute {
+  /** URL path as registered in the router (must end in the campaign suffix). */
+  path: string;
+  /** <title> + og/twitter title (kept discreet — these pages are unlisted). */
+  title: string;
+  /** Meta description. */
+  description: string;
+}
+
 export const SITE = {
   origin: "https://runaurelius.com",
   name: "Aurelius",
@@ -116,6 +133,40 @@ export const ROUTES: RouteMeta[] = [
   },
 ];
 
+/**
+ * Private, personalized company research memos. NOT indexable, NOT in the
+ * sitemap, NOT linked from public nav/footer. Each is reachable only by its
+ * unguessable direct URL.
+ *
+ * Convention: `/{company-slug}-FH37X`. The `-FH37X` campaign suffix is a shared
+ * random token that makes these pages non-enumerable; swap it (and add a new
+ * entry below) whenever a fresh batch of outbound pages is minted.
+ *
+ * To add a company:
+ *   1. Add a `CompanyResearchData` config under `src/data/companies/`.
+ *   2. Add a thin page wrapper under `src/pages/research/`.
+ *   3. Register its route in `src/App.tsx`.
+ *   4. Add an entry here so it is prerendered with `noindex, nofollow`.
+ *   5. Add a `Disallow` line in `public/robots.txt` (or rely on the suffix rule).
+ */
+export const PRIVATE_ROUTES: PrivateRoute[] = [
+  {
+    // Canonical template demo — renders the Fireworks AI sample so the template
+    // can be previewed end-to-end. Swap the data object to repurpose it.
+    path: "/company-template-FH37X",
+    title: "Private research memo — Aurelius",
+    description:
+      "A private, unlisted Aurelius infrastructure research memo. Prepared for a single company from public information and stated assumptions.",
+  },
+  {
+    // First completed outbound page (Fireworks AI), at the per-company URL.
+    path: "/fireworks-ai-FH37X",
+    title: "Prepared for Fireworks AI — Aurelius infrastructure analysis",
+    description:
+      "A private Aurelius infrastructure hypothesis prepared for Fireworks AI from public information. Not indexed. Proposes a no-cost historical scheduler-log backtest.",
+  },
+];
+
 /** Absolute URL for a route. Home resolves to the bare origin (no trailing slash). */
 export function routeUrl(path: string): string {
   return path === "/" ? SITE.origin : SITE.origin + path;
@@ -126,10 +177,17 @@ export function getRoute(path: string): RouteMeta | undefined {
   return ROUTES.find((r) => r.path === path);
 }
 
+/** Look up a private (unlisted) route's metadata by path (exact match). */
+export function getPrivateRoute(path: string): PrivateRoute | undefined {
+  return PRIVATE_ROUTES.find((r) => r.path === path);
+}
+
 /** Robots directive that permits indexing and rich snippet previews. */
 export const ROBOTS_INDEX =
   "index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1";
 export const ROBOTS_NOINDEX = "noindex, follow";
+/** Hard directive for private company pages — no indexing, no link-following. */
+export const ROBOTS_PRIVATE = "noindex, nofollow";
 
 /* ------------------------------------------------------------------ */
 /* JSON-LD structured data                                             */
@@ -278,7 +336,46 @@ export function injectSeoIntoHtml(baseHtml: string, route: RouteMeta): string {
   return html;
 }
 
-/** Build sitemap.xml for all indexable routes. `lastmod` is an ISO date (YYYY-MM-DD). */
+/**
+ * Rewrite the shared HTML shell for a PRIVATE company page. Same mechanism as
+ * `injectSeoIntoHtml`, but it stamps a hard `noindex, nofollow` directive, points
+ * the canonical at the page's own (unlisted) URL rather than the homepage, and
+ * injects NO JSON-LD — these pages must stay invisible to crawlers and quiet in
+ * structured data. The body + app bootstrap are untouched, so the SPA still
+ * renders the memo normally.
+ */
+export function injectPrivateSeoIntoHtml(baseHtml: string, route: PrivateRoute): string {
+  const url = SITE.origin + route.path;
+  let html = baseHtml;
+
+  html = html.replace(/<title>[\s\S]*?<\/title>/, `<title>${escapeHtml(route.title)}</title>`);
+  html = setMetaContent(html, "name", "description", route.description);
+  html = setMetaContent(html, "property", "og:title", route.title);
+  html = setMetaContent(html, "property", "og:description", route.description);
+  html = setMetaContent(html, "property", "og:url", url);
+  html = setMetaContent(html, "name", "twitter:title", route.title);
+  html = setMetaContent(html, "name", "twitter:description", route.description);
+
+  if (/<link rel="canonical" href="[^"]*"\s*\/?>/.test(html)) {
+    html = html.replace(/(<link rel="canonical" href=")[^"]*(")/, `$1${escapeAttr(url)}$2`);
+  } else {
+    html = html.replace("</head>", `    <link rel="canonical" href="${escapeAttr(url)}" />\n  </head>`);
+  }
+
+  if (/<meta name="robots" content="[^"]*"\s*\/?>/.test(html)) {
+    html = setMetaContent(html, "name", "robots", ROBOTS_PRIVATE);
+  } else {
+    html = html.replace("</head>", `    <meta name="robots" content="${ROBOTS_PRIVATE}" />\n  </head>`);
+  }
+
+  return html;
+}
+
+/**
+ * Build sitemap.xml for all indexable routes. `lastmod` is an ISO date
+ * (YYYY-MM-DD). PRIVATE_ROUTES are intentionally excluded — private company
+ * memos must never be discoverable through the sitemap.
+ */
 export function buildSitemapXml(lastmod: string): string {
   const urls = ROUTES.map((r) => {
     return [

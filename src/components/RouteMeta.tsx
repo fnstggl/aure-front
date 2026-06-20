@@ -1,6 +1,14 @@
 import { useEffect } from "react";
 import { useLocation } from "react-router-dom";
-import { SITE, getRoute, routeUrl, ROBOTS_INDEX, ROBOTS_NOINDEX } from "@/lib/seo";
+import {
+  SITE,
+  getRoute,
+  getPrivateRoute,
+  routeUrl,
+  ROBOTS_INDEX,
+  ROBOTS_NOINDEX,
+  ROBOTS_PRIVATE,
+} from "@/lib/seo";
 
 /**
  * Keeps document <head> metadata correct during client-side navigation.
@@ -40,13 +48,17 @@ export function RouteMeta() {
 
   useEffect(() => {
     const route = getRoute(pathname);
-    const title = route?.title ?? SITE.defaultTitle;
-    const description = route?.description ?? SITE.defaultDescription;
+    // Private company memos aren't in ROUTES; resolve them separately so SPA
+    // navigation keeps the noindex,nofollow directive and discreet title.
+    const priv = route ? undefined : getPrivateRoute(pathname);
+    const title = route?.title ?? priv?.title ?? SITE.defaultTitle;
+    const description = route?.description ?? priv?.description ?? SITE.defaultDescription;
     const url = route ? routeUrl(route.path) : SITE.origin + pathname;
+    const robots = route ? ROBOTS_INDEX : priv ? ROBOTS_PRIVATE : ROBOTS_NOINDEX;
 
     document.title = title;
     upsertMeta("name", "description", description);
-    upsertMeta("name", "robots", route ? ROBOTS_INDEX : ROBOTS_NOINDEX);
+    upsertMeta("name", "robots", robots);
     upsertMeta("property", "og:title", title);
     upsertMeta("property", "og:description", description);
     upsertMeta("property", "og:url", url);
