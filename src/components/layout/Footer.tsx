@@ -18,8 +18,8 @@ export function Footer() {
               <img src="/aure_logo.png" alt="Aurelius" className="h-5 w-auto" />
             </Link>
             <p className="mt-4 text-[13.5px] leading-relaxed text-white/42">
-              The control layer for economically efficient GPU fleets. Shadow-mode first,
-              constraint-aware by default.
+              The economic decision layer for GPU fleets. Works beside your existing scheduler —
+              shadow-mode first, constraint-aware by default.
             </p>
           </div>
 

@@ -60,14 +60,15 @@ export function ProblemSection() {
     <Section>
       <Container>
         <div ref={ref} className="mx-auto max-w-3xl text-center">
-          <h2 className="text-balance text-[clamp(1.8rem,3.8vw,2.75rem)] font-medium leading-[1.08] tracking-[-0.025em] text-foreground md:whitespace-nowrap">
-            Your GPU fleet bleeds money.
-            <br />
-            <span className="text-white/50">Your scheduler wasn’t built to stop it.</span>
+          <h2 className="text-balance text-[clamp(1.8rem,3.8vw,2.75rem)] font-medium leading-[1.1] tracking-[-0.025em] text-foreground">
+            Your scheduler was built to place workloads,{" "}
+            <span className="text-white/50">not maximize fleet economics.</span>
           </h2>
-          <p className="mx-auto mt-6 max-w-xl text-[15px] leading-relaxed text-white/60 md:text-[16px]">
-            Most schedulers optimize for availability, fairness, and latency.
-            Aurelius finds the best economic outcome.
+          <p className="mx-auto mt-6 max-w-2xl text-[15px] leading-relaxed text-white/60 md:text-[16px]">
+            Most schedulers optimize availability, fairness, utilization, and latency. Those matter —
+            but they do not automatically produce the best economic outcome. Aurelius adds the
+            missing economic layer: forecasting when, where, and how workloads should run to maximize
+            useful output per dollar while respecting hard constraints.
           </p>
         </div>
 
@@ -152,6 +153,32 @@ export function ProblemSection() {
         <p className="mt-7 text-center font-mono text-[11px] uppercase tracking-[0.18em] text-white/30">
           {on ? "Aurelius optimizes · cost · energy · capacity · timing · region · constraints" : "Without Aurelius · thousands of microdecisions compound into excess costs"}
         </p>
+
+        {/* scheduler vs aurelius — placement vs economics */}
+        <div className="mx-auto mt-14 grid max-w-3xl gap-px overflow-hidden rounded-md border border-border bg-border sm:grid-cols-2">
+          <div className="bg-background p-6">
+            <div className="font-mono text-[11px] uppercase tracking-[0.16em] text-white/45">Scheduler</div>
+            <ul className="mt-4 space-y-2.5">
+              {["Places workloads", "Enforces capacity", "Balances availability, fairness, and latency"].map((t) => (
+                <li key={t} className="flex items-start gap-3 text-[13.5px] leading-relaxed text-white/62">
+                  <span className="mt-2 inline-block h-1 w-1 shrink-0 bg-white/30" aria-hidden />
+                  {t}
+                </li>
+              ))}
+            </ul>
+          </div>
+          <div className="bg-background p-6">
+            <div className="font-mono text-[11px] uppercase tracking-[0.16em] text-steel">Aurelius</div>
+            <ul className="mt-4 space-y-2.5">
+              {["Scores economic tradeoffs", "Forecasts bottlenecks before execution", "Recommends the highest-value safe decision"].map((t) => (
+                <li key={t} className="flex items-start gap-3 text-[13.5px] leading-relaxed text-white/62">
+                  <span className="mt-2 inline-block h-1 w-1 shrink-0 bg-signal" aria-hidden />
+                  {t}
+                </li>
+              ))}
+            </ul>
+          </div>
+        </div>
       </Container>
     </Section>
   );

@@ -357,7 +357,7 @@ export function AureliusSchematicDiagram({ fig = "fig.01", title = "advisory lay
           viewBox={`0 ${VB_TOP} ${W} ${VB_H}`}
           className="absolute inset-0 h-full w-full"
           role="img"
-          aria-label="Aurelius advisory layer: scheduler metadata passes through Aurelius before GPU execution; unsafe payload is blocked at the constraint gate."
+          aria-label="Aurelius advisory layer: the scheduler shares metadata with Aurelius, which recommends the best economic decision; the scheduler keeps control of execution and unsafe payloads are blocked at the constraint gate."
           initial={reduced ? false : { opacity: 0 }}
           animate={reduced ? { opacity: 1 } : inView ? { opacity: 1 } : { opacity: 0 }}
           transition={{ duration: 0.9, ease: EASE }}
@@ -415,7 +415,7 @@ export function AureliusSchematicDiagram({ fig = "fig.01", title = "advisory lay
       <figcaption className="flex items-center justify-between gap-2.5 border-t border-border px-4 py-2.5 font-mono text-[10.5px] uppercase tracking-[0.2em] text-white/42">
         <span className="flex items-center gap-2.5">
           <span className="h-px w-4 bg-white/40" aria-hidden />
-          scheduler → aurelius → execution
+          metadata → aurelius → scheduler-controlled execution
         </span>
         <span className="hidden tabular-nums text-white/22 sm:inline">metadata_only</span>
       </figcaption>

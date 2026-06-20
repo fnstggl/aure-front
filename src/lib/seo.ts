@@ -36,14 +36,14 @@ export const SITE = {
   name: "Aurelius",
   /** og:image / twitter:image used across pages. */
   image: "https://runaurelius.com/image_homepage.png",
-  imageAlt: "Aurelius — the control layer for economically efficient GPU fleets",
+  imageAlt: "Aurelius — the economic decision layer for GPU fleets",
   twitterCard: "summary_large_image",
   locale: "en_US",
   themeColor: "#0a0a0a",
   /** Falls back to these when a path isn't in ROUTES (e.g. 404). */
-  defaultTitle: "Aurelius — The control layer for economically efficient GPU fleets",
+  defaultTitle: "Aurelius — The economic decision layer for GPU fleets",
   defaultDescription:
-    "Aurelius evaluates when workloads should run, where they should run, and when optimization is safe — before execution. Shadow-mode first. Constraint-aware by default. Built for schedulers, platform teams, and GPU fleet operators.",
+    "Aurelius supercharges your existing scheduler with an economic decision layer — forecasting power, capacity, congestion, and demand, then recommending lower-cost, constraint-safe decisions without changing how you schedule. Shadow-mode first. Your scheduler stays in control.",
 } as const;
 
 /**
@@ -53,9 +53,9 @@ export const SITE = {
 export const ROUTES: RouteMeta[] = [
   {
     path: "/",
-    title: "Aurelius — The control layer for economically efficient GPU fleets",
+    title: "Aurelius — The economic decision layer for GPU fleets",
     description:
-      "Aurelius forecasts power, capacity, congestion, and demand constraints before execution to generate safer, lower-cost GPU workload decisions — and proves the savings in shadow mode before anything changes.",
+      "Supercharge your scheduler. Aurelius forecasts power, capacity, congestion, and demand before they become bottlenecks, then identifies lower-cost, constraint-safe decisions — without changing your existing scheduler. Shadow-mode first.",
     name: "Platform",
     priority: 1.0,
     changefreq: "weekly",
