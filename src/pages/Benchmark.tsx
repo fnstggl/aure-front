@@ -373,7 +373,7 @@ export default function Benchmark() {
             </Reveal>
             <Reveal delay={160}>
               <div className="mt-9 flex flex-col items-center justify-center gap-3 sm:flex-row">
-                <CTAButton to="/contact" variant="primary" withArrow>
+                <CTAButton to="/contact" variant="primary" withArrow beam>
                   Run a shadow-mode analysis
                 </CTAButton>
                 <CTAButton to="/how-it-works" variant="secondary">

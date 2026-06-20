@@ -270,6 +270,23 @@
   .streak-in   { animation: spectrum-wipe 0.85s cubic-bezier(0.4, 0, 0.2, 1) both; }
 }
 
+/* Hover border-beam — one gradient segment travels the button's perimeter while
+   it is hovered (left → top → right → bottom, looping). A single dash on a
+   full-perimeter gap, so it reads as one moving line, never a fill. No glow. */
+@keyframes beam-travel {
+  to { stroke-dashoffset: -100; }
+}
+@layer utilities {
+  .beam-line {
+    opacity: 0;
+    transition: opacity 0.18s ease;
+  }
+  .group:hover .beam-line {
+    opacity: 1;
+    animation: beam-travel 2.4s linear infinite;
+  }
+}
+
 /* ============================================================
    Motion — staggered reveals + ambient system loops.
    Transform/opacity only. No layout shift. Disabled for reduced motion.

@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useId, useRef, useState } from "react";
 import { Link } from "react-router-dom";
 import { motion, useTime, useTransform } from "framer-motion";
 import { cn } from "@/lib/utils";
@@ -294,11 +294,45 @@ export function ShadowFlow() {
 const baseCta =
   "inline-flex h-11 items-center justify-center gap-2 rounded-md px-6 text-[14px] font-medium tracking-tight transition-all duration-200 ease-premium active:translate-y-px focus-visible:outline-none";
 
+/* BeamBorder — a single spectral segment that travels the button perimeter on
+   hover (one dash on a full-perimeter gap). Sits on the edge only; no glow. */
+function BeamBorder() {
+  const gid = `beam-${useId()}`;
+  return (
+    <svg className="pointer-events-none absolute inset-0 h-full w-full overflow-visible" aria-hidden>
+      <defs>
+        <linearGradient id={gid} x1="0" y1="0" x2="1" y2="0">
+          <stop offset="0%" style={{ stopColor: "hsl(var(--spectrum-blue))" }} />
+          <stop offset="28%" style={{ stopColor: "hsl(var(--spectrum-violet))" }} />
+          <stop offset="52%" style={{ stopColor: "hsl(var(--spectrum-magenta))" }} />
+          <stop offset="78%" style={{ stopColor: "hsl(var(--spectrum-orange))" }} />
+          <stop offset="100%" style={{ stopColor: "hsl(var(--spectrum-amber))" }} />
+        </linearGradient>
+      </defs>
+      <rect
+        className="beam-line"
+        x="0"
+        y="0"
+        width="100%"
+        height="100%"
+        rx="4"
+        fill="none"
+        stroke={`url(#${gid})`}
+        strokeWidth="1.5"
+        pathLength={100}
+        strokeDasharray="18 82"
+        vectorEffect="non-scaling-stroke"
+      />
+    </svg>
+  );
+}
+
 export function CTAButton({
   to,
   href,
   variant = "primary",
   withArrow = false,
+  beam = false,
   className,
   children,
   ...rest
@@ -307,6 +341,8 @@ export function CTAButton({
   href?: string;
   variant?: "primary" | "secondary";
   withArrow?: boolean;
+  /* Adds a spectral border-beam that travels the perimeter on hover. */
+  beam?: boolean;
   className?: string;
   children: React.ReactNode;
 } & React.AnchorHTMLAttributes<HTMLAnchorElement>) {
@@ -317,12 +353,13 @@ export function CTAButton({
 
   const content = (
     <>
+      {beam && <BeamBorder />}
       {children}
       {withArrow && <Arrow className="transition-transform duration-200 group-hover:translate-x-0.5" />}
     </>
   );
 
-  const classes = cn(baseCta, "group", styles, className);
+  const classes = cn(baseCta, "group", beam && "relative", styles, className);
 
   if (to) {
     return (
