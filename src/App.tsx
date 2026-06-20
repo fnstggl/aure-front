@@ -14,6 +14,7 @@ import Index from "./pages/Index";
 const HowItWorks = lazyWithReload(() => import("./pages/HowItWorks"));
 const Safety = lazyWithReload(() => import("./pages/Safety"));
 const ShadowAudit = lazyWithReload(() => import("./pages/ShadowAudit"));
+const Benchmark = lazyWithReload(() => import("./pages/Benchmark"));
 const Docs = lazyWithReload(() => import("./pages/Docs"));
 const Contact = lazyWithReload(() => import("./pages/Contact"));
 const Privacy = lazyWithReload(() => import("./pages/Privacy"));
@@ -36,6 +37,7 @@ const App = () => (
               <Route path="/how-it-works" element={<HowItWorks />} />
               <Route path="/safety" element={<Safety />} />
               <Route path="/shadow-audit" element={<ShadowAudit />} />
+              <Route path="/benchmark" element={<Benchmark />} />
               <Route path="/docs" element={<Docs />} />
               <Route path="/contact" element={<Contact />} />
               <Route path="/privacy" element={<Privacy />} />
