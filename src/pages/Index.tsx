@@ -29,33 +29,29 @@ export default function Index() {
         <div className="hero-field" aria-hidden />
         <div className="hero-field-shimmer" aria-hidden />
         <div className="hero-field-vignette" aria-hidden />
+        <div className="hero-glow" aria-hidden />
 
         <Container className="relative">
-          <div className="mx-auto max-w-3xl text-center">
-            <Reveal delay={60}>
-              <h1 className="text-balance text-[clamp(2.1rem,5.4vw,3.8rem)] font-medium leading-[1.04] tracking-[-0.03em] text-foreground">
+          <div className="mx-auto max-w-2xl text-center">
+            <Reveal delay={80}>
+              <h1 className="text-balance text-[clamp(2.4rem,6vw,4.25rem)] font-medium leading-[1.02] tracking-[-0.035em] text-foreground">
                 Supercharge your scheduler.
               </h1>
             </Reveal>
-            <Reveal delay={120}>
-              <p className="mx-auto mt-6 max-w-2xl text-balance text-[clamp(1.05rem,2.5vw,1.45rem)] font-medium leading-snug tracking-[-0.01em]">
-                <span className="text-white/52">Your scheduler places workloads. </span>
-                <span className="text-foreground">Aurelius helps it make more profitable decisions.</span>
+            <Reveal delay={200}>
+              <p className="mx-auto mt-7 max-w-xl text-balance text-[clamp(1.05rem,2.4vw,1.4rem)] leading-snug tracking-[-0.01em]">
+                <span className="text-white/45">Your scheduler places workloads. </span>
+                <span className="text-white/85">Aurelius helps it make more profitable decisions.</span>
               </p>
             </Reveal>
-            <Reveal delay={180}>
-              <p className="mx-auto mt-5 max-w-2xl text-[15px] leading-relaxed text-white/64 md:text-[16.5px]">
-                Forecast power, capacity, congestion, and demand constraints before they become bottlenecks. Identify lower-cost workload decisions without changing your existing scheduler.
-              </p>
-            </Reveal>
-            <Reveal delay={230}>
-              <p className="mx-auto mt-4 max-w-xl text-[13px] leading-relaxed text-white/42">
+            <Reveal delay={320}>
+              <p className="mx-auto mt-6 max-w-md font-mono text-[11.5px] leading-relaxed tracking-tight text-white/38">
                 Metadata-only. Constraint-gated. Shadow-mode first. Your scheduler stays in control.
               </p>
             </Reveal>
 
-            <Reveal delay={290}>
-              <div className="mt-9 flex flex-col items-center justify-center gap-3 sm:flex-row">
+            <Reveal delay={440}>
+              <div className="mt-10 flex flex-col items-center justify-center gap-3 sm:flex-row">
                 <CTAButton to="/contact" variant="primary" withArrow>
                   See how much you could save
                 </CTAButton>
@@ -64,39 +60,11 @@ export default function Index() {
                 </CTAButton>
               </div>
             </Reveal>
-
-            <Reveal delay={360}>
-              <div className="mt-11 flex flex-wrap items-center justify-center gap-x-5 gap-y-2 font-mono text-[12px] tracking-tight text-white/45">
-                <span><span className="text-foreground">+42%</span> goodput / $</span>
-                <span className="text-white/15">·</span>
-                <span><span className="text-foreground">−21%</span> GPU-hours</span>
-                <span className="text-white/15">·</span>
-                <span>public Azure traces</span>
-                <span className="text-white/15">·</span>
-                <span>SLA-safe benchmark</span>
-              </div>
-              <p className="mt-3.5 font-mono text-[11px] text-white/26">
-                Benchmark evidence on public traces, not a guaranteed universal result.
-              </p>
-            </Reveal>
           </div>
         </Container>
       </section>
 
-      {/* ===================== Category positioning ===================== */}
-      <Section>
-        <Container>
-          <Reveal className="mx-auto max-w-3xl text-center">
-            <h2 className="text-balance text-[clamp(1.55rem,3.6vw,2.5rem)] font-medium leading-[1.14] tracking-[-0.02em]">
-              <span className="text-white/50">Existing schedulers optimize placement.</span>
-              <br />
-              <span className="text-foreground">Aurelius optimizes the economics of the entire fleet.</span>
-            </h2>
-          </Reveal>
-        </Container>
-      </Section>
-
-      {/* ================= The cost reality (scary problem grid) ============== */}
+      {/* ============ The economic gap — overspending + positive proof ========= */}
       <ProblemSection />
 
       {/* ===================== How it fits (sits beside) ================== */}

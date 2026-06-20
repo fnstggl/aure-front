@@ -351,6 +351,18 @@
       radial-gradient(125% 95% at 50% 44%, transparent 46%, hsl(0 0% 2% / 0.66) 98%),
       radial-gradient(48% 36% at 50% 45%, hsl(0 0% 2% / 0.62), hsl(0 0% 2% / 0.18) 60%, transparent 78%);
   }
+  /* A barely-there cool-white pool lifts the headline off the field. Static,
+     understated — no color, no motion — sits above the centering scrim. */
+  .hero-glow {
+    position: absolute;
+    left: 50%;
+    top: 42%;
+    width: min(680px, 86%);
+    height: 340px;
+    transform: translate(-50%, -50%);
+    background: radial-gradient(closest-side, hsl(0 0% 100% / 0.05), transparent 72%);
+    pointer-events: none;
+  }
 }
 
 /* Privacy / legal prose — restrained lists that read as part of the system,

@@ -412,12 +412,9 @@ export function AureliusSchematicDiagram({ fig = "fig.01", title = "advisory lay
         )}
       </div>
 
-      <figcaption className="flex items-center justify-between gap-2.5 border-t border-border px-4 py-2.5 font-mono text-[10.5px] uppercase tracking-[0.2em] text-white/42">
-        <span className="flex items-center gap-2.5">
-          <span className="h-px w-4 bg-white/40" aria-hidden />
-          metadata → aurelius → scheduler-controlled execution
-        </span>
-        <span className="hidden tabular-nums text-white/22 sm:inline">metadata_only</span>
+      <figcaption className="flex items-center gap-2.5 border-t border-border px-4 py-2.5 font-mono text-[10px] uppercase leading-relaxed tracking-[0.12em] text-white/42">
+        <span className="h-px w-4 shrink-0 bg-white/40" aria-hidden />
+        <span>scheduler metadata → aurelius recommendations → scheduler-controlled execution</span>
       </figcaption>
     </figure>
   );
