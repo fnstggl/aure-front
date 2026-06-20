@@ -62,13 +62,21 @@
 
     /* ── Spectrum ──────────────────────────────────────────────────────
        The full range of fleet conditions Aurelius reasons across — power,
-       capacity, congestion, demand, region, timing. Rendered as an iridescent
-       holographic loop (seamless: first stop == last) so a streak reads like
-       light on a prismatic surface, not a flat rainbow. Monochrome is the
-       system at rest; the spectrum is the system seeing. Peak moments only. */
+       capacity, congestion, demand, region, timing. Blue → violet → magenta →
+       orange → amber. Monochrome is the system at rest; the spectrum is the
+       system seeing. Spent only at peak moments — never as body text. */
+    --spectrum-blue:    214 90% 62%;
+    --spectrum-violet:  256 88% 68%;
+    --spectrum-magenta: 322 82% 62%;
+    --spectrum-orange:   24 92% 58%;
+    --spectrum-amber:    43 96% 62%;
     --gradient-spectrum: linear-gradient(
       90deg,
-      #ff63d1, #b06cff, #5f9cff, #4fe1e0, #6dffae, #f3ff7d, #ffac6b, #ff63d1
+      hsl(var(--spectrum-blue)),
+      hsl(var(--spectrum-violet)),
+      hsl(var(--spectrum-magenta)),
+      hsl(var(--spectrum-orange)),
+      hsl(var(--spectrum-amber))
     );
 
     /* Legacy custom tokens kept for existing components */
@@ -217,12 +225,10 @@
   }
 
   /* ── Spectrum accents ───────────────────────────────────────────────
-     Sharp iridescent fill — no fade, no glow, square 90° ends. Oversized so
-     the holographic loop can drift (see .streak-in). Every streak and tick. */
+     Sharp gradient fill — no fade, no glow, square 90° ends. The exact line.
+     Used for every spectral streak and tick. */
   .spectrum-line {
     background-image: var(--gradient-spectrum);
-    background-size: 200% 100%;
-    background-position: 0 50%;
   }
 
   /* Tiny spectral dot — announcement pills, footer mark. */
@@ -253,23 +259,15 @@
   }
 }
 
-/* Every spectral streak draws in left → right each time it enters view (a clip
-   wipe, colors fixed), then drifts: the iridescent loop shifts continuously so
-   the line shimmers like a holographic surface rather than a flat rainbow. */
+/* Every spectral streak draws in left → right each time it enters view. The
+   colors stay fixed; a clip wipe reveals the line from its left edge. */
 @keyframes spectrum-wipe {
   from { clip-path: inset(0 100% 0 0); }
   to   { clip-path: inset(0 0 0 0); }
 }
-@keyframes iridescent-shift {
-  to { background-position: 200% 50%; }
-}
 @layer utilities {
   .streak-idle { clip-path: inset(0 100% 0 0); }            /* hidden, pre-reveal */
-  .streak-in {
-    animation:
-      spectrum-wipe 0.85s cubic-bezier(0.4, 0, 0.2, 1) both,
-      iridescent-shift 7s linear 0.85s infinite;
-  }
+  .streak-in   { animation: spectrum-wipe 0.85s cubic-bezier(0.4, 0, 0.2, 1) both; }
 }
 
 /* ============================================================
