@@ -1,14 +1,7 @@
-User-agent: Googlebot
-Allow: /
-
-User-agent: Bingbot
-Allow: /
-
-User-agent: Twitterbot
-Allow: /
-
-User-agent: facebookexternalhit
-Allow: /
-
+# https://runaurelius.com — robots policy
+# All user agents may crawl the entire site.
 User-agent: *
 Allow: /
+
+# XML sitemap (generated at build time, lists every indexable route).
+Sitemap: https://runaurelius.com/sitemap.xml
