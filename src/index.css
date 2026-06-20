@@ -61,23 +61,18 @@
     --data-deep: 0 0% 46%;
 
     /* ── Spectrum ──────────────────────────────────────────────────────
-       The full range of fleet conditions Aurelius reasons across —
-       power, capacity, congestion, demand, region, timing. Monochrome is
-       the system at rest; the spectrum is the system seeing. Spent only at
-       peak moments: the hero claim, the proven number, the call to act.
-       Never as body text, never as a fill — only as a thin, faded accent. */
-    --spectrum-blue:    214 90% 62%;
-    --spectrum-violet:  256 88% 68%;
-    --spectrum-magenta: 322 82% 62%;
-    --spectrum-orange:   24 92% 58%;
-    --spectrum-amber:    43 96% 62%;
+       The full range of fleet conditions Aurelius reasons across — power,
+       capacity, congestion, demand, region, timing. The line runs warm→cool:
+       amber (left) through a dim indigo core to cornflower blue (right).
+       Monochrome is the system at rest; the spectrum is the system seeing.
+       Spent only at peak moments — never as body text, never as a fill. */
     --gradient-spectrum: linear-gradient(
       90deg,
-      hsl(var(--spectrum-blue)),
-      hsl(var(--spectrum-violet)),
-      hsl(var(--spectrum-magenta)),
-      hsl(var(--spectrum-orange)),
-      hsl(var(--spectrum-amber))
+      #ea9740 0%,
+      #a06b79 30%,
+      #524d7e 50%,
+      #4a7fc2 73%,
+      #57a6ea 100%
     );
 
     /* Legacy custom tokens kept for existing components */
@@ -226,21 +221,13 @@
   }
 
   /* ── Spectrum accents ───────────────────────────────────────────────
-     Short, solid gradient line — eyebrow ticks, small accents. */
+     Sharp gradient fill — no fade, no glow, square 90° ends. The exact
+     line. Used for every spectral streak and tick. */
   .spectrum-line {
     background-image: var(--gradient-spectrum);
   }
 
-  /* The signature accent: a thin spectral streak faded at both ends so it
-     terminates cleanly into the off-black, never a hard bar. No glow — the
-     line itself carries the color. */
-  .spectrum-rule {
-    background-image: var(--gradient-spectrum);
-    -webkit-mask-image: linear-gradient(90deg, transparent, #000 16%, #000 84%, transparent);
-    mask-image: linear-gradient(90deg, transparent, #000 16%, #000 84%, transparent);
-  }
-
-  /* Tiny spectral dot — announcement pills, peak eyebrows, footer mark. */
+  /* Tiny spectral dot — announcement pills, footer mark. */
   .spectrum-dot {
     background-image: var(--gradient-spectrum);
   }
@@ -268,18 +255,15 @@
   }
 }
 
-/* The hero underline draws itself once — the system revealing the spectrum.
-   Origin-left scale so it appears to extend under the word. */
-@keyframes rule-draw {
-  from { transform: scaleX(0); opacity: 0; }
-  to   { transform: scaleX(1); opacity: 1; }
+/* Every spectral streak draws in left → right each time it enters view. The
+   colors stay fixed; a clip wipe reveals the line from its left edge. */
+@keyframes spectrum-wipe {
+  from { clip-path: inset(0 100% 0 0); }
+  to   { clip-path: inset(0 0 0 0); }
 }
 @layer utilities {
-  .rule-draw {
-    transform-origin: left center;
-    animation: rule-draw 1.1s cubic-bezier(0.16, 1, 0.3, 1) both;
-    animation-delay: var(--rule-delay, 520ms);
-  }
+  .streak-idle { clip-path: inset(0 100% 0 0); }            /* hidden, pre-reveal */
+  .streak-in   { animation: spectrum-wipe 0.85s cubic-bezier(0.4, 0, 0.2, 1) both; }
 }
 
 /* ============================================================

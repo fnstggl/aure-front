@@ -47,7 +47,7 @@ export default function Index() {
                 <span className="text-white/52">Your scheduler optimizes utilization.</span>
                 <br />
                 <span className="text-foreground">
-                  Aurelius optimizes <SpectrumUnderline delay={620}>economics</SpectrumUnderline>.
+                  Aurelius optimizes <SpectrumUnderline>economics</SpectrumUnderline>.
                 </span>
               </h1>
             </Reveal>

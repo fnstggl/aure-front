@@ -1,3 +1,4 @@
+import { useEffect, useRef, useState } from "react";
 import { Link } from "react-router-dom";
 import { motion, useTime, useTransform } from "framer-motion";
 import { cn } from "@/lib/utils";
@@ -101,40 +102,84 @@ export function SectionEyebrow({
         className,
       )}
     >
-      <span className={cn("h-px w-7", tone === "spectrum" ? "spectrum-line" : "bg-white/15")} aria-hidden />
+      {tone === "spectrum" ? (
+        <SpectrumStreak className="h-px w-7" />
+      ) : (
+        <span className="h-px w-7 bg-white/15" aria-hidden />
+      )}
       {children}
     </div>
   );
 }
 
-/* SpectrumUnderline — the signature accent. Draws a thin, end-faded spectral
-   rule under a single word. Spend it on the one word that carries a section's
-   meaning; the text itself stays monochrome. */
-export function SpectrumUnderline({
-  children,
-  className,
-  delay,
-}: {
-  children: React.ReactNode;
-  className?: string;
-  delay?: number;
-}) {
+/* Re-triggering in-view: increments a counter each time the element (re)enters
+   the viewport, so the streak's wipe replays on every appearance — not once. */
+function useReplayInView<T extends HTMLElement>() {
+  const ref = useRef<T>(null);
+  const [play, setPlay] = useState(0);
+  const inside = useRef(false);
+  useEffect(() => {
+    const el = ref.current;
+    if (!el || typeof IntersectionObserver === "undefined") {
+      setPlay(1);
+      return;
+    }
+    const obs = new IntersectionObserver(
+      (entries) =>
+        entries.forEach((e) => {
+          if (e.isIntersecting && !inside.current) {
+            inside.current = true;
+            setPlay((p) => p + 1);
+          } else if (!e.isIntersecting && inside.current) {
+            inside.current = false;
+          }
+        }),
+      { threshold: 0, rootMargin: "0px 0px -12% 0px" },
+    );
+    obs.observe(el);
+    return () => obs.disconnect();
+  }, []);
+  return { ref, play };
+}
+
+/* SpectrumStreak — the exact line: a sharp-ended gradient streak (no fade, no
+   glow) that wipes in left → right every time it enters view. Height + width
+   come from className. Reduced motion shows it statically. */
+export function SpectrumStreak({ className }: { className?: string }) {
+  const reduced = usePrefersReducedMotion();
+  const { ref, play } = useReplayInView<HTMLSpanElement>();
   return (
-    <span className={cn("relative inline-block", className)}>
-      <span className="relative z-10">{children}</span>
+    <span ref={ref} aria-hidden className={cn("relative block overflow-hidden", className)}>
       <span
-        aria-hidden
-        className="rule-draw spectrum-rule pointer-events-none absolute inset-x-0 -bottom-[0.04em] h-[2px]"
-        style={delay != null ? ({ "--rule-delay": `${delay}ms` } as React.CSSProperties) : undefined}
+        key={play}
+        className={cn("absolute inset-0 spectrum-line", !reduced && (play === 0 ? "streak-idle" : "streak-in"))}
       />
     </span>
   );
 }
 
-/* SpectrumRule — a standalone centered accent line, for the stat moment
-   beneath a headline number. */
+/* SpectrumUnderline — the signature accent. A spectral streak under a single
+   word; the text itself stays monochrome. Spend it on the one word that
+   carries a section's meaning. */
+export function SpectrumUnderline({
+  children,
+  className,
+}: {
+  children: React.ReactNode;
+  className?: string;
+}) {
+  return (
+    <span className={cn("relative inline-block", className)}>
+      <span className="relative z-10">{children}</span>
+      <SpectrumStreak className="pointer-events-none absolute inset-x-0 -bottom-[0.04em] h-[2px]" />
+    </span>
+  );
+}
+
+/* SpectrumRule — a standalone accent streak, for the stat moment beneath a
+   headline number. */
 export function SpectrumRule({ className }: { className?: string }) {
-  return <span aria-hidden className={cn("spectrum-rule block h-[2px]", className)} />;
+  return <SpectrumStreak className={cn("h-[2px]", className)} />;
 }
 
 /* AnnouncementPill — square-cornered (our enterprise tell vs. x.ai's rounded
