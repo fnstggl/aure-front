@@ -38,7 +38,7 @@ export default function Index() {
             <Reveal delay={20}>
               <div className="mb-7 flex justify-center">
                 <AnnouncementPill to="/benchmark" label="New">
-                  Shadow-mode results on public Azure traces
+                  Shadow-mode results on the Azure LLM Inference Trace 2024
                 </AnnouncementPill>
               </div>
             </Reveal>
@@ -79,12 +79,12 @@ export default function Index() {
                 <span className="text-white/15">·</span>
                 <span><span className="text-foreground">−21%</span> GPU-hours</span>
                 <span className="text-white/15">·</span>
-                <span>public Azure traces</span>
+                <span>Azure LLM Inference Trace 2024</span>
                 <span className="text-white/15">·</span>
-                <span>SLA-safe benchmark</span>
+                <span>counterfactual replay</span>
               </div>
               <p className="mt-3.5 font-mono text-[11px] text-white/26">
-                Benchmark evidence on public traces (not a guaranteed universal result).
+                Counterfactual on a public trace — not a guaranteed universal result.
               </p>
             </Reveal>
           </div>
@@ -163,7 +163,7 @@ export default function Index() {
               higher goodput per dollar
             </p>
             <p className="mt-6 font-mono text-[11px] uppercase tracking-[0.22em] text-white/32">
-              Measured on public Azure traces · SLA-safe · −21% GPU-hours
+              Azure LLM Inference Trace 2024 · counterfactual · −21% GPU-hours
             </p>
           </Reveal>
         </Container>
