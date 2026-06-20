@@ -1,35 +1,40 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { cn } from "@/lib/utils";
-import { Container, Reveal, CTAButton } from "@/components/site/primitives";
+import { Container, Reveal, CTAButton, Arrow } from "@/components/site/primitives";
 import {
   MemoEyebrow,
   MemoSectionHeader,
   MemoSection,
   FieldLabel,
-  MetaRow,
+  ConvictionTag,
+  SignalChip,
   TrustChip,
 } from "./memo-primitives";
-import { WorkloadMap } from "./WorkloadMap";
-import type { CompanyResearchData } from "./types";
+import {
+  FleetEconomicsMap,
+  WorkloadFlexibilityMatrix,
+  ObjectiveComparison,
+  ShadowReplayFlow,
+} from "./diagrams";
+import type { CompanyResearchData, Conviction, HypothesisCard } from "./types";
 
 /* ============================================================================
-   CompanyResearch — the reusable private research-memo template.
+   CompanyResearch — concise executive infrastructure memo (v2).
 
-   Renders an entire personalized outbound page from ONE `CompanyResearchData`
-   object. Composition only: every word, number, logo, and accent comes from the
-   config (see `src/data/companies/`). To make a page for a new company, author a
-   config and a thin page wrapper — never edit this file.
+   Renders an entire personalized outbound page from ONE CompanyResearchData
+   object. Composition only — author a config, never edit this file. Tighter,
+   more visual, more skimmable than v1: diagrams carry the weight, copy stays
+   under ~1,800 words, disclaimers appear once at top and once in the footer.
 
-   The page deliberately does NOT use the public <Layout> (site nav + footer):
-   it carries its own minimal, link-free chrome so it reads as a confidential
-   internal artifact and is never wired into public navigation.
+   The page carries its own minimal, link-free chrome (no public nav/footer) so
+   it reads as a confidential internal artifact and is never wired into public
+   navigation.
    ============================================================================ */
 
 const MONTHS = [
   "January", "February", "March", "April", "May", "June",
   "July", "August", "September", "October", "November", "December",
 ];
-
 function formatDate(iso: string): string {
   const [y, m, d] = iso.split("-").map(Number);
   if (!y || !m || !d) return iso;
@@ -46,6 +51,10 @@ const DEFAULT_GRADIENT = {
   ],
 };
 
+function Dot() {
+  return <span className="text-white/15" aria-hidden>·</span>;
+}
+
 /* ------------------------------------------------------------------ */
 /* Minimal private chrome (no links into the public site)             */
 /* ------------------------------------------------------------------ */
@@ -55,7 +64,6 @@ function PrivateHeader({ docRef }: { docRef: string }) {
     <header className="fixed inset-x-0 top-0 z-50 glass-nav">
       <div className="mx-auto flex h-14 max-w-content items-center justify-between px-6 lg:px-8">
         <div className="flex items-center gap-3">
-          {/* Logo is intentionally not a link — this page stands alone. */}
           <img src="/aure_logo.png" alt="Aurelius" className="h-4 w-auto" />
           <span className="hidden h-3.5 w-px bg-border-strong sm:block" aria-hidden />
           <span className="hidden font-mono text-[10.5px] uppercase tracking-[0.18em] text-white/40 sm:block">
@@ -74,27 +82,30 @@ function PrivateHeader({ docRef }: { docRef: string }) {
 }
 
 /* ------------------------------------------------------------------ */
-/* Hero cover — recreates the report cover page from config            */
+/* Hero cover — pre-rendered image (sharp, full-bleed) with a          */
+/* structural gradient fallback so the page is never broken.           */
 /* ------------------------------------------------------------------ */
 
 function HeroCover({ data }: { data: CompanyResearchData }) {
   const { hero, company } = data;
+  const [imgFailed, setImgFailed] = useState(false);
   const eyebrow = hero.eyebrow ?? "Economic Analysis for";
 
-  // If a pre-rendered cover image is supplied, the title is already baked in —
-  // show it edge-to-edge and skip the structural overlay.
-  if (hero.coverImage) {
+  if (hero.coverImage && !imgFailed) {
     return (
-      <section className="relative isolate w-full overflow-hidden pt-14">
+      <section className="relative isolate w-full overflow-hidden bg-background pt-14">
+        {/* 90° sharp edges, full hero width, text baked into the image. */}
         <img
           src={hero.coverImage}
           alt={`Economic analysis for ${company} — research by Aurelius`}
           className="block w-full"
+          onError={() => setImgFailed(true)}
         />
       </section>
     );
   }
 
+  // Structural fallback: recreate the cover from config (gradient + logo + title).
   const gradient = hero.gradient ?? DEFAULT_GRADIENT;
   const field = [
     ...gradient.blooms.map(
@@ -104,194 +115,154 @@ function HeroCover({ data }: { data: CompanyResearchData }) {
   ].join(", ");
 
   return (
-    <section className="relative isolate flex min-h-[72vh] w-full flex-col overflow-hidden pt-14 md:min-h-[80vh]">
+    <section className="relative isolate flex min-h-[68vh] w-full flex-col overflow-hidden pt-14 md:min-h-[74vh]">
       <div className="absolute inset-0" style={{ background: field }} aria-hidden />
-      <div
-        className="research-grain pointer-events-none absolute inset-0 opacity-[0.07] mix-blend-overlay"
-        aria-hidden
-      />
-      {/* Subtle scrim so overlaid text stays readable on the gradient. */}
+      <div className="research-grain pointer-events-none absolute inset-0 opacity-[0.07] mix-blend-overlay" aria-hidden />
       <div
         className="pointer-events-none absolute inset-0"
-        style={{
-          background:
-            "radial-gradient(125% 95% at 50% 42%, transparent 38%, hsl(0 0% 2% / 0.58) 100%)",
-        }}
+        style={{ background: "radial-gradient(125% 95% at 50% 42%, transparent 38%, hsl(0 0% 2% / 0.58) 100%)" }}
         aria-hidden
       />
-
       <Container className="relative flex flex-1 flex-col">
         <div className="flex flex-1 flex-col items-center justify-center py-24 text-center">
-          <Reveal>
-            <h1 className="flex flex-wrap items-center justify-center gap-x-4 gap-y-1.5 text-balance text-[clamp(1.85rem,5vw,3.5rem)] font-medium leading-[1.04] tracking-[-0.025em] text-white">
-              <span className="text-white/92">{eyebrow}</span>
-              <span className="inline-flex items-center gap-3 whitespace-nowrap">
-                <span
-                  className="inline-flex items-center [&_img]:h-[0.74em] [&_img]:w-auto [&_svg]:h-[0.74em] [&_svg]:w-auto"
-                  aria-hidden
-                >
-                  {hero.logo}
-                </span>
-                <span>{company}</span>
+          <h1 className="flex flex-wrap items-center justify-center gap-x-4 gap-y-1.5 text-balance text-[clamp(1.85rem,5vw,3.5rem)] font-medium leading-[1.04] tracking-[-0.025em] text-white">
+            <span className="text-white/92">{eyebrow}</span>
+            <span className="inline-flex items-center gap-3 whitespace-nowrap">
+              <span className="inline-flex items-center [&_img]:h-[0.74em] [&_img]:w-auto [&_svg]:h-[0.74em] [&_svg]:w-auto" aria-hidden>
+                {hero.logo}
               </span>
-            </h1>
-          </Reveal>
+              <span>{company}</span>
+            </span>
+          </h1>
         </div>
-
-        <Reveal delay={160} className="relative pb-12 text-center">
+        <div className="relative pb-12 text-center">
           <div className="inline-flex items-center gap-2.5 text-[13px] tracking-tight text-white/72">
             <span>Research by</span>
             <img src="/aure_logo.png" alt="Aurelius" className="h-4 w-auto opacity-90" />
           </div>
-        </Reveal>
+        </div>
       </Container>
     </section>
   );
 }
 
 /* ------------------------------------------------------------------ */
-/* 1 · Private memo header / colophon                                  */
+/* Memo metadata strip + the single top disclaimer                     */
 /* ------------------------------------------------------------------ */
 
-function MemoHeaderBlock({ data }: { data: CompanyResearchData }) {
+function MemoMetaStrip({ data }: { data: CompanyResearchData }) {
   const { memo } = data;
   return (
-    <MemoSection className="!border-t-0 pt-12 md:pt-16 lg:pt-20">
-      <Container>
-        <div className="grid gap-10 lg:grid-cols-[1fr_320px] lg:gap-16">
-          <Reveal>
+    <section className="border-b border-border bg-background-alt">
+      <Container className="py-8 md:py-9">
+        <div className="flex flex-col gap-5 md:flex-row md:items-end md:justify-between">
+          <div>
             <MemoEyebrow>Confidential infrastructure memo</MemoEyebrow>
-            <h2 className="mt-6 text-balance text-[clamp(1.8rem,4vw,2.8rem)] font-medium leading-[1.05] tracking-[-0.02em] text-foreground">
+            <h1 className="mt-4 text-[clamp(1.45rem,3.2vw,2.1rem)] font-medium leading-[1.06] tracking-[-0.02em] text-foreground">
               {memo.preparedFor}
-            </h2>
-            <p className="mt-3 text-[clamp(1.05rem,2.2vw,1.4rem)] font-medium tracking-tight text-white/55">
-              {memo.title}
-            </p>
-            <p className="mt-6 max-w-xl text-[12.5px] leading-relaxed text-white/40">{memo.note}</p>
-          </Reveal>
-
-          <Reveal delay={120}>
-            <div className="rounded-lg border border-border bg-card p-5">
-              <FieldLabel tone="gold">Document</FieldLabel>
-              <div className="mt-4">
-                <MetaRow k="Reference" v={data.docRef} />
-                <MetaRow k="Prepared" v={formatDate(data.preparedOn)} />
-                <MetaRow k="Prepared by" v="Aurelius" />
-                <MetaRow
-                  k="Classification"
-                  v={<span className="text-accent-gold">Private · unlisted</span>}
-                />
-                <MetaRow k="Basis" v="Public information" />
-              </div>
-            </div>
-          </Reveal>
+            </h1>
+            <p className="mt-1.5 text-[14px] tracking-tight text-white/55">{memo.title}</p>
+          </div>
+          <div className="flex flex-wrap items-center gap-x-4 gap-y-1.5 font-mono text-[10.5px] uppercase tracking-[0.14em] text-white/42">
+            <span className="tabular-nums">{data.docRef}</span>
+            <Dot />
+            <span>{formatDate(data.preparedOn)}</span>
+            <Dot />
+            <span className="text-accent-gold/80">{memo.note}</span>
+          </div>
         </div>
+        <p className="mt-6 max-w-3xl text-[12px] leading-relaxed text-white/40">{data.disclaimer}</p>
       </Container>
-    </MemoSection>
+    </section>
   );
 }
 
 /* ------------------------------------------------------------------ */
-/* 2 · Opening thesis                                                  */
+/* 01 · Opening thesis                                                  */
 /* ------------------------------------------------------------------ */
 
 function ThesisSection({ data }: { data: CompanyResearchData }) {
   const { thesis } = data;
   return (
-    <MemoSection id="thesis" alt grain>
-      <Container>
-        <div className="grid gap-12 lg:grid-cols-[1fr_300px] lg:gap-16">
-          <Reveal>
-            <MemoEyebrow index="01">{thesis.eyebrow ?? "Opening thesis"}</MemoEyebrow>
-            <div className="mt-7 max-w-2xl space-y-5 text-pretty text-[clamp(1.05rem,2vw,1.3rem)] font-light leading-[1.55] text-white/82">
-              {thesis.body}
-            </div>
-          </Reveal>
-
-          {thesis.basis && (
-            <Reveal delay={120}>
-              <div className="rounded-lg border border-border bg-card/60 p-5">
-                <FieldLabel tone="gold">What informed this read</FieldLabel>
-                <div className="mt-4">
-                  {thesis.basis.map((b) => (
-                    <MetaRow key={b.label} k={b.label} v={b.value} />
-                  ))}
-                </div>
-                <p className="mt-4 text-[11px] leading-relaxed text-white/32">
-                  Public / stated figures, point-in-time. Corrections welcome.
-                </p>
-              </div>
-            </Reveal>
-          )}
-        </div>
-      </Container>
-    </MemoSection>
-  );
-}
-
-/* ------------------------------------------------------------------ */
-/* 3 · Why this may matter — insight cards                             */
-/* ------------------------------------------------------------------ */
-
-function InsightsSection({ data }: { data: CompanyResearchData }) {
-  const { insights, company } = data;
-  return (
-    <MemoSection id="why">
+    <MemoSection id="thesis" className="!border-t-0">
       <Container>
         <Reveal>
-          <MemoSectionHeader
-            index="02"
-            eyebrow={insights.eyebrow ?? `Why this may matter for ${company}`}
-            title={insights.title}
-            intro={insights.intro}
-          />
+          <MemoEyebrow index="01">{thesis.eyebrow ?? "Thesis"}</MemoEyebrow>
         </Reveal>
-        <div className="mt-12 grid gap-px overflow-hidden rounded-lg border border-border bg-border md:grid-cols-2">
-          {insights.cards.map((c, i) => (
-            <Reveal key={c.title} delay={(i % 2) * 90} className="flex flex-col bg-card p-6 lg:p-7">
-              <div className="flex items-baseline gap-3">
-                <span className="font-mono text-[12px] tabular-nums text-accent-gold/80">
-                  {String(i + 1).padStart(2, "0")}
-                </span>
-                <h3 className="text-[16.5px] font-medium leading-snug tracking-tight text-foreground">
-                  {c.title}
-                </h3>
-              </div>
-              <div className="mt-5 space-y-2">
-                <FieldLabel>Hypothesis</FieldLabel>
-                <p className="text-[13.5px] leading-relaxed text-white/64">{c.hypothesis}</p>
-              </div>
-              <div className="mt-5 space-y-2 border-t border-border pt-5">
-                <FieldLabel tone="steel">What Aurelius would test</FieldLabel>
-                <p className="text-[13.5px] leading-relaxed text-white/64">{c.test}</p>
-              </div>
-            </Reveal>
-          ))}
-        </div>
+        <Reveal delay={80}>
+          <div className="mt-7 max-w-3xl space-y-4 text-pretty text-[clamp(1.05rem,1.9vw,1.3rem)] font-light leading-[1.5] text-white/82">
+            {thesis.body}
+          </div>
+        </Reveal>
+        {thesis.signals && (
+          <Reveal delay={140}>
+            <div className="mt-8 flex flex-wrap items-center gap-2">
+              <span className="mr-1 font-mono text-[10px] uppercase tracking-[0.16em] text-white/30">
+                Signals read
+              </span>
+              {thesis.signals.map((s) => (
+                <SignalChip key={s.label}>{s.label}</SignalChip>
+              ))}
+            </div>
+          </Reveal>
+        )}
       </Container>
     </MemoSection>
   );
 }
 
 /* ------------------------------------------------------------------ */
-/* 4 · Workload map                                                    */
+/* 02 · What surprised us (+ Diagram C visualizes it)                  */
 /* ------------------------------------------------------------------ */
 
-function WorkloadSection({ data }: { data: CompanyResearchData }) {
-  const { workloadMap } = data;
+function SurpriseSection({ data }: { data: CompanyResearchData }) {
+  const { surprise } = data;
   return (
-    <MemoSection id="workload-map" alt>
+    <MemoSection id="surprise" alt grain>
+      <Container>
+        <Reveal>
+          <MemoEyebrow index="02">{surprise.eyebrow ?? "What surprised us"}</MemoEyebrow>
+        </Reveal>
+        <Reveal delay={80} className="mt-7">
+          <div className="border border-accent-gold/35 bg-accent-gold-faint p-7 md:p-9">
+            <div className="grid gap-6 md:grid-cols-[auto_1fr] md:items-center md:gap-12">
+              <div className="text-center md:text-left">
+                <div className="text-[clamp(3.4rem,9vw,5.2rem)] font-medium leading-none tracking-[-0.04em] text-accent-gold">
+                  {surprise.value}
+                </div>
+                <div className="mt-3 max-w-[16rem] font-mono text-[10.5px] uppercase leading-relaxed tracking-[0.14em] text-white/55">
+                  {surprise.label}
+                </div>
+              </div>
+              <p className="text-[14.5px] leading-relaxed text-white/74">{surprise.body}</p>
+            </div>
+          </div>
+        </Reveal>
+        <Reveal delay={140} className="mt-6">
+          <ObjectiveComparison />
+        </Reveal>
+      </Container>
+    </MemoSection>
+  );
+}
+
+/* ------------------------------------------------------------------ */
+/* 03 · Where Aurelius fits (Diagram A)                                 */
+/* ------------------------------------------------------------------ */
+
+function FitSection() {
+  return (
+    <MemoSection id="fit">
       <Container>
         <Reveal>
           <MemoSectionHeader
             index="03"
-            eyebrow={workloadMap.eyebrow ?? "Workload map"}
-            title={workloadMap.title}
-            intro={workloadMap.intro}
+            eyebrow="Where Aurelius fits"
+            title="An economic layer over the scheduler — not a replacement"
           />
         </Reveal>
-        <Reveal delay={120} className="mt-12">
-          <WorkloadMap classes={workloadMap.classes} note={workloadMap.note} />
+        <Reveal delay={120} className="mt-10">
+          <FleetEconomicsMap />
         </Reveal>
       </Container>
     </MemoSection>
@@ -299,50 +270,66 @@ function WorkloadSection({ data }: { data: CompanyResearchData }) {
 }
 
 /* ------------------------------------------------------------------ */
-/* 5 · Where savings may exist                                         */
+/* 04 · Hypotheses — conviction-ranked cards                           */
 /* ------------------------------------------------------------------ */
 
-function SavingsSection({ data }: { data: CompanyResearchData }) {
-  const { savings } = data;
+const CONVICTION_BORDER: Record<Conviction, string> = {
+  highest: "border-l-2 border-l-accent-gold",
+  medium: "border-l border-l-white/25",
+  lower: "border-l border-l-white/12",
+};
+
+function HField({ label, mono, children }: { label: string; mono?: boolean; children: React.ReactNode }) {
   return (
-    <MemoSection id="savings">
+    <div>
+      <FieldLabel tone={mono ? "muted" : "steel"}>{label}</FieldLabel>
+      <div
+        className={cn(
+          "mt-2 leading-relaxed text-white/58",
+          mono ? "font-mono text-[11.5px] text-white/46" : "text-[12.5px]",
+        )}
+      >
+        {children}
+      </div>
+    </div>
+  );
+}
+
+function HypothesisCardView({ c, n }: { c: HypothesisCard; n: number }) {
+  return (
+    <div className={cn("border border-border bg-card p-6 lg:p-7", CONVICTION_BORDER[c.conviction])}>
+      <div className="flex items-center justify-between gap-3">
+        <ConvictionTag level={c.conviction} />
+        <span className="font-mono text-[11px] tabular-nums text-white/22">H{String(n).padStart(2, "0")}</span>
+      </div>
+      <h3 className="mt-4 text-[17px] font-medium leading-snug tracking-tight text-foreground">{c.title}</h3>
+      <p className="mt-2.5 max-w-3xl text-[14px] leading-relaxed text-white/72">{c.hypothesis}</p>
+      <div className="mt-5 grid gap-x-8 gap-y-4 border-t border-border pt-5 sm:grid-cols-3">
+        <HField label="Why it matters">{c.matters}</HField>
+        <HField label="What we'd test">{c.test}</HField>
+        <HField label="Metadata needed" mono>{c.metadata}</HField>
+      </div>
+    </div>
+  );
+}
+
+function HypothesesSection({ data }: { data: CompanyResearchData }) {
+  const { hypotheses } = data;
+  return (
+    <MemoSection id="hypotheses" alt>
       <Container>
         <Reveal>
           <MemoSectionHeader
             index="04"
-            eyebrow={savings.eyebrow ?? "Where savings may exist"}
-            title={savings.title}
-            intro={savings.intro}
+            eyebrow={hypotheses.eyebrow ?? "Hypotheses"}
+            title={hypotheses.title}
+            intro={hypotheses.intro}
           />
         </Reveal>
-        <div className="mt-12 overflow-hidden rounded-lg border border-border">
-          {savings.items.map((s, i) => (
-            <Reveal
-              key={s.title}
-              delay={i * 60}
-              className={cn(
-                "grid gap-5 bg-card p-6 md:grid-cols-[1fr_1.45fr] lg:gap-10 lg:p-7",
-                i > 0 && "border-t border-border",
-              )}
-            >
-              <div className="flex gap-4">
-                <span className="font-mono text-[12px] tabular-nums text-accent-gold/80">
-                  H{String(i + 1).padStart(2, "0")}
-                </span>
-                <h3 className="text-[15.5px] font-medium leading-snug tracking-tight text-foreground">
-                  {s.title}
-                </h3>
-              </div>
-              <div className="space-y-4">
-                <div className="space-y-1.5">
-                  <FieldLabel>Hypothesis</FieldLabel>
-                  <p className="text-[13.5px] leading-relaxed text-white/64">{s.hypothesis}</p>
-                </div>
-                <div className="space-y-1.5">
-                  <FieldLabel tone="steel">Validated or invalidated by</FieldLabel>
-                  <p className="text-[13px] leading-relaxed text-white/52">{s.validate}</p>
-                </div>
-              </div>
+        <div className="mt-10 space-y-4">
+          {hypotheses.cards.map((c, i) => (
+            <Reveal key={c.title} delay={i * 60}>
+              <HypothesisCardView c={c} n={i + 1} />
             </Reveal>
           ))}
         </div>
@@ -352,7 +339,32 @@ function SavingsSection({ data }: { data: CompanyResearchData }) {
 }
 
 /* ------------------------------------------------------------------ */
-/* 6 · Backtest plan                                                   */
+/* 05 · Workload flexibility (Diagram B)                               */
+/* ------------------------------------------------------------------ */
+
+function WorkloadSection({ data }: { data: CompanyResearchData }) {
+  const { workload } = data;
+  return (
+    <MemoSection id="workload">
+      <Container>
+        <Reveal>
+          <MemoSectionHeader
+            index="05"
+            eyebrow={workload.eyebrow ?? "Workload flexibility"}
+            title={workload.title}
+            intro={workload.intro}
+          />
+        </Reveal>
+        <Reveal delay={120} className="mt-10">
+          <WorkloadFlexibilityMatrix rows={workload.rows} />
+        </Reveal>
+      </Container>
+    </MemoSection>
+  );
+}
+
+/* ------------------------------------------------------------------ */
+/* 06 · The backtest (Diagram D + steps + trust)                       */
 /* ------------------------------------------------------------------ */
 
 function BacktestSection({ data }: { data: CompanyResearchData }) {
@@ -362,26 +374,29 @@ function BacktestSection({ data }: { data: CompanyResearchData }) {
       <Container>
         <Reveal>
           <MemoSectionHeader
-            index="05"
+            index="06"
             eyebrow={backtest.eyebrow ?? "The backtest"}
             title={backtest.title}
             intro={backtest.intro}
           />
         </Reveal>
-        <div className="mt-12 grid gap-px overflow-hidden rounded-lg border border-border bg-border md:grid-cols-2 lg:grid-cols-4">
+        <Reveal delay={120} className="mt-10">
+          <ShadowReplayFlow />
+        </Reveal>
+        <div className="mt-8 grid gap-px overflow-hidden border border-border bg-border md:grid-cols-2 lg:grid-cols-4">
           {backtest.steps.map((s, i) => (
-            <Reveal key={s.title} delay={i * 80} className="flex flex-col bg-card p-6">
+            <Reveal key={s.title} delay={i * 70} className="bg-card p-5">
               <div className="font-mono text-[12px] tabular-nums text-accent-gold/80">
                 {String(i + 1).padStart(2, "0")}
               </div>
-              <h3 className="mt-4 text-[15px] font-medium leading-snug tracking-tight text-foreground">
+              <h3 className="mt-3 text-[14px] font-medium leading-snug tracking-tight text-foreground">
                 {s.title}
               </h3>
-              <p className="mt-2.5 text-[13px] leading-relaxed text-white/55">{s.detail}</p>
+              <p className="mt-2 text-[12.5px] leading-relaxed text-white/52">{s.detail}</p>
             </Reveal>
           ))}
         </div>
-        <Reveal delay={130} className="mt-8 flex flex-wrap gap-2.5">
+        <Reveal delay={120} className="mt-7 flex flex-wrap gap-2.5">
           {backtest.trust.map((t) => (
             <TrustChip key={t}>{t}</TrustChip>
           ))}
@@ -392,7 +407,7 @@ function BacktestSection({ data }: { data: CompanyResearchData }) {
 }
 
 /* ------------------------------------------------------------------ */
-/* 7 · Metrics                                                         */
+/* 07 · Metrics                                                         */
 /* ------------------------------------------------------------------ */
 
 function MetricsSection({ data }: { data: CompanyResearchData }) {
@@ -402,26 +417,24 @@ function MetricsSection({ data }: { data: CompanyResearchData }) {
       <Container>
         <Reveal>
           <MemoSectionHeader
-            index="06"
-            eyebrow={metrics.eyebrow ?? "What we would report"}
+            index="07"
+            eyebrow={metrics.eyebrow ?? "What we'd report"}
             title={metrics.title}
             intro={metrics.intro}
           />
         </Reveal>
-        <div className="mt-12 grid gap-px overflow-hidden rounded-lg border border-border bg-border sm:grid-cols-2 lg:grid-cols-3">
+        <div className="mt-10 grid gap-px overflow-hidden border border-border bg-border sm:grid-cols-2 lg:grid-cols-3">
           {metrics.items.map((m, i) => (
-            <Reveal key={m.name} delay={(i % 3) * 70} className="flex flex-col bg-card p-5">
-              <div className="flex items-start justify-between gap-3">
-                <h3 className="text-[14px] font-medium leading-snug tracking-tight text-foreground">
+            <Reveal key={m.name} delay={(i % 3) * 60} className="flex items-start justify-between gap-3 bg-card p-5">
+              <div>
+                <h3 className="text-[13.5px] font-medium leading-snug tracking-tight text-foreground">
                   {m.name}
                 </h3>
-                {m.unit && (
-                  <span className="shrink-0 font-mono text-[10px] tabular-nums text-accent-gold/70">
-                    {m.unit}
-                  </span>
-                )}
+                <p className="mt-1.5 text-[12px] leading-relaxed text-white/48">{m.detail}</p>
               </div>
-              <p className="mt-2.5 text-[12.5px] leading-relaxed text-white/50">{m.detail}</p>
+              {m.unit && (
+                <span className="shrink-0 font-mono text-[10px] tabular-nums text-accent-gold/70">{m.unit}</span>
+              )}
             </Reveal>
           ))}
         </div>
@@ -431,7 +444,7 @@ function MetricsSection({ data }: { data: CompanyResearchData }) {
 }
 
 /* ------------------------------------------------------------------ */
-/* 8 · Reference benchmark                                             */
+/* 08 · Reference benchmark                                             */
 /* ------------------------------------------------------------------ */
 
 function BenchmarkSection({ data }: { data: CompanyResearchData }) {
@@ -441,34 +454,26 @@ function BenchmarkSection({ data }: { data: CompanyResearchData }) {
       <Container>
         <div className="mx-auto max-w-3xl text-center">
           <Reveal>
-            <MemoEyebrow index="07" className="justify-center">
+            <MemoEyebrow index="08" className="justify-center">
               {benchmark.eyebrow ?? "Reference benchmark"}
             </MemoEyebrow>
           </Reveal>
           <Reveal delay={80}>
-            <h2 className="mt-6 text-balance text-[clamp(1.55rem,3.2vw,2.3rem)] font-medium leading-[1.1] tracking-[-0.02em] text-foreground">
+            <h2 className="mt-6 text-balance text-[clamp(1.5rem,3vw,2.2rem)] font-medium leading-[1.1] tracking-[-0.02em] text-foreground">
               {benchmark.title}
             </h2>
           </Reveal>
-          {benchmark.intro && (
-            <Reveal delay={120}>
-              <p className="mx-auto mt-5 max-w-xl text-[15px] leading-relaxed text-white/60">
-                {benchmark.intro}
-              </p>
-            </Reveal>
-          )}
         </div>
-
-        <Reveal delay={140} className="mx-auto mt-12 max-w-3xl">
+        <Reveal delay={120} className="mx-auto mt-10 max-w-3xl">
           <div
             className={cn(
-              "grid gap-px overflow-hidden rounded-lg border border-border bg-border",
+              "grid gap-px overflow-hidden border border-border bg-border",
               benchmark.stats.length === 3 ? "sm:grid-cols-3" : "sm:grid-cols-2",
             )}
           >
             {benchmark.stats.map((s) => (
               <div key={s.label} className="bg-card px-6 py-8 text-center">
-                <div className="text-[clamp(2.2rem,6vw,3.1rem)] font-medium leading-none tracking-[-0.03em] text-foreground">
+                <div className="text-[clamp(2.2rem,6vw,3rem)] font-medium leading-none tracking-[-0.03em] text-foreground">
                   {s.value}
                 </div>
                 <div className="mt-3 font-mono text-[10.5px] uppercase tracking-[0.16em] text-white/45">
@@ -477,13 +482,11 @@ function BenchmarkSection({ data }: { data: CompanyResearchData }) {
               </div>
             ))}
           </div>
-          <div className="mt-5 flex flex-col items-center gap-2 text-center">
+          <div className="mt-4 flex flex-col items-center gap-2 text-center">
             <span className="font-mono text-[11px] uppercase tracking-[0.18em] text-accent-gold/75">
               {benchmark.source}
             </span>
-            <p className="max-w-xl text-[12px] leading-relaxed text-white/38">
-              {benchmark.disclaimer}
-            </p>
+            <p className="max-w-xl text-[11.5px] leading-relaxed text-white/36">{benchmark.disclaimer}</p>
           </div>
         </Reveal>
       </Container>
@@ -492,81 +495,49 @@ function BenchmarkSection({ data }: { data: CompanyResearchData }) {
 }
 
 /* ------------------------------------------------------------------ */
-/* 9 · Assumptions table                                               */
+/* 09 · Key assumptions (4 cards, not a table)                         */
 /* ------------------------------------------------------------------ */
 
 function AssumptionsSection({ data }: { data: CompanyResearchData }) {
   const { assumptions } = data;
-  const cols = "grid-cols-[1.1fr_1.3fr_1.3fr]";
   return (
     <MemoSection id="assumptions">
       <Container>
         <Reveal>
           <MemoSectionHeader
-            index="08"
-            eyebrow={assumptions.eyebrow ?? "Assumptions"}
+            index="09"
+            eyebrow={assumptions.eyebrow ?? "Key assumptions"}
             title={assumptions.title}
             intro={assumptions.intro}
           />
         </Reveal>
-
-        <Reveal delay={120} className="mt-12">
-          {/* Desktop: a real 3-column ledger table */}
-          <div className="hidden overflow-hidden rounded-lg border border-border md:block">
-            <div
-              className={cn(
-                "grid bg-white/[0.015] font-mono text-[10px] uppercase tracking-[0.16em] text-white/45",
-                cols,
-              )}
-            >
-              <div className="px-5 py-3">Assumption</div>
-              <div className="border-l border-border px-5 py-3">Why it may be true</div>
-              <div className="border-l border-border px-5 py-3">How we would validate it</div>
-            </div>
-            {assumptions.rows.map((r, i) => (
-              <div key={i} className={cn("grid border-t border-border", cols)}>
-                <div className="px-5 py-5 text-[13.5px] font-medium leading-snug text-foreground">
-                  {r.assumption}
-                </div>
-                <div className="border-l border-border px-5 py-5 text-[13px] leading-relaxed text-white/58">
-                  {r.why}
-                </div>
-                <div className="border-l border-border px-5 py-5 text-[13px] leading-relaxed text-white/58">
-                  {r.validate}
-                </div>
-              </div>
-            ))}
-          </div>
-
-          {/* Mobile: stacked cards */}
-          <div className="overflow-hidden rounded-lg border border-border md:hidden">
-            {assumptions.rows.map((r, i) => (
-              <div key={i} className={cn("bg-card p-5", i > 0 && "border-t border-border")}>
-                <h3 className="text-[14.5px] font-medium leading-snug text-foreground">
-                  {r.assumption}
+        <div className="mt-10 grid gap-px overflow-hidden border border-border bg-border sm:grid-cols-2">
+          {assumptions.items.map((a, i) => (
+            <Reveal key={a.assumption} delay={(i % 2) * 70} className="flex flex-col bg-card p-6">
+              <div className="flex gap-3">
+                <span className="font-mono text-[11px] tabular-nums text-accent-gold/70">
+                  {String(i + 1).padStart(2, "0")}
+                </span>
+                <h3 className="text-[14.5px] font-medium leading-snug tracking-tight text-foreground">
+                  {a.assumption}
                 </h3>
-                <div className="mt-4 space-y-1.5">
-                  <FieldLabel>Why it may be true</FieldLabel>
-                  <p className="text-[13px] leading-relaxed text-white/58">{r.why}</p>
-                </div>
-                <div className="mt-4 space-y-1.5">
-                  <FieldLabel tone="steel">How we would validate it</FieldLabel>
-                  <p className="text-[13px] leading-relaxed text-white/58">{r.validate}</p>
-                </div>
               </div>
-            ))}
-          </div>
-        </Reveal>
+              <div className="mt-4 border-t border-border pt-4">
+                <FieldLabel tone="steel">How we validate it</FieldLabel>
+                <p className="mt-2 text-[12.5px] leading-relaxed text-white/56">{a.validate}</p>
+              </div>
+            </Reveal>
+          ))}
+        </div>
       </Container>
     </MemoSection>
   );
 }
 
 /* ------------------------------------------------------------------ */
-/* 10 · CTA                                                            */
+/* CTA — confident, assumptive                                         */
 /* ------------------------------------------------------------------ */
 
-/** Picks <Link>-style internal nav vs <a> for mailto/external links. */
 function MemoCta({
   link,
   variant,
@@ -596,35 +567,25 @@ function CtaSection({ data }: { data: CompanyResearchData }) {
       <Container>
         <div className="mx-auto max-w-2xl text-center">
           <Reveal>
-            <MemoEyebrow index="09" className="justify-center">
-              Next step
-            </MemoEyebrow>
-          </Reveal>
-          <Reveal delay={80}>
-            <h2 className="mt-6 text-balance text-[clamp(1.6rem,3.4vw,2.5rem)] font-medium leading-tight tracking-[-0.02em] text-foreground">
+            <h2 className="text-balance text-[clamp(1.8rem,4vw,2.8rem)] font-medium leading-[1.05] tracking-[-0.025em] text-foreground">
               {cta.title}
             </h2>
           </Reveal>
-          {cta.body && (
-            <Reveal delay={130}>
-              <p className="mx-auto mt-5 max-w-xl text-[15px] leading-relaxed text-white/62">
-                {cta.body}
-              </p>
-            </Reveal>
-          )}
-          <Reveal delay={190}>
+          <Reveal delay={90}>
+            <p className="mx-auto mt-5 max-w-xl text-[14.5px] leading-relaxed text-white/64">{cta.body}</p>
+          </Reveal>
+          <Reveal delay={160}>
             <div className="mt-9 flex flex-col items-center justify-center gap-3 sm:flex-row">
               <MemoCta link={cta.primary} variant="primary" withArrow />
-              {cta.secondary && <MemoCta link={cta.secondary} variant="secondary" />}
+              <MemoCta link={cta.secondary} variant="secondary" />
             </div>
           </Reveal>
-          {cta.footnote && (
-            <Reveal delay={240}>
-              <p className="mx-auto mt-8 max-w-md font-mono text-[11px] leading-relaxed text-white/30">
-                {cta.footnote}
-              </p>
-            </Reveal>
-          )}
+          <Reveal delay={220}>
+            <div className="mt-8 flex items-center justify-center gap-2.5 font-mono text-[10.5px] uppercase tracking-[0.16em] text-white/38">
+              <span className="h-1 w-1 rounded-full bg-accent-gold/80" aria-hidden />
+              {cta.trustLine}
+            </div>
+          </Reveal>
         </div>
       </Container>
     </MemoSection>
@@ -632,7 +593,7 @@ function CtaSection({ data }: { data: CompanyResearchData }) {
 }
 
 /* ------------------------------------------------------------------ */
-/* Private footer — self-contained, no links into the public site     */
+/* Private footer — self-contained, single closing disclaimer          */
 /* ------------------------------------------------------------------ */
 
 function PrivateFooter({ data }: { data: CompanyResearchData }) {
@@ -650,9 +611,9 @@ function PrivateFooter({ data }: { data: CompanyResearchData }) {
           <p className="font-mono text-[10.5px] tracking-tight text-white/26">{data.memo.note}</p>
         </div>
         <p className="mt-6 max-w-2xl text-[11px] leading-relaxed text-white/24">
-          Prepared for {data.company} from public information and stated assumptions. This is a
-          hypothesis, not a claim of savings, and does not imply an existing relationship between
-          Aurelius and {data.company}. © {new Date().getFullYear()} Aurelius.
+          Prepared for {data.company} from public information and stated assumptions. Not a claim of
+          savings; does not imply an existing relationship between Aurelius and {data.company}.
+          Corrections welcome. © {new Date().getFullYear()} Aurelius.
         </p>
       </Container>
     </footer>
@@ -664,7 +625,6 @@ function PrivateFooter({ data }: { data: CompanyResearchData }) {
 /* ------------------------------------------------------------------ */
 
 export function CompanyResearch({ data }: { data: CompanyResearchData }) {
-  // Long memo reached by direct link — always open at the cover.
   useEffect(() => {
     window.scrollTo(0, 0);
   }, [data.slug]);
@@ -673,12 +633,13 @@ export function CompanyResearch({ data }: { data: CompanyResearchData }) {
     <div className="min-h-screen bg-background text-foreground antialiased">
       <PrivateHeader docRef={data.docRef} />
       <HeroCover data={data} />
+      <MemoMetaStrip data={data} />
       <main>
-        <MemoHeaderBlock data={data} />
         <ThesisSection data={data} />
-        <InsightsSection data={data} />
+        <SurpriseSection data={data} />
+        <FitSection />
+        <HypothesesSection data={data} />
         <WorkloadSection data={data} />
-        <SavingsSection data={data} />
         <BacktestSection data={data} />
         <MetricsSection data={data} />
         <BenchmarkSection data={data} />

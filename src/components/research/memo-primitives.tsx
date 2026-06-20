@@ -1,6 +1,7 @@
 import type { ReactNode } from "react";
 import { cn } from "@/lib/utils";
 import { Reveal } from "@/components/site/primitives";
+import type { Conviction } from "./types";
 
 /* ============================================================================
    Memo primitives — shared atoms for the private research page.
@@ -98,6 +99,43 @@ export function MetaRow({ k, v }: { k: string; v: ReactNode }) {
       <span className="font-mono text-[10.5px] uppercase tracking-[0.16em] text-white/36">{k}</span>
       <span className="text-right font-mono text-[12px] tabular-nums text-white/72">{v}</span>
     </div>
+  );
+}
+
+/** Confidence label + a 3-bar brass meter (highest = 3 bars). */
+export function ConvictionTag({ level }: { level: Conviction }) {
+  const filled = level === "highest" ? 3 : level === "medium" ? 2 : 1;
+  const label =
+    level === "highest"
+      ? "Highest conviction"
+      : level === "medium"
+        ? "Medium conviction"
+        : "Lower conviction";
+  return (
+    <span className="inline-flex items-center gap-2.5">
+      <span className="flex items-end gap-[3px]" aria-hidden>
+        {[0, 1, 2].map((i) => (
+          <span
+            key={i}
+            className={cn(
+              "w-[3px]",
+              i < filled ? "bg-accent-gold" : "bg-white/15",
+              i === 0 ? "h-2" : i === 1 ? "h-2.5" : "h-3",
+            )}
+          />
+        ))}
+      </span>
+      <span className="font-mono text-[10px] uppercase tracking-[0.16em] text-white/55">{label}</span>
+    </span>
+  );
+}
+
+/** Compact, sharp-cornered mono chip for the public-signals row. */
+export function SignalChip({ children }: { children: ReactNode }) {
+  return (
+    <span className="inline-flex items-center border border-border bg-white/[0.015] px-2.5 py-1 font-mono text-[10.5px] tracking-tight text-white/55">
+      {children}
+    </span>
   );
 }
 

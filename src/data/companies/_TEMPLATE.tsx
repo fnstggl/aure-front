@@ -3,22 +3,18 @@ import type { CompanyResearchData } from "@/components/research/types";
 /* ============================================================================
    COMPANY RESEARCH TEMPLATE — copy this file to build a new outbound page.
    ----------------------------------------------------------------------------
-   HOW TO USE
-     1. Duplicate this file → src/data/companies/<company>.tsx
-     2. Rename the export (e.g. `acmeResearch`) and fill every field below.
-        Everything you see on the page comes from this object — there is no
-        layout to touch.
-     3. Add a thin page wrapper → src/pages/research/<Company>Research.tsx
-        (copy src/pages/research/FireworksResearch.tsx).
-     4. Register routes in src/App.tsx and add the path to PRIVATE_ROUTES in
-        src/lib/seo.ts (keeps it noindex + out of the sitemap), plus a
-        Disallow line in public/robots.txt if you change the campaign suffix.
+   1. Duplicate → src/data/companies/<company>.tsx, rename the export, fill it in.
+   2. Add a thin page wrapper → src/pages/research/<Company>Research.tsx
+      (copy FireworksResearch.tsx).
+   3. Register routes in src/App.tsx + add the path to PRIVATE_ROUTES in
+      src/lib/seo.ts (keeps it noindex + out of the sitemap), and a Disallow
+      line in public/robots.txt if you change the campaign suffix.
 
-   TONE — keep it a research memo, not marketing:
-     • Say "hypothesis", "we would test", "we would validate", "based on
-       public information". Never "we will save you X%".
-     • Make the reader feel a founder actually studied their infrastructure.
-     • Replace the [BRACKETED] placeholders below with real, researched content.
+   TONE — concise executive memo, not marketing. Confident, precise, analytical.
+   Say "hypothesis", "we'd test", "the backtest confirms or kills it". Never
+   "interested in…?", "book a demo", "we can help you save money". Keep total
+   copy under ~1,800 words; let the diagrams carry the weight. Replace every
+   [BRACKETED] placeholder with real, researched content.
    ============================================================================ */
 
 export const templateResearch: CompanyResearchData = {
@@ -26,18 +22,19 @@ export const templateResearch: CompanyResearchData = {
   company: "[Company Name]",
   docRef: "AUR-RES-0000-XX",
   preparedOn: "2026-01-01", // YYYY-MM-DD
+  disclaimer:
+    "Based on public information and stated assumptions. Not a claim of savings; does not imply an existing relationship. Corrections welcome.",
 
-  /* Hero / cover. Either provide a pre-rendered `coverImage` (title baked in)
-     or let the cover be recreated from `gradient` + `logo`. */
   hero: {
     eyebrow: "Economic Analysis for",
-    // Replace with the company's real <svg> mark or <img src="/…" alt="" />.
+    // Real company mark, or rely on the structural fallback below.
     logo: (
       <svg viewBox="0 0 36 36" fill="currentColor" aria-hidden>
-        <rect x="6" y="6" width="24" height="24" rx="3" />
+        <rect x="6" y="6" width="24" height="24" />
       </svg>
     ),
-    // coverImage: "/research/<company>-cover.png",
+    // Pre-rendered cover (text baked in, 90° sharp). Drop the PNG in /public.
+    coverImage: "/research_company.png",
     gradient: {
       base: "hsl(225 28% 9%)",
       blooms: [
@@ -48,172 +45,153 @@ export const templateResearch: CompanyResearchData = {
     },
   },
 
-  /* 1 · Private memo header */
   memo: {
     preparedFor: "Prepared for [Company Name]",
     title: "Aurelius infrastructure hypothesis",
-    note: "Private research page · Not indexed · Based on public information and stated assumptions",
+    note: "Private · unlisted · not indexed",
   },
 
-  /* 2 · Opening thesis — personalize heavily. */
+  /* 1 · Thesis — 2 short paragraphs, personalized. */
   thesis: {
-    eyebrow: "Opening thesis",
+    eyebrow: "Thesis",
     body: (
       <>
-        <p>
-          I looked at [Company]&rsquo;s business, workload profile, and infrastructure model. My
-          hypothesis is that economic inefficiencies may exist not because the fleet is poorly
-          utilized, but because utilization alone is an incomplete objective.
-        </p>
-        <p>
-          Aurelius tests whether flexible workloads can be shifted across time, regions, and
-          backends while preserving SLA constraints. [Add 1–2 sentences of company-specific
-          reasoning — a public datapoint, a workload, a stated architecture choice.]
-        </p>
+        <p>[One sharp paragraph: what the company runs, and why utilization may be an incomplete objective.]</p>
+        <p>[One sentence tying a public datapoint to the economic gap you'd investigate.]</p>
       </>
     ),
-    // Optional — public signals that informed the read. Delete if unused.
-    basis: [
-      { label: "Serving model", value: "[e.g. serverless · dedicated]" },
-      { label: "Stated scale", value: "[public figure]" },
-      { label: "Deferrable surface", value: "[batch · eval · fine-tune]" },
+    // Skimmable public-evidence chips.
+    signals: [
+      { label: "[serving model]" },
+      { label: "[inference engine]" },
+      { label: "[batch / flexible work]" },
+      { label: "[regions / providers]" },
+      { label: "[key public datapoint]" },
     ],
   },
 
-  /* 3 · Why this may matter — 3–4 insight cards. */
-  insights: {
-    eyebrow: "Why this may matter for [Company]",
-    title: "[A specific, non-generic framing of the opportunity]",
-    intro: "Each is a hypothesis from public information, written to be argued with.",
+  /* 2 · What surprised us — one large number. */
+  surprise: {
+    eyebrow: "What surprised us",
+    value: "~X×",
+    label: "[the striking, sourced number — e.g. per-token cost spread]",
+    body: <>[Two sentences: the public fact, then the non-obvious economic insight it implies.]</>,
+  },
+
+  /* 4 · Hypotheses — 3–4 cards, ranked by conviction (highest first). */
+  hypotheses: {
+    eyebrow: "Hypotheses",
+    title: "[N] hypotheses, ranked by conviction",
+    intro: "Ranked by how strongly public evidence supports them. The backtest confirms or kills each.",
     cards: [
       {
-        title: "[Latency-critical inference likely requires headroom]",
-        hypothesis: "[Why this may be true for this company, and why it matters economically.]",
-        test: "[What Aurelius would test, and the scheduler metadata that would settle it.]",
+        conviction: "highest",
+        title: "[Operating-point mismatch, etc.]",
+        hypothesis: "[One sentence.]",
+        matters: "[Why it matters economically — one line.]",
+        test: "[What Aurelius would test — one line.]",
+        metadata: "[metadata · needed · to · settle it]",
       },
       {
-        title: "[Flexible workloads may exist behind the critical path]",
+        conviction: "medium",
+        title: "[Warm headroom, etc.]",
         hypothesis: "[…]",
+        matters: "[…]",
         test: "[…]",
+        metadata: "[…]",
       },
       {
-        title: "[Regional/time-based cost variance may create scheduling opportunities]",
+        conviction: "medium",
+        title: "[Flexible trough filling, etc.]",
         hypothesis: "[…]",
+        matters: "[…]",
         test: "[…]",
+        metadata: "[…]",
       },
       {
-        title: "[Current utilization targets may hide economic inefficiency]",
+        conviction: "lower",
+        title: "[Cross-region routing, etc.]",
         hypothesis: "[…]",
+        matters: "[…]",
         test: "[…]",
+        metadata: "[…]",
       },
     ],
   },
 
-  /* 4 · Workload map — classify each class: sla-critical | flexible | shiftable. */
-  workloadMap: {
-    eyebrow: "Workload map",
-    title: "What is fixed, what is flexible, and what could move",
-    intro: "A first-pass classification — the backtest would replace it with the real job mix.",
-    classes: [
-      { name: "Real-time inference", kind: "sla-critical", note: "[why]" },
-      { name: "Batch inference", kind: "shiftable", note: "[why]" },
-      { name: "Evaluations", kind: "shiftable", note: "[why]" },
-      { name: "Fine-tuning", kind: "flexible", note: "[why]" },
-      { name: "Internal data processing", kind: "shiftable", note: "[why]" },
-      { name: "Maintenance / background jobs", kind: "flexible", note: "[why]" },
-    ],
-    note: "White = critical path. Brass = movable across time, region, or backend.",
-  },
-
-  /* 5 · Where savings may exist — frame each as a hypothesis. */
-  savings: {
-    eyebrow: "Where savings may exist",
-    title: "Mechanisms to validate — not claims",
-    intro: "Each is a lever the backtest would confirm on your logs or rule out.",
-    items: [
-      {
-        title: "Delay-tolerant work shifted away from expensive periods",
-        hypothesis: "[…]",
-        validate: "[the metadata signal that confirms or denies it]",
-      },
-      {
-        title: "Region-aware routing for flexible jobs",
-        hypothesis: "[…]",
-        validate: "[…]",
-      },
-      {
-        title: "Queue-aware admission control to reduce low-value GPU burn",
-        hypothesis: "[…]",
-        validate: "[…]",
-      },
-      {
-        title: "Economic scheduling instead of pure utilization maximization",
-        hypothesis: "[…]",
-        validate: "[…]",
-      },
+  /* 5 · Workload flexibility matrix. yes ✓ | partial • | no — */
+  workload: {
+    eyebrow: "Workload flexibility",
+    title: "What's fixed, what's flexible",
+    intro: "How tightly each class is bound to the latency-critical path.",
+    rows: [
+      { name: "Real-time inference", tag: "fixed / SLA-critical", latencyBound: "yes", deadlineBound: "no", regionShiftable: "no", economicallySchedulable: "no" },
+      { name: "Agents / interactive apps", tag: "mostly fixed", latencyBound: "yes", deadlineBound: "no", regionShiftable: "partial", economicallySchedulable: "partial" },
+      { name: "Batch inference", tag: "flexible", latencyBound: "no", deadlineBound: "yes", regionShiftable: "yes", economicallySchedulable: "yes" },
+      { name: "Evaluations", tag: "flexible", latencyBound: "no", deadlineBound: "yes", regionShiftable: "yes", economicallySchedulable: "yes" },
+      { name: "RL / fine-tuning", tag: "flexible", latencyBound: "no", deadlineBound: "partial", regionShiftable: "yes", economicallySchedulable: "yes" },
+      { name: "Internal data processing", tag: "flexible", latencyBound: "no", deadlineBound: "partial", regionShiftable: "yes", economicallySchedulable: "yes" },
     ],
   },
 
-  /* 6 · Backtest plan — usually unchanged across companies. */
+  /* 6 · Backtest — usually unchanged across companies. */
   backtest: {
     eyebrow: "The backtest",
-    title: "A no-cost historical backtest, entirely in shadow",
-    intro: "Everything above can be tested on data you already have, without touching production.",
+    title: "Observed baseline vs economic counterfactual",
+    intro: "Run entirely on data you already have. The backtest confirms or kills each hypothesis.",
     steps: [
-      { title: "Export 7–30 days of scheduler metadata", detail: "Timing, resources, SLA class, region, deadlines, outcomes. No payloads." },
-      { title: "Replay historical decisions in shadow mode", detail: "Reconstruct what the scheduler did, decision by decision. Nothing re-executed." },
-      { title: "Compare current policy vs Aurelius policy", detail: "Aurelius proposes economic decisions under your hard constraints; we diff the two." },
-      { title: "Deliver a savings / SLA report", detail: "Goodput per dollar, GPU-hours, and proof every constraint held." },
+      { title: "Export 7–30 days of metadata", detail: "Timing, resources, serving path, SLA class, region, deadlines, outcomes. No payloads." },
+      { title: "Replay the current policy", detail: "Reconstruct the scheduler's actual decisions as the observed baseline." },
+      { title: "Replay the Aurelius policy", detail: "Economic decisions under the same hard constraints, decision for decision." },
+      { title: "Return the report", detail: "Goodput/$, GPU-hours, and proof every SLA held." },
     ],
-    trust: ["No production changes", "No model payloads", "Metadata only", "Runs against historical logs"],
+    trust: ["No production changes", "No model payloads", "Metadata only", "Historical logs"],
   },
 
   /* 7 · Metrics — usually unchanged. */
   metrics: {
-    eyebrow: "What we would report",
-    title: "What the report would put a number on",
+    eyebrow: "What we'd report",
+    title: "Six numbers, baseline vs counterfactual",
     items: [
-      { name: "SLA-safe goodput per dollar", detail: "Useful tokens within SLA, per dollar of GPU spend.", unit: "tok / $" },
-      { name: "GPU-hours consumed", detail: "Total and by workload class, baseline vs counterfactual.", unit: "GPU·h" },
-      { name: "Queue / wait time", detail: "Time to admission and time in queue.", unit: "ms" },
-      { name: "SLA violation rate", detail: "Latency/throughput breaches under each policy.", unit: "%" },
-      { name: "Regional cost exposure", detail: "Flexible GPU-hours landing in higher-cost region-hours.", unit: "$" },
-      { name: "Migration / deferral impact", detail: "Net effect of every shift and deferral proposed.", unit: "Δ$" },
+      { name: "SLA-safe goodput / $", detail: "The primary objective.", unit: "tok/$" },
+      { name: "GPU-hours", detail: "Total and by workload class.", unit: "GPU·h" },
+      { name: "Queue / wait time", detail: "Incl. overload incidence.", unit: "ms" },
+      { name: "SLA violation rate", detail: "Must not regress.", unit: "%" },
+      { name: "Regional cost exposure", detail: "Flexible hours in costlier regions.", unit: "$" },
+      { name: "Migration / deferral impact", detail: "Net effect of each shift.", unit: "Δ$" },
     ],
   },
 
-  /* 8 · Reference benchmark — PLACEHOLDER values. Keep clearly a reference. */
+  /* 8 · Reference benchmark — PLACEHOLDER values; keep clearly a reference. */
   benchmark: {
     eyebrow: "Reference benchmark",
     title: "What the same approach did on public traces",
-    intro: "A reference result, not a prediction.",
     stats: [
       { value: "+XX%", label: "SLA-safe goodput / $" },
       { value: "−YY%", label: "GPU-hours" },
     ],
     source: "Public LLM inference traces",
-    disclaimer:
-      "A reference result on public traces — not a guarantee or forecast for [Company], which only a backtest on your own scheduler metadata can establish.",
+    disclaimer: "A reference result on public traces — not a forecast for [Company]. Only a backtest on your own logs can establish that.",
   },
 
-  /* 9 · Assumptions table. */
+  /* 9 · Key assumptions — 4 cards. */
   assumptions: {
-    eyebrow: "Assumptions",
-    title: "Every assumption this rests on — and how we'd check it",
-    rows: [
-      { assumption: "Some jobs are delay-tolerant", why: "[why it may be true]", validate: "[how we'd validate]" },
-      { assumption: "Costs vary by time/region/backend", why: "[…]", validate: "[…]" },
-      { assumption: "SLA headroom exists in parts of the workload", why: "[…]", validate: "[…]" },
-      { assumption: "Current scheduling optimizes utilization more than economic outcome", why: "[…]", validate: "[…]" },
+    eyebrow: "Key assumptions",
+    title: "Key assumptions to validate",
+    items: [
+      { assumption: "A meaningful share of work is deadline-tolerant", validate: "Measure deadline-minus-runtime slack across job classes." },
+      { assumption: "Marginal cost varies by time, region, provider, or operating point", validate: "Join a per-region-hour-backend cost signal to actual placement." },
+      { assumption: "Some requests finish with unused SLA headroom", validate: "Compute realized latency versus SLA budget per request." },
+      { assumption: "Current scheduling optimizes utilization/latency more directly than economic output", validate: "Measure goodput-per-dollar dispersion across pools at similar utilization." },
     ],
   },
 
-  /* 10 · CTA — soft, research-oriented. */
+  /* CTA — confident, assumptive. No question mark. */
   cta: {
-    title: "Interested in seeing whether this is real on your logs?",
-    body: "Everything here is a hypothesis from public information. The only way to know is to replay your own scheduler metadata — at no cost, in shadow, against historical logs.",
-    primary: { label: "Run a no-cost historical backtest", href: "/contact" },
-    secondary: { label: "Reply with corrections to these assumptions", href: "/contact" },
-    footnote: "If a number here is wrong, tell us — the assumptions are meant to be argued with.",
+    title: "Quantify it on your fleet",
+    body: "Everything above can be tested directly against historical scheduler metadata. We replay 7–30 days of decisions, compare the current policy against an economic counterfactual, and return a savings/SLA report — with no production changes and no model payloads.",
+    primary: { label: "Run the historical backtest", href: "/contact" },
+    secondary: { label: "Send corrections to the assumptions", href: "/contact" },
+    trustLine: "Metadata only · Shadow replay · No production changes",
   },
 };

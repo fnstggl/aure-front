@@ -1,178 +1,161 @@
 import type { ReactNode } from "react";
 
 /* ============================================================================
-   Company research memo — data model
+   Company research memo — data model (v2: concise executive memo)
    ----------------------------------------------------------------------------
-   A single private outbound page (/{company-slug}-FH37X) is generated entirely
-   from ONE `CompanyResearchData` object. To produce a new company page you only
-   author a new config — no layout code changes. See
-   `src/data/companies/fireworks.tsx` for a fully-worked, genuinely-researched
-   example and `src/data/companies/_TEMPLATE.tsx` for a blank to copy.
+   A single private outbound page (/{company-slug}-FH37X) is generated from ONE
+   `CompanyResearchData` object. To make a new company page, author a new config
+   — no layout code changes. See `src/data/companies/fireworks.tsx` for a fully
+   worked example and `_TEMPLATE.tsx` for a blank to copy.
 
-   Rich-text fields accept `ReactNode` so a config (authored as .tsx) can add
-   light emphasis (<strong>, <span className="text-accent-gold">…). Keep copy in
-   the research register: "hypothesis", "we would test", "we would validate",
-   "based on public information". Never promise a specific saving.
+   Tone: confident, precise, analytical, founder-led, infrastructure-native.
+   Say "hypothesis", "we would test", "the backtest confirms or kills it".
+   Never "interested in…?", "book a demo", or "we can help you save money".
+   Keep total page copy under ~1,800 words — let the diagrams carry the weight.
    ============================================================================ */
 
-/** Where a workload class sits relative to the latency-critical path. */
-export type WorkloadKind = "sla-critical" | "flexible" | "shiftable";
+/** Conviction tier for a hypothesis — drives the confidence label + accent. */
+export type Conviction = "highest" | "medium" | "lower";
 
-export interface WorkloadClass {
-  /** e.g. "Real-time inference". */
+/** Cell state in the workload flexibility matrix. */
+export type MatrixFlag = "yes" | "partial" | "no";
+
+/** A workload row in the flexibility matrix (Diagram B). */
+export interface WorkloadRow {
   name: string;
-  /** Classification that drives the visual treatment + legend. */
-  kind: WorkloadKind;
-  /** One short clause on why it sits where it does (company-specific). */
-  note?: string;
+  /** Short classification, e.g. "fixed / SLA-critical" or "flexible". */
+  tag: string;
+  latencyBound: MatrixFlag;
+  deadlineBound: MatrixFlag;
+  regionShiftable: MatrixFlag;
+  economicallySchedulable: MatrixFlag;
 }
 
-/** An insight card — "Why this may matter for [Company]". */
-export interface InsightCard {
-  /** Short, specific, infrastructure-literate title. */
+/** A single concise hypothesis card (≤ ~150 words). */
+export interface HypothesisCard {
+  conviction: Conviction;
   title: string;
-  /** The hypothesis itself — what may be true and why. */
+  /** One-sentence hypothesis. */
   hypothesis: ReactNode;
-  /** What Aurelius would actually test to confirm / reject it. */
+  /** Why it matters economically (one line). */
+  matters: ReactNode;
+  /** What Aurelius would test (one line). */
   test: ReactNode;
+  /** Scheduler metadata needed to settle it (short). */
+  metadata: string;
 }
 
-/** A specific savings hypothesis — framed to validate, never to claim. */
-export interface SavingsHypothesis {
-  /** Short mechanism label, e.g. "Delay-tolerant work shifted off-peak". */
-  title: string;
-  /** Why the economic opportunity may exist. */
-  hypothesis: ReactNode;
-  /** The metadata signal that would confirm or deny it. */
-  validate: ReactNode;
-}
-
-/** A step in the no-cost historical backtest. */
+/** A backtest step (kept terse). */
 export interface BacktestStep {
   title: string;
   detail: ReactNode;
 }
 
-/** A metric Aurelius would report back. */
+/** A metric Aurelius would report. */
 export interface MetricRow {
-  /** Metric name, e.g. "SLA-safe goodput per dollar". */
   name: string;
-  /** One clause on what it captures. */
   detail: string;
-  /** Optional unit / mono tag, e.g. "$ / 1M tok". */
   unit?: string;
 }
 
-/** A reference-benchmark stat. Clearly a reference result, not a guarantee. */
+/** A reference-benchmark stat. */
 export interface BenchmarkStat {
-  /** e.g. "+XX%" or a concrete public figure. */
   value: string;
-  /** e.g. "SLA-safe goodput / $". */
   label: string;
 }
 
-/** A row in the assumptions table. */
-export interface AssumptionRow {
+/** A key assumption + how it's validated (replaces the long table). */
+export interface AssumptionItem {
   assumption: string;
-  why: ReactNode;
-  validate: ReactNode;
+  validate: string;
 }
 
-/** Optional "what informed this" line item shown under the thesis. */
-export interface SourceNote {
+/** A compact public-signal chip shown under the thesis. */
+export interface Signal {
   label: string;
-  value: string;
 }
 
 export interface CompanyResearchData {
   /* --- Identity ----------------------------------------------------------- */
-  /** URL slug, e.g. "fireworks-ai" → /fireworks-ai-FH37X. */
   slug: string;
-  /** Display name, e.g. "Fireworks AI". */
   company: string;
-  /** Internal document reference shown in the memo header, e.g. "AUR-2406-FW". */
   docRef: string;
   /** ISO date the memo was prepared (YYYY-MM-DD). */
   preparedOn: string;
+  /** The single top-of-page disclaimer (kept quiet; not repeated per section). */
+  disclaimer: string;
 
   /* --- Hero / cover ------------------------------------------------------- */
   hero: {
-    /** Small line above the title. Defaults to "Economic Analysis for". */
     eyebrow?: string;
-    /** Company logo node (inline SVG preferred) shown in the cover + header. */
+    /** Company logo node (used by the structural-cover fallback). */
     logo: ReactNode;
     /**
-     * Optional pre-rendered full-bleed cover image (text already baked in). If
-     * set, it is shown edge-to-edge and the structural title overlay is skipped.
-     * If omitted, the cover is recreated in CSS from `gradient` below — fully
-     * data-driven and reusable, no per-company art required.
+     * Pre-rendered full-bleed cover image with the title baked in. Shown
+     * edge-to-edge, sharp-cornered. If it fails to load, the structural cover
+     * (gradient + logo + title) renders instead, so the page is never broken.
      */
     coverImage?: string;
-    /** Tailwind/CSS color stops for the recreated cover gradient. */
+    /** Colors for the structural-cover fallback. */
     gradient?: {
-      /** Base field color (deep). */
       base: string;
-      /** Layered radial blooms (CSS color + position). */
       blooms: { color: string; at: string; size?: string }[];
     };
   };
 
-  /* --- 1. Private memo header --------------------------------------------- */
+  /* --- Memo metadata strip ------------------------------------------------ */
   memo: {
-    /** "Prepared for [Company]". */
     preparedFor: string;
-    /** "Aurelius infrastructure hypothesis". */
     title: string;
-    /** Small note: "Private research page · Not indexed · …". */
+    /** Short classification note, e.g. "Private · unlisted · not indexed". */
     note: string;
   };
 
-  /* --- 2. Opening thesis -------------------------------------------------- */
+  /* --- Opening thesis ----------------------------------------------------- */
   thesis: {
     eyebrow?: string;
-    /** The personalized opening paragraph(s). */
     body: ReactNode;
-    /** Optional "what informed this read" list (public sources, observations). */
-    basis?: SourceNote[];
+    /** Skimmable public-signal chips (Fireworks-specific evidence). */
+    signals?: Signal[];
   };
 
-  /* --- 3. Why this may matter for [Company] ------------------------------- */
-  insights: {
+  /* --- "What surprised us" highlight card --------------------------------- */
+  surprise: {
+    eyebrow?: string;
+    /** The one large number, e.g. "~4×". */
+    value: string;
+    /** Its label, e.g. "per-token cost spread on the same hardware". */
+    label: string;
+    /** Two-sentence explanation + the insight. */
+    body: ReactNode;
+  };
+
+  /* --- Hypotheses (3–4 cards with conviction) ----------------------------- */
+  hypotheses: {
     eyebrow?: string;
     title: string;
     intro?: ReactNode;
-    cards: InsightCard[];
+    cards: HypothesisCard[];
   };
 
-  /* --- 4. Workload map ---------------------------------------------------- */
-  workloadMap: {
+  /* --- Workload flexibility (Diagram B data) ------------------------------ */
+  workload: {
     eyebrow?: string;
     title: string;
     intro?: ReactNode;
-    classes: WorkloadClass[];
-    /** Optional caption under the map. */
-    note?: ReactNode;
+    rows: WorkloadRow[];
   };
 
-  /* --- 5. Where savings may exist ----------------------------------------- */
-  savings: {
-    eyebrow?: string;
-    title: string;
-    intro?: ReactNode;
-    items: SavingsHypothesis[];
-  };
-
-  /* --- 6. Backtest plan --------------------------------------------------- */
+  /* --- Backtest plan ------------------------------------------------------ */
   backtest: {
     eyebrow?: string;
     title: string;
     intro?: ReactNode;
     steps: BacktestStep[];
-    /** Trust guarantees ("No production changes", "Metadata only", …). */
     trust: string[];
   };
 
-  /* --- 7. Metrics --------------------------------------------------------- */
+  /* --- Metrics ------------------------------------------------------------ */
   metrics: {
     eyebrow?: string;
     title: string;
@@ -180,33 +163,31 @@ export interface CompanyResearchData {
     items: MetricRow[];
   };
 
-  /* --- 8. Reference benchmark --------------------------------------------- */
+  /* --- Reference benchmark ------------------------------------------------ */
   benchmark: {
     eyebrow?: string;
     title: string;
     intro?: ReactNode;
     stats: BenchmarkStat[];
-    /** e.g. "Public LLM inference traces". */
     source: string;
-    /** Makes clear this is a reference result, not a company guarantee. */
     disclaimer: string;
   };
 
-  /* --- 9. Assumptions ----------------------------------------------------- */
+  /* --- Key assumptions (4 cards) ------------------------------------------ */
   assumptions: {
     eyebrow?: string;
     title: string;
     intro?: ReactNode;
-    rows: AssumptionRow[];
+    items: AssumptionItem[];
   };
 
-  /* --- 10. CTA ------------------------------------------------------------ */
+  /* --- CTA ---------------------------------------------------------------- */
   cta: {
-    title: ReactNode;
-    body?: ReactNode;
+    title: string;
+    body: ReactNode;
     primary: { label: string; href: string };
-    secondary?: { label: string; href: string };
-    /** Small reassurance under the buttons. */
-    footnote?: ReactNode;
+    secondary: { label: string; href: string };
+    /** Trust line, e.g. "Metadata only · Shadow replay · No production changes". */
+    trustLine: string;
   };
 }
