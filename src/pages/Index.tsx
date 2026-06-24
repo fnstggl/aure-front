@@ -1,3 +1,4 @@
+import { Link } from "react-router-dom";
 import { cn } from "@/lib/utils";
 import { Layout } from "@/components/layout/Layout";
 import {
@@ -67,12 +68,19 @@ export default function Index() {
                 <span className="text-white/15">·</span>
                 <span><span className="text-foreground">−21%</span> GPU-hours</span>
                 <span className="text-white/15">·</span>
-                <span>public Azure traces</span>
+                <span>Azure LLM Inference Trace 2024</span>
                 <span className="text-white/15">·</span>
-                <span>SLA-safe benchmark</span>
+                <span>SLA-safe</span>
               </div>
               <p className="mt-3.5 font-mono text-[11px] text-white/26">
-                Benchmark evidence on public traces (not a guaranteed universal result).
+                Counterfactual replay on the Azure LLM Inference Trace 2024 — not a guaranteed
+                universal result.{" "}
+                <Link
+                  to="/benchmark"
+                  className="text-white/40 underline decoration-white/20 underline-offset-[3px] transition-colors duration-200 hover:text-white/70"
+                >
+                  View the benchmark
+                </Link>
               </p>
             </Reveal>
           </div>
@@ -141,7 +149,7 @@ export default function Index() {
               higher goodput per dollar
             </p>
             <p className="mt-7 font-mono text-[11px] uppercase tracking-[0.22em] text-white/32">
-              Measured on public Azure traces · SLA-safe · −21% GPU-hours
+              Counterfactual replay · Azure LLM Inference Trace 2024 · −21% GPU-hours
             </p>
           </Reveal>
         </Container>
