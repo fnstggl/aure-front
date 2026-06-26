@@ -61,9 +61,9 @@ export function ProblemSection() {
       <Container>
         <div ref={ref} className="mx-auto max-w-3xl text-center">
           <h2 className="text-balance text-[clamp(1.8rem,3.8vw,2.75rem)] font-medium leading-[1.08] tracking-[-0.025em] text-foreground md:whitespace-nowrap">
-            Your GPU fleet bleeds money.
+            Economic inefficiency compounds.
             <br />
-            <span className="text-white/50">Your scheduler wasn’t built to stop it.</span>
+            <span className="text-white/50">Small scheduling decisions accumulate into measurable differences in cost, throughput, and resource efficiency.</span>
           </h2>
           <p className="mx-auto mt-6 max-w-xl text-[15px] leading-relaxed text-white/60 md:text-[16px]">
             Most schedulers optimize for availability, fairness, and latency.
