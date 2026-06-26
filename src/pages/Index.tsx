@@ -41,51 +41,34 @@ export default function Index() {
           <Rails className="z-10" />
 
           <div className="relative z-20 flex min-h-[100dvh] flex-col">
-            <div className="flex flex-1 items-center">
-              <Grid className="w-full">
-                <div className="col-span-1 px-6 pb-12 pt-32 sm:px-8 md:col-span-10 md:pt-28 lg:px-10">
-                  <Reveal>
-                    <p className="font-mono text-[11px] uppercase tracking-[0.28em] text-white/45">
-                      Limited access
-                    </p>
-                  </Reveal>
-                  <Reveal delay={60}>
-                    <h1 className="mt-6 text-[clamp(3.2rem,10vw,7rem)] font-medium leading-[0.92] tracking-[-0.04em] text-foreground">
-                      Aurelius
-                    </h1>
-                  </Reveal>
-                  <Reveal delay={120}>
-                    <p className="mt-6 max-w-2xl text-balance text-[clamp(1.1rem,2.6vw,1.7rem)] font-medium leading-[1.15] tracking-[-0.02em] text-white/82">
-                      Constraint-aware orchestration for AI infrastructure.
-                    </p>
-                  </Reveal>
-                  <Reveal delay={180}>
-                    <p className="mt-5 max-w-xl text-[14.5px] leading-relaxed text-white/52 md:text-[15px]">
-                      Higher SLA-safe goodput per dollar — proven in shadow mode before anything
-                      reaches production.
-                    </p>
-                  </Reveal>
-                  <Reveal delay={240}>
-                    <div className="mt-9 flex flex-col gap-3 sm:flex-row">
-                      <Action to="/technical-report" variant="primary" withArrow>
-                        Read Technical Report
-                      </Action>
-                      <Action to="/contact" variant="secondary">
-                        See how much your fleet could have saved
-                      </Action>
-                    </div>
-                  </Reveal>
-                  <Reveal delay={300}>
-                    <p className="mt-6 max-w-md text-[12.5px] leading-relaxed text-white/38">
-                      We work with a small number of GPU fleet operators at a time.
-                    </p>
-                  </Reveal>
-                </div>
-              </Grid>
+            <div className="flex flex-1 items-center justify-center">
+              <div className="mx-auto max-w-3xl px-6 pb-16 pt-32 text-center sm:px-8 md:pt-28">
+                <Reveal>
+                  <h1 className="text-balance text-[clamp(2rem,5.4vw,3.7rem)] font-medium leading-[1.06] tracking-[-0.03em]">
+                    <span className="text-white/55">Every scheduling decision is an </span>
+                    <span className="text-foreground">economic decision.</span>
+                  </h1>
+                </Reveal>
+                <Reveal delay={120}>
+                  <div className="mt-10 flex flex-col items-center justify-center gap-3 sm:flex-row">
+                    <Action to="/technical-report" variant="primary" withArrow>
+                      Read Technical Report
+                    </Action>
+                    <Action to="/contact" variant="secondary">
+                      See how much your fleet could have saved
+                    </Action>
+                  </div>
+                </Reveal>
+                <Reveal delay={200}>
+                  <p className="mt-6 text-[12.5px] leading-relaxed text-white/60">
+                    We work with a small number of GPU fleet operators at a time.
+                  </p>
+                </Reveal>
+              </div>
             </div>
 
-            {/* console metrics bar — aligned to the rails */}
-            <Reveal delay={340} className="border-t border-border">
+            {/* console metrics bar — metrics kept */}
+            <Reveal delay={300} className="border-t border-border">
               <div className="grid grid-cols-1 gap-px bg-border sm:grid-cols-3">
                 <Metric value="+26%" label="SLA-safe goodput / $" />
                 <Metric value="−21%" label="GPU-hours" />

@@ -327,7 +327,7 @@
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;
-    opacity: 0.36;
+    opacity: 0.78;
     animation: hero-breathe 26s ease-in-out infinite;
   }
   /* a brighter copy revealed only through a soft moving band → per-dot shimmer */
@@ -338,7 +338,7 @@
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;
-    opacity: 0.55;
+    opacity: 0.62;
     mix-blend-mode: screen;
     -webkit-mask-image: linear-gradient(100deg, transparent 38%, #000 50%, transparent 62%);
     mask-image: linear-gradient(100deg, transparent 38%, #000 50%, transparent 62%);
@@ -355,9 +355,9 @@
     inset: 0;
     background:
       /* black vignette framing the edges */
-      radial-gradient(130% 130% at 50% 50%, transparent 40%, hsl(0 0% 0% / 0.6) 76%, hsl(0 0% 0%) 100%),
-      radial-gradient(125% 95% at 50% 44%, transparent 46%, hsl(0 0% 2% / 0.66) 98%),
-      radial-gradient(48% 36% at 50% 45%, hsl(0 0% 2% / 0.62), hsl(0 0% 2% / 0.18) 60%, transparent 78%);
+      radial-gradient(140% 140% at 50% 50%, transparent 32%, hsl(0 0% 0% / 0.74) 72%, hsl(0 0% 0%) 100%),
+      /* soft central scrim so the centered headline stays legible over the brighter image */
+      radial-gradient(66% 46% at 50% 47%, hsl(0 0% 0% / 0.5), transparent 72%);
   }
 }
 
