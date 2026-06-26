@@ -93,11 +93,9 @@ export function QueueShiftDiagram({ fig = "fig.02", title = "economic scheduling
 
         {/* ---- cost (y) axis ---- */}
         <line x1={PX0} y1={TOP - 8} x2={PX0} y2={BASE} stroke={C.rail} strokeWidth="1" />
+        {/* y-axis value labels only — gridlines removed to reduce clutter */}
         {[0.5, 0.8, 1.1].map((c) => (
-          <g key={c}>
-            <line x1={PX0 - 4} y1={cy(c)} x2={PX1} y2={cy(c)} stroke="#ffffff" strokeWidth="1" />
-            <Annotation x={PX0 - 12} y={cy(c) + 3.5} anchor="end" state="dim" size={10}>{c.toFixed(2)}</Annotation>
-          </g>
+          <Annotation key={c} x={PX0 - 12} y={cy(c) + 3.5} anchor="end" state="dim" size={10}>{c.toFixed(2)}</Annotation>
         ))}
         <Annotation x={PX0 - 12} y={TOP + 2} anchor="end" state="dim" size={9.5} track={0.4}>$/GPU·h</Annotation>
 

@@ -78,9 +78,9 @@ export default function HowItWorks() {
               title="When the two conflict, safety wins"
             />
           </Reveal>
-          <div className="mt-10 grid gap-px overflow-hidden rounded-md border border-border bg-border md:grid-cols-2">
-            <Reveal className="bg-card p-6">
-              <div className="mb-4 font-mono text-[11px] uppercase tracking-[0.16em] text-white/50">
+          <div className="mt-10 grid overflow-hidden rounded-md border border-white bg-black md:grid-cols-2">
+            <Reveal className="bg-black p-6">
+              <div className="mb-4 font-mono text-[11px] uppercase tracking-[0.16em] text-white">
                 Optimization
               </div>
               <ul className="space-y-2.5">
@@ -90,15 +90,15 @@ export default function HowItWorks() {
                   "Ranks options by expected savings",
                   "Respects resource constraints",
                 ].map((t) => (
-                  <li key={t} className="flex items-center gap-3 text-[13.5px] text-white/62">
-                    <span className="inline-block h-1 w-1 shrink-0 bg-white/30" aria-hidden />
+                  <li key={t} className="flex items-center gap-3 text-[13.5px] text-white">
+                    <span className="inline-block h-1 w-1 shrink-0 bg-white" aria-hidden />
                     {t}
                   </li>
                 ))}
               </ul>
             </Reveal>
-            <Reveal delay={120} className="bg-card p-6">
-              <div className="mb-4 font-mono text-[11px] uppercase tracking-[0.16em] text-steel">
+            <Reveal delay={120} className="bg-black p-6 border-t border-white md:border-l md:border-t-0">
+              <div className="mb-4 font-mono text-[11px] uppercase tracking-[0.16em] text-white">
                 Safety
               </div>
               <ul className="space-y-2.5">
@@ -108,8 +108,8 @@ export default function HowItWorks() {
                   "Deterministic fallback",
                   "Conservative defaults",
                 ].map((t) => (
-                  <li key={t} className="flex items-center gap-3 text-[13.5px] text-white/62">
-                    <span className="inline-block h-1 w-1 shrink-0 bg-signal" aria-hidden />
+                  <li key={t} className="flex items-center gap-3 text-[13.5px] text-white">
+                    <span className="inline-block h-1 w-1 shrink-0 bg-white" aria-hidden />
                     {t}
                   </li>
                 ))}
@@ -133,7 +133,7 @@ export default function HowItWorks() {
             />
           </Reveal>
           <Reveal delay={140}>
-            <p className="mt-8 max-w-2xl border-l border-signal/40 pl-5 text-[14px] leading-relaxed text-white/55">
+            <p className="mt-8 max-w-2xl border-l border-white pl-5 text-[14px] leading-relaxed text-white">
               Most savings come from time-shifting batch and training workloads away from peak
               pricing windows — not from throttling or resource reduction.
             </p>

@@ -50,10 +50,15 @@ export function ControlLoopDiagram({ fig = "fig.03", title = "control loop" }: {
         />
 
         {/* return arc — the loop closes back to observe */}
-        <path d={RETURN} fill="none" stroke={C.rail} strokeWidth="1.2" strokeDasharray="3 6" />
-        {!reduced && inView && (
-          <path d={RETURN} fill="none" stroke={C.steelLine} strokeWidth="1.2" strokeDasharray="3 9" className="flow-dash" />
-        )}
+        {/* single return arc — flows when in view, static dashed otherwise */}
+        <path
+          d={RETURN}
+          fill="none"
+          stroke={C.steelLine}
+          strokeWidth="1.2"
+          strokeDasharray="3 6"
+          className={!reduced && inView ? "flow-dash" : undefined}
+        />
         <path
           d={`M${CX[0] - 5} ${RB + 12} L${CX[0]} ${RB + 2} L${CX[0] + 5} ${RB + 12}`}
           fill="none"

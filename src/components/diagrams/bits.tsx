@@ -103,10 +103,10 @@ export function StatusTag({
   className?: string;
 }) {
   const styles: Record<GateState, string> = {
-    pass: "border-signal/35 text-steel/85",
-    gold: "border-signal/55 bg-signal/10 text-steel",
+    pass: "border-white text-white",
+    gold: "border-white text-white",
     fail: "border-destructive/50 text-destructive",
-    idle: "border-border text-white/40",
+    idle: "border-white text-white",
   };
   return (
     <span
@@ -144,8 +144,8 @@ function Glyph({ state }: { state: GateState }) {
 export function KV({ k, v, vClass }: { k: string; v: string; vClass?: string }) {
   return (
     <div className="flex items-center justify-between gap-4 font-mono text-[11px]">
-      <span className="text-white/40">{k}</span>
-      <span className={cn("tabular-nums text-white/68", vClass)}>{v}</span>
+      <span className="text-white">{k}</span>
+      <span className={cn("tabular-nums text-white", vClass)}>{v}</span>
     </div>
   );
 }

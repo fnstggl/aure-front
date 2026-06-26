@@ -56,13 +56,13 @@ export default function ShadowAudit() {
               intro="Zero risk to your production environment. The output is a structured report designed for infrastructure teams."
             />
           </Reveal>
-          <ul className="mt-10 divide-y divide-border border-y border-border">
+          <ul className="mt-10 divide-y divide-white border-y border-white">
             {whatYouSee.map((item, i) => (
               <Reveal as="li" key={item.k} delay={i * 60} className="flex flex-col gap-1 py-4 sm:flex-row sm:items-center sm:justify-between">
                 <span className="font-mono text-[12px] uppercase tracking-[0.1em] text-foreground">
                   {item.k}
                 </span>
-                <span className="text-[13.5px] text-white/55">{item.v}</span>
+                <span className="text-[13.5px] text-white">{item.v}</span>
               </Reveal>
             ))}
           </ul>
@@ -84,15 +84,15 @@ export default function ShadowAudit() {
             </div>
             <div className="lg:col-span-7">
               <Reveal delay={140}>
-                <div className="rounded-md border border-border bg-card p-6">
-                  <div className="mb-4 flex items-center gap-2 font-mono text-[11px] uppercase tracking-[0.16em] text-white/50">
-                    <span className="inline-block h-1.5 w-1.5 rounded-full bg-signal anim-breathe" aria-hidden />
+                <div className="rounded-md border border-white bg-black p-6">
+                  <div className="mb-4 flex items-center gap-2 font-mono text-[11px] uppercase tracking-[0.16em] text-white">
+                    <span className="inline-block h-1.5 w-1.5 rounded-full bg-white anim-breathe" aria-hidden />
                     counterfactual report
                   </div>
                   <div className="space-y-2.5">
-                    <KV k="energy delta" v="−12.4%" vClass="text-steel" />
-                    <KV k="cost delta" v="−$4,280 / mo" vClass="text-steel" />
-                    <KV k="carbon delta" v="−8.2 tCO₂e / mo" vClass="text-steel" />
+                    <KV k="energy delta" v="−12.4%" vClass="text-white" />
+                    <KV k="cost delta" v="−$4,280 / mo" vClass="text-white" />
+                    <KV k="carbon delta" v="−8.2 tCO₂e / mo" vClass="text-white" />
                     <KV k="latency impact" v="none" />
                   </div>
                 </div>
