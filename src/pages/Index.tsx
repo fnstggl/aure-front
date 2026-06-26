@@ -45,7 +45,7 @@ export default function Index() {
                 <div className="col-span-1 px-6 pb-12 pt-32 sm:px-8 md:col-span-10 md:pt-28 lg:px-10">
                   <Reveal>
                     <p className="font-mono text-[11px] uppercase tracking-[0.28em] text-white/45">
-                      By invitation · MMXXVI
+                      Limited access
                     </p>
                   </Reveal>
                   <Reveal delay={60}>

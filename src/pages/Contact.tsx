@@ -28,7 +28,7 @@ const contactSchema = z.object({
 type ContactFormValues = z.infer<typeof contactSchema>;
 
 const inputClass =
-  "bg-card rounded-none border-input text-foreground placeholder:text-white/30 focus-visible:ring-signal/40 focus-visible:border-signal/40";
+  "bg-black rounded-none border-white text-white placeholder:text-white/40 focus-visible:ring-white/40 focus-visible:border-white";
 
 export default function Contact() {
   const { toast } = useToast();
@@ -98,7 +98,7 @@ export default function Contact() {
                 <ul className="mt-8 space-y-2.5">
                   {["Metadata only", "Read-only shadow mode", "Counterfactual savings report"].map((t) => (
                     <li key={t} className="flex items-center gap-3 font-mono text-[12px] text-white/55">
-                      <span className="inline-block h-1 w-1 shrink-0 bg-signal" aria-hidden />
+                      <span className="inline-block h-1 w-1 shrink-0 bg-white" aria-hidden />
                       {t}
                     </li>
                   ))}
@@ -109,7 +109,7 @@ export default function Contact() {
             {/* Form column */}
             <div className="lg:col-span-7">
               <Reveal delay={160}>
-                <div className="border border-border bg-card p-6 md:p-8">
+                <div className="border border-white bg-black p-6 md:p-8">
                   <Form {...form}>
                     <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-5">
                       <div className="grid gap-5 sm:grid-cols-2">
@@ -118,7 +118,7 @@ export default function Contact() {
                           name="name"
                           render={({ field }) => (
                             <FormItem>
-                              <FormLabel className="font-mono text-[11px] uppercase tracking-[0.1em] text-white/62">
+                              <FormLabel className="font-mono text-[11px] uppercase tracking-[0.1em] text-white">
                                 Name
                               </FormLabel>
                               <FormControl>
@@ -133,7 +133,7 @@ export default function Contact() {
                           name="email"
                           render={({ field }) => (
                             <FormItem>
-                              <FormLabel className="font-mono text-[11px] uppercase tracking-[0.1em] text-white/62">
+                              <FormLabel className="font-mono text-[11px] uppercase tracking-[0.1em] text-white">
                                 Email
                               </FormLabel>
                               <FormControl>
@@ -151,7 +151,7 @@ export default function Contact() {
                           name="organization"
                           render={({ field }) => (
                             <FormItem>
-                              <FormLabel className="font-mono text-[11px] uppercase tracking-[0.1em] text-white/62">
+                              <FormLabel className="font-mono text-[11px] uppercase tracking-[0.1em] text-white">
                                 Organization
                               </FormLabel>
                               <FormControl>
@@ -166,7 +166,7 @@ export default function Contact() {
                           name="role"
                           render={({ field }) => (
                             <FormItem>
-                              <FormLabel className="font-mono text-[11px] uppercase tracking-[0.1em] text-white/62">
+                              <FormLabel className="font-mono text-[11px] uppercase tracking-[0.1em] text-white">
                                 Role
                               </FormLabel>
                               <FormControl>
@@ -183,7 +183,7 @@ export default function Contact() {
                         name="compute_environment"
                         render={({ field }) => (
                           <FormItem>
-                            <FormLabel className="font-mono text-[11px] uppercase tracking-[0.1em] text-white/62">
+                            <FormLabel className="font-mono text-[11px] uppercase tracking-[0.1em] text-white">
                               Compute environment
                             </FormLabel>
                             <FormControl>
@@ -193,7 +193,7 @@ export default function Contact() {
                                 {...field}
                               />
                             </FormControl>
-                            <p className="font-mono text-[11px] text-white/30">
+                            <p className="font-mono text-[11px] text-white/45">
                               Metadata only — never share secrets or customer data.
                             </p>
                             <FormMessage />
