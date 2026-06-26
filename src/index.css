@@ -323,7 +323,7 @@
   .hero-field {
     position: absolute;
     inset: 0;
-    background-image: url("/hero_background.png");
+    background-image: url("/datacenter_back.png");
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;
@@ -334,7 +334,7 @@
   .hero-field-shimmer {
     position: absolute;
     inset: 0;
-    background-image: url("/hero_background.png");
+    background-image: url("/datacenter_back.png");
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;
@@ -354,6 +354,8 @@
     position: absolute;
     inset: 0;
     background:
+      /* black vignette framing the edges */
+      radial-gradient(130% 130% at 50% 50%, transparent 40%, hsl(0 0% 0% / 0.6) 76%, hsl(0 0% 0%) 100%),
       radial-gradient(125% 95% at 50% 44%, transparent 46%, hsl(0 0% 2% / 0.66) 98%),
       radial-gradient(48% 36% at 50% 45%, hsl(0 0% 2% / 0.62), hsl(0 0% 2% / 0.18) 60%, transparent 78%);
   }
