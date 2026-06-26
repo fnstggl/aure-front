@@ -44,12 +44,12 @@ export default function Index() {
               <Grid className="w-full">
                 <div className="col-span-1 px-6 pb-12 pt-32 sm:px-8 md:col-span-10 md:pt-28 lg:px-10">
                   <Reveal>
-                    <p className="font-mono text-[11px] uppercase tracking-[0.28em] text-white/40">
-                      Research preview · v0.1
+                    <p className="font-mono text-[11px] uppercase tracking-[0.28em] text-white/45">
+                      By invitation · MMXXVI
                     </p>
                   </Reveal>
                   <Reveal delay={60}>
-                    <h1 className="mt-5 text-[clamp(2.4rem,5.4vw,3.9rem)] font-medium leading-[1.0] tracking-[-0.03em] text-foreground">
+                    <h1 className="mt-6 text-[clamp(3.2rem,10vw,7rem)] font-medium leading-[0.92] tracking-[-0.04em] text-foreground">
                       Aurelius
                     </h1>
                   </Reveal>
@@ -76,7 +76,7 @@ export default function Index() {
                   </Reveal>
                   <Reveal delay={300}>
                     <p className="mt-6 max-w-md text-[12.5px] leading-relaxed text-white/38">
-                      By request. Access is limited during the research preview.
+                      We work with a small number of GPU fleet operators at a time.
                     </p>
                   </Reveal>
                 </div>
@@ -86,7 +86,7 @@ export default function Index() {
             {/* console metrics bar — aligned to the rails */}
             <Reveal delay={340} className="border-t border-border">
               <div className="grid grid-cols-1 gap-px bg-border sm:grid-cols-3">
-                <Metric value="+26%" label="SLA-safe goodput / $" gold />
+                <Metric value="+26%" label="SLA-safe goodput / $" />
                 <Metric value="−21%" label="GPU-hours" />
                 <Console title="Evidence" body="Backtested on public production traces" />
               </div>
@@ -143,7 +143,7 @@ export default function Index() {
                 <ul className="mt-8 grid gap-y-3">
                   {VALIDATION.map((item) => (
                     <li key={item} className="flex items-center gap-3 font-mono text-[12.5px] text-white/62">
-                      <span className="inline-block h-px w-4 shrink-0 bg-gold/55" aria-hidden />
+                      <span className="inline-block h-px w-4 shrink-0 bg-white/45" aria-hidden />
                       {item}
                     </li>
                   ))}
@@ -176,7 +176,7 @@ export default function Index() {
                   {EVAL_STEPS.map((step, i) => (
                     <div key={step} className="flex items-center gap-4">
                       <div className="flex items-baseline gap-2.5">
-                        <span className="font-mono text-[11px] tabular-nums text-gold/70">
+                        <span className="font-mono text-[11px] tabular-nums text-white/55">
                           {String(i + 1).padStart(2, "0")}
                         </span>
                         <span className="font-mono text-[12px] uppercase tracking-[0.14em] text-white/72">
@@ -233,14 +233,10 @@ export default function Index() {
 }
 
 /* A single console metric — large mono value over a quiet label. */
-function Metric({ value, label, gold = false }: { value: string; label: string; gold?: boolean }) {
+function Metric({ value, label }: { value: string; label: string }) {
   return (
     <div className="bg-background px-6 py-6 sm:px-8 lg:px-10">
-      <div
-        className={`font-mono text-[clamp(1.7rem,3.4vw,2.4rem)] leading-none tracking-tight tabular-nums ${
-          gold ? "text-gold" : "text-foreground"
-        }`}
-      >
+      <div className="font-mono text-[clamp(1.7rem,3.4vw,2.4rem)] leading-none tracking-tight tabular-nums text-foreground">
         {value}
       </div>
       <div className="mt-3 text-[12.5px] tracking-tight text-white/48">{label}</div>

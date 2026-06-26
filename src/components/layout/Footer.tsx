@@ -41,7 +41,7 @@ export function Footer() {
           <span className="font-mono text-[11px] text-white/28">© {new Date().getFullYear()} Aurelius</span>
           <span className="flex items-center gap-2 font-mono text-[10.5px] uppercase tracking-[0.16em] text-white/30">
             <span className="inline-block h-1 w-1 bg-white/30" aria-hidden />
-            Research preview · v0.1 · {new Date().getFullYear()}
+            Festina lente · make haste slowly
           </span>
         </div>
       </div>

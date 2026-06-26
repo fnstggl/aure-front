@@ -32,7 +32,7 @@ export function PageFrame({
 }
 
 function CornerTick({ className }: { className?: string }) {
-  return <span aria-hidden className={cn("absolute z-30 h-2.5 w-2.5 border-gold/40", className)} />;
+  return <span aria-hidden className={cn("absolute z-30 h-2.5 w-2.5 border-white/25", className)} />;
 }
 
 /* Rails — three continuous interior hairlines at 25 / 50 / 75 %. Rendered per
@@ -95,7 +95,7 @@ export function Kicker({
         className,
       )}
     >
-      {index && <span className="tabular-nums text-gold/75">{index}</span>}
+      {index && <span className="tabular-nums text-white/70">{index}</span>}
       <span className="h-px w-6 bg-white/16" aria-hidden />
       <span>{children}</span>
     </div>
@@ -105,7 +105,7 @@ export function Kicker({
 /* Action — the single button style for the redesigned surfaces. Sharp corners,
    restrained. Primary = solid; secondary = hairline ghost with a gold hover. */
 const actionBase =
-  "group inline-flex h-11 items-center justify-center gap-2 px-6 text-[13.5px] font-medium tracking-tight transition-all duration-200 ease-premium active:translate-y-px focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-gold/50";
+  "group inline-flex h-11 items-center justify-center gap-2 px-6 text-[13.5px] font-medium tracking-tight transition-all duration-200 ease-premium active:translate-y-px focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-white/40";
 
 export function Action({
   to,
@@ -126,7 +126,7 @@ export function Action({
   const styles =
     variant === "primary"
       ? "bg-foreground text-background hover:bg-white"
-      : "border border-border-strong bg-transparent text-foreground hover:border-gold/45 hover:bg-white/[0.025]";
+      : "border border-border-strong bg-transparent text-foreground hover:border-white/45 hover:bg-white/[0.04]";
 
   const content = (
     <>

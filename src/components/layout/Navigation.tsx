@@ -20,7 +20,7 @@ export function Navigation() {
           </Link>
           <Link
             to="/contact"
-            className="inline-flex h-9 items-center border border-border-strong px-4 text-[13px] tracking-tight text-foreground/90 transition-all duration-200 ease-premium hover:border-gold/45 hover:text-foreground active:translate-y-px"
+            className="inline-flex h-9 items-center border border-border-strong px-4 text-[13px] tracking-tight text-foreground/90 transition-all duration-200 ease-premium hover:border-white/45 hover:text-foreground active:translate-y-px"
           >
             Request access
           </Link>

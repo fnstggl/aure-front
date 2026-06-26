@@ -82,7 +82,7 @@ export default function TechnicalReport() {
                           href={`#${s.id}`}
                           className="group flex items-baseline gap-3 text-[12.5px] tracking-tight text-white/50 transition-colors hover:text-white/90"
                         >
-                          <span className="font-mono text-[10.5px] tabular-nums text-white/28 group-hover:text-gold/70">
+                          <span className="font-mono text-[10.5px] tabular-nums text-white/28 group-hover:text-white">
                             {s.n}
                           </span>
                           {s.title}
@@ -188,7 +188,7 @@ export default function TechnicalReport() {
                     "Deterministic fallback",
                   ].map((item) => (
                     <li key={item} className="flex items-center gap-3 font-mono text-[12.5px] text-white/62">
-                      <span className="inline-block h-px w-4 shrink-0 bg-gold/55" aria-hidden />
+                      <span className="inline-block h-px w-4 shrink-0 bg-white/45" aria-hidden />
                       {item}
                     </li>
                   ))}
@@ -260,7 +260,7 @@ function Sec({
   return (
     <section id={id} className="scroll-mt-24 border-t border-border py-12 first:border-t-0 first:pt-0 md:py-14">
       <div className="mb-7 flex items-baseline gap-4">
-        <span className="font-mono text-[12px] tabular-nums text-gold/70">{n}</span>
+        <span className="font-mono text-[12px] tabular-nums text-white/70">{n}</span>
         <h2 className="text-[clamp(1.3rem,2.6vw,1.8rem)] font-medium tracking-[-0.02em] text-foreground">
           {title}
         </h2>

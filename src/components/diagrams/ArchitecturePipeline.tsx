@@ -2,105 +2,122 @@ import { cn } from "@/lib/utils";
 import { PlateHeader, CaptionStrip } from "./plate";
 
 /* ============================================================================
-   fig.01 — the one architecture diagram.
+   fig.01 — the evaluation pipeline, drawn as a 1-bit instrument.
 
-   The evaluation pipeline, top to bottom: operator telemetry → offline replay
-   → shadow mode → savings report → controlled rollout. Outline-only stations,
-   sharp corners, monospace labels. Antique gold marks only the committed path
-   (the final, reversible rollout) — the single place color earns its place.
-   No motion: a systems-paper figure, not an animation.
+   Pure black plate, pure white ink — no gray, no gold. A single spine carries
+   five stages top to bottom. A brace marks the read-only phase (≤ 03); a tick
+   marks the constraint gate; the committed stage (05) is the one filled node,
+   on a heavier spine. Hierarchy is weight and fill, never value. No motion.
    ============================================================================ */
 
-type Stage = {
-  n: string;
-  title: string;
-  sub: string;
-  tag?: string;
-  committed?: boolean;
-};
+const W = "#ffffff";
+const SX = 88; // spine x
+const Y = [56, 143, 230, 317, 404]; // stage centers
 
-const STAGES: Stage[] = [
-  { n: "01", title: "Operator telemetry", sub: "Scheduler metadata in — no payloads, no model outputs", tag: "ingest" },
-  { n: "02", title: "Offline replay", sub: "Historical production traces, deterministic", tag: "offline" },
-  { n: "03", title: "Shadow mode", sub: "Read-only, alongside the live scheduler", tag: "read-only" },
-  { n: "04", title: "Savings report", sub: "Audited counterfactual: goodput/$, GPU-hours", tag: "report" },
-  { n: "05", title: "Controlled rollout", sub: "Gradual, reversible, constraint-gated", tag: "committed", committed: true },
+const STAGES = [
+  { n: "01", t: "Operator telemetry", s: "scheduler metadata · no payloads" },
+  { n: "02", t: "Offline replay", s: "historical production traces" },
+  { n: "03", t: "Shadow mode", s: "read-only · alongside live" },
+  { n: "04", t: "Savings report", s: "audited counterfactual" },
+  { n: "05", t: "Controlled rollout", s: "gradual · reversible", committed: true },
 ];
-
-function Chevron({ gold }: { gold?: boolean }) {
-  return (
-    <svg
-      width="9"
-      height="9"
-      viewBox="0 0 9 9"
-      fill="none"
-      aria-hidden
-      className={cn("absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2", gold ? "text-gold/70" : "text-white/30")}
-    >
-      <path d="M1.5 3L4.5 6L7.5 3" stroke="currentColor" strokeWidth="1.2" strokeLinecap="square" strokeLinejoin="miter" />
-    </svg>
-  );
-}
 
 export function ArchitecturePipeline({ className }: { className?: string }) {
   return (
-    <figure className={cn("relative overflow-hidden border border-strong bg-card", className)}>
+    <figure className={cn("relative overflow-hidden border border-white bg-black", className)}>
       <PlateHeader fig="fig.01" title="evaluation pipeline" />
       <div className="relative">
-        <div className="diagram-grid pointer-events-none absolute inset-0" aria-hidden />
-        <ol className="relative mx-auto flex w-full max-w-[460px] flex-col px-5 py-9 sm:px-7 md:py-11">
-          {STAGES.map((s, i) => {
-            const nextCommitted = STAGES[i + 1]?.committed;
+        <svg
+          viewBox="0 0 580 452"
+          className="relative block w-full"
+          role="img"
+          aria-label="Evaluation pipeline: operator telemetry, offline replay, shadow mode, savings report, controlled rollout. Stages one through three are read-only; a constraint gate precedes the committed rollout."
+        >
+          {/* spine */}
+          <line x1={SX} y1={Y[0]} x2={SX} y2={Y[4]} stroke={W} strokeWidth={1.2} />
+          {/* committed segment (04 → 05) — heavier */}
+          <line x1={SX} y1={Y[3]} x2={SX} y2={Y[4]} stroke={W} strokeWidth={2.4} />
+
+          {/* read-only brace over 01–03 */}
+          <path d={`M58 ${Y[0]} H50 V${Y[2]} H58`} stroke={W} strokeWidth={1.2} fill="none" />
+          <text
+            x={44}
+            y={(Y[0] + Y[2]) / 2}
+            fontSize={10.5}
+            letterSpacing="0.2em"
+            fill={W}
+            className="font-mono"
+            transform={`rotate(-90 44 ${(Y[0] + Y[2]) / 2})`}
+            textAnchor="middle"
+          >
+            READ-ONLY
+          </text>
+
+          {/* constraint gate tick between 04 and 05 */}
+          <line x1={SX - 12} y1={360} x2={SX + 12} y2={360} stroke={W} strokeWidth={1.6} />
+          <text x={SX + 150} y={356} fontSize={10.5} letterSpacing="0.16em" fill={W} className="font-mono">
+            CONSTRAINT GATE
+          </text>
+          <text x={SX + 150} y={371} fontSize={10.5} letterSpacing="0.04em" fill={W} className="font-mono">
+            unsafe candidates rejected
+          </text>
+
+          {/* stage chevrons */}
+          {[0, 1, 2, 3].map((i) => {
+            const my = (Y[i] + Y[i + 1]) / 2;
             return (
-              <li key={s.n}>
-                <div
-                  className={cn(
-                    "relative flex items-start gap-4 border px-4 py-3.5",
-                    s.committed ? "border-gold/45" : "border-white/12",
-                  )}
-                >
-                  {/* left registration tick */}
-                  <span
-                    aria-hidden
-                    className={cn("absolute -left-px top-3.5 h-3 w-px", s.committed ? "bg-gold/70" : "bg-white/30")}
-                  />
-                  <span
-                    className={cn(
-                      "mt-px font-mono text-[11px] tabular-nums leading-none",
-                      s.committed ? "text-gold/90" : "text-white/35",
-                    )}
-                  >
-                    {s.n}
-                  </span>
-                  <div className="min-w-0">
-                    <div
-                      className={cn(
-                        "font-mono text-[11.5px] uppercase leading-none tracking-[0.16em]",
-                        s.committed ? "text-gold" : "text-white/88",
-                      )}
-                    >
-                      {s.title}
-                    </div>
-                    <div className="mt-2 text-[12.5px] leading-snug text-white/46">{s.sub}</div>
-                  </div>
-                  {s.tag && (
-                    <span className="ml-auto hidden self-center whitespace-nowrap font-mono text-[9.5px] uppercase tracking-[0.18em] text-white/22 sm:inline">
-                      {s.tag}
-                    </span>
-                  )}
-                </div>
-                {i < STAGES.length - 1 && (
-                  <div className="relative flex h-8 items-center justify-center" aria-hidden>
-                    <span className={cn("block h-full w-px", nextCommitted ? "bg-gold/40" : "bg-white/14")} />
-                    <Chevron gold={nextCommitted} />
-                  </div>
-                )}
-              </li>
+              <path
+                key={i}
+                d={`M${SX - 4} ${my - 3} L${SX} ${my + 1} L${SX + 4} ${my - 3}`}
+                fill="none"
+                stroke={W}
+                strokeWidth={i === 3 ? 1.6 : 1.1}
+                strokeLinecap="square"
+              />
             );
           })}
-        </ol>
+
+          {/* nodes + labels */}
+          {STAGES.map((st, i) => {
+            const committed = !!st.committed;
+            return (
+              <g key={st.n}>
+                <rect
+                  x={SX - 5.5}
+                  y={Y[i] - 5.5}
+                  width={11}
+                  height={11}
+                  fill={committed ? W : "none"}
+                  stroke={W}
+                  strokeWidth={committed ? 2 : 1.3}
+                />
+                <text x={SX + 22} y={Y[i] - 2} fontSize={12} letterSpacing="0.08em" fill={W} className="font-mono">
+                  {st.n}
+                </text>
+                <text x={SX + 52} y={Y[i] - 2} fontSize={12.5} letterSpacing="0.14em" fill={W} className="font-mono">
+                  {st.t.toUpperCase()}
+                </text>
+                <text x={SX + 52} y={Y[i] + 14} fontSize={11.5} letterSpacing="0.02em" fill={W} className="font-mono">
+                  {st.s}
+                </text>
+              </g>
+            );
+          })}
+
+          {/* legend */}
+          <g transform="translate(88 438)">
+            <rect x={0} y={-7} width={9} height={9} fill={W} stroke={W} strokeWidth={1.3} />
+            <text x={16} y={1} fontSize={10} letterSpacing="0.12em" fill={W} className="font-mono">
+              COMMITTED
+            </text>
+            <rect x={118} y={-7} width={9} height={9} fill="none" stroke={W} strokeWidth={1.3} />
+            <text x={134} y={1} fontSize={10} letterSpacing="0.12em" fill={W} className="font-mono">
+              STAGE
+            </text>
+          </g>
+        </svg>
       </div>
-      <CaptionStrip label="telemetry → replay → shadow → savings → rollout" />
+      <CaptionStrip label="fig.01 — telemetry → replay → shadow → savings → rollout" />
     </figure>
   );
 }

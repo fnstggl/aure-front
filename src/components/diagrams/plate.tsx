@@ -14,38 +14,37 @@ import { cn } from "@/lib/utils";
    ============================================================================ */
 
 export const C = {
-  /* monochrome line system — lifted for legibility on near-black plates */
-  line: "hsl(0 0% 100% / 0.66)",
-  lineDim: "hsl(0 0% 100% / 0.44)",
-  lineFaint: "hsl(0 0% 100% / 0.22)",
-  rail: "hsl(0 0% 100% / 0.34)",
-  hair: "hsl(0 0% 100% / 0.14)",
-  faint: "hsl(0 0% 100% / 0.4)",
-  dim: "hsl(0 0% 100% / 0.56)",
-  label: "hsl(0 0% 100% / 0.74)",
-  text: "hsl(0 0% 100% / 0.88)",
-  white: "hsl(0 0% 99%)",
+  /* 1-bit schematic — pure black plate, pure white ink. No gray, no gold.
+     Hierarchy is carried by line weight, fill, and spacing — never by value.
+     Reads like an oscilloscope trace or a plotter printout, not a UI. */
+  line: "#ffffff",
+  lineDim: "#ffffff",
+  lineFaint: "#ffffff",
+  rail: "#ffffff",
+  hair: "#ffffff",
+  faint: "#ffffff",
+  dim: "#ffffff",
+  label: "#ffffff",
+  text: "#ffffff",
+  white: "#ffffff",
 
-  /* "selected / active" == bright white. Fills are none (outline only). */
   steelFill: "none",
   steelFillSoft: "none",
-  steelLine: "hsl(0 0% 100% / 0.9)",
-  steelStrong: "hsl(0 0% 100%)",
-  steelText: "hsl(0 0% 100%)",
+  steelLine: "#ffffff",
+  steelStrong: "#ffffff",
+  steelText: "#ffffff",
 
-  /* red — error / rejected / blocked */
-  red: "hsl(2 62% 58%)",
+  red: "#ffffff",
   redSoft: "none",
-  redLine: "hsl(2 60% 56%)",
+  redLine: "#ffffff",
 
-  /* legacy structural aliases — all fills collapse to none */
   surface: "none",
-  surfaceStroke: "hsl(0 0% 100% / 0.44)",
+  surfaceStroke: "#ffffff",
   surfaceDim: "none",
   plane: "none",
-  planeStroke: "hsl(0 0% 100% / 0.28)",
-  grid: "hsl(0 0% 100% / 0.14)",
-  gridStrong: "hsl(0 0% 100% / 0.26)",
+  planeStroke: "#ffffff",
+  grid: "#ffffff",
+  gridStrong: "#ffffff",
 } as const;
 
 export const EASE = [0.16, 1, 0.3, 1] as const;
@@ -80,7 +79,7 @@ export function TopologyPlate({
 }) {
   const [w, h] = vb;
   return (
-    <figure className={cn("relative overflow-hidden border border-strong bg-card", className)}>
+    <figure className={cn("relative overflow-hidden border border-white bg-black", className)}>
       <PlateHeader fig={fig} title={title ?? caption} />
       <div className="relative overflow-x-auto">
         {/* On desktop (md+) the SVG holds its authored min-width and the row
@@ -118,16 +117,16 @@ export function TopologyPlate({
    makes each diagram read as an authored technical figure. */
 export function PlateHeader({ fig, title }: { fig: string; title: string }) {
   return (
-    <div className="flex items-center justify-between gap-3 border-b border-border bg-white/[0.015] px-4 py-2.5">
+    <div className="flex items-center justify-between gap-3 border-b border-white bg-black px-4 py-2.5">
       <div className="flex items-center gap-3">
-        <span className="border border-border-strong px-1.5 py-0.5 font-mono text-[10px] tabular-nums leading-none tracking-[0.14em] text-white/60">
+        <span className="border border-white px-1.5 py-0.5 font-mono text-[10px] tabular-nums leading-none tracking-[0.14em] text-white">
           {fig.toUpperCase()}
         </span>
-        <span className="font-mono text-[10.5px] uppercase leading-none tracking-[0.2em] text-white/62">
+        <span className="font-mono text-[10.5px] uppercase leading-none tracking-[0.2em] text-white">
           {title}
         </span>
       </div>
-      <span className="hidden font-mono text-[10px] uppercase leading-none tracking-[0.18em] text-white/24 sm:inline">
+      <span className="hidden font-mono text-[10px] uppercase leading-none tracking-[0.18em] text-white sm:inline">
         schematic
       </span>
     </div>
@@ -136,12 +135,12 @@ export function PlateHeader({ fig, title }: { fig: string; title: string }) {
 
 export function CaptionStrip({ label }: { label: string }) {
   return (
-    <figcaption className="flex items-center justify-between gap-2.5 border-t border-border px-4 py-2.5 font-mono text-[10.5px] uppercase tracking-[0.2em] text-white/42">
+    <figcaption className="flex items-center justify-between gap-2.5 border-t border-white px-4 py-2.5 font-mono text-[10.5px] uppercase tracking-[0.2em] text-white">
       <span className="flex items-center gap-2.5">
-        <span className="h-px w-4 bg-white/40" aria-hidden />
+        <span className="h-px w-4 bg-white" aria-hidden />
         {label}
       </span>
-      <span className="hidden tabular-nums text-white/22 sm:inline">metadata_only</span>
+      <span className="hidden tabular-nums text-white sm:inline">metadata_only</span>
     </figcaption>
   );
 }
