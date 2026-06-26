@@ -41,16 +41,16 @@ const oT: O = { ox: OX, oy: 95 }; // scheduler
 const oM: O = { ox: OX, oy: 366 }; // aurelius (largest)
 const oB: O = { ox: OX, oy: 686 }; // gpu execution
 
-/* ---- palette ------------------------------------------------------------- */
-const BG = "#080808";
-const INK = "#e8e8e8"; // primary stroke
-const INK2 = "rgba(232,232,232,0.46)"; // secondary edges
-const INK3 = "rgba(232,232,232,0.22)"; // faint detail
-const F_TOP = "#101010"; // top face (occlusion — near-black, necessary for 3D)
-const F_R = "#0b0b0b"; // right face
-const F_L = "#070707"; // left face
-const STEEL = "#ededed"; // metadata / advisory — white
-const STEEL_DIM = "rgba(237,237,237,0.5)";
+/* ---- palette — pure monochrome: #000000 black, #FFFFFF white, red only ---- */
+const BG = "#000000";
+const INK = "#ffffff"; // primary stroke
+const INK2 = "#ffffff"; // secondary edges
+const INK3 = "#ffffff"; // faint detail
+const F_TOP = "#000000"; // top face (opaque black occlusion for 3D)
+const F_R = "#000000"; // right face
+const F_L = "#000000"; // left face
+const STEEL = "#ffffff"; // metadata / advisory — white
+const STEEL_DIM = "#ffffff";
 const RED = "#c24d49"; // blocked payload only
 const RED_DIM = "rgba(194,77,73,0.62)";
 
@@ -131,7 +131,7 @@ function schedulerStack(o: O) {
   return (
     <g>
       {cards.map((z, i) => (
-        <Fragment key={i}>{isoBox(o, 1.45, 1.35, z, 2.1, 2.3, 0.24, { sw: 1.4, top: i === cards.length - 1 ? "#0f141b" : F_TOP })}</Fragment>
+        <Fragment key={i}>{isoBox(o, 1.45, 1.35, z, 2.1, 2.3, 0.24, { sw: 1.4, top: F_TOP })}</Fragment>
       ))}
     </g>
   );
@@ -145,7 +145,7 @@ function aureliusControlModule(o: O) {
       {/* base */}
       {isoBox(o, cx - 1.4, cy - 1.4, 0, 2.8, 2.8, 1.3, { sw: 1.6 })}
       {/* chip / core deck */}
-      {isoBox(o, cx - 0.8, cy - 0.8, 1.3, 1.6, 1.6, 0.5, { sw: 1.5, top: "#10151c" })}
+      {isoBox(o, cx - 0.8, cy - 0.8, 1.3, 1.6, 1.6, 0.5, { sw: 1.5, top: F_TOP })}
       {/* recessed core mark on top */}
       <Poly
         p={[iso(o, cx - 0.32, cy - 0.32, 1.8), iso(o, cx + 0.32, cy - 0.32, 1.8), iso(o, cx + 0.32, cy + 0.32, 1.8), iso(o, cx - 0.32, cy + 0.32, 1.8)]}
@@ -330,10 +330,10 @@ const TAGS: Tag[] = [
   { text: "PAYLOAD BLOCKED", at: [A.gateStop[0] + 52, A.gateStop[1] - 4], place: "right", tone: "red" },
 ];
 const toneClass: Record<NonNullable<Tag["tone"]>, string> = {
-  white: "text-white/80 border-white/15",
-  steel: "text-white/85 border-white/30",
+  white: "text-white border-white",
+  steel: "text-white border-white",
   red: "text-[hsl(2_42%_58%)] border-[hsl(2_42%_44%/0.5)]",
-  dim: "text-white/40 border-white/10",
+  dim: "text-white border-white",
 };
 const placeStyle: Record<Tag["place"], React.CSSProperties> = {
   above: { transform: "translate(-50%,-100%)" },
@@ -350,7 +350,7 @@ export function AureliusSchematicDiagram({ fig = "fig.01", title = "advisory lay
   const nameIdx = useSequence(SCHEDULERS.length, { enabled: inView, interval: 2800 });
 
   return (
-    <figure data-acp="schematic" className="relative mx-auto max-w-[600px] overflow-hidden border border-strong" style={{ background: BG }}>
+    <figure data-acp="schematic" className="relative mx-auto max-w-[600px] overflow-hidden border border-white" style={{ background: BG }}>
       <PlateHeader fig={fig} title={title} />
       <div ref={ref} className="relative aspect-[920/1072] w-full [container-type:inline-size]">
         <motion.svg
@@ -373,12 +373,12 @@ export function AureliusSchematicDiagram({ fig = "fig.01", title = "advisory lay
             {/* scheduler name — crossfades slowly over the queue stack */}
             <div className="absolute" style={{ left: px(iso(oT, 2.5, 2.5, 0)[0]), top: py(iso(oT, 0, 0, 0)[1] - 6), transform: "translate(-50%,-100%)" }}>
               <div className="flex flex-col items-center gap-1">
-                <span className="font-mono text-[9px] uppercase tracking-[0.2em] text-white/40">Scheduler</span>
+                <span className="font-mono text-[9px] uppercase tracking-[0.2em] text-white">Scheduler</span>
                 <div className="relative h-[1.2em]" style={{ fontSize: "clamp(11px,1.6cqw,16px)" }}>
                   <AnimatePresence mode="wait">
                     <motion.span
                       key={SCHEDULERS[nameIdx]}
-                      className="block whitespace-nowrap font-medium tracking-tight text-white/85"
+                      className="block whitespace-nowrap font-medium tracking-tight text-white"
                       initial={reduced ? false : { opacity: 0, y: 4 }}
                       animate={{ opacity: 1, y: 0 }}
                       exit={reduced ? undefined : { opacity: 0, y: -4 }}
@@ -401,7 +401,7 @@ export function AureliusSchematicDiagram({ fig = "fig.01", title = "advisory lay
                 transition={{ duration: 0.5, delay: 0.7, ease: EASE }}
               >
                 <div
-                  className={`whitespace-nowrap border bg-[hsl(0_0%_3%/0.72)] font-mono uppercase leading-none ${toneClass[t.tone ?? "white"]}`}
+                  className={`whitespace-nowrap border bg-black font-mono uppercase leading-none ${toneClass[t.tone ?? "white"]}`}
                   style={{ fontSize: "clamp(6px,0.85cqw,10px)", padding: "0.42em 0.6em", letterSpacing: "0.18em" }}
                 >
                   {t.text}
@@ -412,12 +412,12 @@ export function AureliusSchematicDiagram({ fig = "fig.01", title = "advisory lay
         )}
       </div>
 
-      <figcaption className="flex items-center justify-between gap-2.5 border-t border-border px-4 py-2.5 font-mono text-[10.5px] uppercase tracking-[0.2em] text-white/42">
+      <figcaption className="flex items-center justify-between gap-2.5 border-t border-white px-4 py-2.5 font-mono text-[10.5px] uppercase tracking-[0.2em] text-white">
         <span className="flex items-center gap-2.5">
-          <span className="h-px w-4 bg-white/40" aria-hidden />
+          <span className="h-px w-4 bg-white" aria-hidden />
           scheduler → aurelius → execution
         </span>
-        <span className="hidden tabular-nums text-white/22 sm:inline">metadata_only</span>
+        <span className="hidden tabular-nums text-white sm:inline">metadata_only</span>
       </figcaption>
     </figure>
   );

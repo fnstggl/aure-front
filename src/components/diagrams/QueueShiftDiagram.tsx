@@ -85,7 +85,7 @@ export function QueueShiftDiagram({ fig = "fig.02", title = "economic scheduling
           y={TOP - 12}
           width={PX1 - tx(WIN_T0)}
           height={ROW_Y(3) + 18 - (TOP - 12)}
-          fill={on ? "hsl(0 0% 100% / 0.05)" : "hsl(0 0% 100% / 0.018)"}
+          fill="none"
           stroke="none"
           style={{ transition: "fill 0.6s" }}
         />
@@ -95,14 +95,14 @@ export function QueueShiftDiagram({ fig = "fig.02", title = "economic scheduling
         <line x1={PX0} y1={TOP - 8} x2={PX0} y2={BASE} stroke={C.rail} strokeWidth="1" />
         {[0.5, 0.8, 1.1].map((c) => (
           <g key={c}>
-            <line x1={PX0 - 4} y1={cy(c)} x2={PX1} y2={cy(c)} stroke="hsl(0 0% 100% / 0.05)" strokeWidth="1" />
+            <line x1={PX0 - 4} y1={cy(c)} x2={PX1} y2={cy(c)} stroke="#ffffff" strokeWidth="1" />
             <Annotation x={PX0 - 12} y={cy(c) + 3.5} anchor="end" state="dim" size={10}>{c.toFixed(2)}</Annotation>
           </g>
         ))}
         <Annotation x={PX0 - 12} y={TOP + 2} anchor="end" state="dim" size={9.5} track={0.4}>$/GPU·h</Annotation>
 
         {/* ---- price curve (the one sanctioned curve) ---- */}
-        <path d={CURVE_FILL} fill="hsl(0 0% 100% / 0.025)" />
+        <path d={CURVE_FILL} fill="none" />
         <path d={CURVE} fill="none" stroke={C.line} strokeWidth="1.6" />
         <Annotation x={tx(13)} y={cy(1.2) - 12} anchor="middle" state="dim" size={10.5} track={0.6}>PEAK PRICING</Annotation>
         <Annotation x={tx(21.3)} y={TOP + 4} anchor="middle" state={on ? "active" : "dim"} size={10.5} track={0.6}>LOW-COST WINDOW</Annotation>
@@ -130,14 +130,14 @@ export function QueueShiftDiagram({ fig = "fig.02", title = "economic scheduling
           return (
             <g key={job.label}>
               {/* row baseline */}
-              <line x1={PX0} y1={y} x2={PX1} y2={y} stroke="hsl(0 0% 100% / 0.04)" strokeWidth="1" />
+              <line x1={PX0} y1={y} x2={PX1} y2={y} stroke="#ffffff" strokeWidth="1" />
               <Annotation x={38} y={y + 4} state={flex ? "white" : "neutral"} size={11}>{job.label}</Annotation>
               <Tag x={PX0 - 16} y={y + 4} anchor="end" state={flex ? (on ? "active" : "neutral") : "dim"} size={9.5}>{flex ? "FLEX" : "LOCK"}</Tag>
 
               {flex && (
                 <>
                   {/* ghost origin slot in the peak */}
-                  <rect x={tx(job.start)} y={y - BLK_H / 2} width={w} height={BLK_H} fill="none" stroke="hsl(0 0% 100% / 0.16)" strokeWidth="1.1" strokeDasharray="2 3" />
+                  <rect x={tx(job.start)} y={y - BLK_H / 2} width={w} height={BLK_H} fill="none" stroke="#ffffff" strokeWidth="1.1" strokeDasharray="2 3" />
                   {/* shift connector — straight, into the window */}
                   <motion.g initial={false} animate={{ opacity: shifted ? 1 : 0 }} transition={{ duration: 0.5, ease: EASE }}>
                     <line x1={tx(job.start) + w + 5} y1={y} x2={tx(job.low!) - 7} y2={y} stroke={C.steelLine} strokeWidth="1" strokeDasharray="3 4" />
@@ -149,7 +149,7 @@ export function QueueShiftDiagram({ fig = "fig.02", title = "economic scheduling
                     x2={curveDotX}
                     y1={cy(priceC)}
                     y2={y - BLK_H / 2}
-                    stroke={shifted ? "hsl(0 0% 100% / 0.28)" : "hsl(0 0% 100% / 0.12)"}
+                    stroke="#ffffff"
                     strokeWidth="1"
                     strokeDasharray="2 3"
                     initial={false}

@@ -45,15 +45,15 @@ export function OptimizationDecisionDiagram({ fig = "fig.05", title = "decision 
           const state = selected ? "selected" : rejected ? "rejected" : scanning ? "active" : "neutral";
           const barW = 116 * c.mult;
           return (
-            <g key={c.id} opacity={rejected ? 0.78 : 1} style={{ transition: "opacity 0.5s" }}>
+            <g key={c.id} opacity={1} style={{ transition: "opacity 0.5s" }}>
               <SystemSurface x={40} y={c.y - 24} w={240} h={48} state={state} />
               {/* rank chip */}
               <rect x={54} y={c.y - 9} width={18} height={18} rx={0} fill="none" stroke={C.lineFaint} strokeWidth="1" />
               <Annotation x={63} y={c.y + 4} anchor="middle" state="dim" size={10.5}>{c.rank}</Annotation>
               <Annotation x={86} y={c.y - 3} state={selected ? "selected" : rejected ? "rejected" : "white"} size={12}>{c.action}</Annotation>
               {/* cost bar — shorter = cheaper */}
-              <rect x={86} y={c.y + 9} width={116} height={3} rx={0} fill="hsl(0 0% 100% / 0.12)" />
-              <rect x={86} y={c.y + 9} width={barW} height={3} rx={0} fill={selected ? C.steelStrong : rejected ? C.redLine : "hsl(0 0% 100% / 0.42)"} style={{ transition: "fill 0.5s" }} />
+              <rect x={86} y={c.y + 9} width={116} height={3} rx={0} fill="none" />
+              <rect x={86} y={c.y + 9} width={barW} height={3} rx={0} fill={selected ? C.steelStrong : rejected ? C.redLine : "#ffffff"} style={{ transition: "fill 0.5s" }} />
               <Annotation x={264} y={c.y + 4} anchor="end" state={selected ? "selected" : "dim"} size={11}>{c.mult.toFixed(2)}×</Annotation>
 
               {/* stream into the filter */}
@@ -62,10 +62,10 @@ export function OptimizationDecisionDiagram({ fig = "fig.05", title = "decision 
                 y1={c.y}
                 x2={rejected ? FX - 14 : FX}
                 y2={c.y}
-                stroke={rejected ? C.redLine : selected ? C.steelStrong : "hsl(0 0% 100% / 0.28)"}
+                stroke={rejected ? C.redLine : selected ? C.steelStrong : "#ffffff"}
                 strokeWidth={selected ? 2.4 : rejected ? 1.7 : 1.3}
                 strokeDasharray={rejected ? "2 5" : undefined}
-                opacity={settled && !selected && !rejected ? 0.5 : 0.92}
+                opacity={1}
                 style={{ transition: "stroke 0.5s, opacity 0.5s" }}
               />
             </g>
@@ -83,7 +83,7 @@ export function OptimizationDecisionDiagram({ fig = "fig.05", title = "decision 
         <Annotation x={FX + FW / 2} y={44} anchor="middle" state="active" size={10} track={0.5}>CONSTRAINT FILTER</Annotation>
 
         {/* ---- selected output → recommendation card ---- */}
-        <line x1={FX + FW} y1={selY} x2={CARD_X} y2={selY} stroke={C.steelStrong} strokeWidth="2.4" opacity={settled ? 1 : 0.3} markerEnd={arrow("steel")} style={{ transition: "opacity 0.5s" }} />
+        <line x1={FX + FW} y1={selY} x2={CARD_X} y2={selY} stroke={C.steelStrong} strokeWidth="2.4" opacity={settled ? 1 : 0} markerEnd={arrow("steel")} style={{ transition: "opacity 0.5s" }} />
         {!reduced && inView && settled && (
           <circle r="3.5" fill={C.steelText}>
             <animateMotion dur="1.6s" repeatCount="indefinite" path={`M${FX + FW} ${selY} H${CARD_X}`} />
@@ -92,7 +92,7 @@ export function OptimizationDecisionDiagram({ fig = "fig.05", title = "decision 
 
         <SystemSurface x={CARD_X} y={92} w={312} h={132} state={settled ? "selected" : "neutral"} />
         <Annotation x={CARD_X + 18} y={118} state={settled ? "active" : "dim"} size={11.5} track={0.6}>SELECTED RECOMMENDATION</Annotation>
-        <line x1={CARD_X + 18} y1={128} x2={CARD_X + 294} y2={128} stroke={C.steelLine} strokeWidth="1" opacity={0.4} />
+        <line x1={CARD_X + 18} y1={128} x2={CARD_X + 294} y2={128} stroke={C.steelLine} strokeWidth="1" />
         {!settled && <Annotation x={CARD_X + 18} y={170} state="dim" size={11.5}>awaiting filter…</Annotation>}
         <motion.g animate={{ opacity: settled ? 1 : 0 }} transition={{ duration: 0.5, ease: EASE }}>
           <Annotation x={CARD_X + 18} y={154} state="white" size={13}>delay 38m</Annotation>
@@ -104,10 +104,10 @@ export function OptimizationDecisionDiagram({ fig = "fig.05", title = "decision 
 
         {/* ---- feasible alternatives (the safe-but-pricier passes resolve here) ---- */}
         {/* short elbows from the filter merge the two passing candidates downward */}
-        <g opacity={settled ? 0.6 : 0} style={{ transition: "opacity 0.5s" }}>
-          <path d={`M${FX + FW} 224 H612 V268`} fill="none" stroke="hsl(0 0% 100% / 0.26)" strokeWidth="1.2" />
-          <path d={`M${FX + FW} 296 H612 V268`} fill="none" stroke="hsl(0 0% 100% / 0.26)" strokeWidth="1.2" />
-          <line x1={612} y1={268} x2={CARD_X} y2={268} stroke="hsl(0 0% 100% / 0.26)" strokeWidth="1.2" markerEnd={arrow("rail")} />
+        <g opacity={settled ? 1 : 0} style={{ transition: "opacity 0.5s" }}>
+          <path d={`M${FX + FW} 224 H612 V268`} fill="none" stroke="#ffffff" strokeWidth="1.2" />
+          <path d={`M${FX + FW} 296 H612 V268`} fill="none" stroke="#ffffff" strokeWidth="1.2" />
+          <line x1={612} y1={268} x2={CARD_X} y2={268} stroke="#ffffff" strokeWidth="1.2" markerEnd={arrow("rail")} />
         </g>
         <SystemSurface x={CARD_X} y={240} w={312} h={84} state="dim" />
         <Annotation x={CARD_X + 18} y={264} state="dim" size={10.5} track={0.5}>ALSO FEASIBLE · CLEARED GATES, HIGHER COST</Annotation>
