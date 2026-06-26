@@ -56,7 +56,7 @@ export function ConstraintEngineDiagram({ fig = "fig.06", title = "constraint ga
         {GATES.map((name, i) => {
           const s = gate(i);
           return (
-            <g key={name} style={{ transition: "opacity 0.4s" }} opacity={s === "idle" ? 0.55 : 1}>
+            <g key={name} style={{ transition: "opacity 0.4s" }} opacity={1}>
               <rect
                 x={GX[i] - 11}
                 y={RAIL_Y - 66}
@@ -106,8 +106,8 @@ export function ConstraintEngineDiagram({ fig = "fig.06", title = "constraint ga
               </motion.span>
             </AnimatePresence>
             {verdict === "rejected" && (
-              <span className="font-mono text-[11px] text-white/45">
-                <span className="text-white/28">append · </span>
+              <span className="font-mono text-[11px] text-white">
+                <span className="text-white">append · </span>
                 <span style={{ color: C.red }}>constraint.residency.fail</span> rejection_logged=true
               </span>
             )}

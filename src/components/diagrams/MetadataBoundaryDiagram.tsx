@@ -27,7 +27,7 @@ export function MetadataBoundaryDiagram({ fig = "fig.08", title = "data boundary
     <div ref={ref}>
       <TopologyPlate fig={fig} title={title} caption="customer environment · metadata boundary" vb={[1000, 440]} minWidth={900}>
         {/* customer environment boundary */}
-        <rect x={40} y={44} width={556} height={356} rx={RX} fill="none" stroke="hsl(0 0% 100% / 0.26)" strokeWidth="1.4" strokeDasharray="5 4" />
+        <rect x={40} y={44} width={556} height={356} rx={RX} fill="none" stroke="#ffffff" strokeWidth="1.4" strokeDasharray="5 4" />
         <Annotation x={62} y={74} state="white" size={12.5} track={0.8}>CUSTOMER SECURE ENVIRONMENT</Annotation>
 
         {ENV.map((n) => (
@@ -52,7 +52,7 @@ export function MetadataBoundaryDiagram({ fig = "fig.08", title = "data boundary
         })}
 
         {/* boundary line */}
-        <line x1={BX} y1={44} x2={BX} y2={400} stroke="hsl(0 0% 100% / 0.22)" strokeWidth="1.2" strokeDasharray="3 4" />
+        <line x1={BX} y1={44} x2={BX} y2={400} stroke="#ffffff" strokeWidth="1.2" strokeDasharray="3 4" />
 
         {/* metadata bridge — the only crossing, straight across */}
         <line x1={526} y1={126} x2={696} y2={126} stroke={C.steelStrong} strokeWidth="2.4" markerEnd={arrow("steel")} />
@@ -79,7 +79,7 @@ export function MetadataBoundaryDiagram({ fig = "fig.08", title = "data boundary
             <g key={a}>
               <SystemSurface x={700} y={y} w={240} h={44} state={first ? "selected" : "active"} />
               <Annotation x={718} y={y + 27} state="active" size={11} track={0.5}>{a}</Annotation>
-              {i < AUR.length - 1 && <line x1={820} y1={y + 44} x2={820} y2={y + 60} stroke={C.steelLine} strokeWidth="1" opacity={0.4} />}
+              {i < AUR.length - 1 && <line x1={820} y1={y + 44} x2={820} y2={y + 60} stroke={C.steelLine} strokeWidth="1" />}
             </g>
           );
         })}
