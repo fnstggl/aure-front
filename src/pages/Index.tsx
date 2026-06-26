@@ -2,13 +2,13 @@ import { Layout } from "@/components/layout/Layout";
 import { Reveal, Arrow } from "@/components/site/primitives";
 import { PageFrame, Band, Grid, Rails, Kicker, Action } from "@/components/site/structure";
 import { ArchitecturePipeline } from "@/components/diagrams/ArchitecturePipeline";
-import { BenchmarkFigure } from "@/components/diagrams/BenchmarkFigure";
 
 /* Aurelius — landing page.
    A systems-paper title page on a visible structural grid, not a marketing
-   stack. Five bands: hero, architecture, validation, evaluation, CTA. One
-   architecture diagram, one benchmark figure, one secondary destination
-   (the technical report), one action. Subtraction over addition. */
+   stack. Bands: hero, problem, architecture, validation, evaluation, CTA. Two
+   visual artifacts only — the fleet-inefficiency fault map and the simplified
+   evaluation pipeline. Benchmark detail lives in /technical-report. One
+   secondary destination, one action. Subtraction over addition. */
 
 const VALIDATION = [
   "Azure public production traces",
@@ -24,6 +24,27 @@ const EVAL_STEPS = [
   "Savings estimate",
   "Shadow deployment",
   "Production rollout",
+];
+
+/* GPU fleet inefficiency classes — the fault map after the hero. Short labels,
+   no prose; red is the only accent, as a per-class warning marker. */
+const FLEET_FAULTS = [
+  "Idle GPUs",
+  "Stranded capacity",
+  "Fragmentation",
+  "Underutilized clusters",
+  "Peak pricing",
+  "Reservation waste",
+  "Regional imbalance",
+  "Overprovisioning",
+  "Queue backlog",
+  "Forecasting errors",
+  "Cold starts",
+  "SLA risk",
+  "Capacity bottlenecks",
+  "Demand spikes",
+  "Placement mistakes",
+  "Timing windows",
 ];
 
 export default function Index() {
@@ -94,6 +115,33 @@ export default function Index() {
           </div>
         </section>
 
+        {/* ============================ Problem ============================ */}
+        <Band className="py-20 md:py-28 lg:py-32">
+          <Grid>
+            <div className="col-span-1 px-6 sm:px-8 md:col-span-4 lg:px-10">
+              <Reveal>
+                <Kicker>Problem</Kicker>
+              </Reveal>
+              <Reveal delay={60}>
+                <h2 className="mt-6 text-balance text-[clamp(1.6rem,3.2vw,2.3rem)] font-medium leading-[1.08] tracking-[-0.02em] text-foreground">
+                  Schedulers miss the economic state of the fleet.
+                </h2>
+              </Reveal>
+              <Reveal delay={120}>
+                <p className="mt-5 max-w-sm text-[14.5px] leading-relaxed text-white/52">
+                  Most schedulers optimize for availability, fairness, and latency. Aurelius
+                  evaluates the economic tradeoffs they leave behind.
+                </p>
+              </Reveal>
+            </div>
+            <div className="col-span-1 mt-12 px-6 sm:px-8 md:col-span-7 md:col-start-6 md:mt-0 md:px-0 md:pr-8 lg:pr-10">
+              <Reveal delay={120}>
+                <FaultMap />
+              </Reveal>
+            </div>
+          </Grid>
+        </Band>
+
         {/* ========================= Architecture ========================= */}
         <Band className="py-20 md:py-28 lg:py-32">
           <Grid>
@@ -125,12 +173,7 @@ export default function Index() {
         {/* ========================== Validation ========================== */}
         <Band className="py-20 md:py-28 lg:py-32">
           <Grid>
-            <div className="col-span-1 px-6 sm:px-8 md:col-span-7 md:px-0 md:pl-8 lg:pl-10">
-              <Reveal>
-                <BenchmarkFigure />
-              </Reveal>
-            </div>
-            <div className="col-span-1 mt-12 px-6 sm:px-8 md:col-span-4 md:col-start-9 md:mt-0 lg:px-10">
+            <div className="col-span-1 px-6 sm:px-8 md:col-span-4 lg:px-10">
               <Reveal>
                 <Kicker index="02">Validation</Kicker>
               </Reveal>
@@ -140,7 +183,14 @@ export default function Index() {
                 </h2>
               </Reveal>
               <Reveal delay={120}>
-                <ul className="mt-8 grid gap-y-3">
+                <p className="mt-5 max-w-sm text-[12.5px] leading-relaxed text-white/38">
+                  Evidence, not a guaranteed universal result.
+                </p>
+              </Reveal>
+            </div>
+            <div className="col-span-1 mt-10 px-6 sm:px-8 md:col-span-7 md:col-start-6 md:mt-0 lg:px-10">
+              <Reveal delay={120}>
+                <ul className="grid gap-x-10 gap-y-3.5 sm:grid-cols-2">
                   {VALIDATION.map((item) => (
                     <li key={item} className="flex items-center gap-3 font-mono text-[12.5px] text-white/62">
                       <span className="inline-block h-px w-4 shrink-0 bg-white/45" aria-hidden />
@@ -148,12 +198,6 @@ export default function Index() {
                     </li>
                   ))}
                 </ul>
-              </Reveal>
-              <Reveal delay={160}>
-                <p className="mt-8 max-w-sm text-[12.5px] leading-relaxed text-white/38">
-                  A backtest on public production traces — evidence, not a guaranteed universal
-                  result.
-                </p>
               </Reveal>
             </div>
           </Grid>
@@ -251,5 +295,32 @@ function Console({ title, body }: { title: string; body: string }) {
       <div className="font-mono text-[10px] uppercase tracking-[0.22em] text-white/32">{title}</div>
       <div className="mt-3 text-[12.5px] leading-snug text-white/55">{body}</div>
     </div>
+  );
+}
+
+/* Fleet inefficiency fault map — a restrained diagnostic panel. A hairline
+   matrix of the inefficiency classes a scheduler leaves on the table; red is the
+   sole accent, a small per-class warning marker. No prose inside cells. */
+function FaultMap() {
+  return (
+    <figure className="relative overflow-hidden border border-border bg-background">
+      <div className="flex items-center justify-between border-b border-border px-4 py-2.5">
+        <span className="flex items-center gap-2.5 font-mono text-[10.5px] uppercase tracking-[0.2em] text-white/55">
+          <span className="inline-block h-1 w-1 bg-destructive" aria-hidden />
+          Fleet inefficiencies
+        </span>
+        <span className="hidden font-mono text-[10px] uppercase tracking-[0.18em] text-white/25 sm:inline">
+          16 classes
+        </span>
+      </div>
+      <ul className="grid grid-cols-2 gap-px bg-border">
+        {FLEET_FAULTS.map((f) => (
+          <li key={f} className="flex items-center gap-2.5 bg-background px-4 py-3">
+            <span className="inline-block h-1 w-1 shrink-0 bg-destructive/70" aria-hidden />
+            <span className="font-mono text-[12px] tracking-tight text-white/72">{f}</span>
+          </li>
+        ))}
+      </ul>
+    </figure>
   );
 }
