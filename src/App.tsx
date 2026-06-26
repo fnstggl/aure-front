@@ -12,6 +12,7 @@ import Index from "./pages/Index";
 // Code-split secondary routes so the landing page ships less JS up front.
 // lazyWithReload auto-recovers when a deploy invalidates the previous build's
 // hashed chunks — otherwise the page would sit broken until a manual refresh.
+const TechnicalReport = lazyWithReload(() => import("./pages/TechnicalReport"));
 const HowItWorks = lazyWithReload(() => import("./pages/HowItWorks"));
 const Safety = lazyWithReload(() => import("./pages/Safety"));
 const ShadowAudit = lazyWithReload(() => import("./pages/ShadowAudit"));
@@ -35,6 +36,7 @@ const App = () => (
           <Suspense fallback={<RouteFallback />}>
             <Routes>
               <Route path="/" element={<Index />} />
+              <Route path="/technical-report" element={<TechnicalReport />} />
               <Route path="/how-it-works" element={<HowItWorks />} />
               <Route path="/safety" element={<Safety />} />
               <Route path="/shadow-audit" element={<ShadowAudit />} />

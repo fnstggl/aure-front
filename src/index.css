@@ -60,6 +60,11 @@
     --data-violet: 0 0% 58%;
     --data-deep: 0 0% 46%;
 
+    /* Antique gold — the single chromatic accent. Roman austerity, not SaaS.
+       Used only to mark hierarchy and the committed/approved path. Muted on
+       purpose; always carried at partial opacity. Never a fill of large areas. */
+    --gold: 40 34% 58%;
+
     /* Legacy custom tokens kept for existing components */
     --surface-glass: 0 0% 100% / 0.025;
     --surface-glass-border: 0 0% 100% / 0.08;
@@ -106,6 +111,7 @@
     --data-pale: 0 0% 82%;
     --data-violet: 0 0% 58%;
     --data-deep: 0 0% 46%;
+    --gold: 40 34% 58%;
   }
 
   /* Off-white-gray section — neutral editorial relief from the dark (no beige) */

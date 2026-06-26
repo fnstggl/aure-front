@@ -53,12 +53,21 @@ export const SITE = {
 export const ROUTES: RouteMeta[] = [
   {
     path: "/",
-    title: "Aurelius — The control layer for economically efficient GPU fleets",
+    title: "Aurelius — Constraint-aware orchestration for AI infrastructure",
     description:
-      "Aurelius forecasts power, capacity, congestion, and demand constraints before execution to generate safer, lower-cost GPU workload decisions — and proves the savings in shadow mode before anything changes.",
+      "Aurelius increases SLA-safe goodput per dollar by optimizing scheduling, placement, admission, routing, capacity, and energy decisions. Backtested on public production traces. Shadow-mode first, read-only by default.",
     name: "Platform",
     priority: 1.0,
     changefreq: "weekly",
+  },
+  {
+    path: "/technical-report",
+    title: "Technical Report — Aurelius",
+    description:
+      "How Aurelius increases SLA-safe goodput per dollar, and how those results are measured against an operator's own scheduler on public production traces: architecture, methodology, benchmark results, validation, and limitations.",
+    name: "Technical Report",
+    priority: 0.9,
+    changefreq: "monthly",
   },
   {
     path: "/how-it-works",

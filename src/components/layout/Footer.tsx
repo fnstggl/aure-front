@@ -1,11 +1,9 @@
 import { Link } from "react-router-dom";
 
 const footerLinks = [
-  { label: "How it works", href: "/how-it-works" },
-  { label: "Safety", href: "/safety" },
-  { label: "Shadow audit", href: "/shadow-audit" },
-  { label: "Docs", href: "/docs" },
-  { label: "Contact", href: "/contact" },
+  { label: "Technical Report", href: "/technical-report" },
+  { label: "Request access", href: "/contact" },
+  { label: "Privacy", href: "/privacy" },
 ];
 
 export function Footer() {
@@ -18,8 +16,8 @@ export function Footer() {
               <img src="/aure_logo.png" alt="Aurelius" className="h-5 w-auto" />
             </Link>
             <p className="mt-4 text-[13.5px] leading-relaxed text-white/42">
-              The control layer for economically efficient GPU fleets. Shadow-mode first,
-              constraint-aware by default.
+              Constraint-aware orchestration for AI infrastructure. Shadow-mode first,
+              read-only by default.
             </p>
           </div>
 
@@ -40,17 +38,9 @@ export function Footer() {
         </div>
 
         <div className="mt-12 flex flex-col gap-2 border-t border-border pt-6 sm:flex-row sm:items-center sm:justify-between">
-          <span className="flex items-center gap-4 font-mono text-[11px] text-white/28">
-            <span>© {new Date().getFullYear()} Aurelius</span>
-            <Link
-              to="/privacy"
-              className="tracking-tight transition-colors duration-200 hover:text-white/60"
-            >
-              Privacy Policy
-            </Link>
-          </span>
+          <span className="font-mono text-[11px] text-white/28">© {new Date().getFullYear()} Aurelius</span>
           <span className="flex items-center gap-2 font-mono text-[10.5px] uppercase tracking-[0.16em] text-white/30">
-            <span className="inline-block h-1 w-1 rounded-full bg-signal/80" aria-hidden />
+            <span className="inline-block h-1 w-1 bg-gold/70" aria-hidden />
             Shadow-mode · constraint-aware
           </span>
         </div>
