@@ -44,13 +44,12 @@ export default function Index() {
               <Grid className="w-full">
                 <div className="col-span-1 px-6 pb-12 pt-32 sm:px-8 md:col-span-10 md:pt-28 lg:px-10">
                   <Reveal>
-                    <p className="flex items-center gap-2.5 font-mono text-[11px] uppercase tracking-[0.28em] text-white/42">
-                      <span className="inline-block h-1.5 w-1.5 bg-gold/70" aria-hidden />
-                      Control plane for GPU fleets
+                    <p className="font-mono text-[11px] uppercase tracking-[0.28em] text-white/40">
+                      Research preview · v0.1
                     </p>
                   </Reveal>
                   <Reveal delay={60}>
-                    <h1 className="mt-6 text-[clamp(3.2rem,10vw,7rem)] font-medium leading-[0.92] tracking-[-0.04em] text-foreground">
+                    <h1 className="mt-5 text-[clamp(2.4rem,5.4vw,3.9rem)] font-medium leading-[1.0] tracking-[-0.03em] text-foreground">
                       Aurelius
                     </h1>
                   </Reveal>
@@ -61,31 +60,35 @@ export default function Index() {
                   </Reveal>
                   <Reveal delay={180}>
                     <p className="mt-5 max-w-xl text-[14.5px] leading-relaxed text-white/52 md:text-[15px]">
-                      Increase SLA-safe goodput per dollar by optimizing scheduling, placement,
-                      admission, routing, capacity, and energy decisions.
+                      Higher SLA-safe goodput per dollar — proven in shadow mode before anything
+                      reaches production.
                     </p>
                   </Reveal>
                   <Reveal delay={240}>
                     <div className="mt-9 flex flex-col gap-3 sm:flex-row">
-                      <Action to="/contact" variant="primary" withArrow>
-                        See how much your fleet could have saved
-                      </Action>
-                      <Action to="/technical-report" variant="secondary">
+                      <Action to="/technical-report" variant="primary" withArrow>
                         Read Technical Report
                       </Action>
+                      <Action to="/contact" variant="secondary">
+                        See how much your fleet could have saved
+                      </Action>
                     </div>
+                  </Reveal>
+                  <Reveal delay={300}>
+                    <p className="mt-6 max-w-md text-[12.5px] leading-relaxed text-white/38">
+                      By request. Access is limited during the research preview.
+                    </p>
                   </Reveal>
                 </div>
               </Grid>
             </div>
 
             {/* console metrics bar — aligned to the rails */}
-            <Reveal delay={300} className="border-t border-border">
-              <div className="grid grid-cols-2 gap-px bg-border md:grid-cols-4">
+            <Reveal delay={340} className="border-t border-border">
+              <div className="grid grid-cols-1 gap-px bg-border sm:grid-cols-3">
                 <Metric value="+26%" label="SLA-safe goodput / $" gold />
                 <Metric value="−21%" label="GPU-hours" />
                 <Console title="Evidence" body="Backtested on public production traces" />
-                <Console title="Posture" body="Shadow-mode first · constraint-gated" />
               </div>
             </Reveal>
           </div>

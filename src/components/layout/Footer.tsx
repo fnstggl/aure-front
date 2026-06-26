@@ -40,8 +40,8 @@ export function Footer() {
         <div className="mt-12 flex flex-col gap-2 border-t border-border pt-6 sm:flex-row sm:items-center sm:justify-between">
           <span className="font-mono text-[11px] text-white/28">© {new Date().getFullYear()} Aurelius</span>
           <span className="flex items-center gap-2 font-mono text-[10.5px] uppercase tracking-[0.16em] text-white/30">
-            <span className="inline-block h-1 w-1 bg-gold/70" aria-hidden />
-            Shadow-mode · constraint-aware
+            <span className="inline-block h-1 w-1 bg-white/30" aria-hidden />
+            Research preview · v0.1 · {new Date().getFullYear()}
           </span>
         </div>
       </div>

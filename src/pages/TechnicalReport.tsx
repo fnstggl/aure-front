@@ -54,7 +54,7 @@ export default function TechnicalReport() {
                 <div className="mt-9 flex flex-wrap items-center gap-x-6 gap-y-2 font-mono text-[11px] uppercase tracking-[0.18em] text-white/34">
                   <span>Aurelius</span>
                   <span className="text-white/14">·</span>
-                  <span>Draft</span>
+                  <span>Version 0.1</span>
                   <span className="text-white/14">·</span>
                   <span>Backtested on public traces</span>
                   <span className="text-white/14">·</span>
