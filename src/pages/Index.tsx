@@ -1,28 +1,22 @@
 import { Layout } from "@/components/layout/Layout";
 import { Reveal, Arrow } from "@/components/site/primitives";
 import { PageFrame, Band, Grid, Rails, Kicker, Action } from "@/components/site/structure";
-import { ArchitecturePipeline } from "@/components/diagrams/ArchitecturePipeline";
+import { WorldModelArchitecture } from "@/components/diagrams/WorldModelArchitecture";
 
 /* Aurelius — landing page.
    A systems-paper title page on a visible structural grid, not a marketing
-   stack. Five bands: hero, architecture, validation, evaluation, CTA. One
-   architecture diagram, one benchmark figure, one secondary destination
-   (the technical report), one action. Subtraction over addition. */
-
-const VALIDATION = [
-  "Azure public production traces",
-  "Historical replay",
-  "Shadow mode before deployment",
-  "Read-only evaluation",
-  "Deterministic fallback",
-];
+   stack. The page teaches one idea: the optimal scheduling decision depends on
+   constraints that haven't emerged yet — so Aurelius forecasts the future
+   cluster state, simulates candidate decisions, and commits the economic
+   optimum before execution. Architecture is the reason; savings are the
+   consequence. Four bands: architecture, evidence, evaluation, CTA. */
 
 const EVAL_STEPS = [
   "Upload telemetry",
   "Offline replay",
   "Savings estimate",
   "Shadow deployment",
-  "Production rollout",
+  "Controlled rollout",
 ];
 
 export default function Index() {
@@ -46,22 +40,28 @@ export default function Index() {
                     The optimal scheduling decision depends on constraints that haven&rsquo;t emerged yet.
                   </h1>
                 </Reveal>
-                <Reveal delay={120}>
+                <Reveal delay={80}>
+                  <p className="mx-auto mt-5 max-w-xl text-[14px] leading-relaxed text-white/60 md:text-[15px]">
+                    Aurelius forecasts future cluster constraints and simulates candidate decisions
+                    before execution.
+                  </p>
+                </Reveal>
+                <Reveal delay={160}>
                   <div className="mt-10 flex flex-col items-center justify-center gap-3 sm:flex-row">
-                    <Action to="/technical-report" variant="primary" withArrow>
-                      Read Technical Report
-                    </Action>
-                    <Action to="/contact" variant="secondary">
+                    <Action to="/contact" variant="primary" withArrow>
                       See how much your fleet could have saved
+                    </Action>
+                    <Action to="/technical-report" variant="secondary">
+                      Read Technical Report
                     </Action>
                   </div>
                 </Reveal>
-                <Reveal delay={200}>
+                <Reveal delay={220}>
                   <p className="mt-6 text-[13px] leading-relaxed text-white/80">
                     Working with a small batch of infrastructure operators.
                   </p>
                 </Reveal>
-                <Reveal delay={260}>
+                <Reveal delay={280}>
                   <div className="mt-8 flex flex-wrap items-center justify-center gap-x-5 gap-y-1.5 font-mono text-[10.5px] tracking-[0.12em] text-white/32">
                     <span><span className="text-white/50">+26%</span> SLA-safe goodput / $</span>
                     <span className="text-white/18">·</span>
@@ -77,7 +77,44 @@ export default function Index() {
           </div>
         </section>
 
-        {/* ========================== Validation ========================== */}
+        {/* ========================= Architecture ========================= */}
+        {/* The thesis, made visible. Lead with the world-model control loop —
+            this is the reason to read the Technical Report. */}
+        <Band className="py-20 md:py-28 lg:py-32">
+          <Grid>
+            <div className="col-span-1 px-6 sm:px-8 md:col-span-4 lg:px-10">
+              <Reveal>
+                <Kicker index="01">Architecture</Kicker>
+              </Reveal>
+              <Reveal delay={60}>
+                <h2 className="mt-6 text-balance text-[clamp(1.6rem,3.2vw,2.3rem)] font-medium leading-[1.08] tracking-[-0.02em] text-foreground">
+                  Forecast. Simulate. Decide.
+                </h2>
+              </Reveal>
+              <Reveal delay={120}>
+                <p className="mt-5 max-w-sm text-[14.5px] leading-relaxed text-white/52">
+                  Aurelius builds a predictive world model of the cluster state, forecasts future
+                  constraints across power, capacity, congestion, memory, topology, demand, and
+                  pricing, then simulates candidate workload decisions before they are made.
+                </p>
+              </Reveal>
+              <Reveal delay={160}>
+                <p className="mt-5 max-w-sm text-[14.5px] leading-relaxed text-white/52">
+                  Scheduling is the final step. The economic optimum is chosen ahead of time, subject
+                  to the constraints each decision will actually face.
+                </p>
+              </Reveal>
+            </div>
+            <div className="col-span-1 mt-12 px-6 sm:px-8 md:col-span-7 md:col-start-6 md:mt-0 md:px-0 md:pr-8 lg:pr-10">
+              <Reveal delay={120}>
+                <WorldModelArchitecture />
+              </Reveal>
+            </div>
+          </Grid>
+        </Band>
+
+        {/* ============================ Evidence =========================== */}
+        {/* The consequence. Kept concise and secondary to the architecture. */}
         <Band className="py-20 md:py-28 lg:py-32">
           <Grid>
             <div className="col-span-1 px-6 sm:px-8 md:col-span-7 lg:px-10">
@@ -87,16 +124,22 @@ export default function Index() {
             </div>
             <div className="col-span-1 mt-12 px-6 sm:px-8 md:col-span-4 md:col-start-9 md:mt-0 lg:px-10">
               <Reveal>
-                <Kicker index="01">Validation</Kicker>
+                <Kicker index="02">Evidence</Kicker>
               </Reveal>
               <Reveal delay={60}>
                 <h2 className="mt-6 text-balance text-[clamp(1.6rem,3.2vw,2.3rem)] font-medium leading-[1.08] tracking-[-0.02em] text-foreground">
-                  Measured against your own scheduler.
+                  Backtested on public production traces.
                 </h2>
               </Reveal>
               <Reveal delay={120}>
-                <ul className="mt-8 grid gap-y-3">
-                  {VALIDATION.map((item) => (
+                <p className="mt-6 max-w-sm text-[14px] leading-relaxed text-white/52">
+                  Validated through offline replay and read-only shadow mode before any rollout —
+                  measured against the operator&rsquo;s own scheduler.
+                </p>
+              </Reveal>
+              <Reveal delay={160}>
+                <ul className="mt-7 grid gap-y-3">
+                  {["Offline replay", "Read-only shadow mode", "Public Azure production traces"].map((item) => (
                     <li key={item} className="flex items-center gap-3 font-mono text-[12.5px] text-white/62">
                       <span className="inline-block h-px w-4 shrink-0 bg-white/45" aria-hidden />
                       {item}
@@ -104,40 +147,10 @@ export default function Index() {
                   ))}
                 </ul>
               </Reveal>
-              <Reveal delay={160}>
-                <p className="mt-8 max-w-sm text-[12.5px] leading-relaxed text-white/38">
-                  A backtest on public production traces — evidence, not a guaranteed universal
-                  result.
+              <Reveal delay={200}>
+                <p className="mt-7 max-w-sm text-[12.5px] leading-relaxed text-white/38">
+                  Evidence, not a guaranteed universal result.
                 </p>
-              </Reveal>
-            </div>
-          </Grid>
-        </Band>
-
-        {/* ========================= Architecture ========================= */}
-        <Band className="py-20 md:py-28 lg:py-32">
-          <Grid>
-            <div className="col-span-1 px-6 sm:px-8 md:col-span-4 lg:px-10">
-              <Reveal>
-                <Kicker index="02">Architecture</Kicker>
-              </Reveal>
-              <Reveal delay={60}>
-                <h2 className="mt-6 text-balance text-[clamp(1.6rem,3.2vw,2.3rem)] font-medium leading-[1.08] tracking-[-0.02em] text-foreground">
-                  Decided in advance, not in hindsight.
-                </h2>
-              </Reveal>
-              <Reveal delay={120}>
-                <p className="mt-5 max-w-sm text-[14.5px] leading-relaxed text-white/52">
-                  Aurelius forecasts the constraints each scheduling decision will face — power,
-                  capacity, congestion, demand — and simulates its economic outcome before the
-                  decision is made, choosing the optimal one. The policy is then proven in offline
-                  replay and read-only shadow mode before any rollout.
-                </p>
-              </Reveal>
-            </div>
-            <div className="col-span-1 mt-12 px-6 sm:px-8 md:col-span-7 md:col-start-6 md:mt-0 md:px-0 md:pr-8 lg:pr-10">
-              <Reveal delay={120}>
-                <ArchitecturePipeline />
               </Reveal>
             </div>
           </Grid>
@@ -152,10 +165,17 @@ export default function Index() {
               </Reveal>
               <Reveal delay={60}>
                 <h2 className="mt-6 max-w-2xl text-balance text-[clamp(1.6rem,3.2vw,2.3rem)] font-medium leading-[1.08] tracking-[-0.02em] text-foreground">
-                  From upload to rollout. Read-only until you decide otherwise.
+                  Read-only until you decide otherwise.
                 </h2>
               </Reveal>
-              <Reveal delay={120}>
+              <Reveal delay={100}>
+                <p className="mt-5 max-w-2xl text-[14.5px] leading-relaxed text-white/52">
+                  Start with scheduler metadata. Aurelius replays historical decisions, simulates
+                  counterfactual outcomes, and produces an audited savings report before any
+                  production rollout.
+                </p>
+              </Reveal>
+              <Reveal delay={140}>
                 <div className="mt-10 flex flex-col gap-y-4 md:flex-row md:flex-wrap md:items-center md:gap-x-4">
                   {EVAL_STEPS.map((step, i) => (
                     <div key={step} className="flex items-center gap-4">
@@ -192,13 +212,13 @@ export default function Index() {
               </Reveal>
               <Reveal delay={60}>
                 <h2 className="mt-7 max-w-3xl text-balance text-[clamp(2rem,5.4vw,3.6rem)] font-medium leading-[1.02] tracking-[-0.03em] text-foreground">
-                  See how much you would&rsquo;ve saved.
+                  See what your scheduler missed.
                 </h2>
               </Reveal>
               <Reveal delay={120}>
                 <p className="mt-6 max-w-xl text-[15px] leading-relaxed text-white/55">
-                  Start with a read-only shadow-mode evaluation against your scheduler metadata. No
-                  payload access. No execution impact.
+                  Run a read-only evaluation against historical scheduler metadata. No payload
+                  access. No execution impact.
                 </p>
               </Reveal>
               <Reveal delay={180}>
