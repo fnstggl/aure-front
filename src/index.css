@@ -39,7 +39,7 @@
     --destructive-foreground: 0 0% 96%;
 
     /* Hairline borders carry their own alpha */
-    --border: 0 0% 100% / 0.08;
+    --border: 0 0% 100% / 0.11;
     --border-strong: 0 0% 100% / 0.16;
     --input: 0 0% 100% / 0.12;
     --ring: 0 0% 80%;
@@ -99,7 +99,7 @@
     --accent-foreground: 0 0% 93%;
     --destructive: 2 58% 54%;
     --destructive-foreground: 0 0% 96%;
-    --border: 0 0% 100% / 0.08;
+    --border: 0 0% 100% / 0.11;
     --border-strong: 0 0% 100% / 0.16;
     --input: 0 0% 100% / 0.12;
     --ring: 0 0% 80%;
@@ -327,7 +327,7 @@
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;
-    opacity: 0.78;
+    opacity: 0.92;
     animation: hero-breathe 26s ease-in-out infinite;
   }
   /* a brighter copy revealed only through a soft moving band → per-dot shimmer */
@@ -338,7 +338,7 @@
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;
-    opacity: 0.62;
+    opacity: 0.72;
     mix-blend-mode: screen;
     -webkit-mask-image: linear-gradient(100deg, transparent 38%, #000 50%, transparent 62%);
     mask-image: linear-gradient(100deg, transparent 38%, #000 50%, transparent 62%);
@@ -354,10 +354,10 @@
     position: absolute;
     inset: 0;
     background:
-      /* black vignette framing the edges */
-      radial-gradient(140% 140% at 50% 50%, transparent 32%, hsl(0 0% 0% / 0.74) 72%, hsl(0 0% 0%) 100%),
-      /* soft central scrim so the centered headline stays legible over the brighter image */
-      radial-gradient(66% 46% at 50% 47%, hsl(0 0% 0% / 0.5), transparent 72%);
+      /* black vignette framing the edges — lighter, so the image stays visible */
+      radial-gradient(150% 150% at 50% 50%, transparent 44%, hsl(0 0% 0% / 0.6) 80%, hsl(0 0% 0%) 100%),
+      /* narrow scrim band behind the single-line headline for legibility */
+      radial-gradient(56% 26% at 50% 46%, hsl(0 0% 0% / 0.44), transparent 74%);
   }
 }
 

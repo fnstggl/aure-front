@@ -2,8 +2,6 @@ import { Layout } from "@/components/layout/Layout";
 import { Reveal, Arrow } from "@/components/site/primitives";
 import { PageFrame, Band, Grid, Rails, Kicker, Action } from "@/components/site/structure";
 import { ArchitecturePipeline } from "@/components/diagrams/ArchitecturePipeline";
-import { BenchmarkFigure } from "@/components/diagrams/BenchmarkFigure";
-import { ProblemSection } from "@/components/site/ProblemSection";
 
 /* Aurelius — landing page.
    A systems-paper title page on a visible structural grid, not a marketing
@@ -42,11 +40,10 @@ export default function Index() {
 
           <div className="relative z-20 flex min-h-[100dvh] flex-col">
             <div className="flex flex-1 items-center justify-center">
-              <div className="mx-auto max-w-3xl px-6 pb-16 pt-32 text-center sm:px-8 md:pt-28">
+              <div className="mx-auto w-full max-w-[72rem] px-6 pb-16 pt-32 text-center sm:px-8">
                 <Reveal>
-                  <h1 className="text-balance text-[clamp(2rem,5.4vw,3.7rem)] font-medium leading-[1.06] tracking-[-0.03em]">
-                    <span className="text-white/55">Every scheduling decision is an </span>
-                    <span className="text-foreground">economic decision.</span>
+                  <h1 className="text-[clamp(1.2rem,2.1vw,1.55rem)] font-medium leading-[1.3] tracking-[-0.01em] text-foreground">
+                    The optimal scheduling decision depends on constraints that haven&rsquo;t emerged yet.
                   </h1>
                 </Reveal>
                 <Reveal delay={120}>
@@ -60,33 +57,21 @@ export default function Index() {
                   </div>
                 </Reveal>
                 <Reveal delay={200}>
-                  <p className="mt-6 text-[12.5px] leading-relaxed text-white/60">
-                    We work with a small number of GPU fleet operators at a time.
+                  <p className="mt-6 text-[13px] leading-relaxed text-white/80">
+                    Working with a small batch of infrastructure operators.
                   </p>
                 </Reveal>
               </div>
             </div>
-
-            {/* console metrics bar — metrics kept */}
-            <Reveal delay={300} className="border-t border-border">
-              <div className="grid grid-cols-1 gap-px bg-border sm:grid-cols-3">
-                <Metric value="+26%" label="SLA-safe goodput / $" />
-                <Metric value="−21%" label="GPU-hours" />
-                <Console title="Evidence" body="Backtested on public production traces" />
-              </div>
-            </Reveal>
           </div>
         </section>
-
-        {/* === Problem — the exact GPU-fleet inefficiency grid (red/white) === */}
-        <ProblemSection />
 
         {/* ========================== Validation ========================== */}
         <Band className="py-20 md:py-28 lg:py-32">
           <Grid>
-            <div className="col-span-1 px-6 sm:px-8 md:col-span-7 md:px-0 md:pl-8 lg:pl-10">
+            <div className="col-span-1 px-6 sm:px-8 md:col-span-7 lg:px-10">
               <Reveal>
-                <BenchmarkFigure />
+                <StatMoment />
               </Reveal>
             </div>
             <div className="col-span-1 mt-12 px-6 sm:px-8 md:col-span-4 md:col-start-9 md:mt-0 lg:px-10">
@@ -127,14 +112,15 @@ export default function Index() {
               </Reveal>
               <Reveal delay={60}>
                 <h2 className="mt-6 text-balance text-[clamp(1.6rem,3.2vw,2.3rem)] font-medium leading-[1.08] tracking-[-0.02em] text-foreground">
-                  Proven before it acts.
+                  Decided in advance, not in hindsight.
                 </h2>
               </Reveal>
               <Reveal delay={120}>
                 <p className="mt-5 max-w-sm text-[14.5px] leading-relaxed text-white/52">
-                  Aurelius sits beside your scheduler. Metadata in, offline replay, read-only shadow,
-                  an audited savings report — then a gradual, reversible rollout under hard
-                  constraints.
+                  Aurelius forecasts the constraints each scheduling decision will face — power,
+                  capacity, congestion, demand — and simulates its economic outcome before the
+                  decision is made, choosing the optimal one. The policy is then proven in offline
+                  replay and read-only shadow mode before any rollout.
                 </p>
               </Reveal>
             </div>
@@ -219,24 +205,20 @@ export default function Index() {
   );
 }
 
-/* A single console metric — large mono value over a quiet label. */
-function Metric({ value, label }: { value: string; label: string }) {
+/* Headline result — the savings as a single large number, immediately legible.
+   Restrained: one number, one line, one measured-provenance caption. */
+function StatMoment() {
   return (
-    <div className="bg-background px-6 py-6 sm:px-8 lg:px-10">
-      <div className="font-mono text-[clamp(1.7rem,3.4vw,2.4rem)] leading-none tracking-tight tabular-nums text-foreground">
-        {value}
+    <div className="text-center md:text-left">
+      <div className="text-[clamp(3.6rem,8.5vw,6.8rem)] font-medium leading-[0.9] tracking-[-0.04em] text-foreground">
+        +26%
       </div>
-      <div className="mt-3 text-[12.5px] tracking-tight text-white/48">{label}</div>
-    </div>
-  );
-}
-
-/* A console field — uppercase title over a short value. */
-function Console({ title, body }: { title: string; body: string }) {
-  return (
-    <div className="bg-background px-6 py-6 sm:px-8 lg:px-10">
-      <div className="font-mono text-[10px] uppercase tracking-[0.22em] text-white/32">{title}</div>
-      <div className="mt-3 text-[12.5px] leading-snug text-white/55">{body}</div>
+      <p className="mt-4 text-[clamp(1.05rem,2.4vw,1.6rem)] font-medium tracking-tight text-white/80">
+        higher SLA-safe goodput per dollar
+      </p>
+      <p className="mt-6 font-mono text-[11px] uppercase tracking-[0.2em] text-white/42">
+        Measured on public Azure traces · SLA-safe · −21% GPU-hours
+      </p>
     </div>
   );
 }
