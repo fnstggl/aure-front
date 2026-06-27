@@ -40,9 +40,9 @@ export default function Index() {
 
           <div className="relative z-20 flex min-h-[100dvh] flex-col">
             <div className="flex flex-1 items-center justify-center">
-              <div className="mx-auto w-full max-w-[72rem] px-6 pb-16 pt-32 text-center sm:px-8">
+              <div className="mx-auto w-full max-w-[72rem] px-6 pb-16 pt-32 text-center sm:px-8 -translate-y-[13px]">
                 <Reveal>
-                  <h1 className="text-[clamp(1.2rem,2.1vw,1.55rem)] font-medium leading-[1.3] tracking-[-0.01em] text-foreground">
+                  <h1 className="text-[clamp(1.5rem,2.6vw,2rem)] font-medium leading-[1.3] tracking-[-0.01em] text-foreground">
                     The optimal scheduling decision depends on constraints that haven&rsquo;t emerged yet.
                   </h1>
                 </Reveal>
@@ -60,6 +60,17 @@ export default function Index() {
                   <p className="mt-6 text-[13px] leading-relaxed text-white/80">
                     Working with a small batch of infrastructure operators.
                   </p>
+                </Reveal>
+                <Reveal delay={260}>
+                  <div className="mt-8 flex flex-wrap items-center justify-center gap-x-5 gap-y-1.5 font-mono text-[10.5px] tracking-[0.12em] text-white/32">
+                    <span><span className="text-white/50">+26%</span> SLA-safe goodput / $</span>
+                    <span className="text-white/18">·</span>
+                    <span><span className="text-white/50">−21%</span> GPU-hours</span>
+                    <span className="text-white/18">·</span>
+                    <span><span className="text-white/50">−25%</span> energy cost</span>
+                    <span className="text-white/18">·</span>
+                    <span className="uppercase tracking-[0.16em]">Measured on public Azure traces</span>
+                  </div>
                 </Reveal>
               </div>
             </div>
