@@ -36,7 +36,7 @@ export default function Index() {
             <div className="flex flex-1 items-center justify-center">
               <div className="mx-auto w-full max-w-[72rem] px-6 pb-16 pt-32 text-center sm:px-8 -translate-y-[13px]">
                 <Reveal>
-                  <h1 className="font-century mx-auto max-w-[20ch] text-[clamp(1.7rem,3.4vw,2.55rem)] font-medium leading-[1.16] tracking-[-0.005em] text-foreground sm:max-w-[30ch]">
+                  <h1 className="mx-auto max-w-[22ch] text-[clamp(1.35rem,2.5vw,1.75rem)] font-medium leading-[1.2] tracking-[-0.015em] text-foreground sm:max-w-none sm:whitespace-nowrap">
                     The optimal scheduling decision depends on constraints that haven&rsquo;t emerged yet.
                   </h1>
                 </Reveal>
@@ -100,7 +100,7 @@ export default function Index() {
             </div>
             <div className="col-span-1 mt-12 px-6 sm:px-8 md:col-span-7 md:col-start-6 md:mt-0 md:px-0 md:pr-8 lg:pr-10">
               <Reveal delay={120}>
-                <WorldModelArchitecture />
+                <WorldModelArchitecture className="mx-auto max-w-[480px]" />
               </Reveal>
             </div>
           </Grid>
@@ -110,7 +110,12 @@ export default function Index() {
         {/* The consequence. Kept concise and secondary to the architecture. */}
         <Band className="py-20 md:py-28 lg:py-32">
           <Grid>
-            <div className="col-span-1 px-6 sm:px-8 md:col-span-4 lg:px-10">
+            <div className="col-span-1 px-6 sm:px-8 md:col-span-7 lg:px-10">
+              <Reveal>
+                <StatMoment />
+              </Reveal>
+            </div>
+            <div className="col-span-1 mt-12 px-6 sm:px-8 md:col-span-4 md:col-start-9 md:mt-0 lg:px-10">
               <Reveal>
                 <Kicker index="02">Evidence</Kicker>
               </Reveal>
@@ -139,11 +144,6 @@ export default function Index() {
                 <p className="mt-7 max-w-sm text-[12.5px] leading-relaxed text-white/38">
                   Evidence, not a guaranteed universal result.
                 </p>
-              </Reveal>
-            </div>
-            <div className="col-span-1 mt-12 px-6 sm:px-8 md:col-span-7 md:col-start-6 md:mt-0 lg:px-10">
-              <Reveal>
-                <StatMoment />
               </Reveal>
             </div>
           </Grid>
@@ -233,7 +233,7 @@ export default function Index() {
    Restrained: one number, one line, one measured-provenance caption. */
 function StatMoment() {
   return (
-    <div className="text-center md:text-right">
+    <div className="text-center md:text-left">
       <div className="text-[clamp(3.6rem,8.5vw,6.8rem)] font-medium leading-[0.9] tracking-[-0.04em] text-foreground">
         +26%
       </div>

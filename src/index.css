@@ -161,16 +161,6 @@
     font-family: "Geist Mono", "IBM Plex Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
   }
 
-  /* Century Expanded — the one editorial serif, used only for the hero thesis.
-     Requested first so a licensed copy is honored where present; Georgia is the
-     canonical fallback for a Century-style face so the serif treatment renders
-     everywhere. */
-  .font-century {
-    font-family: "Century Expanded", "Century Expanded BT", "Century Schoolbook",
-      Georgia, "Times New Roman", serif;
-    font-feature-settings: "kern" 1, "liga" 1;
-  }
-
   .glass-nav {
     background: hsl(0 0% 2% / 0.6);
     backdrop-filter: blur(16px) saturate(120%);
