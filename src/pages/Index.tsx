@@ -42,7 +42,7 @@ export default function Index() {
             <div className="flex flex-1 items-center justify-center">
               <div className="mx-auto w-full max-w-[72rem] px-6 pb-16 pt-32 text-center sm:px-8 -translate-y-[13px]">
                 <Reveal>
-                  <h1 className="text-[clamp(1.5rem,2.6vw,2rem)] font-medium leading-[1.3] tracking-[-0.01em] text-foreground">
+                  <h1 className="text-[clamp(1.1rem,1.6vw,1.35rem)] font-medium leading-[1.3] tracking-[-0.01em] text-foreground">
                     The optimal scheduling decision depends on constraints that haven&rsquo;t emerged yet.
                   </h1>
                 </Reveal>
