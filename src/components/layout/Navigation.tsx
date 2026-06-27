@@ -6,6 +6,7 @@ import { ScrambleText } from "@/components/site/ScrambleText";
 const navItems = [
   { label: "Platform", href: "/" },
   { label: "How it works", href: "/how-it-works" },
+  { label: "Benchmark", href: "/benchmark" },
   { label: "Safety", href: "/safety" },
   { label: "Shadow audit", href: "/shadow-audit" },
   { label: "Docs", href: "/docs" },
@@ -22,7 +23,7 @@ export function Navigation() {
           <Link to="/" className="flex items-center" aria-label="Aurelius — home">
             <img src="/aure_logo.png" alt="Aurelius" className="h-5 w-auto" />
           </Link>
-          <ul className="hidden items-center gap-8 md:flex">
+          <ul className="hidden items-center gap-8 lg:flex">
             {navItems.map((item) => {
               const active = location.pathname === item.href;
               return (
@@ -55,7 +56,7 @@ export function Navigation() {
             onClick={() => setOpen((v) => !v)}
             aria-label={open ? "Close menu" : "Open menu"}
             aria-expanded={open}
-            className="flex h-9 w-9 items-center justify-center rounded-md border border-border-strong text-foreground/80 transition-colors hover:text-foreground md:hidden"
+            className="flex h-9 w-9 items-center justify-center rounded-md border border-border-strong text-foreground/80 transition-colors hover:text-foreground lg:hidden"
           >
             <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden>
               {open ? (
@@ -70,7 +71,7 @@ export function Navigation() {
 
       {/* Mobile dropdown */}
       {open && (
-        <div className="border-t border-border bg-background/95 backdrop-blur-md md:hidden">
+        <div className="border-t border-border bg-background/95 backdrop-blur-md lg:hidden">
           <ul className="mx-auto max-w-content px-6 py-3">
             {navItems.map((item) => {
               const active = location.pathname === item.href;

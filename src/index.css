@@ -60,6 +60,25 @@
     --data-violet: 0 0% 58%;
     --data-deep: 0 0% 46%;
 
+    /* ── Spectrum ──────────────────────────────────────────────────────
+       The full range of fleet conditions Aurelius reasons across — power,
+       capacity, congestion, demand, region, timing. Blue → violet → magenta →
+       orange → amber. Monochrome is the system at rest; the spectrum is the
+       system seeing. Spent only at peak moments — never as body text. */
+    --spectrum-blue:    214 90% 62%;
+    --spectrum-violet:  256 88% 68%;
+    --spectrum-magenta: 322 82% 62%;
+    --spectrum-orange:   24 92% 58%;
+    --spectrum-amber:    43 96% 62%;
+    --gradient-spectrum: linear-gradient(
+      90deg,
+      hsl(var(--spectrum-blue)),
+      hsl(var(--spectrum-violet)),
+      hsl(var(--spectrum-magenta)),
+      hsl(var(--spectrum-orange)),
+      hsl(var(--spectrum-amber))
+    );
+
     /* Legacy custom tokens kept for existing components */
     --surface-glass: 0 0% 100% / 0.025;
     --surface-glass-border: 0 0% 100% / 0.08;
@@ -203,6 +222,68 @@
 
   .border-strong {
     border-color: hsl(var(--border-strong));
+  }
+
+  /* ── Spectrum accents ───────────────────────────────────────────────
+     Sharp gradient fill — no fade, no glow, square 90° ends. The exact line.
+     Used for every spectral streak and tick. */
+  .spectrum-line {
+    background-image: var(--gradient-spectrum);
+  }
+
+  /* Tiny spectral dot — announcement pills, footer mark. */
+  .spectrum-dot {
+    background-image: var(--gradient-spectrum);
+  }
+
+  /* Square coordinate grid behind a headline number — the x.ai stat treatment,
+     masked to a soft floor so the number stays the focus. Monochrome lines;
+     the spectrum arrives separately as the accent rule beneath. */
+  .stat-grid {
+    background-image:
+      linear-gradient(hsl(0 0% 100% / 0.045) 1px, transparent 1px),
+      linear-gradient(90deg, hsl(0 0% 100% / 0.045) 1px, transparent 1px);
+    background-size: 56px 56px;
+    background-position: center;
+    -webkit-mask-image: radial-gradient(118% 96% at 50% 50%, #000 26%, transparent 74%);
+    mask-image: radial-gradient(118% 96% at 50% 50%, #000 26%, transparent 74%);
+  }
+
+  /* One faint spectral wash on the stat floor — the only colored fill we allow,
+     kept under ~10% so the number reads white (truth) above a lit horizon. */
+  .stat-spectrum-floor {
+    background-image: var(--gradient-spectrum);
+    opacity: 0.09;
+    -webkit-mask-image: radial-gradient(60% 120% at 50% 118%, #000, transparent 70%);
+    mask-image: radial-gradient(60% 120% at 50% 118%, #000, transparent 70%);
+  }
+}
+
+/* Every spectral streak draws in left → right each time it enters view. The
+   colors stay fixed; a clip wipe reveals the line from its left edge. */
+@keyframes spectrum-wipe {
+  from { clip-path: inset(0 100% 0 0); }
+  to   { clip-path: inset(0 0 0 0); }
+}
+@layer utilities {
+  .streak-idle { clip-path: inset(0 100% 0 0); }            /* hidden, pre-reveal */
+  .streak-in   { animation: spectrum-wipe 0.85s cubic-bezier(0.4, 0, 0.2, 1) both; }
+}
+
+/* Hover border-beam — one gradient segment travels the button's perimeter while
+   it is hovered (left → top → right → bottom, looping). A single dash on a
+   full-perimeter gap, so it reads as one moving line, never a fill. No glow. */
+@keyframes beam-travel {
+  to { stroke-dashoffset: -100; }
+}
+@layer utilities {
+  .beam-line {
+    opacity: 0;
+    transition: opacity 0.18s ease;
+  }
+  .group:hover .beam-line {
+    opacity: 1;
+    animation: beam-travel 2.4s linear infinite;
   }
 }
 

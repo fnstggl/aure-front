@@ -1,3 +1,4 @@
+import { useEffect, useId, useRef, useState } from "react";
 import { Link } from "react-router-dom";
 import { motion, useTime, useTransform } from "framer-motion";
 import { cn } from "@/lib/utils";
@@ -85,20 +86,130 @@ export function Reveal({
 export function SectionEyebrow({
   children,
   className,
+  tone = "default",
+}: {
+  children: React.ReactNode;
+  className?: string;
+  /* "spectrum" lights the leading tick with the gradient — reserved for the
+     two or three peak sections so the accent stays rare. */
+  tone?: "default" | "spectrum";
+}) {
+  return (
+    <div
+      className={cn(
+        "flex items-center gap-3 font-mono text-[10.5px] uppercase tracking-[0.24em]",
+        tone === "spectrum" ? "text-white/55" : "text-white/35",
+        className,
+      )}
+    >
+      {tone === "spectrum" ? (
+        <SpectrumStreak className="h-px w-7" />
+      ) : (
+        <span className="h-px w-7 bg-white/15" aria-hidden />
+      )}
+      {children}
+    </div>
+  );
+}
+
+/* Re-triggering in-view: increments a counter each time the element (re)enters
+   the viewport, so the streak's wipe replays on every appearance — not once. */
+function useReplayInView<T extends HTMLElement>() {
+  const ref = useRef<T>(null);
+  const [play, setPlay] = useState(0);
+  const inside = useRef(false);
+  useEffect(() => {
+    const el = ref.current;
+    if (!el || typeof IntersectionObserver === "undefined") {
+      setPlay(1);
+      return;
+    }
+    const obs = new IntersectionObserver(
+      (entries) =>
+        entries.forEach((e) => {
+          if (e.isIntersecting && !inside.current) {
+            inside.current = true;
+            setPlay((p) => p + 1);
+          } else if (!e.isIntersecting && inside.current) {
+            inside.current = false;
+          }
+        }),
+      { threshold: 0, rootMargin: "0px 0px -12% 0px" },
+    );
+    obs.observe(el);
+    return () => obs.disconnect();
+  }, []);
+  return { ref, play };
+}
+
+/* SpectrumStreak — the exact line: a sharp-ended gradient streak (no fade, no
+   glow) that wipes in left → right every time it enters view. Height + width
+   come from className. Reduced motion shows it statically. */
+export function SpectrumStreak({ className }: { className?: string }) {
+  const reduced = usePrefersReducedMotion();
+  const { ref, play } = useReplayInView<HTMLSpanElement>();
+  return (
+    <span ref={ref} aria-hidden className={cn("relative block overflow-hidden", className)}>
+      <span
+        key={play}
+        className={cn("absolute inset-0 spectrum-line", !reduced && (play === 0 ? "streak-idle" : "streak-in"))}
+      />
+    </span>
+  );
+}
+
+/* SpectrumUnderline — the signature accent. A spectral streak under a single
+   word; the text itself stays monochrome. Spend it on the one word that
+   carries a section's meaning. */
+export function SpectrumUnderline({
+  children,
+  className,
 }: {
   children: React.ReactNode;
   className?: string;
 }) {
   return (
-    <div
+    <span className={cn("relative inline-block", className)}>
+      <span className="relative z-10">{children}</span>
+      <SpectrumStreak className="pointer-events-none absolute inset-x-0 -bottom-[0.04em] h-[2px]" />
+    </span>
+  );
+}
+
+/* SpectrumRule — a standalone accent streak, for the stat moment beneath a
+   headline number. */
+export function SpectrumRule({ className }: { className?: string }) {
+  return <SpectrumStreak className={cn("h-[2px]", className)} />;
+}
+
+/* AnnouncementPill — square-cornered (our enterprise tell vs. x.ai's rounded
+   pill), led by a small spectral mark. One per page, above the hero claim. */
+export function AnnouncementPill({
+  to,
+  label,
+  children,
+  className,
+}: {
+  to: string;
+  label?: string;
+  children: React.ReactNode;
+  className?: string;
+}) {
+  return (
+    <Link
+      to={to}
       className={cn(
-        "flex items-center gap-3 font-mono text-[10.5px] uppercase tracking-[0.24em] text-white/35",
+        "group inline-flex items-center gap-2.5 border border-border bg-white/[0.02] px-3 py-1.5 text-[12.5px] tracking-tight text-white/62 transition-colors duration-200 hover:border-white/22 hover:text-white/82",
         className,
       )}
     >
-      <span className="h-px w-7 bg-white/15" aria-hidden />
-      {children}
-    </div>
+      <span className="spectrum-dot h-1.5 w-1.5" aria-hidden />
+      {label && (
+        <span className="font-mono text-[10px] uppercase tracking-[0.2em] text-white/80">{label}</span>
+      )}
+      <span>{children}</span>
+      <Arrow className="text-white/40 transition-transform duration-200 group-hover:translate-x-0.5" />
+    </Link>
   );
 }
 
@@ -109,6 +220,7 @@ export function SectionHeader({
   className,
   align = "left",
   revealIntro = false,
+  eyebrowTone = "default",
 }: {
   eyebrow?: string;
   title: React.ReactNode;
@@ -116,12 +228,13 @@ export function SectionHeader({
   className?: string;
   align?: "left" | "center";
   revealIntro?: boolean;
+  eyebrowTone?: "default" | "spectrum";
 }) {
   const introClass = "mt-5 max-w-xl text-pretty text-[15px] leading-relaxed text-white/64 md:text-[16px]";
   return (
     <div className={cn("max-w-2xl", align === "center" && "mx-auto text-center", className)}>
       {eyebrow && (
-        <SectionEyebrow className={cn("mb-6", align === "center" && "justify-center")}>
+        <SectionEyebrow tone={eyebrowTone} className={cn("mb-6", align === "center" && "justify-center")}>
           {eyebrow}
         </SectionEyebrow>
       )}
@@ -181,11 +294,45 @@ export function ShadowFlow() {
 const baseCta =
   "inline-flex h-11 items-center justify-center gap-2 rounded-md px-6 text-[14px] font-medium tracking-tight transition-all duration-200 ease-premium active:translate-y-px focus-visible:outline-none";
 
+/* BeamBorder — a single spectral segment that travels the button perimeter on
+   hover (one dash on a full-perimeter gap). Sits on the edge only; no glow. */
+function BeamBorder() {
+  const gid = `beam-${useId()}`;
+  return (
+    <svg className="pointer-events-none absolute inset-0 h-full w-full overflow-visible" aria-hidden>
+      <defs>
+        <linearGradient id={gid} x1="0" y1="0" x2="1" y2="0">
+          <stop offset="0%" style={{ stopColor: "hsl(var(--spectrum-blue))" }} />
+          <stop offset="28%" style={{ stopColor: "hsl(var(--spectrum-violet))" }} />
+          <stop offset="52%" style={{ stopColor: "hsl(var(--spectrum-magenta))" }} />
+          <stop offset="78%" style={{ stopColor: "hsl(var(--spectrum-orange))" }} />
+          <stop offset="100%" style={{ stopColor: "hsl(var(--spectrum-amber))" }} />
+        </linearGradient>
+      </defs>
+      <rect
+        className="beam-line"
+        x="0"
+        y="0"
+        width="100%"
+        height="100%"
+        rx="4"
+        fill="none"
+        stroke={`url(#${gid})`}
+        strokeWidth="1.5"
+        pathLength={100}
+        strokeDasharray="18 82"
+        vectorEffect="non-scaling-stroke"
+      />
+    </svg>
+  );
+}
+
 export function CTAButton({
   to,
   href,
   variant = "primary",
   withArrow = false,
+  beam = false,
   className,
   children,
   ...rest
@@ -194,6 +341,8 @@ export function CTAButton({
   href?: string;
   variant?: "primary" | "secondary";
   withArrow?: boolean;
+  /* Adds a spectral border-beam that travels the perimeter on hover. */
+  beam?: boolean;
   className?: string;
   children: React.ReactNode;
 } & React.AnchorHTMLAttributes<HTMLAnchorElement>) {
@@ -204,12 +353,13 @@ export function CTAButton({
 
   const content = (
     <>
+      {beam && <BeamBorder />}
       {children}
       {withArrow && <Arrow className="transition-transform duration-200 group-hover:translate-x-0.5" />}
     </>
   );
 
-  const classes = cn(baseCta, "group", styles, className);
+  const classes = cn(baseCta, "group", beam && "relative", styles, className);
 
   if (to) {
     return (

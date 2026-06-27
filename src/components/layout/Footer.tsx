@@ -2,6 +2,7 @@ import { Link } from "react-router-dom";
 
 const footerLinks = [
   { label: "How it works", href: "/how-it-works" },
+  { label: "Benchmark", href: "/benchmark" },
   { label: "Safety", href: "/safety" },
   { label: "Shadow audit", href: "/shadow-audit" },
   { label: "Docs", href: "/docs" },
@@ -50,7 +51,7 @@ export function Footer() {
             </Link>
           </span>
           <span className="flex items-center gap-2 font-mono text-[10.5px] uppercase tracking-[0.16em] text-white/30">
-            <span className="inline-block h-1 w-1 rounded-full bg-signal/80" aria-hidden />
+            <span className="spectrum-dot inline-block h-1 w-1" aria-hidden />
             Shadow-mode · constraint-aware
           </span>
         </div>
