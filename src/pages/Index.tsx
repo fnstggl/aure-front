@@ -100,7 +100,7 @@ export default function Index() {
             </div>
             <div className="col-span-1 mt-12 px-6 sm:px-8 md:col-span-7 md:col-start-6 md:mt-0 md:px-0 md:pr-8 lg:pr-10">
               <Reveal delay={120}>
-                <WorldModelArchitecture className="mx-auto max-w-[480px]" />
+                <WorldModelArchitecture />
               </Reveal>
             </div>
           </Grid>
