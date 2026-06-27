@@ -161,6 +161,16 @@
     font-family: "Geist Mono", "IBM Plex Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
   }
 
+  /* Century Expanded — the one editorial serif, used only for the hero thesis.
+     Requested first so a licensed copy is honored where present; Georgia is the
+     canonical fallback for a Century-style face so the serif treatment renders
+     everywhere. */
+  .font-century {
+    font-family: "Century Expanded", "Century Expanded BT", "Century Schoolbook",
+      Georgia, "Times New Roman", serif;
+    font-feature-settings: "kern" 1, "liga" 1;
+  }
+
   .glass-nav {
     background: hsl(0 0% 2% / 0.6);
     backdrop-filter: blur(16px) saturate(120%);
@@ -328,6 +338,11 @@
     background-position: center;
     background-repeat: no-repeat;
     opacity: 0.92;
+    /* ~12% smaller and nudged slightly lower so the field reads as a framed
+       plate rather than a dominant full-bleed image. The datacenter art is
+       black-on-black, so the revealed margin is seamless. */
+    transform: translateY(3%) scale(0.88);
+    transform-origin: center;
     animation: hero-breathe 26s ease-in-out infinite;
   }
   /* a brighter copy revealed only through a soft moving band → per-dot shimmer */
@@ -339,6 +354,8 @@
     background-position: center;
     background-repeat: no-repeat;
     opacity: 0.72;
+    transform: translateY(3%) scale(0.88);
+    transform-origin: center;
     mix-blend-mode: screen;
     -webkit-mask-image: linear-gradient(100deg, transparent 38%, #000 50%, transparent 62%);
     mask-image: linear-gradient(100deg, transparent 38%, #000 50%, transparent 62%);

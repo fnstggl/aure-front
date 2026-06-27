@@ -16,8 +16,8 @@ export function Footer() {
               <img src="/aure_logo.png" alt="Aurelius" className="h-5 w-auto" />
             </Link>
             <p className="mt-4 text-[13.5px] leading-relaxed text-white/42">
-              Constraint-aware orchestration for AI infrastructure. Shadow-mode first,
-              read-only by default.
+              Predictive orchestration for AI infrastructure. Forecast first.
+              Simulate before execution.
             </p>
           </div>
 

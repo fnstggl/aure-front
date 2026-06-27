@@ -36,18 +36,12 @@ export default function Index() {
             <div className="flex flex-1 items-center justify-center">
               <div className="mx-auto w-full max-w-[72rem] px-6 pb-16 pt-32 text-center sm:px-8 -translate-y-[13px]">
                 <Reveal>
-                  <h1 className="text-[clamp(1.1rem,1.6vw,1.35rem)] font-medium leading-[1.3] tracking-[-0.01em] text-foreground">
+                  <h1 className="font-century mx-auto max-w-[20ch] text-[clamp(1.7rem,3.4vw,2.55rem)] font-medium leading-[1.16] tracking-[-0.005em] text-foreground sm:max-w-[30ch]">
                     The optimal scheduling decision depends on constraints that haven&rsquo;t emerged yet.
                   </h1>
                 </Reveal>
-                <Reveal delay={80}>
-                  <p className="mx-auto mt-5 max-w-xl text-[14px] leading-relaxed text-white/60 md:text-[15px]">
-                    Aurelius forecasts future cluster constraints and simulates candidate decisions
-                    before execution.
-                  </p>
-                </Reveal>
-                <Reveal delay={160}>
-                  <div className="mt-10 flex flex-col items-center justify-center gap-3 sm:flex-row">
+                <Reveal delay={120}>
+                  <div className="mt-11 flex flex-col items-center justify-center gap-3 sm:flex-row">
                     <Action to="/contact" variant="primary" withArrow>
                       See how much your fleet could have saved
                     </Action>
@@ -56,12 +50,12 @@ export default function Index() {
                     </Action>
                   </div>
                 </Reveal>
-                <Reveal delay={220}>
+                <Reveal delay={180}>
                   <p className="mt-6 text-[13px] leading-relaxed text-white/80">
                     Working with a small batch of infrastructure operators.
                   </p>
                 </Reveal>
-                <Reveal delay={280}>
+                <Reveal delay={240}>
                   <div className="mt-8 flex flex-wrap items-center justify-center gap-x-5 gap-y-1.5 font-mono text-[10.5px] tracking-[0.12em] text-white/32">
                     <span><span className="text-white/50">+26%</span> SLA-safe goodput / $</span>
                     <span className="text-white/18">·</span>
@@ -94,8 +88,7 @@ export default function Index() {
               <Reveal delay={120}>
                 <p className="mt-5 max-w-sm text-[14.5px] leading-relaxed text-white/52">
                   Aurelius builds a predictive world model of the cluster state, forecasts future
-                  constraints across power, capacity, congestion, memory, topology, demand, and
-                  pricing, then simulates candidate workload decisions before they are made.
+                  constraints, and simulates candidate workload decisions before they are made.
                 </p>
               </Reveal>
               <Reveal delay={160}>
@@ -117,12 +110,7 @@ export default function Index() {
         {/* The consequence. Kept concise and secondary to the architecture. */}
         <Band className="py-20 md:py-28 lg:py-32">
           <Grid>
-            <div className="col-span-1 px-6 sm:px-8 md:col-span-7 lg:px-10">
-              <Reveal>
-                <StatMoment />
-              </Reveal>
-            </div>
-            <div className="col-span-1 mt-12 px-6 sm:px-8 md:col-span-4 md:col-start-9 md:mt-0 lg:px-10">
+            <div className="col-span-1 px-6 sm:px-8 md:col-span-4 lg:px-10">
               <Reveal>
                 <Kicker index="02">Evidence</Kicker>
               </Reveal>
@@ -151,6 +139,11 @@ export default function Index() {
                 <p className="mt-7 max-w-sm text-[12.5px] leading-relaxed text-white/38">
                   Evidence, not a guaranteed universal result.
                 </p>
+              </Reveal>
+            </div>
+            <div className="col-span-1 mt-12 px-6 sm:px-8 md:col-span-7 md:col-start-6 md:mt-0 lg:px-10">
+              <Reveal>
+                <StatMoment />
               </Reveal>
             </div>
           </Grid>
@@ -240,7 +233,7 @@ export default function Index() {
    Restrained: one number, one line, one measured-provenance caption. */
 function StatMoment() {
   return (
-    <div className="text-center md:text-left">
+    <div className="text-center md:text-right">
       <div className="text-[clamp(3.6rem,8.5vw,6.8rem)] font-medium leading-[0.9] tracking-[-0.04em] text-foreground">
         +26%
       </div>
@@ -248,7 +241,7 @@ function StatMoment() {
         higher SLA-safe goodput per dollar
       </p>
       <p className="mt-6 font-mono text-[11px] uppercase tracking-[0.2em] text-white/42">
-        Measured on public Azure traces · SLA-safe · −21% GPU-hours
+        Measured on public Azure traces · SLA-safe · −21% GPU-hours · −25% energy cost
       </p>
     </div>
   );
