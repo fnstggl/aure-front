@@ -348,16 +348,13 @@
     mask-repeat: no-repeat;
     animation: hero-shimmer 24s linear infinite;
   }
-  /* Vignette keeps the field present at the edges but lays a tight scrim only
-     behind the centered headline so the type stays crisp. */
+  /* Vignette frames the edges; image fully visible at center */
   .hero-field-vignette {
     position: absolute;
     inset: 0;
     background:
       /* black vignette framing the edges — lighter, so the image stays visible */
-      radial-gradient(150% 150% at 50% 50%, transparent 44%, hsl(0 0% 0% / 0.6) 80%, hsl(0 0% 0%) 100%),
-      /* narrow scrim band behind the single-line headline for legibility */
-      radial-gradient(56% 26% at 50% 46%, hsl(0 0% 0% / 0.44), transparent 74%);
+      radial-gradient(150% 150% at 50% 50%, transparent 44%, hsl(0 0% 0% / 0.6) 80%, hsl(0 0% 0%) 100%);
   }
 }
 
