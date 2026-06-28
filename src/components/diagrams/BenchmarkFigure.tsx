@@ -2,18 +2,21 @@ import { cn } from "@/lib/utils";
 import { PlateHeader, CaptionStrip } from "./plate";
 
 /* ============================================================================
-   fig.02 — the one benchmark figure, drawn as a 1-bit instrument.
+   fig.04 — the case-study result, drawn as a 1-bit instrument.
 
-   Pure black plate, pure white ink — no gray, no gold. Two validated deltas
-   against the operator's own scheduler, on public production traces: SLA-safe
-   goodput per dollar (+89%, the headline — a solid bar) and GPU-hours (−21%, an
-   outline bar). A diverging figure around a 0 baseline, with an axis title and
-   ± guides. Conservative: only the two stated numbers, framed as a backtest.
+   Pure black plate, pure white ink — no gray, no gold. The Alibaba GenAI 2026
+   case study, reported HONESTLY against an SLA-safe baseline: SLA-safe goodput
+   per dollar (+38.2%, the headline — a solid bar) and GPU-hours (−27.6%, an
+   outline bar), constraint_aware vs constraint_aware_no_affinity, both at
+   0.000% timeout. The discarded "+86.9% vs sla_aware" comparison is excluded
+   here because that baseline violates SLA — see the report body. A diverging
+   figure around the SLA-safe baseline. Conservative: only the two verified
+   deltas, framed as a historical replay.
    ============================================================================ */
 
 const W = "#ffffff";
-const BX = 300; // 0% baseline (x)
-const S = 3.4; // px per percentage point
+const BX = 300; // baseline (x)
+const S = 3.0; // px per percentage point
 const BAR_H = 34;
 const R1 = 88; // goodput bar top
 const R2 = 164; // gpu-hours bar top
@@ -21,55 +24,55 @@ const R2 = 164; // gpu-hours bar top
 export function BenchmarkFigure({ className }: { className?: string }) {
   return (
     <figure className={cn("relative overflow-hidden border border-white bg-black", className)}>
-      <PlateHeader fig="fig.02" title="backtest — public traces" />
+      <PlateHeader fig="fig.04" title="case study — alibaba genai 2026" />
       <div className="relative">
         <svg
           viewBox="0 0 760 282"
           className="relative block w-full"
           role="img"
-          aria-label="Backtest on public production traces: +89% SLA-safe goodput per dollar and −21% GPU-hours, both relative to the operator's existing scheduler."
+          aria-label="Alibaba GenAI 2026 historical replay: +38.2% SLA-safe goodput per dollar and −27.6% GPU-hours, constraint_aware versus an SLA-safe baseline (constraint_aware_no_affinity), both at zero SLA violations."
         >
-          {/* ±20% guides */}
-          {[-20, 20].map((p) => (
+          {/* ±20 / ±40 guides */}
+          {[-40, -20, 20, 40].map((p) => (
             <g key={p}>
-              <line x1={BX + p * S} y1={62} x2={BX + p * S} y2={222} stroke={W} strokeWidth={1} strokeDasharray="2 6" />
-              <text x={BX + p * S} y={240} textAnchor="middle" fontSize={10} letterSpacing="0.1em" fill={W} className="font-mono">
-                {p > 0 ? "+20" : "−20"}
+              <line x1={BX + p * S} y1={62} x2={BX + p * S} y2={222} stroke={W} strokeWidth={1} strokeDasharray="2 6" opacity={0.5} />
+              <text x={BX + p * S} y={240} textAnchor="middle" fontSize={10} letterSpacing="0.08em" fill={W} className="font-mono" opacity={0.7}>
+                {p > 0 ? `+${p}` : `−${Math.abs(p)}`}
               </text>
             </g>
           ))}
 
-          {/* 0% baseline — the operator's current scheduler */}
+          {/* 0% baseline — the SLA-safe baseline */}
           <line x1={BX} y1={54} x2={BX} y2={222} stroke={W} strokeWidth={1.6} />
-          <text x={BX} y={240} textAnchor="middle" fontSize={10} letterSpacing="0.1em" fill={W} className="font-mono">
-            0 · BASELINE
+          <text x={BX} y={240} textAnchor="middle" fontSize={10} letterSpacing="0.08em" fill={W} className="font-mono">
+            0 · SLA-SAFE BASELINE
           </text>
 
           {/* axis title */}
-          <text x={BX} y={262} textAnchor="middle" fontSize={10.5} letterSpacing="0.18em" fill={W} className="font-mono">
-            Δ VS OPERATOR BASELINE (%)
+          <text x={BX} y={262} textAnchor="middle" fontSize={10.5} letterSpacing="0.16em" fill={W} className="font-mono">
+            Δ VS constraint_aware_no_affinity (%)
           </text>
 
-          {/* row 1 — SLA-safe goodput / $ : +89% (headline, solid bar) */}
+          {/* row 1 — SLA-safe goodput / $ : +38.2% (headline, solid bar) */}
           <text x={BX - 16} y={R1 + 22} textAnchor="end" fontSize={12} letterSpacing="0.04em" fill={W} className="font-mono">
             SLA-safe goodput / $
           </text>
-          <rect x={BX} y={R1} width={89 * S} height={BAR_H} fill={W} stroke={W} strokeWidth={1.4} />
-          <text x={BX + 89 * S + 16} y={R1 + 24} textAnchor="start" fontSize={22} letterSpacing="-0.01em" fill={W} className="font-mono">
-            +89%
+          <rect x={BX} y={R1} width={38.2 * S} height={BAR_H} fill={W} stroke={W} strokeWidth={1.4} />
+          <text x={BX + 38.2 * S + 16} y={R1 + 24} textAnchor="start" fontSize={22} letterSpacing="-0.01em" fill={W} className="font-mono">
+            +38.2%
           </text>
 
-          {/* row 2 — GPU-hours : −21% (outline bar) */}
+          {/* row 2 — GPU-hours : −27.6% (outline bar) */}
           <text x={BX + 16} y={R2 + 22} textAnchor="start" fontSize={12} letterSpacing="0.04em" fill={W} className="font-mono">
             GPU-hours
           </text>
-          <rect x={BX - 21 * S} y={R2} width={21 * S} height={BAR_H} fill="none" stroke={W} strokeWidth={1.4} />
-          <text x={BX - 21 * S - 16} y={R2 + 24} textAnchor="end" fontSize={22} letterSpacing="-0.01em" fill={W} className="font-mono">
-            −21%
+          <rect x={BX - 27.6 * S} y={R2} width={27.6 * S} height={BAR_H} fill="none" stroke={W} strokeWidth={1.4} />
+          <text x={BX - 27.6 * S - 16} y={R2 + 24} textAnchor="end" fontSize={22} letterSpacing="-0.01em" fill={W} className="font-mono">
+            −27.6%
           </text>
         </svg>
       </div>
-      <CaptionStrip label="fig.02 — Δ vs operator scheduler · backtest, not a guarantee" />
+      <CaptionStrip label="fig.04 — both arms 0.000% SLA violations · historical replay, not a guarantee" />
     </figure>
   );
 }

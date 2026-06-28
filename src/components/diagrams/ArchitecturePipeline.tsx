@@ -22,10 +22,18 @@ const STAGES = [
   { n: "05", t: "Controlled rollout", s: "gradual · reversible", committed: true },
 ];
 
-export function ArchitecturePipeline({ className }: { className?: string }) {
+export function ArchitecturePipeline({
+  className,
+  fig = "fig.01",
+  title = "evaluation pipeline",
+}: {
+  className?: string;
+  fig?: string;
+  title?: string;
+}) {
   return (
     <figure className={cn("relative overflow-hidden border border-white bg-black", className)}>
-      <PlateHeader fig="fig.01" title="evaluation pipeline" />
+      <PlateHeader fig={fig} title={title} />
       <div className="relative">
         <svg
           viewBox="0 0 580 452"
@@ -117,7 +125,7 @@ export function ArchitecturePipeline({ className }: { className?: string }) {
           </g>
         </svg>
       </div>
-      <CaptionStrip label="fig.01 — telemetry → replay → shadow → savings → rollout" />
+      <CaptionStrip label={`${fig} — telemetry → replay → shadow → savings → rollout`} />
     </figure>
   );
 }

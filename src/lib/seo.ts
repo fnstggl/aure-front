@@ -62,9 +62,9 @@ export const ROUTES: RouteMeta[] = [
   },
   {
     path: "/technical-report",
-    title: "Technical Report — Aurelius",
+    title: "Technical Report — Aurelius: Forecast. Simulate. Decide.",
     description:
-      "How Aurelius increases SLA-safe goodput per dollar, and how those results are measured against an operator's own scheduler on public production traces: architecture, methodology, benchmark results, validation, and limitations.",
+      "How Aurelius builds a predictive world model of AI infrastructure, forecasts future constraints, simulates candidate workload decisions, and chooses the economic optimum before execution — with the search strategy, benchmark methodology, results, and limitations behind it.",
     name: "Technical Report",
     priority: 0.9,
     changefreq: "monthly",
