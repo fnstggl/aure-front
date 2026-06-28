@@ -54,7 +54,7 @@ export default function TechnicalReport() {
               </Reveal>
               <Reveal delay={60}>
                 <h1 className="mt-7 max-w-3xl text-balance text-[clamp(2rem,4.6vw,3.2rem)] font-medium leading-[1.04] tracking-[-0.03em] text-foreground">
-                  Forecast. Simulate. Decide.
+                  Predictive World Models for AI Infrastructure
                 </h1>
               </Reveal>
               <Reveal delay={120}>
