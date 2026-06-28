@@ -59,18 +59,12 @@ export default function TechnicalReport() {
               </Reveal>
               <Reveal delay={120}>
                 <p className="mt-6 max-w-2xl text-[15px] leading-relaxed text-white/58">
-                  How Aurelius builds a predictive world model of AI infrastructure, forecasts future
-                  constraints, simulates candidate workload decisions, and chooses the economic
-                  optimum — subject to SLA, capacity, power, policy, and safety gates — before
-                  execution.
+                  Forecasting future cluster state to optimize workload decisions before execution.
                 </p>
               </Reveal>
               <Reveal delay={160}>
                 <p className="mt-4 max-w-2xl text-[13.5px] leading-relaxed text-white/40">
-                  Aurelius is not a scheduler or a one-knob optimizer. It is a predictive control
-                  architecture: current cluster state → predictive world model → forecast future
-                  constraints → simulate candidate decisions → score economic outcomes → constraint
-                  gate → recommend / execute.
+                  Aurelius introduces a predictive control architecture for AI infrastructure. Rather than optimizing only the current cluster state, it forecasts future infrastructure constraints, simulates candidate decisions against those predicted conditions, and selects the economically optimal action subject to SLA, capacity, power, policy, and safety constraints.
                 </p>
               </Reveal>
               <Reveal delay={200}>
