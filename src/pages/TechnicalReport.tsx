@@ -106,7 +106,7 @@ export default function TechnicalReport() {
                 <p className={`${P} mt-4`}>
                   On public production traces, replayed historically and compared against the
                   operator&rsquo;s own scheduler, Aurelius improves SLA-safe goodput per dollar by
-                  +26% and reduces GPU-hours by −21%. Every decision is evaluated against hard
+                  +89% and reduces GPU-hours by −21%. Every decision is evaluated against hard
                   constraints, runs read-only in shadow mode before any rollout, and falls back
                   deterministically. These figures are backtest evidence, not a guaranteed universal
                   result.
@@ -165,7 +165,7 @@ export default function TechnicalReport() {
               <Sec n="06" id="results" title="Benchmark Results">
                 <p className={P}>
                   Against the operator&rsquo;s scheduler on public production traces, Aurelius delivers
-                  +26% SLA-safe goodput per dollar and −21% GPU-hours. Both deltas are relative to the
+                  +89% SLA-safe goodput per dollar and −21% GPU-hours. Both deltas are relative to the
                   baseline scheduler on the same replayed trace.
                 </p>
                 <div className="mt-9 max-w-[620px]">
@@ -181,7 +181,7 @@ export default function TechnicalReport() {
                 <p className={P}>Aurelius is validated under conservative, read-only conditions:</p>
                 <ul className="mt-6 grid max-w-[60ch] gap-y-3">
                   {[
-                    "Azure public production traces",
+                    "AliBaba public production traces",
                     "Historical replay",
                     "Shadow mode before deployment",
                     "Read-only evaluation",

@@ -34,7 +34,7 @@ export default function Index() {
 
           <div className="relative z-20 flex min-h-[100dvh] flex-col">
             <div className="flex flex-1 items-center justify-center">
-              <div className="mx-auto w-full max-w-[72rem] px-6 pb-16 pt-32 text-center sm:px-8 -translate-y-[13px]">
+              <div className="mx-auto w-full max-w-[72rem] translate-y-[15vh] px-6 pb-16 pt-32 text-center sm:px-8">
                 <Reveal>
                   <h1 className="mx-auto max-w-[22ch] text-[clamp(1.35rem,2.5vw,1.75rem)] font-medium leading-[1.2] tracking-[-0.015em] text-foreground sm:max-w-none sm:whitespace-nowrap">
                     The optimal scheduling decision depends on constraints that haven&rsquo;t emerged yet.
@@ -57,13 +57,13 @@ export default function Index() {
                 </Reveal>
                 <Reveal delay={240}>
                   <div className="mt-8 flex flex-wrap items-center justify-center gap-x-5 gap-y-1.5 font-mono text-[10.5px] tracking-[0.12em] text-white/32">
-                    <span><span className="text-white/50">+26%</span> SLA-safe goodput / $</span>
+                    <span><span className="text-white/50">+89%</span> SLA-safe goodput / $</span>
                     <span className="text-white/18">·</span>
                     <span><span className="text-white/50">−21%</span> GPU-hours</span>
                     <span className="text-white/18">·</span>
                     <span><span className="text-white/50">−25%</span> energy cost</span>
                     <span className="text-white/18">·</span>
-                    <span className="uppercase tracking-[0.16em]">Measured on public Azure traces</span>
+                    <span className="uppercase tracking-[0.16em]">Measured on public AliBaba traces</span>
                   </div>
                 </Reveal>
               </div>
@@ -132,7 +132,7 @@ export default function Index() {
               </Reveal>
               <Reveal delay={160}>
                 <ul className="mt-7 grid gap-y-3">
-                  {["Offline replay", "Read-only shadow mode", "Public Azure production traces"].map((item) => (
+                  {["Offline replay", "Read-only shadow mode", "Public AliBaba production traces"].map((item) => (
                     <li key={item} className="flex items-center gap-3 font-mono text-[12.5px] text-white/62">
                       <span className="inline-block h-px w-4 shrink-0 bg-white/45" aria-hidden />
                       {item}
@@ -235,13 +235,13 @@ function StatMoment() {
   return (
     <div className="text-center md:text-left">
       <div className="text-[clamp(3.6rem,8.5vw,6.8rem)] font-medium leading-[0.9] tracking-[-0.04em] text-foreground">
-        +26%
+        +89%
       </div>
       <p className="mt-4 text-[clamp(1.05rem,2.4vw,1.6rem)] font-medium tracking-tight text-white/80">
         higher SLA-safe goodput per dollar
       </p>
       <p className="mt-6 font-mono text-[11px] uppercase tracking-[0.2em] text-white/42">
-        Measured on public Azure traces · SLA-safe · −21% GPU-hours · −25% energy cost
+        Measured on public AliBaba traces · SLA-safe · −21% GPU-hours · −25% energy cost
       </p>
     </div>
   );

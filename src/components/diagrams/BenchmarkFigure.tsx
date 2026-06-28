@@ -6,14 +6,14 @@ import { PlateHeader, CaptionStrip } from "./plate";
 
    Pure black plate, pure white ink — no gray, no gold. Two validated deltas
    against the operator's own scheduler, on public production traces: SLA-safe
-   goodput per dollar (+26%, the headline — a solid bar) and GPU-hours (−21%, an
+   goodput per dollar (+89%, the headline — a solid bar) and GPU-hours (−21%, an
    outline bar). A diverging figure around a 0 baseline, with an axis title and
    ± guides. Conservative: only the two stated numbers, framed as a backtest.
    ============================================================================ */
 
 const W = "#ffffff";
-const BX = 380; // 0% baseline (x)
-const S = 5; // px per percentage point
+const BX = 300; // 0% baseline (x)
+const S = 3.4; // px per percentage point
 const BAR_H = 34;
 const R1 = 88; // goodput bar top
 const R2 = 164; // gpu-hours bar top
@@ -27,7 +27,7 @@ export function BenchmarkFigure({ className }: { className?: string }) {
           viewBox="0 0 760 282"
           className="relative block w-full"
           role="img"
-          aria-label="Backtest on public production traces: +26% SLA-safe goodput per dollar and −21% GPU-hours, both relative to the operator's existing scheduler."
+          aria-label="Backtest on public production traces: +89% SLA-safe goodput per dollar and −21% GPU-hours, both relative to the operator's existing scheduler."
         >
           {/* ±20% guides */}
           {[-20, 20].map((p) => (
@@ -50,13 +50,13 @@ export function BenchmarkFigure({ className }: { className?: string }) {
             Δ VS OPERATOR BASELINE (%)
           </text>
 
-          {/* row 1 — SLA-safe goodput / $ : +26% (headline, solid bar) */}
+          {/* row 1 — SLA-safe goodput / $ : +89% (headline, solid bar) */}
           <text x={BX - 16} y={R1 + 22} textAnchor="end" fontSize={12} letterSpacing="0.04em" fill={W} className="font-mono">
             SLA-safe goodput / $
           </text>
-          <rect x={BX} y={R1} width={26 * S} height={BAR_H} fill={W} stroke={W} strokeWidth={1.4} />
-          <text x={BX + 26 * S + 16} y={R1 + 24} textAnchor="start" fontSize={22} letterSpacing="-0.01em" fill={W} className="font-mono">
-            +26%
+          <rect x={BX} y={R1} width={89 * S} height={BAR_H} fill={W} stroke={W} strokeWidth={1.4} />
+          <text x={BX + 89 * S + 16} y={R1 + 24} textAnchor="start" fontSize={22} letterSpacing="-0.01em" fill={W} className="font-mono">
+            +89%
           </text>
 
           {/* row 2 — GPU-hours : −21% (outline bar) */}
