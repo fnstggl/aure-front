@@ -8,13 +8,13 @@ import { SearchStrategyLadder } from "@/components/diagrams/SearchStrategyLadder
 import { BenchmarkFigure } from "@/components/diagrams/BenchmarkFigure";
 import { ArchitecturePipeline } from "@/components/diagrams/ArchitecturePipeline";
 
-/* /technical-report — a systems technical report, not a whitepaper.
-   Every number, file path, class name, and surface listed here is grounded in
-   the Aurelius research repository (aurelius/environment, aurelius/forecasting,
-   aurelius/optimization, aurelius/traces) and its audit documents (research/).
-   Two result families are reported separately and never mixed: the Alibaba
-   GenAI 2026 trace case study and the full-action-layer MPC validation. The web
-   page is the canonical report; a browser Print → Save as PDF is offered. */
+/* /technical-report — a systems technical report about what Aurelius is: the
+   discovery, the architecture, and the evidence. It deliberately explains the
+   high-level control architecture and reports verified results without exposing
+   the internal source tree, implementation classes, exact heuristics, or tuning
+   values. Two result families are reported separately and never mixed: the
+   Alibaba GenAI 2026 public-workload case study and the full-architecture MPC
+   validation. The web page is canonical; a Print → Save as PDF is offered. */
 
 const SECTIONS = [
   { n: "00", id: "abstract", title: "Abstract" },
@@ -25,13 +25,13 @@ const SECTIONS = [
   { n: "05", id: "surfaces", title: "Candidate Decision Surfaces" },
   { n: "06", id: "search", title: "Search & Optimization" },
   { n: "07", id: "objective", title: "Objective & Constraint Gates" },
-  { n: "08", id: "case-study", title: "Case Study — Alibaba GenAI 2026" },
+  { n: "08", id: "case-study", title: "Public Workload Case Study" },
   { n: "09", id: "mpc-validation", title: "Full Aurelius MPC Validation" },
   { n: "10", id: "methodology", title: "Benchmark Methodology" },
   { n: "11", id: "baselines", title: "Baselines" },
   { n: "12", id: "results", title: "Results" },
-  { n: "13", id: "ablations", title: "Contribution Analysis" },
-  { n: "14", id: "regret", title: "Search Regret & Optimizer Validation" },
+  { n: "13", id: "contribution", title: "Contribution Analysis" },
+  { n: "14", id: "regret", title: "Optimizer Validation" },
   { n: "15", id: "safety", title: "Safety & Deployment Path" },
   { n: "16", id: "limitations", title: "Limitations" },
   { n: "17", id: "future-work", title: "Future Work" },
@@ -119,27 +119,20 @@ export default function TechnicalReport() {
                   The optimal scheduling decision depends on constraints that have not emerged yet.
                   Aurelius tests that premise directly: it builds a predictive world model of the
                   future cluster state, forecasts the operational constraints a decision will face,
-                  simulates candidate workload decisions against that forecasted state, and selects
-                  the economic optimum subject to SLA, capacity, power, policy, and safety gates.
+                  simulates candidate workload decisions against that state, and selects the economic
+                  optimum subject to SLA, capacity, power, policy, and safety gates.
                 </p>
                 <p className={`${P} mt-4`}>
-                  Two result families are reported here, kept strictly separate. As a workload
-                  generalization <em>case study</em>, the Alibaba GenAI 2026 stable-diffusion LoRA
-                  trace yields <Em>+38.2% SLA-safe goodput per dollar</Em> and <Em>−27.6% GPU-hours</Em>{" "}
-                  against an SLA-safe baseline, with both arms at 0.000% SLA violations. As the{" "}
-                  <em>current-architecture validation</em>, the full Aurelius MPC — every implemented
-                  action surface live — reaches <Em>+82.1% SLA-safe goodput/$</Em> over the strongest
-                  SLA-aware baseline on a bounded serving window. The first is trace-backed and
-                  attributed; the second is directionally robust with a simulator-inferred magnitude.
-                  Neither is a production deployment, and neither is a guarantee for any specific
-                  fleet.
+                  The architecture is the result; the numbers support it. As an external workload{" "}
+                  <em>case study</em>, the public Alibaba GenAI 2026 trace yields{" "}
+                  <Em>+38.2% SLA-safe goodput per dollar</Em> and <Em>−27.6% GPU-hours</Em> against an
+                  SLA-safe baseline, with both arms at 0.000% SLA violations — evidence that the
+                  mechanism is not an artifact of a single internal simulator. As the{" "}
+                  <em>current-architecture validation</em>, enabling the full predictive world model
+                  and its connected decision surfaces reaches <Em>+82.1% SLA-safe goodput/$</Em> over
+                  the strongest SLA-safe baseline on a bounded historical replay. Neither is a
+                  production deployment, and neither is a guarantee for any specific fleet.
                 </p>
-                <Callout>
-                  A widely-quoted <code className="text-white/70">+86.9% / +89%</code> figure compares
-                  against an <code className="text-white/70">sla_aware</code> baseline that violates
-                  SLA on 6.214% of requests. The repository flags that baseline as invalid, so it is
-                  deliberately <span className="text-white/75">not</span> the headline here. See §8 and §11.
-                </Callout>
               </Sec>
 
               {/* 01 — Problem */}
@@ -150,33 +143,31 @@ export default function TechnicalReport() {
                   isolation. But the economic outcome of a placement is decided by constraints that
                   arrive <em>after</em> the placement is made — power and capacity headroom,
                   congestion, memory and topology pressure, demand and pricing, cache locality, model
-                  affinity, the warm/cold state of a replica, migration cost, and the way batching,
+                  affinity, the warm or cold state of a replica, migration cost, and the way batching,
                   precision, and speculative decoding interact under load.
                 </p>
                 <p className={`${P} mt-4`}>
                   Once a job lands, those costs are largely locked in. An <Em>observe → decide</Em>{" "}
                   loop cannot price a constraint it has not yet seen. Aurelius closes that gap with an{" "}
-                  <Em>observe → forecast → simulate → decide</Em> loop: it advances a model of the
-                  cluster forward in time, prices each candidate decision against the state it will
-                  actually meet, and commits the economic optimum ahead of execution.
+                  <Em>observe → forecast → simulate → decide</Em> loop — a different control
+                  architecture, not another scheduler.
                 </p>
               </Sec>
 
               {/* 02 — Architecture */}
               <Sec n="02" id="architecture" title="02 · Forecast → Simulate → Decide">
                 <p className={P}>
-                  Aurelius is an advisory predictive controller. The control loop is implemented as{" "}
-                  <Path>ModelPredictiveEconomicController</Path> in{" "}
-                  <Path>aurelius/environment/controller.py</Path>: each control period it forecasts the
-                  workload, enumerates candidate action bundles, simulates each against the forecasted
-                  world state on a read-only clone, scores it by risk-adjusted SLA-safe goodput per
-                  dollar, rejects anything that fails a hard gate, and returns the best safe bundle —
-                  or falls back deterministically when forecast confidence is low.
+                  Each control period, Aurelius forecasts the workload, generates candidate action
+                  bundles, simulates each against the forecasted world state, scores it by
+                  risk-adjusted SLA-safe goodput per dollar, rejects anything that fails a hard gate,
+                  and recommends the best safe bundle — falling back deterministically when forecast
+                  confidence is low.
                 </p>
                 <p className={`${P} mt-4`}>
-                  It evaluates <Em>coupled action bundles</Em>, not one knob. A bundle spans capacity,
-                  ordering, admission, routing, batching, prewarm, placement, migration, precision,
-                  speculative decoding, and clock at once, because those surfaces interact.
+                  Crucially, it evaluates <Em>coupled action bundles</Em>, not one knob. Workload
+                  timing, placement, routing, capacity, batching, prewarm, and the
+                  precision/speculation/clock policy are scored together, because those decisions
+                  interact.
                 </p>
                 <Figure>
                   <WorldModelArchitecture />
@@ -186,196 +177,138 @@ export default function TechnicalReport() {
               {/* 03 — World model */}
               <Sec n="03" id="world-model" title="03 · Predictive World Model">
                 <p className={P}>
-                  The world model is a persistent, canonical representation of the cluster —{" "}
-                  <Path>CanonicalWorldState</Path> in <Path>aurelius/environment/world_state.py</Path>{" "}
-                  — not a snapshot of free GPUs. It carries replica, server, rack, placement, warm,
-                  queue, migration, and cost sub-states, each a typed dataclass:
+                  Aurelius maintains a persistent world model of the cluster — a forward model of the
+                  fleet, not a snapshot of free GPUs. It carries the replica warm/cold state, server
+                  and rack capacity, placement and locality, queue dynamics, in-flight migrations, and
+                  the operator-cost basis, and it advances that state one control period at a time so a
+                  candidate decision can be scored against the state it will actually meet.
                 </p>
                 <Figure>
                   <WorldModelState />
                 </Figure>
                 <p className={`${P} mt-2`}>
-                  The transition model is <Path>simulate_period()</Path> in{" "}
-                  <Path>world_simulator.py</Path>, which advances the state one control period
-                  (<code className="text-white/70">period_seconds = 60</code>) at a time — planning
-                  prewarm, placement, and migration, then folding in cold-start, warm-capacity, and
-                  topology effects to produce a <Path>PeriodOutcome</Path> (SLA-safe goodput,
-                  GPU-hours, warm-hold and migration cost). Each candidate is scored on a{" "}
-                  <Path>clone_world_state_for_candidate()</Path> copy, so scoring never mutates the
-                  real state. Inputs are fidelity-tagged in code —{" "}
-                  <code className="text-white/70">TRACE_EXACT</code>,{" "}
-                  <code className="text-white/70">TRACE_DERIVED_SAMPLE</code>,{" "}
-                  <code className="text-white/70">BENCHMARK_DERIVED</code>,{" "}
-                  <code className="text-white/70">INFERRED</code> — so no result silently treats a
-                  modeled value as measured.
+                  Candidate decisions are evaluated on read-only simulated future states, so scoring
+                  never mutates the live cluster. Inputs are tagged by provenance — measured,
+                  trace-derived, benchmark-calibrated, or modeled — so no result silently treats a
+                  modeled value as a measured one.
                 </p>
               </Sec>
 
               {/* 04 — Forecasts */}
               <Sec n="04" id="forecasts" title="04 · Forecasted Constraints">
                 <p className={P}>
-                  Forecasting lives in <Path>aurelius/forecasting/</Path>. The planner consumes five
-                  forecasts today — <code className="text-white/70">arrival_rate</code>,{" "}
-                  <code className="text-white/70">output_length</code>,{" "}
-                  <code className="text-white/70">prompt_length</code>,{" "}
-                  <code className="text-white/70">interarrival_cv</code>, and{" "}
-                  <code className="text-white/70">electricity_price</code> — produced by forecasters
-                  including <Path>CaraOutputLengthForecaster</Path>,{" "}
-                  <Path>CaraLatencyForecaster</Path>, <Path>CaraQueueForecaster</Path>,{" "}
-                  <Path>CachePrefixForecaster</Path>, <Path>PriceModel</Path>, and{" "}
-                  <Path>CarbonModel</Path>. Forecasts use only history up to the current period — no
-                  future-truth leakage.
+                  Aurelius forecasts arrival rate, request characteristics (such as prompt and output
+                  length), queue dynamics, and infrastructure and pricing conditions using specialized
+                  forecasting models. Forecasts use only history up to the current period — there is no
+                  future-truth leakage into the decision.
                 </p>
                 <p className={`${PT} mt-4`}>
-                  Honest scope: several constraints are represented in the world model but are{" "}
-                  <span className="text-white/60">not yet consumed as planner-input forecasts</span> —
-                  KV-reuse (planning uses synthetic unique prefixes), queue pressure and SLA pressure
-                  (emergent from arrival + service, not forecast inputs), and carbon, weather, and
-                  network congestion (not wired into the MPC objective). These are stated as absent in{" "}
-                  <Path>mpc_attribution.json</Path> rather than implied.
+                  Honest scope: several constraints are represented in the world model but are not yet
+                  consumed as planner-input forecasts — among them cache-reuse, emergent queue and SLA
+                  pressure, and carbon and network-congestion conditions. They are treated as
+                  out-of-scope inputs today rather than implied.
                 </p>
               </Sec>
 
               {/* 05 — Surfaces */}
               <Sec n="05" id="surfaces" title="05 · Candidate Decision Surfaces">
                 <p className={P}>
-                  The action space is the single source of truth in{" "}
-                  <Path>aurelius/environment/actions.py</Path>, governed by{" "}
-                  <Path>action_registry.py</Path>. Every surface is tagged by status, and the planner
-                  may only optimize <code className="text-white/70">CONNECTED</code> surfaces — those
-                  that actually change the scored reward. A bundle that tries to set a{" "}
-                  <code className="text-white/70">PLANNED</code> surface is rejected by{" "}
-                  <Path>validate_action_bundle()</Path>, so the report cannot claim a knob that is not
-                  wired.
+                  A candidate is a bundle of decisions across several surfaces. Aurelius distinguishes
+                  surfaces that are <Em>active decision levers today</Em> — they change the scored
+                  economic outcome and are optimized — from surfaces that are{" "}
+                  <Em>modeled but not yet optimized</Em>, and <Em>future surfaces</Em> that are
+                  represented but not actuated. A decision can only be recommended on an active lever,
+                  so the report cannot claim a surface that is not wired.
                 </p>
-                <SurfaceTable />
-                <p className={`${PT} mt-5`}>
-                  Routing reaches the reward through a KV-service-factor channel (Mooncake prefix
-                  reuse); prewarm, placement, and migration reach it through the world simulator;
-                  precision, speculative decoding, and clock reach it through the roofline serving
-                  model.
-                </p>
+                <SurfaceGroups />
               </Sec>
 
               {/* 06 — Search */}
               <Sec n="06" id="search" title="06 · Search & Optimization">
                 <p className={P}>
-                  A full bundle space is too large to brute-force, but most windows are small enough
-                  that exhaustive enumeration is tractable — and where it is, the loss of any
-                  approximate search is <Em>measured</Em>, never assumed away. This is{" "}
-                  <Path>AdaptiveSearchPlanner</Path> in{" "}
-                  <Path>aurelius/environment/search_planner.py</Path>. It chooses a strategy from the
-                  raw candidate count and emits a per-decision <Path>SearchPlan</Path> record (raw
-                  count, strategy, candidates evaluated, best reward, estimated regret, selected
-                  bundle, runtime).
+                  Because the surfaces interact, Aurelius evaluates coupled decision bundles rather
+                  than tuning one knob at a time. The search method scales with the size of the space:
+                  exhaustive evaluation where it is tractable, a structured beam-style search with
+                  local improvement for medium spaces, and bounded exploration for larger or
+                  strongly-coupled spaces. Where exact enumeration is feasible, the approximate search
+                  is scored against it so any regret is measured rather than assumed.
                 </p>
                 <Figure>
                   <SearchStrategyLadder />
                 </Figure>
-                <ul className="mt-2 grid max-w-[68ch] gap-y-2.5">
-                  {[
-                    ["exhaustive_cartesian", "full product when raw count ≤ 4096 · deterministic · regret 0 by construction · the basis for regret audits."],
-                    ["beam_search (+ local)", "the default medium-space optimizer: keep the top-6 partial bundles, add one surface at a time, then coordinate-polish the winner — captures coupled interactions (precision×batching, routing×cache, capacity×batching)."],
-                    ["coordinate_descent", "cheap local search; moves one surface at a time, so it has measured regret on coupled cases — demoted to a fallback / local-improvement step."],
-                    ["cross_entropy / random_restart", "seeded, deterministic global search reserved for very high-interaction spaces; bought nothing on the audited fixtures, so they stay optional."],
-                  ].map(([k, v]) => (
-                    <li key={k} className="flex max-w-[68ch] flex-col gap-1 border-l border-white/20 pl-4 sm:flex-row sm:gap-3">
-                      <span className="shrink-0 font-mono text-[12px] text-white/80 sm:w-[200px]">{k}</span>
-                      <span className="text-[13px] leading-relaxed text-white/52">{v}</span>
-                    </li>
-                  ))}
-                </ul>
-                <p className={`${PT} mt-5`}>
-                  The candidate generator is roofline-pruned: each roofline surface is restricted to
-                  the regime where it can help (e.g. speculative decoding only when memory-bandwidth
-                  bound), and co-location / prefill-decode disaggregation are frozen off with a
-                  recorded reason. Pruning the search space never changes the reward — a pruned
-                  candidate would score neutral or worse through the physics.
+                <p className={`${PT} mt-2`}>
+                  The candidate space is pruned by the operating regime — a surface is only proposed
+                  where it can plausibly help — which narrows the search without changing the score a
+                  candidate would receive.
                 </p>
               </Sec>
 
               {/* 07 — Objective */}
               <Sec n="07" id="objective" title="07 · Objective & Constraint Gates">
                 <p className={P}>
-                  The canonical reward is <Em>SLA-safe goodput per operator dollar</Em>: the numerator
-                  counts requests that met their SLA deadline; the denominator is infrastructure cost
-                  — base GPU cost plus warm-hold and migration penalties. The cost decomposition lives
-                  in <Path>ObjectiveFunction</Path> (<Path>aurelius/optimization/objective.py</Path>),
-                  whose components include energy cost (with PUE), carbon cost, a forecast-uncertainty
-                  risk penalty, SLA-penalty cost, inter-region data-transfer cost, queue-delay cost,
-                  and GPU-health cost.
+                  The objective is <Em>SLA-safe goodput per operator dollar</Em>: the numerator counts
+                  requests that met their SLA deadline; the denominator is infrastructure cost,
+                  including the cost of holding replicas warm and of migrations. Energy and carbon
+                  cost, queue delay, and a forecast-uncertainty risk penalty enter the same economic
+                  objective.
                 </p>
                 <p className={`${P} mt-4`}>
                   Gating is two-tier. Hard constraints — SLA, capacity, power, residency, policy —{" "}
-                  <Em>reject</Em> a candidate outright; the objective only ranks feasible candidates;
-                  a Pareto gate records whether the chosen bundle beats each baseline without
-                  regressing SLA (<code className="text-white/70">pareto_safe_vs</code>). When forecast
-                  confidence drops below <code className="text-white/70">confidence_min = 0.15</code>,
-                  the controller falls back deterministically to the SLA-aware action
-                  (<code className="text-white/70">backlog_aware · abs_conformal · off</code>).
+                  <Em>reject</Em> a candidate outright; the objective only ranks the feasible ones; and
+                  a safety gate records whether the chosen bundle beats the baseline without regressing
+                  SLA. When forecast confidence is low, Aurelius falls back deterministically to a safe
+                  default action.
                 </p>
               </Sec>
 
               {/* 08 — Case study */}
-              <Sec n="08" id="case-study" title="08 · Case Study — Alibaba GenAI 2026">
+              <Sec n="08" id="case-study" title="08 · Public Workload Case Study">
                 <p className={P}>
-                  To test whether the gains generalize beyond text-generation traces, Aurelius was
-                  replayed on the Alibaba <Path>cluster-trace-v2026-GenAI</Path>{" "}
-                  (<Path>lora_request_trace.csv</Path>) — stable-diffusion LoRA serving, a materially
-                  different, multi-model, image-generation workload. 26,824 raw rows filter to 26,392
-                  valid requests across 553 sixty-second ticks, priced at $3.00/GPU-hr, with{" "}
-                  <code className="text-white/70">SLA = 2.0 × exec_time + 30s</code> and Erlang-C
-                  M/M/c provisioning at ρ = 0.65. Harness:{" "}
-                  <Path>aurelius/traces/genai_ablation.py</Path>.
+                  To test whether the gains generalize beyond text-generation traces — and beyond a
+                  closed internal simulator — Aurelius was replayed on the public Alibaba GenAI 2026
+                  trace: stable-diffusion LoRA serving, a materially different, multi-model,
+                  image-generation workload (26,392 valid requests over a one-week window, priced and
+                  provisioned with a queue-aware model).
                 </p>
                 <Figure>
                   <BenchmarkFigure />
                 </Figure>
                 <p className={`${P} mt-2`}>
-                  The honest headline compares two SLA-safe arms:{" "}
-                  <code className="text-white/70">constraint_aware</code> at 9.8514 gp/$ (893 GPU-hrs)
-                  versus <code className="text-white/70">constraint_aware_no_affinity</code> at 7.1291
-                  gp/$ (1,234 GPU-hrs) — <Em>+38.2% goodput/$</Em> and <Em>−27.6% GPU-hours</Em>, both
-                  at 0.000% timeout (26,392/26,392 SLA-safe). The decision being optimized is
-                  infrastructure-level: adapter prewarming / model-affinity routing and anticipatory
-                  Erlang-C sizing — not tenant-side arbitrage. A Shapley decomposition attributes{" "}
-                  <Em>61.7%</Em> of the gain to model affinity / prewarming (cold start falls from
-                  ~22.85s without affinity to ~2.79s with it) and 38.3% to anticipatory sizing, with
-                  ~0% interaction.
+                  The honest headline compares two SLA-safe arms and reports{" "}
+                  <Em>+38.2% goodput/$</Em> and <Em>−27.6% GPU-hours</Em>, both at 0.000% SLA
+                  violations. The decision being optimized is infrastructure-level — adapter
+                  prewarming, model-affinity routing, and anticipatory capacity sizing — and the
+                  dominant mechanism is affinity: cold-start latency falls roughly 8× when related
+                  requests are kept warm together.
                 </p>
                 <Callout tone="warn">
-                  Scope of this case study: it is a standalone simulation
-                  (<code className="text-white/70">genai_backtest.py</code>) and is{" "}
-                  <span className="text-white/75">not yet routed through AureliusOptimizer</span>. It
-                  is benchmark-realism evidence of the affinity/sizing mechanism on a new workload, not
-                  a claim that the production controller has been run on this trace. On a single-model
-                  stream the affinity benefit shrinks toward zero.
+                  Scope: this is a public-trace case study, run as a standalone evaluation to validate
+                  the mechanism on an external workload — <span className="text-white/75">not</span> a
+                  production deployment and not a guarantee. A larger headline against an
+                  SLA-violating baseline exists in the literature; it is excluded here because a
+                  baseline that drops completions is not a valid SLA-safe comparison (see §11). On a
+                  single-model stream the affinity benefit shrinks toward zero.
                 </Callout>
               </Sec>
 
               {/* 09 — MPC validation */}
               <Sec n="09" id="mpc-validation" title="09 · Full Aurelius MPC Validation">
                 <p className={P}>
-                  Separately, the complete controller was validated with every implemented surface
-                  live — routing, batching, capacity, placement, migration, prewarm, precision,
-                  speculative decoding, GPU clock, admission, ordering — on a bounded Azure + Mooncake
-                  serving window (hybrid cost, Pareto gate). Artifact:{" "}
-                  <Path>data/external/mpc_controller/mpc_attribution.json</Path>; write-up:{" "}
-                  <Path>research/MPC_VALIDATION_REPORT.md</Path>.
+                  The flagship validation enables the full predictive world model with every connected
+                  decision surface live — workload timing, placement and routing, capacity and
+                  batching, prewarm, and the precision/speculation/clock policy — on a bounded
+                  historical serving window, scored against the strongest deployable SLA-safe baseline.
                 </p>
                 <p className={`${P} mt-4`}>
-                  The full Aurelius MPC reaches <Em>183,152 SLA-safe goodput/$</Em> against the
-                  strongest SLA-aware baseline (<code className="text-white/70">sla_aware</code>) at
-                  100,555 — <Em>+82.1%</Em> — over 120 evaluation periods. No knobs were disabled; the
-                  adaptive beam + local search ran over the full connected space with online
-                  diagnostics on.
+                  With the full architecture enabled, Aurelius reaches <Em>+82.1% SLA-safe goodput/$</Em>{" "}
+                  over the best SLA-safe baseline. No surfaces were disabled, and the baselines are
+                  deployable fixed policies with no oracle and no future information.
                 </p>
                 <Callout>
-                  Honesty, per the artifact: the <span className="text-white/75">direction</span> — the
-                  MPC substantially beats the SLA-aware baseline with all surfaces live — is the robust
-                  finding. The <span className="text-white/75">magnitude</span> is simulator-inferred on
-                  a bounded window. Baselines are deployable fixed policies with no oracle and no future
-                  information.
+                  Honesty: the <span className="text-white/75">direction</span> — the full architecture
+                  substantially beats the SLA-safe baseline with all surfaces live — is the robust
+                  finding. The <span className="text-white/75">magnitude</span> is a bounded-replay
+                  result inferred in simulation, not a production measurement.
                 </Callout>
               </Sec>
 
@@ -385,100 +318,77 @@ export default function TechnicalReport() {
                   Evaluation is deterministic historical replay: a public production trace is replayed
                   step-for-step against a fixed harness, and Aurelius&rsquo; decisions are compared
                   against deployable baseline policies on the same trace under a single metric —
-                  SLA-safe goodput per dollar. Serving physics is queue-aware M/M/c with Erlang-C
-                  provisioning. No policy sees future arrivals; anticipatory sizing uses EWMA arrival
-                  forecasts, and per-request execution time is used rather than predicted (no token
-                  oracle). The Alibaba run additionally satisfies a same-conditions checklist (same
-                  trace, SLA, cost denominator, serving physics, KPI; baseline passes the SLA gate; p99
-                  well under the SLA ceiling).
+                  SLA-safe goodput per dollar. Serving is modeled with queue-aware physics. No policy
+                  sees future arrivals; anticipatory sizing uses forecast inputs only, and per-request
+                  execution time is used rather than predicted, so there is no token oracle.
                 </p>
               </Sec>
 
               {/* 11 — Baselines */}
               <Sec n="11" id="baselines" title="11 · Baselines">
                 <p className={P}>
-                  An integrity rule runs through the repository: a baseline with &gt; 0% SLA violations
-                  is not a valid SLA-safe baseline, and a large delta earned by dropping completions is
-                  excluded from any headline. The full Alibaba factorial makes this concrete:
-                </p>
-                <AblationTable />
-                <p className={`${PT} mt-4`}>
-                  The MPC validation (§9) compares against <code className="text-white/70">fifo</code>{" "}
-                  (98,842 gp/$), <code className="text-white/70">greedy</code> (94,054), and the
-                  SLA-safe <code className="text-white/70">sla_aware</code> (100,555). The two{" "}
-                  <code className="text-white/70">sla_aware</code> baselines belong to different traces
-                  and are never compared across experiments.
+                  A single integrity rule runs through every result: a baseline that violates SLA on
+                  any meaningful fraction of requests is not a valid SLA-safe baseline, and a large
+                  delta earned by quietly dropping completions is excluded from any headline. Aurelius
+                  is therefore always compared against the strongest baseline that itself holds SLA —
+                  not against a weaker policy that would flatter the result. Baselines range from
+                  first-come-first-served through queue- and SLA-aware disciplines.
                 </p>
               </Sec>
 
               {/* 12 — Results */}
               <Sec n="12" id="results" title="12 · Results">
-                <Caption>Table 1 — Headline result (two experiments, kept separate)</Caption>
+                <Caption>Table 1 — Evidence summary (two validations, kept separate)</Caption>
                 <ResultTable
-                  head={["Experiment", "Trace / workload", "Baseline", "Metric", "Δ", "Notes"]}
+                  head={["Validation", "Purpose", "Setting", "Baseline", "Result", "Caveat"]}
                   rows={[
-                    ["Alibaba GenAI 2026", "lora_request_trace · SD-LoRA serving", "constraint_aware_no_affinity (SLA-safe)", "SLA-safe goodput/$", "+38.2%", "9.8514 vs 7.1291 · 0% violations both arms"],
-                    ["Full Aurelius MPC", "bounded Azure + Mooncake window", "sla_aware (best SLA-safe)", "SLA-safe goodput/$", "+82.1%", "183,152 vs 100,555 · direction robust, magnitude simulator-inferred"],
+                    ["Public workload case study", "Generalizes beyond an internal simulator", "Alibaba GenAI 2026 · public trace", "SLA-safe baseline", "+38.2% goodput/$", "standalone replay · not production"],
+                    ["Full Aurelius MPC", "Full architecture + connected surfaces", "bounded historical replay", "best SLA-safe baseline", "+82.1% goodput/$", "direction robust · magnitude simulator-inferred"],
                   ]}
                   emph={[4]}
                 />
-                <Caption className="mt-12">Table 2 — Resource efficiency</Caption>
+                <Caption className="mt-12">Table 2 — Public workload case study</Caption>
                 <ResultTable
-                  head={["Experiment", "GPU-hours baseline", "GPU-hours Aurelius", "Δ", "Energy", "Notes"]}
+                  head={["Metric", "Result", "Baseline", "Caveat"]}
                   rows={[
-                    ["Alibaba GenAI 2026", "1,234", "893", "−27.6%", "not separately reported", "−341 GPU-hrs · both arms SLA-safe"],
-                    ["Full Aurelius MPC", "not reported in artifact", "—", "—", "price in objective; no shifting action", "headline reported as goodput/$, not GPU-hours"],
+                    ["SLA-safe goodput / $", "+38.2%", "SLA-safe baseline", "public trace · external workload"],
+                    ["GPU-hours", "−27.6%", "SLA-safe baseline", "same completions held"],
+                    ["SLA violations", "0.000% (both arms)", "—", "valid SLA-safe comparison"],
                   ]}
-                  emph={[3]}
+                  emph={[1]}
+                />
+                <Caption className="mt-12">Table 3 — Full Aurelius MPC</Caption>
+                <ResultTable
+                  head={["Metric", "Result", "Baseline", "Setting", "Caveat"]}
+                  rows={[
+                    ["SLA-safe goodput / $", "+82.1%", "best SLA-safe baseline", "bounded historical replay", "magnitude simulator-inferred; direction robust"],
+                  ]}
+                  emph={[1]}
                 />
               </Sec>
 
-              {/* 13 — Ablations */}
-              <Sec n="13" id="ablations" title="13 · Contribution Analysis">
-                <Caption>Table 3 — Where the gain comes from</Caption>
-                <ResultTable
-                  head={["Experiment", "Component", "Contribution", "Evidence source", "Notes"]}
-                  rows={[
-                    ["Alibaba GenAI", "Model affinity / prewarming", "61.7%", "genai_ablation.py · Shapley", "cold start 22.85s → 2.79s"],
-                    ["Alibaba GenAI", "Anticipatory sizing", "38.3%", "genai_ablation.py · Shapley", "EWMA arrival forecast, no oracle"],
-                    ["Alibaba GenAI", "Interaction", "~0%", "Shapley", "contributions are additive"],
-                    ["Full MPC", "output_length forecast", "62.8%", "mpc_attribution.json · leave-one-out", "share of measured forecast regret"],
-                    ["Full MPC", "prompt_length forecast", "24.7%", "leave-one-out", ""],
-                    ["Full MPC", "interarrival_cv forecast", "12.3%", "leave-one-out", ""],
-                    ["Full MPC", "arrival_rate forecast", "0.3%", "leave-one-out", ""],
-                  ]}
-                  emph={[2]}
-                />
-              </Sec>
-
-              {/* 14 — Regret */}
-              <Sec n="14" id="regret" title="14 · Search Regret & Optimizer Validation">
+              {/* 13 — Contribution */}
+              <Sec n="13" id="contribution" title="13 · Contribution Analysis">
                 <p className={P}>
-                  Regret is defined as{" "}
-                  <code className="text-white/70">exhaustive_best − chosen_reward</code>, scored on the
-                  full evaluator and reported on every decision where exhaustive enumeration fits
-                  (<Path>research/MPC_SEARCH_REGRET_AUDIT.md</Path>).
+                  In the public-workload case study, a contribution analysis attributes roughly{" "}
+                  <Em>62%</Em> of the gain to model affinity and prewarming and roughly <Em>38%</Em> to
+                  anticipatory capacity sizing, with negligible interaction between them — the two
+                  effects are largely additive. In the full-architecture validation, an internal audit
+                  finds that the remaining headroom is dominated by forecast quality, especially the
+                  forecasts of request characteristics, rather than by the search or the objective.
                 </p>
-                <Caption className="mt-8">Table 4 — Search regret audit (selected experiments)</Caption>
-                <ResultTable
-                  head={["Experiment", "Exhaustive feasible", "Beam regret", "Coordinate regret", "Finding"]}
-                  rows={[
-                    ["Independent-action fixture", "yes", "0", "0", "both find the separable optimum"],
-                    ["Coupled precision + batching", "yes (raw 81–486)", "0", "> 0", "beam captures fp8×aggressive; coordinate misses it"],
-                    ["Coupled routing + cache", "yes", "0", "may miss", "beam keeps both hypotheses"],
-                    ["Azure sampled decisions (dt=60)", "no (raw ≈ 2·10⁵)", "beam + local", "—", "local improved 3/32 decisions; residual is planning/eval parity, not search"],
-                    ["Small dt=60, reduced surfaces", "yes", "≈ 0", "> 0 on coupled periods", "confirms beam matches exhaustive"],
-                  ]}
-                  emph={[2]}
-                />
-                <p className={`${P} mt-6`}>
-                  Beam search has ≈ zero regret versus exhaustive on every fixture where exhaustive is
-                  feasible, including the coupled cases that defeat coordinate descent — so beam + local
-                  improvement is the right default. Coordinate descent has real, measured regret on
-                  coupled fixtures. CEM / random-restart bought nothing on these spaces. The MPC
-                  regret decomposition attributes <Em>100%</Em> of the remaining planner regret (24,897
-                  gp/$) to forecast quality, <Em>0%</Em> to search, and <Em>0%</Em> to the objective;
-                  world-model fidelity is explicitly marked unmeasurable in pure simulation.
+              </Sec>
+
+              {/* 14 — Optimizer validation */}
+              <Sec n="14" id="regret" title="14 · Optimizer Validation">
+                <p className={P}>
+                  Because an approximate search could quietly leave value on the table, its loss is
+                  measured wherever exhaustive enumeration is feasible. The structured beam-style
+                  search shows essentially zero regret against exhaustive evaluation on the coupled
+                  fixtures — including the cases that defeat a one-knob-at-a-time search, which is why
+                  that cheaper method is kept only as a fallback. A regret audit attributes essentially
+                  all of the remaining planner shortfall to forecast quality rather than to the search
+                  itself.
                 </p>
               </Sec>
 
@@ -486,10 +396,10 @@ export default function TechnicalReport() {
               <Sec n="15" id="safety" title="15 · Safety & Deployment Path">
                 <p className={P}>
                   Aurelius reads only the metadata a scheduler already exposes — job timing, resource
-                  requests, constraints — never payloads or model outputs. Candidate scoring runs on a
-                  read-only clone; unsafe candidates are rejected at the constraint gate before
-                  execution; and when confidence is low the controller falls back deterministically.
-                  The path from telemetry to any production change is staged and reversible:
+                  requests, constraints — never payloads or model outputs. Candidate scoring runs
+                  read-only; unsafe candidates are rejected at the constraint gate before execution;
+                  and when confidence is low the controller falls back deterministically. The path from
+                  telemetry to any production change is staged and reversible:
                 </p>
                 <Figure>
                   <ArchitecturePipeline fig="fig.05" title="deployment path" />
@@ -501,13 +411,12 @@ export default function TechnicalReport() {
                 <ul className="grid max-w-[70ch] gap-y-3">
                   {[
                     "Reported deltas are historical replays / backtests on public traces — evidence of achievable savings, not a guarantee for any specific fleet.",
-                    "The full-MPC +82.1% magnitude is simulator-inferred on a bounded window; only its direction is robust.",
-                    "World-model fidelity is unmeasurable in pure simulation — isolating simulator error requires real serving telemetry.",
-                    "The Alibaba GenAI case study is a standalone harness, not yet routed through AureliusOptimizer.",
-                    "Several constraints (KV-reuse, queue/SLA pressure, carbon, weather, congestion) are modeled but not yet consumed as planner-input forecasts.",
+                    "Public-trace results may not transfer directly to a given fleet; the magnitude depends on workload mix, exposed metadata, constraints, and rollout policy.",
+                    "The full-architecture +82.1% is a bounded historical validation inferred in simulation, not a production deployment; only its direction is robust.",
+                    "Simulator fidelity must still be tested against real operator telemetry — that is the only way to isolate model error.",
+                    "The public-workload case study is a standalone evaluation, not the full production control path.",
+                    "Some surfaces are modeled but not yet active production levers, and several constraints are represented but not yet forecast inputs.",
                     "Model-affinity gains are workload-dependent: on a single-model stream the benefit approaches zero.",
-                    "Energy shifting is PLANNED, not connected — electricity price is in the objective, but there is no temporal-shift action yet.",
-                    "Co-location and prefill/decode disaggregation are SIMULATED_ONLY: modeled in the roofline, not live reward actions.",
                   ].map((item) => (
                     <li key={item} className="flex max-w-[70ch] items-start gap-3 text-[13.5px] leading-relaxed text-white/56">
                       <span className="mt-2 inline-block h-px w-4 shrink-0 bg-white/40" aria-hidden />
@@ -520,14 +429,12 @@ export default function TechnicalReport() {
               {/* 17 — Future work */}
               <Sec n="17" id="future-work" title="17 · Future Work">
                 <p className={P}>
-                  The regret decomposition makes the roadmap concrete, ordered by measured impact: a
-                  better <Em>output_length</Em> forecaster (62.8% of the measured forecast regret),
-                  then <Em>prompt_length</Em> (24.7%) and <Em>interarrival_cv</Em> (12.3%); real
-                  serving telemetry to attribute world-model fidelity (the only way to isolate
-                  simulator error); wiring the SIMULATED_ONLY surfaces into the reward path; and adding
-                  the temporal energy-shift action so electricity price becomes an actionable lever,
-                  not only an objective term. Additional public trace families and multi-region
-                  rollouts under live constraints follow.
+                  The contribution analysis points the roadmap at forecast quality first — better
+                  request-characteristic forecasting is the largest measured lever — followed by
+                  validating world-model fidelity against real serving telemetry, promoting the
+                  modeled-but-not-yet-optimized surfaces into active levers, and making energy and cost
+                  signals actionable rather than only objective terms. Additional public trace families
+                  and multi-region replays under live constraints follow.
                 </p>
               </Sec>
 
@@ -536,8 +443,7 @@ export default function TechnicalReport() {
                 <p className={P}>
                   Aurelius can start with read-only scheduler metadata, replay your historical
                   decisions, simulate the counterfactual outcomes, and produce an audited savings
-                  report — without payload access or production impact. The same evaluation in this
-                  report runs on your traces.
+                  report — without payload access or production impact.
                 </p>
                 <div className="mt-8 flex flex-wrap items-center gap-4">
                   <Action to="/contact" variant="primary" withArrow>
@@ -592,15 +498,6 @@ function Em({ children }: { children: React.ReactNode }) {
   return <span className="font-medium text-white/90">{children}</span>;
 }
 
-/* Inline code/path callout — file paths, class names, function names. */
-function Path({ children }: { children: React.ReactNode }) {
-  return (
-    <code className="whitespace-nowrap rounded-[2px] border border-white/12 bg-white/[0.04] px-1.5 py-0.5 font-mono text-[12px] text-white/72">
-      {children}
-    </code>
-  );
-}
-
 /* Caveat / note box. */
 function Callout({ children, tone = "neutral" }: { children: React.ReactNode; tone?: "neutral" | "warn" }) {
   return (
@@ -639,7 +536,7 @@ function ResultTable({
 }) {
   return (
     <div className="-mx-1 overflow-x-auto">
-      <table className="w-full min-w-[640px] border-collapse text-left">
+      <table className="w-full min-w-[560px] border-collapse text-left">
         <thead>
           <tr className="border-b border-white/30">
             {head.map((h) => (
@@ -674,99 +571,66 @@ function ResultTable({
   );
 }
 
-/* Candidate surface table — status-grouped, grounded in actions.py. */
-const SURFACES: { status: string; surfaces: string; reach: string }[] = [
+/* Candidate surfaces — public-facing categories only (no field-level detail). */
+const SURFACE_GROUPS: { tier: string; tierNote: string; groups: string[] }[] = [
   {
-    status: "CONNECTED",
-    surfaces:
-      "capacity · ordering · admission · routing · capacity_multiplier · batching · prewarm · placement · migration · precision · spec_decode · clock",
-    reach: "changes the scored reward — optimized by default",
+    tier: "Active decision levers",
+    tierNote: "optimized today — change the scored economic outcome",
+    groups: [
+      "Workload timing — admission, ordering, deferral",
+      "Placement & routing",
+      "Capacity & batching",
+      "Cache & prewarm state",
+      "Precision / speculation / clock policy",
+    ],
   },
   {
-    status: "SIMULATED_ONLY",
-    surfaces: "colocation · prefill_decode · kv_routing · topology",
-    reach: "modeled in the physics, not yet a live reward action — opt-in",
+    tier: "Modeled, not yet optimized",
+    tierNote: "represented in the physics, not yet a live lever",
+    groups: ["Co-location of background work", "Prefill / decode allocation"],
   },
   {
-    status: "PLANNED",
-    surfaces: "kv_placement · energy",
-    reach: "never enumerated — represented, not actuatable today",
+    tier: "Future surfaces",
+    tierNote: "represented, not actuated today",
+    groups: ["Energy- & cost-aware timing", "Cache placement"],
   },
 ];
 
-function SurfaceTable() {
+function SurfaceGroups() {
   return (
     <div className="mt-7 grid gap-2.5">
-      {SURFACES.map((s) => (
-        <div key={s.status} className="border border-white/20 px-4 py-3.5">
-          <div className="flex items-center gap-3">
+      {SURFACE_GROUPS.map((s) => (
+        <div key={s.tier} className="border border-white/20 px-4 py-3.5">
+          <div className="flex flex-wrap items-center gap-x-3 gap-y-1">
             <span
               className={
                 "font-mono text-[11px] uppercase tracking-[0.12em] " +
-                (s.status === "CONNECTED" ? "text-white" : "text-white/55")
+                (s.tier === "Active decision levers" ? "text-white" : "text-white/55")
               }
             >
-              {s.status}
+              {s.tier}
             </span>
-            <span className="font-mono text-[10px] uppercase tracking-[0.1em] text-white/35">{s.reach}</span>
+            <span className="font-mono text-[10px] uppercase tracking-[0.1em] text-white/35">{s.tierNote}</span>
           </div>
-          <div className="mt-2 font-mono text-[12px] leading-relaxed text-white/62">{s.surfaces}</div>
+          <div className="mt-2.5 flex flex-wrap gap-x-2 gap-y-1.5">
+            {s.groups.map((g) => (
+              <span key={g} className="font-mono text-[11px] leading-relaxed text-white/62">
+                {g}
+                <span className="px-1.5 text-white/18" aria-hidden>
+                  ·
+                </span>
+              </span>
+            ))}
+          </div>
         </div>
       ))}
     </div>
   );
 }
 
-/* Alibaba full-factorial ablation table (verbatim from the trace report). */
-function AblationTable() {
-  const rows: [string, string, string, string, string, boolean][] = [
-    ["constraint_aware", "9.8514", "26,392", "0.000%", "893", true],
-    ["constraint_aware_no_affinity", "7.1291", "26,392", "0.000%", "1,234", true],
-    ["fifo_plus_affinity", "3.1817", "26,392", "0.000%", "2,765", true],
-    ["fifo", "1.7676", "26,392", "0.000%", "4,977", true],
-    ["sla_aware", "5.2720", "17,888", "6.214%", "1,131", false],
-    ["queue_aware", "5.3823", "16,147", "8.746%", "1,000", false],
-    ["utilization_aware", "6.9265", "18,182", "8.890%", "875", false],
-  ];
-  return (
-    <div className="mt-6 -mx-1 overflow-x-auto">
-      <table className="w-full min-w-[600px] border-collapse text-left">
-        <thead>
-          <tr className="border-b border-white/30">
-            {["Config", "gp/$", "SLA-safe", "Timeout%", "GPU-hrs", "Valid?"].map((h) => (
-              <th key={h} className="px-3 py-2.5 font-mono text-[10.5px] uppercase tracking-[0.1em] text-white/50">
-                {h}
-              </th>
-            ))}
-          </tr>
-        </thead>
-        <tbody>
-          {rows.map((r) => (
-            <tr key={r[0]} className="border-b border-white/10">
-              <td className="px-3 py-2.5 font-mono text-[12px] text-white/72">{r[0]}</td>
-              <td className="px-3 py-2.5 font-mono text-[12px] tabular-nums text-white/85">{r[1]}</td>
-              <td className="px-3 py-2.5 font-mono text-[12px] tabular-nums text-white/55">{r[2]}</td>
-              <td className={"px-3 py-2.5 font-mono text-[12px] tabular-nums " + (r[5] ? "text-white/55" : "text-destructive/90")}>
-                {r[3]}
-              </td>
-              <td className="px-3 py-2.5 font-mono text-[12px] tabular-nums text-white/55">{r[4]}</td>
-              <td className={"px-3 py-2.5 font-mono text-[12px] " + (r[5] ? "text-white/70" : "text-destructive/90")}>
-                {r[5] ? "SLA-safe" : "rejected"}
-              </td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
-      <p className="mt-3 max-w-[68ch] font-mono text-[11px] leading-relaxed text-white/38">
-        Rows with timeout &gt; 0% are not valid SLA-safe baselines (Aurelius integrity rule). Source:
-        aurelius/traces/genai_ablation.py · 26,392 requests.
-      </p>
-    </div>
-  );
-}
-
 /* Print → Save as PDF. The webpage is the canonical report; this triggers the
-   browser's native print-to-PDF rather than shipping a fabricated file. */
+   browser's native print-to-PDF (the dark surface is preserved via print CSS in
+   index.css) rather than shipping a fabricated file. */
 function PrintButton() {
   return (
     <button

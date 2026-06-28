@@ -5,13 +5,12 @@ import { PlateHeader, CaptionStrip } from "./plate";
    fig.04 — the case-study result, drawn as a 1-bit instrument.
 
    Pure black plate, pure white ink — no gray, no gold. The Alibaba GenAI 2026
-   case study, reported HONESTLY against an SLA-safe baseline: SLA-safe goodput
-   per dollar (+38.2%, the headline — a solid bar) and GPU-hours (−27.6%, an
-   outline bar), constraint_aware vs constraint_aware_no_affinity, both at
-   0.000% timeout. The discarded "+86.9% vs sla_aware" comparison is excluded
-   here because that baseline violates SLA — see the report body. A diverging
-   figure around the SLA-safe baseline. Conservative: only the two verified
-   deltas, framed as a historical replay.
+   public-workload case study, reported HONESTLY against an SLA-safe baseline:
+   SLA-safe goodput per dollar (+38.2%, the headline — a solid bar) and
+   GPU-hours (−27.6%, an outline bar), both arms at 0.000% SLA violations. A
+   larger comparison against an SLA-violating baseline is deliberately excluded
+   — see the report body. A diverging figure around the SLA-safe baseline.
+   Conservative: only the two verified deltas, framed as a historical replay.
    ============================================================================ */
 
 const W = "#ffffff";
@@ -30,7 +29,7 @@ export function BenchmarkFigure({ className }: { className?: string }) {
           viewBox="0 0 760 282"
           className="relative block w-full"
           role="img"
-          aria-label="Alibaba GenAI 2026 historical replay: +38.2% SLA-safe goodput per dollar and −27.6% GPU-hours, constraint_aware versus an SLA-safe baseline (constraint_aware_no_affinity), both at zero SLA violations."
+          aria-label="Alibaba GenAI 2026 historical replay: +38.2% SLA-safe goodput per dollar and −27.6% GPU-hours versus an SLA-safe baseline, both at zero SLA violations."
         >
           {/* ±20 / ±40 guides */}
           {[-40, -20, 20, 40].map((p) => (
@@ -50,7 +49,7 @@ export function BenchmarkFigure({ className }: { className?: string }) {
 
           {/* axis title */}
           <text x={BX} y={262} textAnchor="middle" fontSize={10.5} letterSpacing="0.16em" fill={W} className="font-mono">
-            Δ VS constraint_aware_no_affinity (%)
+            Δ VS SLA-SAFE BASELINE (%)
           </text>
 
           {/* row 1 — SLA-safe goodput / $ : +38.2% (headline, solid bar) */}

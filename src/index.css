@@ -408,3 +408,27 @@
     transform: none !important;
   }
 }
+
+/* Print / Save as PDF — keep the dark research-lab surface instead of the
+   browser's default white page. Forces the off-black background and faithful
+   color so the exported PDF matches the on-screen report. */
+@media print {
+  html,
+  body,
+  #root {
+    background: #000 !important;
+  }
+
+  *,
+  *::before,
+  *::after {
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+
+  /* Entrance animations never run in print; show everything. */
+  .reveal {
+    opacity: 1 !important;
+    transform: none !important;
+  }
+}

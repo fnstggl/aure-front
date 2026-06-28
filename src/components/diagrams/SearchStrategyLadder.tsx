@@ -2,39 +2,38 @@ import { cn } from "@/lib/utils";
 import { PlateHeader, CaptionStrip } from "./plate";
 
 /* ============================================================================
-   fig.03 — the adaptive search planner, drawn as a decision ladder.
+   fig.03 — coupled-bundle search, drawn as a decision ladder.
 
-   The action space is too large to brute-force, but small windows are not — so
-   the strategy is chosen from the RAW candidate count, and the loss of any
-   approximate search is MEASURED against exhaustive enumeration, not assumed
-   away. Thresholds and strategy names are verbatim from
-   aurelius/environment/search_planner.py (AdaptiveSearchPlanner). No motion.
+   Aurelius evaluates coupled decision bundles rather than tuning one knob at a
+   time. The search method scales with the size of the space, and where exact
+   enumeration is tractable the approximate search is checked against it. Exact
+   thresholds and tuning are intentionally omitted. No motion.
    ============================================================================ */
 
 const RUNGS: { cond: string; strategy: string; note: string; strong?: boolean }[] = [
   {
-    cond: "raw ≤ 4096",
-    strategy: "exhaustive_cartesian",
-    note: "full product · deterministic · regret = 0 by construction",
+    cond: "Small spaces",
+    strategy: "exhaustive evaluation",
+    note: "every coupled bundle scored · exact · the basis for regret audits",
     strong: true,
   },
   {
-    cond: "4096 < raw ≤ 20000",
-    strategy: "beam_search + local",
-    note: "top-6 beam, coordinate polish · exhaustive re-run scores the regret",
+    cond: "Structured medium spaces",
+    strategy: "beam-style search + local improvement",
+    note: "keeps coupled hypotheses alive — captures cross-surface interactions",
     strong: true,
   },
   {
-    cond: "raw > 20000",
-    strategy: "beam_search",
-    note: "top-6 beam · audit skipped for runtime · raw count still reported",
+    cond: "Large / strongly-coupled spaces",
+    strategy: "bounded exploration",
+    note: "seeded, deterministic, runtime-bounded local search",
   },
 ];
 
 export function SearchStrategyLadder({ className }: { className?: string }) {
   return (
     <figure className={cn("relative overflow-hidden border border-white bg-black", className)}>
-      <PlateHeader fig="fig.03" title="adaptive search planner" />
+      <PlateHeader fig="fig.03" title="coupled-bundle search" />
       <div className="px-4 py-5">
         <div className="grid gap-2.5">
           {RUNGS.map((r) => (
@@ -45,12 +44,12 @@ export function SearchStrategyLadder({ className }: { className?: string }) {
                 r.strong ? "border-white" : "border-white/25",
               )}
             >
-              <span className="w-[152px] shrink-0 font-mono text-[10.5px] uppercase tracking-[0.12em] text-white/55">
+              <span className="w-[176px] shrink-0 font-mono text-[10.5px] uppercase tracking-[0.12em] text-white/55">
                 {r.cond}
               </span>
               <span
                 className={cn(
-                  "w-[176px] shrink-0 font-mono text-[12px] leading-none",
+                  "w-[210px] shrink-0 font-mono text-[12px] leading-snug",
                   r.strong ? "text-white" : "text-white/70",
                 )}
               >
@@ -61,19 +60,15 @@ export function SearchStrategyLadder({ className }: { className?: string }) {
           ))}
         </div>
 
-        {/* why beam, not coordinate descent */}
-        <div className="mt-4 grid gap-2 border-t border-white/15 pt-3.5 sm:grid-cols-2">
-          <div className="font-mono text-[10px] leading-snug text-white/55">
-            <span className="text-white/85">beam</span> keeps coupled hypotheses — precision×batching,
-            routing×cache — so cross-surface optima survive.
-          </div>
-          <div className="font-mono text-[10px] leading-snug text-white/45">
-            <span className="text-white/70">coordinate_descent</span> moves one surface at a time → measured
-            regret on coupled cases → demoted to fallback / polish.
-          </div>
+        {/* regret audit — the discipline, not the internals */}
+        <div className="mt-4 border-t border-white/15 pt-3.5">
+          <span className="font-mono text-[10px] leading-snug text-white/55">
+            Where exact enumeration is tractable, the approximate search is scored against it —{" "}
+            <span className="text-white/85">regret is measured, not assumed.</span>
+          </span>
         </div>
       </div>
-      <CaptionStrip label="fig.03 — strategy chosen by candidate count · regret measured, never hidden" />
+      <CaptionStrip label="fig.03 — coupled decision bundles, evaluated by a size-aware search" />
     </figure>
   );
 }
