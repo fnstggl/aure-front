@@ -34,7 +34,7 @@ export default function Index() {
 
           <div className="relative z-20 flex min-h-[100dvh] flex-col">
             <div className="flex flex-1 items-center justify-center">
-              <div className="mx-auto w-full max-w-[72rem] translate-y-[-1vh] px-6 pb-16 pt-32 text-center sm:px-8">
+              <div className="mx-auto w-full max-w-[72rem] translate-y-[4vh] px-6 pb-16 pt-32 text-center sm:px-8">
                 <Reveal>
                   <h1 className="mx-auto max-w-[22ch] text-[clamp(1.35rem,2.5vw,1.75rem)] font-medium leading-[1.2] tracking-[-0.015em] text-foreground sm:max-w-none sm:whitespace-nowrap">
                     The optimal scheduling decision depends on constraints that haven&rsquo;t emerged yet.
