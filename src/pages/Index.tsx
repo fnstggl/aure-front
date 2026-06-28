@@ -2,6 +2,7 @@ import { Layout } from "@/components/layout/Layout";
 import { Reveal, Arrow } from "@/components/site/primitives";
 import { PageFrame, Band, Grid, Rails, Kicker, Action } from "@/components/site/structure";
 import { WorldModelArchitecture } from "@/components/diagrams/WorldModelArchitecture";
+import { ConstraintTimingFigure } from "@/components/diagrams/ConstraintTimingFigure";
 
 /* Aurelius — landing page.
    A systems-paper title page on a visible structural grid, not a marketing
@@ -74,7 +75,7 @@ export default function Index() {
         {/* ============================ Hypothesis =========================== */}
         <Band className="py-20 md:py-28 lg:py-32">
           <Grid>
-            <div className="col-span-1 px-6 sm:px-8 md:col-span-10 lg:px-10">
+            <div className="col-span-1 px-6 sm:px-8 md:col-span-4 lg:px-10">
               <Reveal>
                 <Kicker index="01">Hypothesis</Kicker>
               </Reveal>
@@ -84,9 +85,47 @@ export default function Index() {
                 </h2>
               </Reveal>
               <Reveal delay={120}>
-                <p className="mt-6 max-w-2xl text-[14.5px] leading-relaxed text-white/52">
+                <p className="mt-6 max-w-sm text-[14.5px] leading-relaxed text-white/52">
                   Power prices change. Queue pressure changes. Capacity changes. Deadlines tighten. The decision that appears optimal now can become economically suboptimal later. Aurelius tests whether forecasting those future constraints before execution produces measurably better economic decisions.
                 </p>
+              </Reveal>
+            </div>
+            <div className="col-span-1 mt-12 px-6 sm:px-8 md:col-span-7 md:col-start-6 md:mt-0 md:px-0 md:pr-8 lg:pr-10">
+              <Reveal delay={120}>
+                <ConstraintTimingFigure />
+              </Reveal>
+            </div>
+          </Grid>
+        </Band>
+
+        {/* ========================= Architecture ========================= */}
+        {/* The thesis, made visible. Lead with the world-model control loop —
+            this is the reason to read the Technical Report. */}
+        <Band className="py-20 md:py-28 lg:py-32">
+          <Grid>
+            <div className="col-span-1 px-6 sm:px-8 md:col-span-4 lg:px-10">
+              <Reveal>
+                <Kicker index="02">Architecture</Kicker>
+              </Reveal>
+              <Reveal delay={60}>
+                <h2 className="mt-6 text-balance text-[clamp(1.6rem,3.2vw,2.3rem)] font-medium leading-[1.08] tracking-[-0.02em] text-foreground">
+                  Forecast. Simulate. Rank by Economics.
+                </h2>
+              </Reveal>
+              <Reveal delay={120}>
+                <p className="mt-5 max-w-sm text-[14.5px] leading-relaxed text-white/52">
+                  Conventional schedulers optimize the cluster they can observe. Aurelius uses a predictive world model to forecast the constraints they cannot yet observe, simulate candidate decisions, and rank those decisions by economic outcome before execution.
+                </p>
+              </Reveal>
+              <Reveal delay={160}>
+                <p className="mt-5 max-w-sm text-[14.5px] leading-relaxed text-white/52">
+                  Scheduling starts too late when it only reacts to the present cluster state. A decision that appears optimal now can become expensive later when power prices rise, queue pressure increases, capacity disappears, or deadlines tighten.
+                </p>
+              </Reveal>
+            </div>
+            <div className="col-span-1 mt-12 px-6 sm:px-8 md:col-span-7 md:col-start-6 md:mt-0 md:px-0 md:pr-8 lg:pr-10">
+              <Reveal delay={120}>
+                <WorldModelArchitecture />
               </Reveal>
             </div>
           </Grid>
@@ -103,7 +142,7 @@ export default function Index() {
             </div>
             <div className="col-span-1 mt-12 px-6 sm:px-8 md:col-span-4 md:col-start-9 md:mt-0 lg:px-10">
               <Reveal>
-                <Kicker index="02">Evidence</Kicker>
+                <Kicker index="03">Evidence</Kicker>
               </Reveal>
               <Reveal delay={60}>
                 <h2 className="mt-6 text-balance text-[clamp(1.6rem,3.2vw,2.3rem)] font-medium leading-[1.08] tracking-[-0.02em] text-foreground">
@@ -130,39 +169,6 @@ export default function Index() {
                 <p className="mt-7 max-w-sm text-[12.5px] leading-relaxed text-white/38">
                   Replay evidence. Results depend on workload mix, constraints, and scheduler baseline.
                 </p>
-              </Reveal>
-            </div>
-          </Grid>
-        </Band>
-
-        {/* ========================= Architecture ========================= */}
-        {/* The thesis, made visible. Lead with the world-model control loop —
-            this is the reason to read the Technical Report. */}
-        <Band className="py-20 md:py-28 lg:py-32">
-          <Grid>
-            <div className="col-span-1 px-6 sm:px-8 md:col-span-4 lg:px-10">
-              <Reveal>
-                <Kicker index="03">Architecture</Kicker>
-              </Reveal>
-              <Reveal delay={60}>
-                <h2 className="mt-6 text-balance text-[clamp(1.6rem,3.2vw,2.3rem)] font-medium leading-[1.08] tracking-[-0.02em] text-foreground">
-                  Forecast. Simulate. Rank by Economics.
-                </h2>
-              </Reveal>
-              <Reveal delay={120}>
-                <p className="mt-5 max-w-sm text-[14.5px] leading-relaxed text-white/52">
-                  Conventional schedulers optimize the cluster they can observe. Aurelius uses a predictive world model to forecast the constraints they cannot yet observe, simulate candidate decisions, and rank those decisions by economic outcome before execution.
-                </p>
-              </Reveal>
-              <Reveal delay={160}>
-                <p className="mt-5 max-w-sm text-[14.5px] leading-relaxed text-white/52">
-                  Scheduling starts too late when it only reacts to the present cluster state. A decision that appears optimal now can become expensive later when power prices rise, queue pressure increases, capacity disappears, or deadlines tighten.
-                </p>
-              </Reveal>
-            </div>
-            <div className="col-span-1 mt-12 px-6 sm:px-8 md:col-span-7 md:col-start-6 md:mt-0 md:px-0 md:pr-8 lg:pr-10">
-              <Reveal delay={120}>
-                <WorldModelArchitecture />
               </Reveal>
             </div>
           </Grid>
