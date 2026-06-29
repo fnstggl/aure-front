@@ -4,37 +4,26 @@ import { PlateHeader, CaptionStrip } from "./plate";
 /* ============================================================================
    fig.03 — economic autopsy.
 
-   Not a ledger. A causal flow drawn as a diverging-path schematic:
+   One read, nothing else: a decision's economic value over time. It is LOCKED
+   at T=0 while it appears optimal — a flat white line. At T+Δ the constraints
+   it could not see shift (power ↑, queue ↑, capacity ↓, demand ↑). The locked
+   decision cannot react, so its value drops on a single knee, fading white →
+   red, into one ECONOMIC LOSS readout.
 
-     COMMIT (T=0) ──┬─▶ committed path ── sinks under shifting constraints ──▶ LOSS
-                    └ ─ ─ forecast path ─ ─ ─ (world model) ─ ─ ─▶ OPTIMUM
-
-   The decision looks reasonable when locked: the pre-commit path is flat and
-   white. Then future constraints (power ↑, queue ↑, capacity ↓, demand ↑) press
-   down on the LOCKED path — it cannot react, so it accelerates into red economic
-   loss. A faint dashed forecast path, the predictive world model, anticipated
-   those same constraints and routed to the economic optimum instead.
-
-   Monochrome dominant; red reserved for the deteriorating path + loss. Motion is
-   CSS-only (flow-dash, anim-breathe) and is neutralized by the global
-   prefers-reduced-motion rule in index.css — the figure stays fully legible
-   frozen.
+   Deliberately spare: no forecast path, no alternate optimum, no decorative
+   motion. Monochrome dominant; red reserved for the decline and the loss. The
+   constraint list sits directly above the knee — alignment, not arrows, is the
+   cause. Fully static, so it is identical with or without reduced motion.
    ============================================================================ */
 
 const W = "#ffffff";
-const R = "#D2564E"; // muted red — deterioration / loss only
+const R = "#D2564E"; // muted red — decline / loss only
 
-// committed (locked) path — flat at commit, then accelerating downward
-const COMMIT_PATH = "M250 200 L292 212 L338 234 L384 262 L426 288 L460 300";
-// forecast (world-model) path — straight rise, then level to the optimum
-const FORECAST_PATH = "M250 200 L292 96 L460 96";
-
-// pressure columns: where each constraint presses onto the committed path
-const PRESSURE = [
-  { x: 292, label: "POWER", trend: "↑", ly: 138, ty: 206 },
-  { x: 338, label: "QUEUE", trend: "↑", ly: 158, ty: 228 },
-  { x: 384, label: "CAPACITY", trend: "↓", ly: 138, ty: 256 },
-  { x: 426, label: "DEMAND", trend: "↑", ly: 158, ty: 282 },
+const CONSTRAINTS = [
+  { label: "POWER", trend: "↑" },
+  { label: "QUEUE", trend: "↑" },
+  { label: "CAPACITY", trend: "↓" },
+  { label: "DEMAND", trend: "↑" },
 ];
 
 const LOSS_ROWS = ["GOODPUT / $ ↓", "GPU-HOURS ↑", "ENERGY COST ↑", "SLA RISK ↑"];
@@ -45,140 +34,84 @@ export function ConstraintTimingFigure({ className }: { className?: string }) {
       <PlateHeader fig="fig.03" title="economic autopsy" />
       <div className="relative">
         <svg
-          viewBox="0 0 612 400"
+          viewBox="0 0 580 310"
           className="relative block w-full"
           role="img"
-          aria-label="Economic autopsy. At T=0 a scheduling decision is committed while the current cluster state looks reasonable — power, queue, capacity and deadline all clear. By T plus delta, future constraints shift: power cost rises, queue pressure rises, capacity tightens, demand spikes. These forces press on the locked decision, which cannot react and sinks into economic loss — goodput per dollar down, GPU-hours up, energy cost up, SLA risk up. A faint dashed forecast path, the predictive world model, anticipated those constraints and routed to the economic optimum instead."
+          aria-label="A scheduling decision's economic value over time. At T=0 it is locked while it appears optimal — a flat line. At T plus delta the constraints it could not see shift: power up, queue up, capacity down, demand up. The locked decision cannot react and its value drops into economic loss — goodput per dollar down, GPU-hours up, energy cost up, SLA risk up."
         >
           <defs>
-            {/* committed stroke fades white → red across its run */}
-            <linearGradient id="autopsy-loss" x1="0" y1="0" x2="1" y2="0">
+            {/* the knee fades white → red as value is lost */}
+            <linearGradient id="autopsy-decline" x1="0" y1="0" x2="1" y2="0">
               <stop offset="0%" stopColor={W} stopOpacity={0.85} />
-              <stop offset="50%" stopColor={W} stopOpacity={0.7} />
+              <stop offset="45%" stopColor={W} stopOpacity={0.6} />
               <stop offset="100%" stopColor={R} stopOpacity={1} />
             </linearGradient>
-            <marker id="autopsy-ah-loss" markerWidth="9" markerHeight="9" refX="6.5" refY="4.5" orient="auto">
-              <path d="M1 1L7 4.5L1 8" fill="none" stroke={R} strokeWidth="1.7" strokeLinecap="square" />
+            <marker id="autopsy-ah" markerWidth="9" markerHeight="9" refX="6.5" refY="4.5" orient="auto">
+              <path d="M1 1L7 4.5L1 8" fill="none" stroke={R} strokeWidth="1.8" strokeLinecap="square" />
             </marker>
-            <marker id="autopsy-ah-fore" markerWidth="9" markerHeight="9" refX="6.5" refY="4.5" orient="auto">
-              <path d="M1 1L7 4.5L1 8" fill="none" stroke={W} strokeOpacity="0.5" strokeWidth="1.5" strokeLinecap="square" />
-            </marker>
-            <marker id="autopsy-ah-press" markerWidth="8" markerHeight="8" refX="4" refY="6.5" orient="auto">
-              <path d="M1 1L4 7L7 1" fill="none" stroke={R} strokeWidth="1.5" strokeLinecap="square" />
-            </marker>
-            <marker id="autopsy-ah-time" markerWidth="8" markerHeight="8" refX="6" refY="4" orient="auto">
+            <marker id="autopsy-time" markerWidth="8" markerHeight="8" refX="6" refY="4" orient="auto">
               <path d="M1 1L6 4L1 7" fill="none" stroke={W} strokeOpacity="0.4" strokeWidth="1.3" strokeLinecap="square" />
             </marker>
           </defs>
 
-          {/* ============ column headers (the three acts) ============ */}
-          <text x={96} y={34} textAnchor="middle" fontSize={11} letterSpacing="0.14em" fill={W} className="font-mono">
+          {/* ---------- T=0 · the locked decision (looks optimal) ---------- */}
+          <text x={96} y={110} textAnchor="middle" fontSize={11} letterSpacing="0.16em" fill={W} className="font-mono">
             T=0
           </text>
-          <text x={96} y={49} textAnchor="middle" fontSize={9.5} letterSpacing="0.12em" fill={W} fillOpacity={0.5} className="font-mono">
-            DECISION COMMITTED
+          <text x={96} y={126} textAnchor="middle" fontSize={9.5} letterSpacing="0.12em" fill={W} fillOpacity={0.5} className="font-mono">
+            DECISION LOCKED
+          </text>
+          <rect x={90} y={142} width={12} height={12} fill={W} />
+          {/* flat, white = value intact while it appears optimal */}
+          <line x1={96} y1={148} x2={250} y2={148} stroke={W} strokeWidth={2} />
+          <text x={173} y={167} textAnchor="middle" fontSize={9} letterSpacing="0.14em" fill={W} fillOpacity={0.4} className="font-mono">
+            APPEARS OPTIMAL
           </text>
 
-          <text x={359} y={34} textAnchor="middle" fontSize={11} letterSpacing="0.14em" fill={W} className="font-mono">
+          {/* ---------- T+Δ · the constraints that shift (the cause) ---------- */}
+          <text x={250} y={54} textAnchor="middle" fontSize={11} letterSpacing="0.14em" fill={W} className="font-mono">
             T+Δ
           </text>
-          <text x={359} y={49} textAnchor="middle" fontSize={9.5} letterSpacing="0.12em" fill={W} fillOpacity={0.5} className="font-mono">
-            FUTURE CONSTRAINTS SHIFT
+          <text x={250} y={70} textAnchor="middle" fontSize={9.5} letterSpacing="0.12em" fill={W} fillOpacity={0.5} className="font-mono">
+            CONSTRAINTS SHIFT
           </text>
-
-          <text x={529} y={34} textAnchor="middle" fontSize={11} letterSpacing="0.14em" fill={W} fillOpacity={0.5} className="font-mono">
-            OUTCOME
-          </text>
-
-          {/* ============ left — current state visible (all clear) ============ */}
-          <text x={28} y={86} fontSize={9} letterSpacing="0.14em" fill={W} fillOpacity={0.45} className="font-mono">
-            CURRENT STATE VISIBLE
-          </text>
-          {["POWER", "QUEUE", "CAPACITY", "DEADLINE"].map((s, i) => (
-            <g key={s}>
-              <text x={28} y={106 + i * 16} fontSize={9.5} letterSpacing="0.06em" fill={W} fillOpacity={0.6} className="font-mono">
-                {s}
+          <line x1={206} y1={80} x2={300} y2={80} stroke={W} strokeOpacity={0.25} strokeWidth={1} />
+          {CONSTRAINTS.map((c, i) => (
+            <g key={c.label}>
+              <text x={206} y={98 + i * 16} fontSize={10} letterSpacing="0.06em" fill={W} fillOpacity={0.62} className="font-mono">
+                {c.label}
               </text>
-              <text x={150} y={106 + i * 16} textAnchor="end" fontSize={10} fill={W} fillOpacity={0.55} className="font-mono">
-                ✓
+              <text x={300} y={98 + i * 16} textAnchor="end" fontSize={11} fill={R} className="font-mono">
+                {c.trend}
               </text>
             </g>
           ))}
+          {/* faint tick: cause (list) → effect (knee), alignment not arrows */}
+          <line x1={250} y1={150} x2={250} y2={166} stroke={W} strokeOpacity={0.22} strokeWidth={1} />
 
-          {/* ============ forecast (world-model) path — dashed, flowing ============ */}
+          {/* ---------- the knee · value drops into loss ---------- */}
           <path
-            d={FORECAST_PATH}
+            d="M250 148 L420 244"
             fill="none"
-            stroke={W}
-            strokeOpacity={0.5}
-            strokeWidth={1.4}
-            markerEnd="url(#autopsy-ah-fore)"
-            className="flow-dash"
-          />
-          <text x={300} y={86} fontSize={9} letterSpacing="0.16em" fill={W} fillOpacity={0.55} className="font-mono">
-            FORECASTED PATH
-          </text>
-
-          {/* ============ committed (locked) path — flat, then sinks to red ============ */}
-          {/* pre-commit: flat + white = looked reasonable when locked */}
-          <line x1={96} y1={200} x2={250} y2={200} stroke={W} strokeWidth={2} />
-          <rect x={90} y={194} width={12} height={12} fill={W} />
-          <text x={96} y={228} textAnchor="middle" fontSize={9} letterSpacing="0.12em" fill={W} fillOpacity={0.55} className="font-mono">
-            LOCKED
-          </text>
-          {/* the doomed path */}
-          <path
-            d={COMMIT_PATH}
-            fill="none"
-            stroke="url(#autopsy-loss)"
-            strokeWidth={2.2}
-            markerEnd="url(#autopsy-ah-loss)"
+            stroke="url(#autopsy-decline)"
+            strokeWidth={2.4}
+            markerEnd="url(#autopsy-ah)"
           />
 
-          {/* ============ constraint pressure — forces pushing the path down ============ */}
-          {PRESSURE.map((p) => (
-            <g key={p.label} className="anim-breathe" style={{ animationDelay: `${(p.x % 5) * 0.5}s` }}>
-              <text x={p.x} y={p.ly} textAnchor="middle" fontSize={9.5} letterSpacing="0.04em" fill={W} fillOpacity={0.75} className="font-mono">
-                {p.label}
-                <tspan dx="3" fill={R}>{p.trend}</tspan>
-              </text>
-              <line x1={p.x} y1={p.ly + 8} x2={p.x} y2={p.ty} stroke={R} strokeOpacity={0.85} strokeWidth={1.3} markerEnd="url(#autopsy-ah-press)" />
-            </g>
-          ))}
-
-          {/* ============ right — economic optimum (faint) ============ */}
-          <rect x={466} y={62} width={126} height={64} fill="none" stroke={W} strokeOpacity={0.4} strokeWidth={1.2} />
-          <text x={478} y={84} fontSize={10.5} letterSpacing="0.08em" fill={W} fillOpacity={0.7} className="font-mono">
-            ECONOMIC OPTIMUM
-            <tspan dx="4" fill={W} fillOpacity={0.7}>✓</tspan>
-          </text>
-          <text x={478} y={100} fontSize={9} letterSpacing="0.1em" fill={W} fillOpacity={0.4} className="font-mono">
-            via world model
-          </text>
-          <text x={478} y={116} fontSize={9.5} letterSpacing="0.05em" fill={W} fillOpacity={0.5} className="font-mono">
-            GOODPUT / $ ↑
-          </text>
-
-          {/* ============ right — economic loss (the climax, red) ============ */}
-          <rect x={466} y={240} width={126} height={108} fill="none" stroke={R} strokeWidth={1.6} />
-          <text x={478} y={262} fontSize={11} letterSpacing="0.1em" fill={R} className="font-mono">
+          {/* ---------- the loss · single red readout (the point) ---------- */}
+          <rect x={438} y={196} width={128} height={106} fill="none" stroke={R} strokeWidth={1.6} />
+          <text x={450} y={218} fontSize={11} letterSpacing="0.1em" fill={R} className="font-mono">
             ECONOMIC LOSS
           </text>
           {LOSS_ROWS.map((row, i) => (
-            <text key={row} x={478} y={284 + i * 18} fontSize={10} letterSpacing="0.04em" fill={R} fillOpacity={0.92} className="font-mono">
+            <text key={row} x={450} y={242 + i * 18} fontSize={10} letterSpacing="0.04em" fill={R} fillOpacity={0.92} className="font-mono">
               {row}
             </text>
           ))}
 
-          {/* ============ time axis ============ */}
-          <line x1={70} y1={374} x2={452} y2={374} stroke={W} strokeOpacity={0.35} strokeWidth={1} markerEnd="url(#autopsy-ah-time)" />
-          <text x={96} y={390} textAnchor="middle" fontSize={9} letterSpacing="0.12em" fill={W} fillOpacity={0.4} className="font-mono">
-            T=0
-          </text>
-          <text x={300} y={390} textAnchor="middle" fontSize={9} letterSpacing="0.12em" fill={W} fillOpacity={0.4} className="font-mono">
-            T+Δ
-          </text>
-          <text x={462} y={378} fontSize={9} letterSpacing="0.16em" fill={W} fillOpacity={0.4} className="font-mono">
+          {/* ---------- time baseline (direction only) ---------- */}
+          <line x1={70} y1={286} x2={356} y2={286} stroke={W} strokeOpacity={0.28} strokeWidth={1} markerEnd="url(#autopsy-time)" />
+          <text x={366} y={290} fontSize={9} letterSpacing="0.18em" fill={W} fillOpacity={0.4} className="font-mono">
             TIME
           </text>
         </svg>

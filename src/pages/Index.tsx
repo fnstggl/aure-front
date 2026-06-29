@@ -75,7 +75,7 @@ export default function Index() {
         {/* ============================ Hypothesis =========================== */}
         <Band className="py-20 md:py-28 lg:py-32">
           <Grid>
-            <div className="col-span-1 px-6 sm:px-8 md:col-span-4 lg:px-10">
+            <div className="col-span-1 px-6 sm:px-8 md:col-span-5 lg:px-10">
               <Reveal>
                 <Kicker index="01">Hypothesis</Kicker>
               </Reveal>
@@ -85,12 +85,12 @@ export default function Index() {
                 </h2>
               </Reveal>
               <Reveal delay={120}>
-                <p className="mt-6 max-w-sm text-[14.5px] leading-relaxed text-white/52">
+                <p className="mt-6 max-w-md text-[14.5px] leading-relaxed text-white/52">
                   Power prices change. Queue pressure changes. Capacity changes. Deadlines tighten. The decision that appears optimal now can become economically suboptimal later. Aurelius tests whether forecasting those future constraints before execution produces measurably better economic decisions.
                 </p>
               </Reveal>
             </div>
-            <div className="col-span-1 mt-12 px-6 sm:px-8 md:col-span-7 md:col-start-6 md:mt-0 md:px-0 md:pr-8 lg:pr-10">
+            <div className="col-span-1 mt-12 px-6 sm:px-8 md:col-span-6 md:col-start-7 md:mt-0 md:px-0 md:pr-8 lg:pr-10">
               <Reveal delay={120}>
                 <ConstraintTimingFigure />
               </Reveal>
