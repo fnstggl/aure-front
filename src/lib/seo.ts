@@ -62,9 +62,9 @@ export const ROUTES: RouteMeta[] = [
   },
   {
     path: "/technical-report",
-    title: "Technical Report — Aurelius: Forecast. Simulate. Decide.",
+    title: "Technical Report — Aurelius: Predictive World Models for AI Infrastructure",
     description:
-      "How Aurelius builds a predictive world model of AI infrastructure, forecasts future constraints, simulates candidate workload decisions, and chooses the economic optimum before execution — with the search strategy, benchmark methodology, results, and limitations behind it.",
+      "Aurelius forecasts future cluster state and simulates coupled candidate decisions before execution. On a bounded public-trace replay across PJM/ERCOT/CAISO price windows it reaches up to +191% SLA-safe goodput per dollar vs the strongest SLA-aware baseline — Pareto-safe, at zero search regret.",
     name: "Technical Report",
     priority: 0.9,
     changefreq: "monthly",

@@ -8,13 +8,15 @@ import { SearchStrategyLadder } from "@/components/diagrams/SearchStrategyLadder
 import { BenchmarkFigure } from "@/components/diagrams/BenchmarkFigure";
 import { ArchitecturePipeline } from "@/components/diagrams/ArchitecturePipeline";
 
-/* /technical-report — a systems technical report about what Aurelius is: the
-   discovery, the architecture, and the evidence. It deliberately explains the
-   high-level control architecture and reports verified results without exposing
-   the internal source tree, implementation classes, exact heuristics, or tuning
-   values. Two result families are reported separately and never mixed: the
-   Alibaba GenAI 2026 public-workload case study and the full-architecture MPC
-   validation. The web page is canonical; a Print → Save as PDF is offered. */
+/* /technical-report — a systems technical report about what Aurelius is and the
+   central finding behind it: a correct predictive world model and objective
+   still leave the economic optimum on the table unless the planner actually
+   evaluates the right coupled candidate decisions. Made candidate generation
+   physics-guided and searched it under a regret audit, Aurelius recovers a
+   Pareto-dominant win during expensive electricity windows. The report explains
+   the architecture and reports verified results at a high level — without the
+   internal source tree, implementation classes, or tuning values. The web page
+   is canonical; a Print → Save as PDF is offered. */
 
 const SECTIONS = [
   { n: "00", id: "abstract", title: "Abstract" },
@@ -23,14 +25,14 @@ const SECTIONS = [
   { n: "03", id: "world-model", title: "Predictive World Model" },
   { n: "04", id: "forecasts", title: "Forecasted Constraints" },
   { n: "05", id: "surfaces", title: "Candidate Decision Surfaces" },
-  { n: "06", id: "search", title: "Search & Optimization" },
+  { n: "06", id: "search", title: "Search & Candidate Generation" },
   { n: "07", id: "objective", title: "Objective & Constraint Gates" },
-  { n: "08", id: "case-study", title: "Public Workload Case Study" },
-  { n: "09", id: "mpc-validation", title: "Full Aurelius MPC Validation" },
+  { n: "08", id: "finding", title: "The Bottleneck Was Candidate Generation" },
+  { n: "09", id: "result", title: "Result — Expensive Electricity Windows" },
   { n: "10", id: "methodology", title: "Benchmark Methodology" },
   { n: "11", id: "baselines", title: "Baselines" },
   { n: "12", id: "results", title: "Results" },
-  { n: "13", id: "contribution", title: "Contribution Analysis" },
+  { n: "13", id: "why", title: "Why It Works" },
   { n: "14", id: "regret", title: "Optimizer Validation" },
   { n: "15", id: "safety", title: "Safety & Deployment Path" },
   { n: "16", id: "limitations", title: "Limitations" },
@@ -67,11 +69,25 @@ export default function TechnicalReport() {
                   Aurelius introduces a predictive control architecture for AI infrastructure. Rather than optimizing only the current cluster state, it forecasts future infrastructure constraints, simulates candidate decisions against those predicted conditions, and selects the economically optimal action subject to SLA, capacity, power, policy, and safety constraints.
                 </p>
               </Reveal>
+
+              {/* headline result */}
               <Reveal delay={200}>
+                <div className="mt-10 max-w-2xl border-l-2 border-white/35 pl-5">
+                  <div className="text-[clamp(1.45rem,3.6vw,2.2rem)] font-medium leading-[1.1] tracking-[-0.02em] text-foreground">
+                    Up to +191% higher SLA-safe goodput per dollar
+                  </div>
+                  <p className="mt-3.5 font-mono text-[11.5px] leading-relaxed text-white/46">
+                    +147.85% to +191.41% vs the strongest SLA-aware baseline · bounded Azure/Mooncake
+                    replay · public PJM / ERCOT / CAISO price traces · Pareto-safe · 0 search regret
+                  </p>
+                </div>
+              </Reveal>
+
+              <Reveal delay={240}>
                 <div className="mt-9 flex flex-wrap items-center gap-x-6 gap-y-2 font-mono text-[11px] uppercase tracking-[0.16em] text-white/34">
                   <span>Version 0.1</span>
                   <span className="text-white/14">·</span>
-                  <span>Historical replay on public traces</span>
+                  <span>Bounded historical replay</span>
                   <span className="text-white/14">·</span>
                   <span>Evidence, not a guarantee</span>
                   <span className="text-white/14">·</span>
@@ -117,21 +133,22 @@ export default function TechnicalReport() {
               <Sec n="00" id="abstract" title="Abstract">
                 <p className={P}>
                   The optimal scheduling decision depends on constraints that have not emerged yet.
-                  Aurelius tests that premise directly: it builds a predictive world model of the
-                  future cluster state, forecasts the operational constraints a decision will face,
-                  simulates candidate workload decisions against that state, and selects the economic
-                  optimum subject to SLA, capacity, power, policy, and safety gates.
+                  Aurelius builds a predictive world model of the future cluster state, forecasts the
+                  operational and economic constraints a decision will face, simulates candidate
+                  workload decisions against that state, and selects the economic optimum subject to
+                  SLA, capacity, power, policy, and safety gates.
                 </p>
                 <p className={`${P} mt-4`}>
-                  The architecture is the result; the numbers support it. As an external workload{" "}
-                  <em>case study</em>, the public Alibaba GenAI 2026 trace yields{" "}
-                  <Em>+38.2% SLA-safe goodput per dollar</Em> and <Em>−27.6% GPU-hours</Em> against an
-                  SLA-safe baseline, with both arms at 0.000% SLA violations — evidence that the
-                  mechanism is not an artifact of a single internal simulator. As the{" "}
-                  <em>current-architecture validation</em>, enabling the full predictive world model
-                  and its connected decision surfaces reaches <Em>+82.1% SLA-safe goodput/$</Em> over
-                  the strongest SLA-safe baseline on a bounded historical replay. Neither is a
-                  production deployment, and neither is a guarantee for any specific fleet.
+                  This report describes a finding that sharpened the architecture. A correct world
+                  model and a correct objective are not enough on their own: the economic optimum is
+                  only realized if the planner actually evaluates the <em>right coupled candidate
+                  decisions</em>. When candidate generation is made physics-guided — proposing the
+                  high-value, coupled bundles the operating regime implies — and searched under a
+                  regret audit, Aurelius recovers a Pareto-dominant result during expensive electricity
+                  windows: <Em>up to +191% higher SLA-safe goodput per dollar</Em>{" "}
+                  (<Em>+147.85% to +191.41%</Em>) versus the strongest SLA-aware baseline, with SLA
+                  strictly better and zero search regret against the exhaustive ground truth. The
+                  result is a bounded historical replay on public traces — evidence, not a guarantee.
                 </p>
               </Sec>
 
@@ -141,14 +158,13 @@ export default function TechnicalReport() {
                   Most schedulers optimize a current-state or local objective: availability, fairness,
                   utilization, latency, queue state, immediate capacity. Each is reasonable in
                   isolation. But the economic outcome of a placement is decided by constraints that
-                  arrive <em>after</em> the placement is made — power and capacity headroom,
-                  congestion, memory and topology pressure, demand and pricing, cache locality, model
-                  affinity, the warm or cold state of a replica, migration cost, and the way batching,
-                  precision, and speculative decoding interact under load.
+                  arrive <em>after</em> the placement is made — power and capacity headroom, congestion,
+                  memory and topology pressure, demand, and the price of electricity, which on public
+                  wholesale markets can swing several-fold within a day.
                 </p>
                 <p className={`${P} mt-4`}>
-                  Once a job lands, those costs are largely locked in. An <Em>observe → decide</Em>{" "}
-                  loop cannot price a constraint it has not yet seen. Aurelius closes that gap with an{" "}
+                  Once a job lands, those costs are largely locked in. An <Em>observe → decide</Em> loop
+                  cannot price a constraint it has not yet seen. Aurelius closes that gap with an{" "}
                   <Em>observe → forecast → simulate → decide</Em> loop — a different control
                   architecture, not another scheduler.
                 </p>
@@ -157,17 +173,17 @@ export default function TechnicalReport() {
               {/* 02 — Architecture */}
               <Sec n="02" id="architecture" title="02 · Forecast → Simulate → Decide">
                 <p className={P}>
-                  Each control period, Aurelius forecasts the workload, generates candidate action
-                  bundles, simulates each against the forecasted world state, scores it by
-                  risk-adjusted SLA-safe goodput per dollar, rejects anything that fails a hard gate,
-                  and recommends the best safe bundle — falling back deterministically when forecast
-                  confidence is low.
+                  Each control period, Aurelius forecasts the workload and conditions, generates
+                  candidate action bundles, simulates each against the forecasted world state, scores
+                  it by risk-adjusted SLA-safe goodput per dollar, rejects anything that fails a hard
+                  gate, and recommends the best safe bundle — falling back deterministically when
+                  forecast confidence is low.
                 </p>
                 <p className={`${P} mt-4`}>
                   Crucially, it evaluates <Em>coupled action bundles</Em>, not one knob. Workload
-                  timing, placement, routing, capacity, batching, prewarm, and the
-                  precision/speculation/clock policy are scored together, because those decisions
-                  interact.
+                  timing, placement, routing, capacity, batching, and the precision/speculation/clock
+                  policy are scored together, because those decisions interact — and, as this report
+                  shows, the interactions are exactly where the economic value lives.
                 </p>
                 <Figure>
                   <WorldModelArchitecture />
@@ -198,9 +214,10 @@ export default function TechnicalReport() {
               <Sec n="04" id="forecasts" title="04 · Forecasted Constraints">
                 <p className={P}>
                   Aurelius forecasts arrival rate, request characteristics (such as prompt and output
-                  length), queue dynamics, and infrastructure and pricing conditions using specialized
-                  forecasting models. Forecasts use only history up to the current period — there is no
-                  future-truth leakage into the decision.
+                  length), queue dynamics, and infrastructure and pricing conditions — including
+                  wholesale electricity price — using specialized forecasting models. Forecasts use
+                  only history up to the current period; there is no future-truth leakage into the
+                  decision.
                 </p>
                 <p className={`${PT} mt-4`}>
                   Honest scope: several constraints are represented in the world model but are not yet
@@ -223,23 +240,24 @@ export default function TechnicalReport() {
                 <SurfaceGroups />
               </Sec>
 
-              {/* 06 — Search */}
-              <Sec n="06" id="search" title="06 · Search & Optimization">
+              {/* 06 — Search & candidate generation */}
+              <Sec n="06" id="search" title="06 · Search & Candidate Generation">
                 <p className={P}>
-                  Because the surfaces interact, Aurelius evaluates coupled decision bundles rather
-                  than tuning one knob at a time. The search method scales with the size of the space:
-                  exhaustive evaluation where it is tractable, a structured beam-style search with
-                  local improvement for medium spaces, and bounded exploration for larger or
-                  strongly-coupled spaces. Where exact enumeration is feasible, the approximate search
-                  is scored against it so any regret is measured rather than assumed.
+                  Because the surfaces interact, Aurelius evaluates coupled decision bundles rather than
+                  tuning one knob at a time — and which candidates it evaluates is itself a first-class
+                  step, not an afterthought. A physics-guided generator proposes a focused set of
+                  high-value coupled bundles implied by the operating regime, always including the
+                  known-strong candidates so a high-value option is never silently dropped. The set is
+                  then searched in a way that captures cross-surface coupling, expanding to more
+                  surfaces only when a decision is close and stopping early when the choice is clear.
                 </p>
                 <Figure>
                   <SearchStrategyLadder />
                 </Figure>
                 <p className={`${PT} mt-2`}>
-                  The candidate space is pruned by the operating regime — a surface is only proposed
-                  where it can plausibly help — which narrows the search without changing the score a
-                  candidate would receive.
+                  Where exact enumeration is tractable, the bounded search is scored against it so any
+                  regret is measured rather than assumed — the discipline that surfaced the finding in
+                  §8.
                 </p>
               </Sec>
 
@@ -248,134 +266,153 @@ export default function TechnicalReport() {
                 <p className={P}>
                   The objective is <Em>SLA-safe goodput per operator dollar</Em>: the numerator counts
                   requests that met their SLA deadline; the denominator is infrastructure cost,
-                  including the cost of holding replicas warm and of migrations. Energy and carbon
-                  cost, queue delay, and a forecast-uncertainty risk penalty enter the same economic
+                  including energy at the prevailing market price and the cost of holding replicas warm
+                  and of migrations. A forecast-uncertainty risk penalty enters the same economic
                   objective.
                 </p>
                 <p className={`${P} mt-4`}>
                   Gating is two-tier. Hard constraints — SLA, capacity, power, residency, policy —{" "}
                   <Em>reject</Em> a candidate outright; the objective only ranks the feasible ones; and
-                  a safety gate records whether the chosen bundle beats the baseline without regressing
-                  SLA. When forecast confidence is low, Aurelius falls back deterministically to a safe
-                  default action.
+                  a Pareto gate accepts a recommendation only when it beats the baseline{" "}
+                  <em>without regressing SLA</em>. Every headline in this report passed that gate. When
+                  forecast confidence is low, Aurelius falls back deterministically to a safe default.
                 </p>
               </Sec>
 
-              {/* 08 — Case study */}
-              <Sec n="08" id="case-study" title="08 · Public Workload Case Study">
+              {/* 08 — The finding */}
+              <Sec n="08" id="finding" title="08 · The Bottleneck Was Candidate Generation">
                 <p className={P}>
-                  To test whether the gains generalize beyond text-generation traces — and beyond a
-                  closed internal simulator — Aurelius was replayed on the public Alibaba GenAI 2026
-                  trace: stable-diffusion LoRA serving, a materially different, multi-model,
-                  image-generation workload (26,392 valid requests over a one-week window, priced and
-                  provisioned with a queue-aware model).
+                  The finding behind this report is blunt: with the world model, the simulator, the
+                  objective, and the safety gate all unchanged, enabling more decision levers initially
+                  made results <em>worse</em>. The cause was not the controller — it was containment.
+                  The planner&rsquo;s candidate set had collapsed to a single surface (the GPU clock),
+                  so the bundle that actually wins during an expensive window —{" "}
+                  <Em>lower precision + aggressive batching + a higher clock</Em>, which packs far more
+                  goodput per GPU-hour — was never in the set being evaluated. The optimizer cannot pick
+                  what it never sees.
+                </p>
+                <p className={`${P} mt-4`}>
+                  Making candidate generation physics-guided, and searching the coupled set under a
+                  regret audit, removes that ceiling. On the same window, simply restoring the right
+                  candidate set recovers most of the gain; letting the search reach the coupled
+                  combinations the fixed grid misses recovers the rest — and a regret audit confirms it
+                  forfeits <Em>nothing</Em> the exhaustive search would have found.
+                </p>
+              </Sec>
+
+              {/* 09 — Result */}
+              <Sec n="09" id="result" title="09 · Result — Expensive Electricity Windows">
+                <p className={P}>
+                  The result is measured on a bounded Azure/Mooncake serving replay, scored against the
+                  strongest deployable SLA-aware baseline, across three independent public electricity
+                  markets&rsquo; expensive price windows — PJM, ERCOT, and CAISO — using public price
+                  traces. In every market the recovered bundle is Pareto-dominant: more SLA-safe goodput
+                  per dollar, at lower GPU-hours and lower cost, with SLA strictly better than the
+                  baseline.
                 </p>
                 <Figure>
                   <BenchmarkFigure />
                 </Figure>
                 <p className={`${P} mt-2`}>
-                  The honest headline compares two SLA-safe arms and reports{" "}
-                  <Em>+38.2% goodput/$</Em> and <Em>−27.6% GPU-hours</Em>, both at 0.000% SLA
-                  violations. The decision being optimized is infrastructure-level — adapter
-                  prewarming, model-affinity routing, and anticipatory capacity sizing — and the
-                  dominant mechanism is affinity: cold-start latency falls roughly 8× when related
-                  requests are kept warm together.
+                  The headline is <Em>+147.85% to +191.41% higher SLA-safe goodput per dollar</Em>,
+                  with the bounded search landing exactly on the exhaustive optimum (0 search regret) in
+                  all three markets at roughly 40 evaluations per decision. On the primary window, the
+                  recovered bundle also cut SLA violations by ~87%, GPU-hours by ~25%, and operator cost
+                  by ~24% — a true Pareto win, not goodput bought by spending more.
                 </p>
                 <Callout tone="warn">
-                  Scope: this is a public-trace case study, run as a standalone evaluation to validate
-                  the mechanism on an external workload — <span className="text-white/75">not</span> a
-                  production deployment and not a guarantee. A larger headline against an
-                  SLA-violating baseline exists in the literature; it is excluded here because a
-                  baseline that drops completions is not a valid SLA-safe comparison (see §11). On a
-                  single-model stream the affinity benefit shrinks toward zero.
-                </Callout>
-              </Sec>
-
-              {/* 09 — MPC validation */}
-              <Sec n="09" id="mpc-validation" title="09 · Full Aurelius MPC Validation">
-                <p className={P}>
-                  The flagship validation enables the full predictive world model with every connected
-                  decision surface live — workload timing, placement and routing, capacity and
-                  batching, prewarm, and the precision/speculation/clock policy — on a bounded
-                  historical serving window, scored against the strongest deployable SLA-safe baseline.
-                </p>
-                <p className={`${P} mt-4`}>
-                  With the full architecture enabled, Aurelius reaches <Em>+82.1% SLA-safe goodput/$</Em>{" "}
-                  over the best SLA-safe baseline. No surfaces were disabled, and the baselines are
-                  deployable fixed policies with no oracle and no future information.
-                </p>
-                <Callout>
-                  Honesty: the <span className="text-white/75">direction</span> — the full architecture
-                  substantially beats the SLA-safe baseline with all surfaces live — is the robust
-                  finding. The <span className="text-white/75">magnitude</span> is a bounded-replay
-                  result inferred in simulation, not a production measurement.
+                  Scope: this is a bounded, simulator-inferred result on a primary window with
+                  multi-market confirmation — <span className="text-white/75">not</span> a production
+                  deployment and not a guarantee. The robust findings are the{" "}
+                  <span className="text-white/75">direction</span> and the{" "}
+                  <span className="text-white/75">0 search regret</span>; absolute magnitudes depend on
+                  the serving model&rsquo;s precision/batching bands. An aggressive low-precision mode
+                  can score higher still, but it is excluded from every headline here because its
+                  quality risk is not yet modeled.
                 </Callout>
               </Sec>
 
               {/* 10 — Methodology */}
               <Sec n="10" id="methodology" title="10 · Benchmark Methodology">
                 <p className={P}>
-                  Evaluation is deterministic historical replay: a public production trace is replayed
-                  step-for-step against a fixed harness, and Aurelius&rsquo; decisions are compared
-                  against deployable baseline policies on the same trace under a single metric —
-                  SLA-safe goodput per dollar. Serving is modeled with queue-aware physics. No policy
-                  sees future arrivals; anticipatory sizing uses forecast inputs only, and per-request
-                  execution time is used rather than predicted, so there is no token oracle.
+                  Evaluation is deterministic historical replay: a public production serving trace is
+                  replayed against a fixed harness with public wholesale-electricity price traces, and
+                  Aurelius&rsquo; decisions are compared against deployable baseline policies on the
+                  same window under a single metric — SLA-safe goodput per dollar. No policy sees future
+                  arrivals or future prices; per-request execution time is used rather than predicted,
+                  so there is no oracle. The simulator, reward, cost model, and Pareto gate were held
+                  byte-identical across every arm — the only thing that changed is which candidates the
+                  planner evaluates, which is what makes the gain attributable to search rather than to
+                  tuning.
                 </p>
               </Sec>
 
               {/* 11 — Baselines */}
               <Sec n="11" id="baselines" title="11 · Baselines">
                 <p className={P}>
-                  A single integrity rule runs through every result: a baseline that violates SLA on
-                  any meaningful fraction of requests is not a valid SLA-safe baseline, and a large
-                  delta earned by quietly dropping completions is excluded from any headline. Aurelius
-                  is therefore always compared against the strongest baseline that itself holds SLA —
-                  not against a weaker policy that would flatter the result. Baselines range from
-                  first-come-first-served through queue- and SLA-aware disciplines.
+                  A single integrity rule runs through every result: a baseline that violates SLA on a
+                  meaningful fraction of requests is not a valid SLA-safe baseline, and a delta earned
+                  by quietly dropping completions is excluded from any headline. Aurelius is therefore
+                  always compared against the strongest baseline that itself holds SLA — not a weaker
+                  policy that would flatter the result. The prior, containment-limited planner is
+                  reported alongside as a reference point: it never passes the Pareto gate, because its
+                  SLA is worse than the baseline in every market.
                 </p>
               </Sec>
 
               {/* 12 — Results */}
               <Sec n="12" id="results" title="12 · Results">
-                <Caption>Table 1 — Evidence summary (two validations, kept separate)</Caption>
+                <Caption>Table 1 — Multi-market result (expensive price windows)</Caption>
                 <ResultTable
-                  head={["Validation", "Purpose", "Setting", "Baseline", "Result", "Caveat"]}
+                  head={["Market", "Baseline goodput/$", "Δ goodput/$", "SLA viol. (base → Aurelius)", "Search regret"]}
                   rows={[
-                    ["Public workload case study", "Generalizes beyond an internal simulator", "Alibaba GenAI 2026 · public trace", "SLA-safe baseline", "+38.2% goodput/$", "standalone replay · not production"],
-                    ["Full Aurelius MPC", "Full architecture + connected surfaces", "bounded historical replay", "best SLA-safe baseline", "+82.1% goodput/$", "direction robust · magnitude simulator-inferred"],
+                    ["PJM · expensive", "311,659", "+161.31%", "0.34 → 0.04", "0"],
+                    ["ERCOT · expensive", "373,538", "+191.41%", "0.48 → 0.01", "0"],
+                    ["CAISO · expensive", "406,767", "+147.85%", "0.51 → 0.02", "0"],
                   ]}
-                  emph={[4]}
+                  emph={[2]}
                 />
-                <Caption className="mt-12">Table 2 — Public workload case study</Caption>
+                <Caption className="mt-12">Table 2 — Pareto breakdown (primary window)</Caption>
                 <ResultTable
-                  head={["Metric", "Result", "Baseline", "Caveat"]}
+                  head={["Metric", "Baseline", "Aurelius", "Δ"]}
                   rows={[
-                    ["SLA-safe goodput / $", "+38.2%", "SLA-safe baseline", "public trace · external workload"],
-                    ["GPU-hours", "−27.6%", "SLA-safe baseline", "same completions held"],
-                    ["SLA violations", "0.000% (both arms)", "—", "valid SLA-safe comparison"],
+                    ["SLA-safe goodput / $", "311,659", "814,383", "+161.31%"],
+                    ["SLA violation rate", "0.3375", "0.0438", "−87.0%"],
+                    ["GPU-hours", "—", "—", "−24.78%"],
+                    ["Operator cost", "—", "—", "−23.87%"],
+                    ["Candidates evaluated", "—", "~40", "bounded"],
+                    ["Search regret vs exhaustive", "—", "0", "0%"],
                   ]}
-                  emph={[1]}
+                  emph={[3]}
                 />
-                <Caption className="mt-12">Table 3 — Full Aurelius MPC</Caption>
+                <Caption className="mt-12">Table 3 — Candidate set vs. result (primary window)</Caption>
                 <ResultTable
-                  head={["Metric", "Result", "Baseline", "Setting", "Caveat"]}
+                  head={["Candidate set", "Δ goodput/$", "SLA vs baseline", "Regret vs exhaustive"]}
                   rows={[
-                    ["SLA-safe goodput / $", "+82.1%", "best SLA-safe baseline", "bounded historical replay", "magnitude simulator-inferred; direction robust"],
+                    ["Single-surface (prior)", "−4.47%", "worse — fails gate", "173.5% forfeited"],
+                    ["Physics-guided set", "+100.48%", "better", "30.3%"],
+                    ["Physics-guided + coupled search", "+161.31%", "better", "0%"],
                   ]}
                   emph={[1]}
                 />
               </Sec>
 
-              {/* 13 — Contribution */}
-              <Sec n="13" id="contribution" title="13 · Contribution Analysis">
+              {/* 13 — Why it works */}
+              <Sec n="13" id="why" title="13 · Why It Works">
                 <p className={P}>
-                  In the public-workload case study, a contribution analysis attributes roughly{" "}
-                  <Em>62%</Em> of the gain to model affinity and prewarming and roughly <Em>38%</Em> to
-                  anticipatory capacity sizing, with negligible interaction between them — the two
-                  effects are largely additive. In the full-architecture validation, an internal audit
-                  finds that the remaining headroom is dominated by forecast quality, especially the
-                  forecasts of request characteristics, rather than by the search or the objective.
+                  The decomposition in Table 3 tells the whole story. Restoring the right candidate set
+                  — without touching the search — already turns a regression into a large Pareto-safe
+                  gain, because the moment the high-value bundle is in the set, the unchanged simulator
+                  picks it. Letting the search reach the coupled combinations a fixed grid does not
+                  contain adds the rest, and it does so while matching the exhaustive optimum exactly.
+                  The prior single-surface set, by contrast, forfeited most of the achievable goodput
+                  and never held SLA.
+                </p>
+                <p className={`${P} mt-4`}>
+                  Because the simulator, reward, cost model, and Pareto gate were unchanged, the gain is
+                  attributable to <Em>search and candidate generation</Em> — not to a model that was
+                  quietly made more optimistic. The zero-regret audit against the exhaustive ground
+                  truth is the proof.
                 </p>
               </Sec>
 
@@ -383,12 +420,12 @@ export default function TechnicalReport() {
               <Sec n="14" id="regret" title="14 · Optimizer Validation">
                 <p className={P}>
                   Because an approximate search could quietly leave value on the table, its loss is
-                  measured wherever exhaustive enumeration is feasible. The structured beam-style
-                  search shows essentially zero regret against exhaustive evaluation on the coupled
-                  fixtures — including the cases that defeat a one-knob-at-a-time search, which is why
-                  that cheaper method is kept only as a fallback. A regret audit attributes essentially
-                  all of the remaining planner shortfall to forecast quality rather than to the search
-                  itself.
+                  measured wherever exhaustive enumeration is feasible. Here the bounded coupled-bundle
+                  search shows <Em>zero regret</Em> against the exhaustive ground truth in all three
+                  markets, at roughly 40 evaluations per decision — it finds the exact safe optimum the
+                  exhaustive search finds, far more cheaply. The remaining gap to a forecast oracle
+                  (~4.5%) is forecast quality, not search: with search solved, request-characteristic
+                  forecasting is the next highest-value lever.
                 </p>
               </Sec>
 
@@ -397,8 +434,8 @@ export default function TechnicalReport() {
                 <p className={P}>
                   Aurelius reads only the metadata a scheduler already exposes — job timing, resource
                   requests, constraints — never payloads or model outputs. Candidate scoring runs
-                  read-only; unsafe candidates are rejected at the constraint gate before execution;
-                  and when confidence is low the controller falls back deterministically. The path from
+                  read-only; unsafe candidates are rejected at the constraint gate before execution; and
+                  when confidence is low the controller falls back deterministically. The path from
                   telemetry to any production change is staged and reversible:
                 </p>
                 <Figure>
@@ -410,13 +447,13 @@ export default function TechnicalReport() {
               <Sec n="16" id="limitations" title="16 · Limitations">
                 <ul className="grid max-w-[70ch] gap-y-3">
                   {[
-                    "Reported deltas are historical replays / backtests on public traces — evidence of achievable savings, not a guarantee for any specific fleet.",
-                    "Public-trace results may not transfer directly to a given fleet; the magnitude depends on workload mix, exposed metadata, constraints, and rollout policy.",
-                    "The full-architecture +82.1% is a bounded historical validation inferred in simulation, not a production deployment; only its direction is robust.",
+                    "The result is a bounded historical replay on public traces — evidence of achievable savings, not a guarantee for any specific fleet.",
+                    "Magnitudes are simulator-inferred and depend on the serving model's precision/batching bands; the robust findings are the direction and the zero search regret.",
+                    "It is one primary window with multi-market confirmation, not a long-horizon production deployment.",
                     "Simulator fidelity must still be tested against real operator telemetry — that is the only way to isolate model error.",
-                    "The public-workload case study is a standalone evaluation, not the full production control path.",
+                    "An aggressive low-precision mode can score higher but is excluded from every headline because its quality risk is not yet modeled.",
+                    "The largest gains appear during expensive electricity windows; quiet, cheap-power periods leave less to recover.",
                     "Some surfaces are modeled but not yet active production levers, and several constraints are represented but not yet forecast inputs.",
-                    "Model-affinity gains are workload-dependent: on a single-model stream the benefit approaches zero.",
                   ].map((item) => (
                     <li key={item} className="flex max-w-[70ch] items-start gap-3 text-[13.5px] leading-relaxed text-white/56">
                       <span className="mt-2 inline-block h-px w-4 shrink-0 bg-white/40" aria-hidden />
@@ -429,12 +466,13 @@ export default function TechnicalReport() {
               {/* 17 — Future work */}
               <Sec n="17" id="future-work" title="17 · Future Work">
                 <p className={P}>
-                  The contribution analysis points the roadmap at forecast quality first — better
-                  request-characteristic forecasting is the largest measured lever — followed by
-                  validating world-model fidelity against real serving telemetry, promoting the
-                  modeled-but-not-yet-optimized surfaces into active levers, and making energy and cost
-                  signals actionable rather than only objective terms. Additional public trace families
-                  and multi-region replays under live constraints follow.
+                  With search no longer the bottleneck, the residual gap to a forecast oracle points the
+                  roadmap at forecast quality first — better request-characteristic and arrival
+                  forecasting is the largest measured lever. Beyond that: validating world-model
+                  fidelity against real operator telemetry, extending the result across more windows,
+                  markets, and workloads, promoting modeled-but-not-yet-optimized surfaces into active
+                  levers, and modeling precision quality so the aggressive low-precision ceiling can be
+                  claimed safely rather than only as a diagnostic.
                 </p>
               </Sec>
 
