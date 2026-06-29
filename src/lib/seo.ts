@@ -35,7 +35,7 @@ export const SITE = {
   origin: "https://runaurelius.com",
   name: "Aurelius",
   /** og:image / twitter:image used across pages. */
-  image: "https://runaurelius.com/image_homepage.png",
+  image: "https://runaurelius.com/opengraph.png",
   imageAlt: "Aurelius — the control layer for economically efficient GPU fleets",
   twitterCard: "summary_large_image",
   locale: "en_US",
