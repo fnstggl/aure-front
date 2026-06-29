@@ -86,7 +86,7 @@ export default function Contact() {
               </Reveal>
               <Reveal delay={80}>
                 <h1 className="mt-6 text-balance text-[clamp(1.9rem,4vw,2.8rem)] font-medium leading-[1.08] tracking-tight text-foreground">
-                  See how much more economic value Aurelius could unlock for your fleet
+                  See how much economic value Aurelius could unlock for your fleet
                 </h1>
               </Reveal>
               <Reveal delay={140}>

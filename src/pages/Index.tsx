@@ -26,9 +26,11 @@ export default function Index() {
       <PageFrame>
         {/* ============================== Hero ============================== */}
         <section className="relative overflow-hidden border-t border-border">
-          {/* mobile: a single static background image (no ambient animation) */}
+          {/* mobile: a single static background image (no ambient animation).
+              Contained so the dotted ellipse fits the width instead of bleeding
+              off the sides. */}
           <div
-            className="absolute inset-0 z-0 bg-cover bg-center sm:hidden"
+            className="absolute inset-0 z-0 bg-contain bg-center bg-no-repeat sm:hidden"
             style={{ backgroundImage: "url('/hero_background.png')" }}
             aria-hidden
           />
