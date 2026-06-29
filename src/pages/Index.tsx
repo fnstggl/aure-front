@@ -2,6 +2,7 @@ import { Layout } from "@/components/layout/Layout";
 import { Reveal, Arrow } from "@/components/site/primitives";
 import { PageFrame, Band, Grid, Rails, Kicker, Action } from "@/components/site/structure";
 import { WorldModelArchitecture } from "@/components/diagrams/WorldModelArchitecture";
+import { ScrollWordReveal } from "@/components/site/ScrollWordReveal";
 
 /* Aurelius — landing page.
    A systems-paper title page on a visible structural grid, not a marketing
@@ -78,11 +79,11 @@ export default function Index() {
               <Reveal>
                 <Kicker index="01">Hypothesis</Kicker>
               </Reveal>
-              <Reveal delay={60}>
-                <h2 className="mt-6 text-balance text-[clamp(1.6rem,3.2vw,2.3rem)] font-medium leading-[1.08] tracking-[-0.02em] text-foreground">
-                  Most infrastructure waste is created because schedulers optimize before future constraints are visible.
-                </h2>
-              </Reveal>
+              <ScrollWordReveal
+                as="h2"
+                text="Most infrastructure waste is created because schedulers optimize before future constraints are visible."
+                className="mt-6 text-balance text-[clamp(1.6rem,3.2vw,2.3rem)] font-medium leading-[1.08] tracking-[-0.02em] text-foreground"
+              />
               <Reveal delay={120}>
                 <p className="mt-6 max-w-2xl text-[14.5px] leading-relaxed text-white/52">
                   Power prices change. Queue pressure changes. Capacity changes. Deadlines tighten. The decision that appears optimal now can become economically suboptimal later. Aurelius tests whether forecasting those future constraints before execution produces measurably better economic decisions.
