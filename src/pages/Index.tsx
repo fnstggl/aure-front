@@ -30,8 +30,8 @@ export default function Index() {
               95% width so the ellipse horns reach near the screen edges with a
               small margin, without bleeding off the sides. */}
           <div
-            className="absolute inset-0 z-0 bg-center bg-no-repeat sm:hidden"
-            style={{ backgroundImage: "url('/mobile_background.png')", backgroundSize: "95%" }}
+            className="absolute inset-0 z-0 bg-no-repeat sm:hidden"
+            style={{ backgroundImage: "url('/mobile_background.png')", backgroundSize: "95%", backgroundPosition: "50% 35%" }}
             aria-hidden
           />
           {/* desktop: preserved dotted horn field (animated) */}
