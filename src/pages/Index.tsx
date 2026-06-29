@@ -26,9 +26,15 @@ export default function Index() {
       <PageFrame>
         {/* ============================== Hero ============================== */}
         <section className="relative overflow-hidden border-t border-border">
-          {/* preserved dotted horn field */}
-          <div className="hero-field z-0" aria-hidden />
-          <div className="hero-field-shimmer z-0" aria-hidden />
+          {/* mobile: a single static background image (no ambient animation) */}
+          <div
+            className="absolute inset-0 z-0 bg-cover bg-center sm:hidden"
+            style={{ backgroundImage: "url('/hero_background.png')" }}
+            aria-hidden
+          />
+          {/* desktop: preserved dotted horn field (animated) */}
+          <div className="hero-field z-0 hidden sm:block" aria-hidden />
+          <div className="hero-field-shimmer z-0 hidden sm:block" aria-hidden />
           <div className="hero-field-vignette z-0" aria-hidden />
           {/* the structural rails cross the horn, as in a plate */}
           <Rails className="z-10" />
