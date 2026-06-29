@@ -58,11 +58,11 @@ export default function Index() {
                 </Reveal>
                 <Reveal delay={240}>
                   <div className="mt-8 flex flex-wrap items-center justify-center gap-x-5 gap-y-1.5 font-mono text-[10.5px] tracking-[0.12em] text-white/32">
-                    <span><span className="text-white/50">+100.5%</span> SLA-safe goodput / $</span>
+                    <span><span className="text-white/50">+191%</span> SLA-safe goodput / $</span>
                     <span className="text-white/18">·</span>
                     <span><span className="text-white/50">−21%</span> GPU-hours</span>
                     <span className="text-white/18">·</span>
-                    <span className="uppercase tracking-[0.16em]">Measured on public Azure LLM serving traces</span>
+                    <span className="uppercase tracking-[0.16em]">Measured on bounded Azure/Mooncake replay</span>
                   </div>
                 </Reveal>
               </div>
@@ -150,7 +150,7 @@ export default function Index() {
               </Reveal>
               <Reveal delay={160}>
                 <ul className="mt-7 grid gap-y-3">
-                  {["Offline replay", "Read-only shadow mode", "Public Azure LLM serving traces"].map((item) => (
+                  {["Offline replay", "Read-only shadow mode", "Bounded Azure/Mooncake replay"].map((item) => (
                     <li key={item} className="flex items-center gap-3 font-mono text-[12.5px] text-white/62">
                       <span className="inline-block h-px w-4 shrink-0 bg-white/45" aria-hidden />
                       {item}
@@ -254,13 +254,13 @@ function StatMoment() {
   return (
     <div className="text-center md:text-left">
       <div className="text-[clamp(3.6rem,8.5vw,6.8rem)] font-medium leading-[0.9] tracking-[-0.04em] text-foreground">
-        +100.5%
+        +191%
       </div>
       <p className="mt-4 text-[clamp(1.05rem,2.4vw,1.6rem)] font-medium tracking-tight text-white/80">
         higher SLA-safe goodput per dollar
       </p>
-      <p className="mt-6 max-w-md font-mono text-[11px] uppercase leading-relaxed tracking-[0.2em] text-white/42">
-        Measured on public Azure LLM serving traces · replayed against historical electricity markets · SLA-safe · −21% GPU-hours
+      <p className="mt-6 max-w-md font-mono text-[11px] uppercase leading-relaxed tracking-[0.14em] text-white/42">
+        Measured on bounded Azure/Mooncake replay with public PJM/ERCOT/CAISO price traces; Pareto-safe vs strongest SLA-aware baseline.
       </p>
     </div>
   );
