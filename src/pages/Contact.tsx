@@ -86,7 +86,7 @@ export default function Contact() {
               </Reveal>
               <Reveal delay={80}>
                 <h1 className="mt-6 text-balance text-[clamp(1.9rem,4vw,2.8rem)] font-medium leading-[1.08] tracking-tight text-foreground">
-                  See how much Aurelius could save
+                  See how much more economic value Aurelius could unlock for your fleet
                 </h1>
               </Reveal>
               <Reveal delay={140}>
@@ -96,7 +96,7 @@ export default function Contact() {
               </Reveal>
               <Reveal delay={200}>
                 <ul className="mt-8 space-y-2.5">
-                  {["Metadata only", "Read-only shadow mode", "Counterfactual savings report"].map((t) => (
+                  {["Metadata only", "Read-only shadow mode", "Counterfactual savings report", "+191% higher goodput/$ on public production traces"].map((t) => (
                     <li key={t} className="flex items-center gap-3 font-mono text-[12px] text-white/55">
                       <span className="inline-block h-1 w-1 shrink-0 bg-white" aria-hidden />
                       {t}
