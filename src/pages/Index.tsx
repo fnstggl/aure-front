@@ -2,7 +2,6 @@ import { Layout } from "@/components/layout/Layout";
 import { Reveal, Arrow } from "@/components/site/primitives";
 import { PageFrame, Band, Grid, Rails, Kicker, Action } from "@/components/site/structure";
 import { WorldModelArchitecture } from "@/components/diagrams/WorldModelArchitecture";
-import { ConstraintTimingFigure } from "@/components/diagrams/ConstraintTimingFigure";
 
 /* Aurelius — landing page.
    A systems-paper title page on a visible structural grid, not a marketing
@@ -38,7 +37,7 @@ export default function Index() {
               <div className="mx-auto w-full max-w-[72rem] translate-y-[5vh] px-6 pb-16 pt-32 text-center sm:px-8">
                 <Reveal>
                   <h1 className="mx-auto max-w-[22ch] text-[clamp(1.35rem,2.5vw,1.75rem)] font-medium leading-[1.2] tracking-[-0.015em] text-foreground sm:max-w-none sm:whitespace-nowrap">
-                    The optimal scheduling decision depends on constraints that haven’t emerged yet.
+                    The optimal scheduling decision depends on constraints that haven&rsquo;t emerged yet.
                   </h1>
                 </Reveal>
                 <Reveal delay={120}>
@@ -75,7 +74,7 @@ export default function Index() {
         {/* ============================ Hypothesis =========================== */}
         <Band className="py-20 md:py-28 lg:py-32">
           <Grid>
-            <div className="col-span-1 px-6 sm:px-8 md:col-span-5 lg:px-10">
+            <div className="col-span-1 px-6 sm:px-8 md:col-span-10 lg:px-10">
               <Reveal>
                 <Kicker index="01">Hypothesis</Kicker>
               </Reveal>
@@ -85,14 +84,9 @@ export default function Index() {
                 </h2>
               </Reveal>
               <Reveal delay={120}>
-                <p className="mt-6 max-w-md text-[14.5px] leading-relaxed text-white/52">
+                <p className="mt-6 max-w-2xl text-[14.5px] leading-relaxed text-white/52">
                   Power prices change. Queue pressure changes. Capacity changes. Deadlines tighten. The decision that appears optimal now can become economically suboptimal later. Aurelius tests whether forecasting those future constraints before execution produces measurably better economic decisions.
                 </p>
-              </Reveal>
-            </div>
-            <div className="col-span-1 mt-12 px-6 sm:px-8 md:col-span-6 md:col-start-7 md:mt-0 md:px-0 md:pr-8 lg:pr-10">
-              <Reveal delay={120}>
-                <ConstraintTimingFigure />
               </Reveal>
             </div>
           </Grid>
@@ -109,7 +103,7 @@ export default function Index() {
               </Reveal>
               <Reveal delay={60}>
                 <h2 className="mt-6 text-balance text-[clamp(1.6rem,3.2vw,2.3rem)] font-medium leading-[1.08] tracking-[-0.02em] text-foreground">
-                  Forecast. Simulate. Decide.
+                  Forecast. Simulate. Rank by Economics.
                 </h2>
               </Reveal>
               <Reveal delay={120}>
