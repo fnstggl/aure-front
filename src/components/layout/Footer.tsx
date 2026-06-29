@@ -11,10 +11,10 @@ export function Footer() {
     <footer className="relative overflow-hidden border-t border-border bg-background">
       {/* decorative dotted hand, bottom-right corner */}
       <img
-        src="/hand_dots.png"
+        src="/hand-dots.png"
         alt=""
         aria-hidden
-        className="pointer-events-none absolute bottom-0 right-0 z-0 hidden w-40 select-none opacity-80 sm:block md:w-48 lg:w-56"
+        className="pointer-events-none absolute bottom-0 -right-[120px] z-0 hidden w-[360px] select-none opacity-80 sm:block"
         onError={(e) => {
           e.currentTarget.style.display = "none";
         }}
