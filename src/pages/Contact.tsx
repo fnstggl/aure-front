@@ -28,7 +28,7 @@ const contactSchema = z.object({
 type ContactFormValues = z.infer<typeof contactSchema>;
 
 const inputClass =
-  "bg-black rounded-none border-white text-white placeholder:text-white focus-visible:ring-white focus-visible:border-white";
+  "bg-black rounded-none border-white text-white placeholder:text-white/40 focus-visible:ring-white/40 focus-visible:border-white";
 
 export default function Contact() {
   const { toast } = useToast();
@@ -90,14 +90,14 @@ export default function Contact() {
                 </h1>
               </Reveal>
               <Reveal delay={140}>
-                <p className="mt-5 max-w-md text-[15px] leading-relaxed text-white">
+                <p className="mt-5 max-w-md text-[15px] leading-relaxed text-white/62">
                   Start with a read-only shadow-run evaluation using scheduler metadata. Historical replay and live shadow deployments supported. No payload access. No execution impact.
                 </p>
               </Reveal>
               <Reveal delay={200}>
                 <ul className="mt-8 space-y-2.5">
                   {["Metadata only", "Read-only shadow mode", "Counterfactual savings report"].map((t) => (
-                    <li key={t} className="flex items-center gap-3 font-mono text-[12px] text-white">
+                    <li key={t} className="flex items-center gap-3 font-mono text-[12px] text-white/55">
                       <span className="inline-block h-1 w-1 shrink-0 bg-white" aria-hidden />
                       {t}
                     </li>
@@ -193,7 +193,7 @@ export default function Contact() {
                                 {...field}
                               />
                             </FormControl>
-                            <p className="font-mono text-[11px] text-white">
+                            <p className="font-mono text-[11px] text-white/45">
                               Metadata only — never share secrets or customer data.
                             </p>
                             <FormMessage />

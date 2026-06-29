@@ -39,7 +39,7 @@
     --destructive-foreground: 0 0% 96%;
 
     /* Hairline borders carry their own alpha */
-    --border: 0 0% 100% / 0.08;
+    --border: 0 0% 100% / 0.11;
     --border-strong: 0 0% 100% / 0.16;
     --input: 0 0% 100% / 0.12;
     --ring: 0 0% 80%;
@@ -59,6 +59,11 @@
     --data-pale: 0 0% 82%;
     --data-violet: 0 0% 58%;
     --data-deep: 0 0% 46%;
+
+    /* Antique gold — the single chromatic accent. Roman austerity, not SaaS.
+       Used only to mark hierarchy and the committed/approved path. Muted on
+       purpose; always carried at partial opacity. Never a fill of large areas. */
+    --gold: 40 34% 58%;
 
     /* Legacy custom tokens kept for existing components */
     --surface-glass: 0 0% 100% / 0.025;
@@ -94,7 +99,7 @@
     --accent-foreground: 0 0% 93%;
     --destructive: 2 58% 54%;
     --destructive-foreground: 0 0% 96%;
-    --border: 0 0% 100% / 0.08;
+    --border: 0 0% 100% / 0.11;
     --border-strong: 0 0% 100% / 0.16;
     --input: 0 0% 100% / 0.12;
     --ring: 0 0% 80%;
@@ -106,6 +111,7 @@
     --data-pale: 0 0% 82%;
     --data-violet: 0 0% 58%;
     --data-deep: 0 0% 46%;
+    --gold: 40 34% 58%;
   }
 
   /* Off-white-gray section — neutral editorial relief from the dark (no beige) */
@@ -317,22 +323,29 @@
   .hero-field {
     position: absolute;
     inset: 0;
-    background-image: url("/hero_background.png");
+    background-image: url("/datacenter_back.png");
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;
-    opacity: 0.36;
+    opacity: 0.92;
+    /* ~12% smaller and nudged slightly lower so the field reads as a framed
+       plate rather than a dominant full-bleed image. The datacenter art is
+       black-on-black, so the revealed margin is seamless. */
+    transform: translateY(3%) scale(0.88);
+    transform-origin: center;
     animation: hero-breathe 26s ease-in-out infinite;
   }
   /* a brighter copy revealed only through a soft moving band → per-dot shimmer */
   .hero-field-shimmer {
     position: absolute;
     inset: 0;
-    background-image: url("/hero_background.png");
+    background-image: url("/datacenter_back.png");
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;
-    opacity: 0.55;
+    opacity: 0.72;
+    transform: translateY(3%) scale(0.88);
+    transform-origin: center;
     mix-blend-mode: screen;
     -webkit-mask-image: linear-gradient(100deg, transparent 38%, #000 50%, transparent 62%);
     mask-image: linear-gradient(100deg, transparent 38%, #000 50%, transparent 62%);
@@ -342,14 +355,13 @@
     mask-repeat: no-repeat;
     animation: hero-shimmer 24s linear infinite;
   }
-  /* Vignette keeps the field present at the edges but lays a tight scrim only
-     behind the centered headline so the type stays crisp. */
+  /* Vignette frames the edges; image fully visible at center */
   .hero-field-vignette {
     position: absolute;
     inset: 0;
     background:
-      radial-gradient(125% 95% at 50% 44%, transparent 46%, hsl(0 0% 2% / 0.66) 98%),
-      radial-gradient(48% 36% at 50% 45%, hsl(0 0% 2% / 0.62), hsl(0 0% 2% / 0.18) 60%, transparent 78%);
+      /* black vignette framing the edges — lighter, so the image stays visible */
+      radial-gradient(150% 150% at 50% 50%, transparent 44%, hsl(0 0% 0% / 0.6) 80%, hsl(0 0% 0%) 100%);
   }
 }
 
@@ -391,6 +403,30 @@
     scroll-behavior: auto !important;
   }
 
+  .reveal {
+    opacity: 1 !important;
+    transform: none !important;
+  }
+}
+
+/* Print / Save as PDF — keep the dark research-lab surface instead of the
+   browser's default white page. Forces the off-black background and faithful
+   color so the exported PDF matches the on-screen report. */
+@media print {
+  html,
+  body,
+  #root {
+    background: #000 !important;
+  }
+
+  *,
+  *::before,
+  *::after {
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+
+  /* Entrance animations never run in print; show everything. */
   .reveal {
     opacity: 1 !important;
     transform: none !important;

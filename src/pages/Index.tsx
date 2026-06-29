@@ -1,361 +1,267 @@
-import { cn } from "@/lib/utils";
 import { Layout } from "@/components/layout/Layout";
-import {
-  Container,
-  Section,
-  SectionEyebrow,
-  SectionHeader,
-  CTAButton,
-  Reveal,
-  ShadowFlow,
-} from "@/components/site/primitives";
+import { Reveal, Arrow } from "@/components/site/primitives";
+import { PageFrame, Band, Grid, Rails, Kicker, Action } from "@/components/site/structure";
+import { WorldModelArchitecture } from "@/components/diagrams/WorldModelArchitecture";
 import { ScrollWordReveal } from "@/components/site/ScrollWordReveal";
-import { ProblemSection } from "@/components/site/ProblemSection";
-import { AureliusSchematicDiagram } from "@/components/diagrams/AureliusSchematicDiagram";
-import { QueueShiftDiagram } from "@/components/diagrams/QueueShiftDiagram";
-import { ControlLoopDiagram } from "@/components/diagrams/ControlLoopDiagram";
-import { FleetTopologyDiagram } from "@/components/diagrams/FleetTopologyDiagram";
-import { OptimizationDecisionDiagram } from "@/components/diagrams/OptimizationDecisionDiagram";
-import { ConstraintEngineDiagram } from "@/components/diagrams/ConstraintEngineDiagram";
-import { ShadowModeAuditDiagram } from "@/components/diagrams/ShadowModeAuditDiagram";
-import { MetadataBoundaryDiagram } from "@/components/diagrams/MetadataBoundaryDiagram";
+
+/* Aurelius — landing page.
+   A systems-paper title page on a visible structural grid, not a marketing
+   stack. The page teaches one idea: the optimal scheduling decision depends on
+   constraints that haven't emerged yet — so Aurelius forecasts the future
+   cluster state, simulates candidate decisions, and commits the economic
+   optimum before execution. Architecture is the reason; savings are the
+   consequence. Four bands: architecture, evidence, evaluation, CTA. */
+
+const EVAL_STEPS = [
+  "Upload telemetry",
+  "Offline replay",
+  "Savings estimate",
+  "Shadow deployment",
+  "Controlled rollout",
+];
 
 export default function Index() {
   return (
     <Layout>
-      {/* ============================== Hero ============================== */}
-      <section className="relative flex min-h-[100dvh] flex-col justify-center overflow-hidden pb-24 pt-28 md:pt-32">
-        {/* Quiet mathematical structure behind the claim — static PNG + subtle shimmer */}
-        <div className="hero-field" aria-hidden />
-        <div className="hero-field-shimmer" aria-hidden />
-        <div className="hero-field-vignette" aria-hidden />
+      <PageFrame>
+        {/* ============================== Hero ============================== */}
+        <section className="relative overflow-hidden border-t border-border">
+          {/* preserved dotted horn field */}
+          <div className="hero-field z-0" aria-hidden />
+          <div className="hero-field-shimmer z-0" aria-hidden />
+          <div className="hero-field-vignette z-0" aria-hidden />
+          {/* the structural rails cross the horn, as in a plate */}
+          <Rails className="z-10" />
 
-        <Container className="relative">
-          <div className="mx-auto max-w-3xl text-center">
-            <Reveal delay={60}>
-              <h1 className="text-balance text-[clamp(2rem,5.2vw,3.6rem)] font-medium leading-[1.05] tracking-[-0.025em]">
-                <span className="text-white/52">Your scheduler optimizes utilization.</span>
-                <br />
-                <span className="text-foreground">Aurelius optimizes economics.</span>
-              </h1>
-            </Reveal>
-            <Reveal delay={120}>
-              <p className="mx-auto mt-6 max-w-2xl text-[15px] leading-relaxed text-white/68 md:text-[17px]">
-                Forecast power, capacity, congestion, and demand constraints before execution. Generate safer workload decisions. Prove savings in shadow mode before deployment.
-              </p>
-            </Reveal>
-            <Reveal delay={180}>
-              <p className="mx-auto mt-4 max-w-xl text-[13px] leading-relaxed text-white/42">
-                Metadata-only. Constraint-gated. Built for GPU fleet operators.
-              </p>
-            </Reveal>
-
-            <Reveal delay={240}>
-              <div className="mt-9 flex flex-col items-center justify-center gap-3 sm:flex-row">
-                <CTAButton to="/contact" variant="primary" withArrow>
-                  See how much you could save
-                </CTAButton>
-                <CTAButton to="/how-it-works" variant="secondary">
-                  View technical overview
-                </CTAButton>
+          <div className="relative z-20 flex min-h-[100dvh] flex-col">
+            <div className="flex flex-1 items-center justify-center">
+              <div className="mx-auto w-full max-w-[72rem] translate-y-[5vh] px-6 pb-16 pt-32 text-center sm:px-8">
+                <Reveal>
+                  <h1 className="mx-auto max-w-[22ch] text-[clamp(1.35rem,2.5vw,1.75rem)] font-medium leading-[1.2] tracking-[-0.015em] text-foreground sm:max-w-none sm:whitespace-nowrap">
+                    The optimal scheduling decision depends on constraints that haven&rsquo;t emerged yet.
+                  </h1>
+                </Reveal>
+                <Reveal delay={120}>
+                  <div className="mt-11 flex flex-col items-center justify-center gap-3 sm:flex-row">
+                    <Action to="/contact" variant="primary" withArrow>
+                      See how much your fleet could have saved
+                    </Action>
+                    <Action to="/technical-report" variant="secondary">
+                      Read Technical Report
+                    </Action>
+                  </div>
+                </Reveal>
+                <Reveal delay={180}>
+                  <p className="mt-6 text-[13px] leading-relaxed text-white/80">
+                    Working with a small batch of infrastructure operators.
+                  </p>
+                </Reveal>
+                <Reveal delay={240}>
+                  <div className="mt-8 flex flex-wrap items-center justify-center gap-x-5 gap-y-1.5 font-mono text-[10.5px] tracking-[0.12em] text-white/32">
+                    <span><span className="text-white/50">+191%</span> SLA-safe goodput / $</span>
+                    <span className="text-white/18">·</span>
+                    <span><span className="text-white/50">−25%</span> GPU-hours</span>
+                    <span className="text-white/18">·</span>
+                    <span className="uppercase tracking-[0.16em]">Measured on bounded Azure/Mooncake replay</span>
+                  </div>
+                </Reveal>
               </div>
-            </Reveal>
-
-            <Reveal delay={320}>
-              <div className="mt-11 flex flex-wrap items-center justify-center gap-x-5 gap-y-2 font-mono text-[12px] tracking-tight text-white/45">
-                <span><span className="text-foreground">+42%</span> goodput / $</span>
-                <span className="text-white/15">·</span>
-                <span><span className="text-foreground">−21%</span> GPU-hours</span>
-                <span className="text-white/15">·</span>
-                <span>public Azure traces</span>
-                <span className="text-white/15">·</span>
-                <span>SLA-safe benchmark</span>
-              </div>
-              <p className="mt-3.5 font-mono text-[11px] text-white/26">
-                Benchmark evidence on public traces (not a guaranteed universal result).
-              </p>
-            </Reveal>
+            </div>
           </div>
-        </Container>
-      </section>
+        </section>
 
-      {/* ================= The cost reality (scary problem grid) ============== */}
-      <ProblemSection />
-
-      {/* ===================== Scheduler interception ================== */}
-      <Section>
-        <Container>
-          <Reveal>
-            <SectionHeader
-              eyebrow="How it fits"
-              title="An advisory layer between your scheduler and execution"
-              intro="Aurelius reads scheduler metadata, forecasts conditions, and filters candidates before they run — then advises. Your scheduler stays in control and execution is unchanged."
-            />
-          </Reveal>
-          <Reveal delay={140} className="mt-12">
-            <AureliusSchematicDiagram />
-          </Reveal>
-        </Container>
-      </Section>
-
-      {/* ============================ Problem ============================ */}
-      <Section>
-        <Container>
-          <Reveal>
-            <SectionHeader
-              eyebrow="The problem"
-              title="Your scheduler is costing you money"
-              intro="Modern schedulers optimize for availability, fairness, and latency — not economic outcome. Once a job is placed, its energy cost, regional constraints, and timing tradeoffs are often locked in."
-            />
-          </Reveal>
-          <Reveal delay={120}>
-            <ul className="mt-10 grid gap-px overflow-hidden rounded-md border border-border bg-border md:grid-cols-3">
-              {[
-                "Schedulers do not see future grid conditions.",
-                "Utilization does not equal economic efficiency.",
-                "Teams lack audit-grade counterfactuals before changing production behavior.",
-              ].map((point, i) => (
-                <li key={point} className="bg-background p-5">
-                  <span className="font-mono text-[12px] tabular-nums text-white/25">
-                    {String(i + 1).padStart(2, "0")}
-                  </span>
-                  <p className="mt-3 text-[14px] leading-relaxed text-white/62">{point}</p>
-                </li>
-              ))}
-            </ul>
-          </Reveal>
-          <Reveal delay={160} className="mt-12">
-            <QueueShiftDiagram />
-          </Reveal>
-        </Container>
-      </Section>
-
-      {/* ==================== Stat moment (typography) ================= */}
-      <Section className="py-[84px] md:py-[124px] lg:py-[148px]">
-        <Container>
-          <Reveal className="mx-auto max-w-4xl text-center">
-            <div className="text-[clamp(4.5rem,15vw,11rem)] font-medium leading-[0.84] tracking-[-0.05em] text-foreground">
-              42%
-            </div>
-            <p className="mt-5 text-[clamp(1.1rem,2.6vw,1.7rem)] font-medium tracking-tight text-white/72">
-              higher goodput per dollar
-            </p>
-            <p className="mt-7 font-mono text-[11px] uppercase tracking-[0.22em] text-white/32">
-              Measured on public Azure traces · SLA-safe · −21% GPU-hours
-            </p>
-          </Reveal>
-        </Container>
-      </Section>
-
-      {/* ======================= System Overview ======================== */}
-      <Section alt>
-        <Container>
-          <Reveal>
-            <SectionHeader
-              eyebrow="System overview"
-              title="A deterministic control loop"
-              revealIntro
-              intro="Observe, forecast, decide, filter, log. Aurelius reads scheduler metadata, predicts conditions with uncertainty bounds, ranks options, rejects unsafe candidates under hard constraints, and records every outcome — append-only."
-            />
-          </Reveal>
-          <Reveal delay={140} className="mt-12">
-            <ControlLoopDiagram />
-          </Reveal>
-        </Container>
-      </Section>
-
-      {/* ======================== Fleet Topology ======================== */}
-      <Section>
-        <Container>
-          <Reveal>
-            <SectionHeader
-              eyebrow="Fleet topology"
-              title="Built for real GPU fleet topology"
-              intro="Aurelius reasons across regions, clusters, GPU pools, workload classes, timing windows, and operational constraints — without inspecting payloads or model outputs."
-            />
-          </Reveal>
-          <Reveal delay={140} className="mt-12">
-            <FleetTopologyDiagram />
-          </Reveal>
-        </Container>
-      </Section>
-
-      {/* ===================== Optimization Decision ==================== */}
-      <Section alt>
-        <Container>
-          <Reveal>
-            <SectionHeader
-              eyebrow="Decision logic"
-              title="Every optimization is ranked, filtered, and explainable"
-              intro="For each workload, Aurelius generates candidate decisions — run now, delay, or relocate — scores each on expected cost, and filters anything that violates a constraint. The selected candidate comes with its reasons, not a black-box verdict."
-            />
-          </Reveal>
-          <Reveal delay={140} className="mt-12">
-            <OptimizationDecisionDiagram />
-          </Reveal>
-        </Container>
-      </Section>
-
-      {/* ======================= Constraint Engine ====================== */}
-      <Section>
-        <Container>
-          <Reveal>
-            <SectionHeader
-              eyebrow="Safety"
-              title="Optimization stops at the constraint boundary"
-              intro="Aurelius only recommends actions that pass hard operational constraints. If a candidate violates SLA, residency, capacity, power, or policy boundaries, it is rejected before execution — and the rejection is recorded."
-            />
-          </Reveal>
-          <Reveal delay={140} className="mt-12">
-            <ConstraintEngineDiagram />
-          </Reveal>
-        </Container>
-      </Section>
-
-      {/* ============== Manifesto — Apple-style scroll word reveal ============= */}
-      <Section className="py-[84px] md:py-[120px] lg:py-[144px]">
-        <Container>
-          <ScrollWordReveal
-            as="h2"
-            text={"No payload access.\nNo execution risk.\nNo blind decisions."}
-            className="max-w-4xl text-[clamp(1.9rem,5vw,3.5rem)] font-medium leading-[1.12] tracking-[-0.025em] text-foreground"
-          />
-          <ScrollWordReveal
-            as="p"
-            text={
-              "Aurelius reads only the metadata a scheduler already exposes, proves every decision against hard constraints, and records the counterfactual before anything runs."
-            }
-            className="mt-11 max-w-2xl text-[clamp(1rem,2.1vw,1.4rem)] font-medium leading-[1.5] tracking-[-0.01em] text-foreground"
-          />
-        </Container>
-      </Section>
-
-      {/* ===================== Shadow Mode / Audit ====================== */}
-      <Section alt>
-        <Container>
-          <Reveal>
-            <SectionHeader
-              eyebrow="Shadow mode"
-              title="Prove savings before changing execution"
-              intro="Run Aurelius in shadow mode to compare actual scheduler behavior against counterfactual decisions. Aurelius records what it would have done, why, and whether the decision stayed safe — with no execution impact."
-            />
-          </Reveal>
-          <Reveal delay={140} className="mt-12">
-            <ShadowModeAuditDiagram />
-          </Reveal>
-        </Container>
-      </Section>
-
-      {/* ====================== Security / Boundary ===================== */}
-      <Section>
-        <Container>
-          <Reveal>
-            <SectionHeader
-              eyebrow="Integration"
-              title="Designed to integrate without seeing the work itself"
-              revealIntro
-              intro="Aurelius reads job metadata only — no payloads, no model outputs, no customer code. It deploys as a sidecar control layer, runs read-only in shadow mode, and writes an append-only audit log."
-            />
-          </Reveal>
-          <Reveal delay={140} className="mt-12">
-            <MetadataBoundaryDiagram />
-          </Reveal>
-          <Reveal delay={200}>
-            <ul className="mt-8 grid gap-x-10 gap-y-2.5 sm:grid-cols-2">
-              {[
-                "Reads job metadata only",
-                "No payload or model-output access",
-                "Runs read-only in shadow mode",
-                "Append-only audit logs",
-                "Deploys as sidecar / control layer",
-                "Gradual rollout after validation",
-              ].map((item) => (
-                <li key={item} className="flex items-center gap-3 font-mono text-[12px] text-white/55">
-                  <span className="inline-block h-1 w-1 shrink-0 bg-white/25" aria-hidden />
-                  {item}
-                </li>
-              ))}
-            </ul>
-          </Reveal>
-        </Container>
-      </Section>
-
-      {/* ===================== Adoption (light relief) ================== */}
-      <section className="section-light border-t border-border">
-        <Container className="py-[76px] md:py-[108px] lg:py-[124px]">
-          <Reveal>
-            <div className="flex items-center gap-3 font-mono text-[10.5px] uppercase tracking-[0.24em] text-foreground/50">
-              <span className="h-px w-7 bg-black/20" aria-hidden />
-              Adoption
-            </div>
-          </Reveal>
-          <Reveal delay={80}>
-            <h2 className="mt-6 max-w-2xl text-balance text-[clamp(1.7rem,3.4vw,2.5rem)] font-medium leading-[1.08] tracking-[-0.02em] text-foreground">
-              From metadata to validated savings, in three steps
-            </h2>
-          </Reveal>
-          <Reveal delay={130}>
-            <p className="mt-5 max-w-xl text-[15px] leading-relaxed text-muted-foreground">
-              No execution risk to start. Aurelius proves its economics against your real scheduler
-              behavior before it ever changes a decision.
-            </p>
-          </Reveal>
-
-          <div className="mt-12 grid gap-y-10 md:grid-cols-3 md:gap-0">
-            {[
-              { n: "01", t: "Connect metadata", d: "Aurelius reads scheduler metadata only — job timing, resources, constraints. No payloads, no model outputs, no customer code." },
-              { n: "02", t: "Run shadow mode", d: "Counterfactual decisions are recorded read-only, in parallel with your scheduler, with zero execution impact." },
-              { n: "03", t: "Review the report", d: "Audit-grade counterfactual savings, rejected unsafe candidates, and proof that SLAs would have held." },
-            ].map((s, i) => (
-              <Reveal
-                key={s.n}
-                delay={i * 90}
-                className={cn("md:px-7", i > 0 && "md:border-l md:border-black/10", i === 0 && "md:pl-0")}
-              >
-                <div className="font-mono text-[13px] tabular-nums text-foreground/30">{s.n}</div>
-                <h3 className="mt-4 text-[17px] font-medium tracking-tight text-foreground">{s.t}</h3>
-                <p className="mt-2.5 text-[13.5px] leading-relaxed text-muted-foreground">{s.d}</p>
+        {/* ============================ Hypothesis =========================== */}
+        <Band className="py-20 md:py-28 lg:py-32">
+          <Grid>
+            <div className="col-span-1 px-6 sm:px-8 md:col-span-10 lg:px-10">
+              <Reveal>
+                <Kicker index="01">Hypothesis</Kicker>
               </Reveal>
-            ))}
-          </div>
-        </Container>
-      </section>
+              <ScrollWordReveal
+                as="h2"
+                text="Most infrastructure waste is created because schedulers optimize before future constraints are visible."
+                className="mt-6 text-balance text-[clamp(1.6rem,3.2vw,2.3rem)] font-medium leading-[1.08] tracking-[-0.02em] text-foreground"
+              />
+              <Reveal delay={120}>
+                <p className="mt-6 max-w-2xl text-[14.5px] leading-relaxed text-white/52">
+                  Power prices change. Queue pressure changes. Capacity changes. Deadlines tighten. The decision that appears optimal now can become economically suboptimal later. Aurelius tests whether forecasting those future constraints before execution produces measurably better economic decisions.
+                </p>
+              </Reveal>
+            </div>
+          </Grid>
+        </Band>
 
-      {/* ============================== CTA ============================= */}
-      <Section alt>
-        <Container>
-          <div className="mx-auto max-w-2xl text-center">
-            <Reveal>
-              <SectionEyebrow className="justify-center">Get started</SectionEyebrow>
-            </Reveal>
-            <Reveal delay={80}>
-              <h2 className="mt-5 text-balance text-[clamp(1.6rem,3.4vw,2.5rem)] font-medium leading-tight tracking-tight text-foreground">
-                See what Aurelius would have saved on your fleet
-              </h2>
-            </Reveal>
-            <Reveal delay={140}>
-              <p className="mx-auto mt-5 max-w-xl text-[15px] leading-relaxed text-white/62">
-                Start with shadow-mode analysis against scheduler metadata. No execution impact
-                required.
-              </p>
-            </Reveal>
-            <Reveal delay={200}>
-              <div className="mt-9 flex flex-col items-center justify-center gap-3 sm:flex-row">
-                <CTAButton to="/contact" variant="primary" withArrow>
-                  Run a shadow-mode analysis
-                </CTAButton>
-                <CTAButton to="/how-it-works" variant="secondary">
-                  Read the technical overview
-                </CTAButton>
-              </div>
-            </Reveal>
+        {/* ========================= Architecture ========================= */}
+        {/* The thesis, made visible. Lead with the world-model control loop —
+            this is the reason to read the Technical Report. */}
+        <Band className="py-20 md:py-28 lg:py-32">
+          <Grid>
+            <div className="col-span-1 px-6 sm:px-8 md:col-span-4 lg:px-10">
+              <Reveal>
+                <Kicker index="02">Architecture</Kicker>
+              </Reveal>
+              <Reveal delay={60}>
+                <h2 className="mt-6 text-balance text-[clamp(1.6rem,3.2vw,2.3rem)] font-medium leading-[1.08] tracking-[-0.02em] text-foreground">
+                  Forecast. Simulate. Rank by Economics.
+                </h2>
+              </Reveal>
+              <Reveal delay={120}>
+                <p className="mt-5 max-w-sm text-[14.5px] leading-relaxed text-white/52">
+                  Conventional schedulers optimize the cluster they can observe. Aurelius uses a predictive world model to forecast the constraints they cannot yet observe, simulate candidate decisions, and rank those decisions by economic outcome before execution.
+                </p>
+              </Reveal>
+              <Reveal delay={160}>
+                <p className="mt-5 max-w-sm text-[14.5px] leading-relaxed text-white/52">
+                  Scheduling starts too late when it only reacts to the present cluster state. A decision that appears optimal now can become expensive later when power prices rise, queue pressure increases, capacity disappears, or deadlines tighten.
+                </p>
+              </Reveal>
+            </div>
+            <div className="col-span-1 mt-12 px-6 sm:px-8 md:col-span-7 md:col-start-6 md:mt-0 md:px-0 md:pr-8 lg:pr-10">
+              <Reveal delay={120}>
+                <WorldModelArchitecture />
+              </Reveal>
+            </div>
+          </Grid>
+        </Band>
 
-            <Reveal delay={260} className="mt-12">
-              <ShadowFlow />
-            </Reveal>
-          </div>
-        </Container>
-      </Section>
+        {/* ============================ Evidence =========================== */}
+        {/* The consequence. Kept concise and secondary to the architecture. */}
+        <Band className="py-20 md:py-28 lg:py-32">
+          <Grid>
+            <div className="col-span-1 px-6 sm:px-8 md:col-span-7 lg:px-10">
+              <Reveal>
+                <StatMoment />
+              </Reveal>
+            </div>
+            <div className="col-span-1 mt-12 px-6 sm:px-8 md:col-span-4 md:col-start-9 md:mt-0 lg:px-10">
+              <Reveal>
+                <Kicker index="03">Evidence</Kicker>
+              </Reveal>
+              <Reveal delay={60}>
+                <h2 className="mt-6 text-balance text-[clamp(1.6rem,3.2vw,2.3rem)] font-medium leading-[1.08] tracking-[-0.02em] text-foreground">
+                  Backtested on public production traces.
+                </h2>
+              </Reveal>
+              <Reveal delay={120}>
+                <p className="mt-6 max-w-sm text-[14px] leading-relaxed text-white/52">
+                  Validated through offline replay and read-only shadow mode before any rollout —
+                  measured against the operator&rsquo;s own scheduler.
+                </p>
+              </Reveal>
+              <Reveal delay={160}>
+                <ul className="mt-7 grid gap-y-3">
+                  {["Offline replay", "Read-only shadow mode", "Bounded Azure/Mooncake replay"].map((item) => (
+                    <li key={item} className="flex items-center gap-3 font-mono text-[12.5px] text-white/62">
+                      <span className="inline-block h-px w-4 shrink-0 bg-white/45" aria-hidden />
+                      {item}
+                    </li>
+                  ))}
+                </ul>
+              </Reveal>
+              <Reveal delay={200}>
+                <p className="mt-7 max-w-sm text-[12.5px] leading-relaxed text-white/38">
+                  Replay evidence. Results depend on workload mix, constraints, and scheduler baseline.
+                </p>
+              </Reveal>
+            </div>
+          </Grid>
+        </Band>
+
+        {/* ========================== Evaluation ========================== */}
+        <Band className="py-20 md:py-28 lg:py-32">
+          <Grid>
+            <div className="col-span-1 px-6 sm:px-8 md:col-span-12 lg:px-10">
+              <Reveal>
+                <Kicker index="04">Evaluation</Kicker>
+              </Reveal>
+              <Reveal delay={60}>
+                <h2 className="mt-6 max-w-2xl text-balance text-[clamp(1.6rem,3.2vw,2.3rem)] font-medium leading-[1.08] tracking-[-0.02em] text-foreground">
+                  Read-only until you decide otherwise.
+                </h2>
+              </Reveal>
+              <Reveal delay={100}>
+                <p className="mt-5 max-w-2xl text-[14.5px] leading-relaxed text-white/52">
+                  Start with scheduler metadata. Aurelius replays historical decisions, simulates
+                  counterfactual outcomes, and produces an audited savings report before any
+                  production rollout.
+                </p>
+              </Reveal>
+              <Reveal delay={140}>
+                <div className="mt-10 flex flex-col gap-y-4 md:flex-row md:flex-wrap md:items-center md:gap-x-4">
+                  {EVAL_STEPS.map((step, i) => (
+                    <div key={step} className="flex items-center gap-4">
+                      <div className="flex items-baseline gap-2.5">
+                        <span className="font-mono text-[11px] tabular-nums text-white/55">
+                          {String(i + 1).padStart(2, "0")}
+                        </span>
+                        <span className="font-mono text-[12px] uppercase tracking-[0.14em] text-white/72">
+                          {step}
+                        </span>
+                        {i === 0 && (
+                          <span className="ml-1 border border-border-strong px-1.5 py-0.5 font-mono text-[9px] uppercase tracking-[0.18em] text-white/40">
+                            Week 1
+                          </span>
+                        )}
+                      </div>
+                      {i < EVAL_STEPS.length - 1 && (
+                        <Arrow className="hidden shrink-0 text-white/22 md:block" />
+                      )}
+                    </div>
+                  ))}
+                </div>
+              </Reveal>
+            </div>
+          </Grid>
+        </Band>
+
+        {/* ============================== CTA ============================== */}
+        <Band divide={false} className="py-24 md:py-32 lg:py-40">
+          <Grid>
+            <div className="col-span-1 px-6 sm:px-8 md:col-span-10 lg:px-10">
+              <Reveal>
+                <Kicker index="05">Request access</Kicker>
+              </Reveal>
+              <Reveal delay={60}>
+                <h2 className="mt-7 max-w-3xl text-balance text-[clamp(2rem,5.4vw,3.6rem)] font-medium leading-[1.02] tracking-[-0.03em] text-foreground">
+                  Run a read-only savings audit.
+                </h2>
+              </Reveal>
+              <Reveal delay={120}>
+                <p className="mt-6 max-w-xl text-[15px] leading-relaxed text-white/55">
+                  Upload historical scheduler metadata. Aurelius replays decisions offline, simulates
+                  counterfactual outcomes, and produces an audited savings report. Metadata only. No
+                  payload access. No production changes.
+                </p>
+              </Reveal>
+              <Reveal delay={180}>
+                <div className="mt-9">
+                  <Action to="/contact" variant="primary" withArrow>
+                    See how much your fleet could have saved
+                  </Action>
+                </div>
+              </Reveal>
+            </div>
+          </Grid>
+        </Band>
+      </PageFrame>
     </Layout>
+  );
+}
+
+/* Headline result — the savings as a single large number, immediately legible.
+   Restrained: one number, one line, one measured-provenance caption. */
+function StatMoment() {
+  return (
+    <div className="text-center md:text-left">
+      <div className="text-[clamp(3.6rem,8.5vw,6.8rem)] font-medium leading-[0.9] tracking-[-0.04em] text-foreground">
+        +191%
+      </div>
+      <p className="mt-4 text-[clamp(1.05rem,2.4vw,1.6rem)] font-medium tracking-tight text-white/80">
+        higher SLA-safe goodput per dollar
+      </p>
+      <p className="mt-6 max-w-md font-mono text-[11px] uppercase leading-relaxed tracking-[0.14em] text-white/42">
+        Measured on bounded Azure/Mooncake replay with public PJM/ERCOT/CAISO price traces; Pareto-safe vs strongest SLA-aware baseline.
+      </p>
+    </div>
   );
 }

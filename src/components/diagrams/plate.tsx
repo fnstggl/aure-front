@@ -14,7 +14,9 @@ import { cn } from "@/lib/utils";
    ============================================================================ */
 
 export const C = {
-  /* pure monochrome — every line is solid #FFFFFF white, no grays */
+  /* 1-bit schematic — pure black plate, pure white ink. No gray, no gold.
+     Hierarchy is carried by line weight, fill, and spacing — never by value.
+     Reads like an oscilloscope trace or a plotter printout, not a UI. */
   line: "#ffffff",
   lineDim: "#ffffff",
   lineFaint: "#ffffff",
@@ -26,19 +28,16 @@ export const C = {
   text: "#ffffff",
   white: "#ffffff",
 
-  /* "selected / active" == bright white. Fills are none (outline only). */
   steelFill: "none",
   steelFillSoft: "none",
   steelLine: "#ffffff",
   steelStrong: "#ffffff",
   steelText: "#ffffff",
 
-  /* red — error / rejected / blocked */
-  red: "hsl(2 62% 58%)",
+  red: "#ffffff",
   redSoft: "none",
-  redLine: "hsl(2 60% 56%)",
+  redLine: "#ffffff",
 
-  /* legacy structural aliases — all fills collapse to none, lines are white */
   surface: "none",
   surfaceStroke: "#ffffff",
   surfaceDim: "none",
