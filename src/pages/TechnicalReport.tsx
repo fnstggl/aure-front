@@ -78,7 +78,7 @@ export default function TechnicalReport() {
                   </div>
                   <p className="mt-3.5 font-mono text-[11.5px] leading-relaxed text-white/46">
                     +147.85% to +191.41% vs the strongest SLA-aware baseline · bounded Azure/Mooncake
-                    replay · public PJM / ERCOT / CAISO price traces · Pareto-safe · 0 search regret
+                    replay · public PJM / ERCOT / CAISO price traces · Pareto-safe
                   </p>
                 </div>
               </Reveal>
