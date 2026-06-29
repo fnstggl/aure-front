@@ -1,7 +1,18 @@
 # https://runaurelius.com — robots policy
-# All user agents may crawl the entire site.
+# Public marketing pages may be crawled freely.
 User-agent: *
 Allow: /
+
+# --- Private company research memos ----------------------------------------
+# Personalized outbound pages live at /{company-slug}-FH37X. They are unlisted,
+# carry a noindex,nofollow meta directive, and are never added to the sitemap.
+# Disallow the template demo explicitly, plus the shared "-FH37X" campaign
+# suffix so future per-company pages are covered automatically.
+# (Belt-and-suspenders: the real defense is unguessable URLs + noindex + no
+# inbound links; these rules just keep compliant crawlers away entirely.)
+Disallow: /company-template-FH37X
+Disallow: /*-FH37X$
+Disallow: /*-FH37X
 
 # XML sitemap (generated at build time, lists every indexable route).
 Sitemap: https://runaurelius.com/sitemap.xml

@@ -3,7 +3,13 @@ import react from "@vitejs/plugin-react-swc";
 import path from "node:path";
 import fs from "node:fs";
 import { componentTagger } from "lovable-tagger";
-import { ROUTES, injectSeoIntoHtml, buildSitemapXml } from "./src/lib/seo";
+import {
+  ROUTES,
+  PRIVATE_ROUTES,
+  injectSeoIntoHtml,
+  injectPrivateSeoIntoHtml,
+  buildSitemapXml,
+} from "./src/lib/seo";
 
 /**
  * Build-time SEO prerendering for this client-rendered SPA.
@@ -47,10 +53,21 @@ function seoPrerender(): Plugin {
         }
       }
 
+      // Private company memos: prerender each with a hard noindex,nofollow
+      // directive so the served HTML carries it before the SPA boots. These are
+      // deliberately NOT added to sitemap.xml.
+      for (const route of PRIVATE_ROUTES) {
+        const html = injectPrivateSeoIntoHtml(baseHtml, route);
+        const dir = path.join(distDir, route.path);
+        fs.mkdirSync(dir, { recursive: true });
+        fs.writeFileSync(path.join(dir, "index.html"), html);
+      }
+
       fs.writeFileSync(path.join(distDir, "sitemap.xml"), buildSitemapXml(lastmod));
 
       console.log(
-        `\n[seo] prerendered ${ROUTES.length} routes + sitemap.xml (lastmod ${lastmod})`,
+        `\n[seo] prerendered ${ROUTES.length} routes + ${PRIVATE_ROUTES.length} private` +
+          ` (noindex) + sitemap.xml (lastmod ${lastmod})`,
       );
     },
   };
