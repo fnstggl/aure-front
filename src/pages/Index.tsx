@@ -60,7 +60,7 @@ export default function Index() {
                   <div className="mt-8 flex flex-wrap items-center justify-center gap-x-5 gap-y-1.5 font-mono text-[10.5px] tracking-[0.12em] text-white/32">
                     <span><span className="text-white/50">+191%</span> SLA-safe goodput / $</span>
                     <span className="text-white/18">·</span>
-                    <span><span className="text-white/50">−21%</span> GPU-hours</span>
+                    <span><span className="text-white/50">−25%</span> GPU-hours</span>
                     <span className="text-white/18">·</span>
                     <span className="uppercase tracking-[0.16em]">Measured on bounded Azure/Mooncake replay</span>
                   </div>
