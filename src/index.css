@@ -231,6 +231,18 @@
     opacity: 1;
     transform: translateY(0);
   }
+
+  /* Mobile: lighter, opacity-led reveal. A smaller lift and shorter duration
+     read as a clean fade rather than a slide, and dropping the persistent
+     will-change avoids a compositor layer per section — together this removes
+     the choppiness on phones. Desktop keeps the fuller motion above. */
+  @media (max-width: 767px) {
+    .reveal {
+      transform: translateY(6px);
+      transition-duration: 0.5s;
+      will-change: auto;
+    }
+  }
 }
 
 @keyframes node-breathe {

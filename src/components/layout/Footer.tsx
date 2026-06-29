@@ -14,7 +14,7 @@ export function Footer() {
         src="/hand-dots.png"
         alt=""
         aria-hidden
-        className="pointer-events-none absolute bottom-0 -right-[120px] z-0 hidden w-[360px] select-none opacity-80 sm:block"
+        className="pointer-events-none absolute bottom-0 -right-[80px] z-0 block w-[230px] select-none opacity-80 sm:-right-[120px] sm:w-[360px]"
         onError={(e) => {
           e.currentTarget.style.display = "none";
         }}
