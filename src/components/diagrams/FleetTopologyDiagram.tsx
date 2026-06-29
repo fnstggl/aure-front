@@ -55,7 +55,7 @@ const READOUT = [
 function Region({ r }: { r: (typeof REGIONS)[number] }) {
   const sel = r.state === "selected";
   return (
-    <g style={{ transition: "opacity 0.5s" }} opacity={sel ? 1 : 0.72}>
+    <g style={{ transition: "opacity 0.5s" }} opacity={1}>
       <SystemSurface x={r.x} y={r.y} w={RW} h={RH} state={sel ? "selected" : "rejected"} />
       <Annotation x={r.x + 18} y={r.y + 28} state={sel ? "white" : "rejected"} size={13.5} track={1.2}>{r.code}</Annotation>
       <StatusMark x={r.x + RW - 20} y={r.y + 22} kind={sel ? "pass" : "fail"} r={8} />
@@ -135,7 +135,7 @@ export function FleetTopologyDiagram({ fig = "fig.04", title = "fleet topology" 
             <span className="inline-block h-1.5 w-1.5" style={{ background: READOUT[step].sel ? C.steelText : C.red }} />
             <div className="relative h-4 flex-1 overflow-hidden">
               <AnimatePresence mode="wait">
-                <motion.span key={step} initial={{ opacity: 0, y: 6 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -6 }} transition={{ duration: 0.4, ease: EASE }} className="block font-mono text-[11.5px]" style={{ color: READOUT[step].sel ? C.steelText : "hsl(0 0% 100% / 0.56)" }}>
+                <motion.span key={step} initial={{ opacity: 0, y: 6 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -6 }} transition={{ duration: 0.4, ease: EASE }} className="block font-mono text-[11.5px]" style={{ color: READOUT[step].sel ? C.steelText : "#ffffff" }}>
                   {READOUT[step].t}
                 </motion.span>
               </AnimatePresence>

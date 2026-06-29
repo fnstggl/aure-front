@@ -42,22 +42,22 @@ export function SchedulerInterceptionDiagram({ fig = "fig.01", title = "schedule
         <Tag x={406} y={198} anchor="middle" state="dim">SCHEDULER REMAINS AUTHORITY</Tag>
 
         {/* ---- metadata branch (down to Aurelius) ---- */}
-        <path d={META_PATH} fill="none" stroke={C.steelLine} strokeWidth="2" opacity={decided ? 1 : 0.5} markerEnd={arrow("steel")} style={{ transition: "opacity 0.5s" }} />
+        <path d={META_PATH} fill="none" stroke={C.steelLine} strokeWidth="2" opacity={1} markerEnd={arrow("steel")} style={{ transition: "opacity 0.5s" }} />
         <Annotation x={416} y={228} state="active" size={11} track={0.6}>metadata only</Annotation>
 
         {/* ---- advisory return (up to rail) ---- */}
-        <path d={ADVISORY_PATH} fill="none" stroke={C.steelLine} strokeWidth="2" strokeDasharray="3 4" opacity={step >= 3 ? 1 : 0.4} markerEnd={arrow("steel")} style={{ transition: "opacity 0.5s" }} />
+        <path d={ADVISORY_PATH} fill="none" stroke={C.steelLine} strokeWidth="2" strokeDasharray="3 4" opacity={1} markerEnd={arrow("steel")} style={{ transition: "opacity 0.5s" }} />
         <Annotation x={648} y={196} state={step >= 3 ? "active" : "dim"} size={11} track={0.6}>advisory decision</Annotation>
 
         {/* ---- payload tap → blocked ---- */}
-        <line x1="724" y1="142" x2="724" y2="214" stroke={C.rail} strokeWidth="1.2" strokeDasharray="2 4" opacity={0.5} />
+        <line x1="724" y1="142" x2="724" y2="214" stroke={C.rail} strokeWidth="1.2" strokeDasharray="2 4" />
         <StatusMark x={724} y={224} kind="fail" r={8} />
         <Annotation x={742} y={228} state="rejected" size={11} track={0.6}>no payload access</Annotation>
 
         {/* ---- Aurelius control plane (sidecar) ---- */}
         <SystemSurface x={300} y={246} w={300} h={132} state={decided ? "selected" : "active"} rx={7} />
         <Annotation x={320} y={274} state="active" size={13.5} track={1}>AURELIUS CONTROL LAYER</Annotation>
-        <line x1="320" y1="286" x2="580" y2="286" stroke={C.steelLine} strokeWidth="1" opacity={0.4} />
+        <line x1="320" y1="286" x2="580" y2="286" stroke={C.steelLine} strokeWidth="1" />
 
         <motion.g animate={{ opacity: decided ? 0 : 1 }} transition={{ duration: 0.4, ease: EASE }}>
           <Annotation x={320} y={330} state="dim" size={12.5}>evaluating candidates…</Annotation>
@@ -68,7 +68,7 @@ export function SchedulerInterceptionDiagram({ fig = "fig.01", title = "schedule
           <Annotation x={320} y={332} state="neutral" size={12}>selected</Annotation>
           <Annotation x={580} y={332} anchor="end" state="selected" size={12}>delay batch</Annotation>
           <Annotation x={320} y={354} state="neutral" size={12}>rejected</Annotation>
-          <g opacity={0.85}>
+          <g>
             <Annotation x={580} y={354} anchor="end" state="rejected" size={12}>delay 2h</Annotation>
             <line x1="520" y1="350" x2="580" y2="350" stroke={C.red} strokeWidth="1" />
           </g>

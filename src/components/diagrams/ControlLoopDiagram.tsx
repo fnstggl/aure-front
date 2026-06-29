@@ -50,10 +50,15 @@ export function ControlLoopDiagram({ fig = "fig.03", title = "control loop" }: {
         />
 
         {/* return arc — the loop closes back to observe */}
-        <path d={RETURN} fill="none" stroke={C.rail} strokeWidth="1.2" strokeDasharray="3 6" opacity={0.7} />
-        {!reduced && inView && (
-          <path d={RETURN} fill="none" stroke={C.steelLine} strokeWidth="1.2" strokeDasharray="3 9" className="flow-dash" opacity={0.55} />
-        )}
+        {/* single return arc — flows when in view, static dashed otherwise */}
+        <path
+          d={RETURN}
+          fill="none"
+          stroke={C.steelLine}
+          strokeWidth="1.2"
+          strokeDasharray="3 6"
+          className={!reduced && inView ? "flow-dash" : undefined}
+        />
         <path
           d={`M${CX[0] - 5} ${RB + 12} L${CX[0]} ${RB + 2} L${CX[0] + 5} ${RB + 12}`}
           fill="none"
@@ -61,7 +66,6 @@ export function ControlLoopDiagram({ fig = "fig.03", title = "control loop" }: {
           strokeWidth="1.4"
           strokeLinecap="square"
           strokeLinejoin="miter"
-          opacity={0.8}
         />
 
         {/* stations */}
@@ -69,7 +73,7 @@ export function ControlLoopDiagram({ fig = "fig.03", title = "control loop" }: {
           const active = i === step;
           const done = i < step;
           return (
-            <g key={s.key} style={{ transition: "opacity 0.5s" }} opacity={active ? 1 : done ? 0.82 : 0.55}>
+            <g key={s.key} style={{ transition: "opacity 0.5s" }} opacity={1}>
               <rect
                 x={CX[i] - NW / 2}
                 y={RAIL_Y - NH / 2}

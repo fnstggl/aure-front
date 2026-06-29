@@ -25,26 +25,26 @@ const COLS = "96px 1.1fr 1.1fr 76px 1.4fr 104px";
 const statusStyle: Record<Status, { label: string; color: string }> = {
   selected: { label: "selected", color: C.steelText },
   rejected: { label: "rejected", color: C.red },
-  logged: { label: "logged", color: "hsl(0 0% 100% / 0.5)" },
+  logged: { label: "logged", color: "#ffffff" },
 };
 
 export function ShadowModeAuditDiagram({ fig = "fig.07", title = "shadow audit" }: { fig?: string; title?: string } = {}) {
   const { ref, inView } = useInView();
 
   return (
-    <figure ref={ref} className="relative overflow-hidden border border-strong bg-card">
+    <figure ref={ref} className="relative overflow-hidden border border-white bg-black">
       <PlateHeader fig={fig} title={title} />
       <MobileScaleFit width={760}>
           {/* ledger header */}
-          <div className="flex items-center justify-between border-b border-border px-5 py-3">
-            <span className="font-mono text-[11px] uppercase tracking-[0.18em] text-white/55">audit.log — counterfactual ledger</span>
-            <span className="flex items-center gap-1.5 font-mono text-[10px] uppercase tracking-wider text-white/35">
-              <span className="h-1.5 w-1.5 bg-white/30" /> append-only
+          <div className="flex items-center justify-between border-b border-white px-5 py-3">
+            <span className="font-mono text-[11px] uppercase tracking-[0.18em] text-white">audit.log — counterfactual ledger</span>
+            <span className="flex items-center gap-1.5 font-mono text-[10px] uppercase tracking-wider text-white">
+              <span className="h-1.5 w-1.5 bg-white" /> append-only
             </span>
           </div>
 
           {/* column header */}
-          <div className="grid gap-x-4 border-b border-border/70 px-5 py-2 font-mono text-[9.5px] uppercase tracking-[0.14em] text-white/30" style={{ gridTemplateColumns: COLS }}>
+          <div className="grid gap-x-4 border-b border-white px-5 py-2 font-mono text-[9.5px] uppercase tracking-[0.14em] text-white" style={{ gridTemplateColumns: COLS }}>
             <span>time</span><span>observed</span><span>counterfactual</span><span>Δ exp.</span><span>constraints</span><span className="text-right">status</span>
           </div>
 
@@ -59,14 +59,14 @@ export function ShadowModeAuditDiagram({ fig = "fig.07", title = "shadow audit" 
                   initial={{ opacity: 0 }}
                   animate={{ opacity: inView ? 1 : 0 }}
                   transition={{ duration: 0.4, delay: i * 0.12, ease: EASE }}
-                  className="grid items-center gap-x-4 border-b border-border/40 py-2.5 font-mono text-[12px]"
+                  className="grid items-center gap-x-4 border-b border-white py-2.5 font-mono text-[12px]"
                   style={{ gridTemplateColumns: COLS }}
                 >
-                  <span className="text-white/30 tabular-nums">{r.t}</span>
-                  <span className="text-white/55">{r.observed}</span>
-                  <span style={{ color: r.status === "selected" ? C.steelText : r.status === "rejected" ? C.red : "hsl(0 0% 100% / 0.78)" }}>{r.counter}</span>
-                  <span className="tabular-nums" style={{ color: r.status === "rejected" ? C.red : "hsl(0 0% 92%)" }}>{r.delta}</span>
-                  <span className="text-white/42">{r.constraints}</span>
+                  <span className="text-white tabular-nums">{r.t}</span>
+                  <span className="text-white">{r.observed}</span>
+                  <span style={{ color: r.status === "selected" ? C.steelText : r.status === "rejected" ? C.red : "#ffffff" }}>{r.counter}</span>
+                  <span className="tabular-nums" style={{ color: r.status === "rejected" ? C.red : "#ffffff" }}>{r.delta}</span>
+                  <span className="text-white">{r.constraints}</span>
                   <span className="flex items-center justify-end gap-1.5 uppercase tracking-wider" style={{ color: st.color }}>
                     <span className="inline-block h-1.5 w-1.5" style={{ background: st.color }} />
                     {st.label}
@@ -77,7 +77,7 @@ export function ShadowModeAuditDiagram({ fig = "fig.07", title = "shadow audit" 
           </div>
 
           {/* summary ledger strip */}
-          <div className="grid grid-cols-2 gap-px border-t border-border bg-border sm:grid-cols-4">
+          <div className="grid grid-cols-2 gap-px border-t border-white bg-white sm:grid-cols-4">
             <Stat label="Counterfactual savings" value={<Counter to={18.4} enabled={inView} decimals={1} prefix="−" suffix="%" />} sub="$4,280 / mo" />
             <Stat label="Rejected unsafe" value={<Counter to={14} enabled={inView} />} />
             <Stat label="SLA violations avoided" value={<Counter to={6} enabled={inView} />} />
@@ -152,10 +152,10 @@ function MobileScaleFit({ width, children }: { width: number; children: React.Re
 
 function Stat({ label, value, sub }: { label: string; value: React.ReactNode; sub?: string }) {
   return (
-    <div className="bg-card-elevated px-5 py-3.5">
-      <div className="font-mono text-[10px] uppercase tracking-[0.12em] text-white/40">{label}</div>
-      <div className="mt-1 font-mono text-xl tabular-nums text-foreground">{value}</div>
-      {sub && <div className="mt-0.5 font-mono text-[11px] text-white/40">{sub}</div>}
+    <div className="bg-black px-5 py-3.5">
+      <div className="font-mono text-[10px] uppercase tracking-[0.12em] text-white">{label}</div>
+      <div className="mt-1 font-mono text-xl tabular-nums text-white">{value}</div>
+      {sub && <div className="mt-0.5 font-mono text-[11px] text-white">{sub}</div>}
     </div>
   );
 }
