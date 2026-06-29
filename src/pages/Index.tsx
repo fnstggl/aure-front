@@ -38,7 +38,7 @@ export default function Index() {
               <div className="mx-auto w-full max-w-[72rem] translate-y-[5vh] px-6 pb-16 pt-32 text-center sm:px-8">
                 <Reveal>
                   <h1 className="mx-auto max-w-[22ch] text-[clamp(1.35rem,2.5vw,1.75rem)] font-medium leading-[1.2] tracking-[-0.015em] text-foreground sm:max-w-none sm:whitespace-nowrap">
-                    The most expensive scheduling mistakes are invisible when decisions are made.
+                    The optimal scheduling decision depends on constraints that haven’t emerged yet.
                   </h1>
                 </Reveal>
                 <Reveal delay={120}>
