@@ -109,7 +109,7 @@ export default function Index() {
               </Reveal>
               <Reveal delay={60}>
                 <h2 className="mt-6 text-balance text-[clamp(1.6rem,3.2vw,2.3rem)] font-medium leading-[1.08] tracking-[-0.02em] text-foreground">
-                  Forecast. Simulate. Rank by Economics.
+                  Forecast. Simulate. Decide.
                 </h2>
               </Reveal>
               <Reveal delay={120}>

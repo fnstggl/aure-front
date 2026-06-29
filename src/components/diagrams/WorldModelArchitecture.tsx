@@ -2,137 +2,100 @@ import { useEffect, useState } from "react";
 import { cn } from "@/lib/utils";
 import { useInView } from "@/hooks/useInView";
 import { usePrefersReducedMotion } from "@/hooks/usePrefersReducedMotion";
+import { PlateHeader, CaptionStrip } from "./plate";
 
 /* ============================================================================
-   fig.01 — the predictive control architecture, drawn as a live instrument.
+   fig.01 — the predictive control loop, drawn as a live instrument.
 
-   A proper input → process → output diagram, not a black box:
+   Answers one question in five seconds: how does Aurelius decide using future
+   constraints? Three reads, left to right:
 
-     CURRENT STATE            WORLD MODEL                 EXECUTION
-     (cluster inputs)   →     simulates & forecasts   →  economic optimum
-                              the constraints each        → constraint gate
-                              decision will face          → recommend / execute
+     CURRENT STATE  →  PREDICTIVE WORLD MODEL  →  DECISION
+     (cluster inputs)  forecasts the future state   the economic optimum
+                       and branches into candidate   passes the constraint
+                       decisions, each simulated      gate and is executed
+                       inside that future and ranked
 
-   The world model is the active core: it works through the named constraints
-   it is optimizing (compute, memory, energy, electricity markets, KV cache, …)
-   while a counter reports how many candidate combinations it has tried. The
-   pace is deliberately calm — a new constraint set every ~1.8s, the counter
-   settling on a different total each pass. Pure black plate, white ink, no
-   gold. Reduced motion collapses to the resolved state.
+   The centre is the active part: the world model forecasts forward in time
+   (T+1 → T+2 → T+3) and forks into candidate decisions. While SIMULATING it
+   scans the candidates being evaluated in the predicted future; it then RANKS
+   them by economic outcome, selects the #1 safe candidate (bright white, ✓),
+   and lights the decision chain — economic optimum → constraint gate →
+   recommend / execute — before looping. No constraint checklist, no exact
+   search count. Calm pacing, transform/opacity + width only. Reduced motion
+   collapses to the resolved state.
    ============================================================================ */
 
-const INPUTS = ["cluster telemetry", "GPU utilization", "workload queue", "power & thermal"];
+const INPUTS = ["cluster telemetry", "GPU utilization", "workload queue", "power / thermal"];
+const HORIZON = ["T+1", "T+2", "T+3"];
 
-const CONSTRAINTS = [
-  "Compute", "Memory", "Network", "Storage", "Queueing", "Latency", "Throughput",
-  "Energy", "Electricity Markets", "Cooling", "Capacity", "Placement", "Model Affinity",
-  "KV Cache", "Routing", "Migration", "Batching", "Replicas", "Precision",
-  "Speculative Decoding", "Clock / DVFS", "Scheduling", "Prewarming", "Forecasts",
-  "Reliability", "Availability", "Multi-tenancy", "Economics", "Carbon",
-  "Data Constraints", "Hardware Constraints", "Operational Constraints", "Safety Constraints",
+/* candidate simulations, shown in A/B/C order; rank + bar carry the economic
+   ranking, the #1 safe candidate is the selected economic optimum. */
+const CANDIDATES = [
+  { id: "A", score: 54, rank: 2, selected: false },
+  { id: "B", score: 92, rank: 1, selected: true },
+  { id: "C", score: 33, rank: 3, selected: false },
 ];
 
-const TARGETS = [3247, 5812, 4196]; // combinations tried — rotates each pass
+const SIMULATE_MS = 4200;
+const RANKED_MS = 1700;
+const EXECUTE_MS = 2600;
+const TICK_MS = 880; // scan cadence while simulating (calm)
 
-const WINDOW = 6;
-const SIMULATE_MS = 6400;
-const FOUND_MS = 1300;
-const EXEC_MS = 2800;
-const SET_MS = 1800; // constraint set cadence (calm)
-const COUNT_MS = 340; // counter cadence (calm, eased)
-
-type Phase = "simulate" | "found" | "exec";
+type Phase = "simulate" | "ranked" | "execute";
 
 export function WorldModelArchitecture({ className }: { className?: string }) {
   const { ref, inView } = useInView();
   const reduced = usePrefersReducedMotion();
-  const [phase, setPhase] = useState<Phase>("found");
-  const [cycle, setCycle] = useState(0);
-  const [set, setSet] = useState(0);
-  const [count, setCount] = useState(TARGETS[0]);
-
-  const target = TARGETS[cycle % TARGETS.length];
+  const [phase, setPhase] = useState<Phase>("ranked");
+  const [tick, setTick] = useState(0);
+  const [filled, setFilled] = useState(true);
 
   // Begin a fresh pass when the figure enters view; resolved state otherwise.
   useEffect(() => {
     if (reduced || !inView) {
-      setPhase("found");
-      setCount(target);
+      setPhase("ranked");
+      setFilled(true);
       return;
     }
-    setCount(0);
+    setFilled(false);
     setPhase("simulate");
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    const id = window.setTimeout(() => setFilled(true), 80); // 0 → score fill
+    return () => window.clearTimeout(id);
   }, [inView, reduced]);
 
-  // Phase machine — each phase schedules the next; the loop rotates the total.
+  // Phase machine — simulate → ranked → execute → loop.
   useEffect(() => {
     if (reduced || !inView) return;
     let id: number;
     if (phase === "simulate") {
-      id = window.setTimeout(() => {
-        setCount(target);
-        setPhase("found");
-      }, SIMULATE_MS);
-    } else if (phase === "found") {
-      id = window.setTimeout(() => setPhase("exec"), FOUND_MS);
+      id = window.setTimeout(() => setPhase("ranked"), SIMULATE_MS);
+    } else if (phase === "ranked") {
+      id = window.setTimeout(() => setPhase("execute"), RANKED_MS);
     } else {
-      id = window.setTimeout(() => {
-        setCycle((c) => c + 1);
-        setCount(0);
-        setPhase("simulate");
-      }, EXEC_MS);
+      id = window.setTimeout(() => setPhase("simulate"), EXECUTE_MS);
     }
     return () => window.clearTimeout(id);
-  }, [phase, inView, reduced, target]);
+  }, [phase, inView, reduced]);
 
-  // Advance the visible constraint set, slowly, while simulating.
+  // Scan the candidates being evaluated, and advance the forecast horizon.
   useEffect(() => {
     if (reduced || !inView || phase !== "simulate") return;
-    const id = window.setInterval(() => setSet((s) => s + 1), SET_MS);
+    const id = window.setInterval(() => setTick((t) => t + 1), TICK_MS);
     return () => window.clearInterval(id);
   }, [phase, inView, reduced]);
 
-  // Ease the counter toward its target — decelerating, never frantic.
-  useEffect(() => {
-    if (reduced || !inView || phase !== "simulate") return;
-    const id = window.setInterval(() => {
-      setCount((c) => {
-        if (c >= target) return target;
-        return Math.min(target, c + Math.max(37, Math.round((target - c) * 0.16)));
-      });
-    }, COUNT_MS);
-    return () => window.clearInterval(id);
-  }, [phase, inView, reduced, target]);
-
   const resolved = phase !== "simulate";
-  const base = set * WINDOW;
-  const visible = Array.from({ length: WINDOW }, (_, i) => {
-    const idx = (base + i) % CONSTRAINTS.length;
-    return { name: CONSTRAINTS[idx], idx };
-  });
+  const activeCandidate = phase === "simulate" ? tick % CANDIDATES.length : -1;
+  const horizonLit = resolved ? HORIZON.length : (tick % HORIZON.length) + 1;
 
   return (
     <figure ref={ref} className={cn("relative overflow-hidden border border-white bg-black", className)}>
-      {/* figure label */}
-      <div className="flex items-center justify-between gap-3 border-b border-white px-4 py-2.5">
-        <div className="flex items-center gap-3">
-          <span className="border border-white px-1.5 py-0.5 font-mono text-[10px] tabular-nums leading-none tracking-[0.14em] text-white">
-            FIG.01
-          </span>
-          <span className="font-mono text-[10.5px] uppercase leading-none tracking-[0.2em] text-white">
-            forecast · simulate · decide
-          </span>
-        </div>
-        <span className="flex items-center gap-1.5 font-mono text-[9.5px] uppercase leading-none tracking-[0.18em] text-white/55">
-          <span className={cn("inline-block h-1.5 w-1.5", resolved ? "bg-white" : "bg-white/70")} aria-hidden />
-          {resolved ? "locked" : "searching"}
-        </span>
-      </div>
+      <PlateHeader fig="fig.01" title="predictive control loop" />
 
       <div className="flex flex-col gap-3 px-4 py-5 md:flex-row md:items-stretch md:gap-2.5">
         {/* ---------------- current state (inputs) ---------------- */}
-        <div className="md:w-[150px] md:shrink-0">
+        <div className="md:w-[132px] md:shrink-0">
           <PanelLabel>current state</PanelLabel>
           <div className="mt-2.5 grid grid-cols-2 gap-1.5 md:grid-cols-1">
             {INPUTS.map((x) => (
@@ -148,64 +111,112 @@ export function WorldModelArchitecture({ className }: { className?: string }) {
 
         <Flow />
 
-        {/* ---------------- world model (the active core) ---------------- */}
+        {/* ---------------- predictive world model (the active core) ---------------- */}
         <div className="md:flex-1">
-          <PanelLabel>world model</PanelLabel>
+          <PanelLabel>predictive world model</PanelLabel>
           <div className="mt-2.5 border border-white">
-            <div className="border-b border-white/25 px-3 py-1.5 font-mono text-[9.5px] uppercase tracking-[0.16em] text-white/60">
-              simulating forecast constraints
-            </div>
-            <div className="divide-y divide-white/10">
-              {visible.map(({ name, idx }, i) => {
-                const optimizing = !resolved && (idx + set) % WINDOW === i % 3;
-                const fill = resolved ? 86 : 58 + ((idx * 37) % 40);
-                return (
-                  <div key={`${name}-${i}`} className="flex items-center gap-2.5 px-3 py-[7px]">
+            {/* forecast forward in time — chips light as the horizon advances */}
+            <div className="flex items-center justify-between gap-2 border-b border-white/25 px-3 py-1.5">
+              <span className="font-mono text-[9.5px] uppercase tracking-[0.16em] text-white/60">
+                forecast future state
+              </span>
+              <span className="flex items-center gap-1 font-mono text-[9.5px] tabular-nums leading-none">
+                {HORIZON.map((t, i) => (
+                  <span key={t} className="flex items-center gap-1">
+                    {i > 0 && <span className="text-white/30">→</span>}
                     <span
                       className={cn(
-                        "h-1.5 w-1.5 shrink-0",
-                        optimizing ? "animate-pulse border border-white/80" : "bg-white",
+                        "border px-1 py-0.5 leading-none transition-colors duration-500",
+                        i < horizonLit ? "border-white/55 text-white/85" : "border-white/15 text-white/30",
                       )}
-                      aria-hidden
-                    />
-                    <span className="flex-1 truncate font-mono text-[11px] leading-none text-white/85">
-                      {name}
+                    >
+                      {t}
                     </span>
-                    <span className="relative hidden h-1.5 w-14 shrink-0 bg-white/[0.06] sm:block">
-                      <span
-                        className="absolute inset-y-0 left-0 bg-white/45 transition-[width] duration-700 ease-out"
-                        style={{ width: `${fill}%` }}
-                      />
-                    </span>
-                  </div>
-                );
-              })}
+                  </span>
+                ))}
+              </span>
             </div>
-          </div>
-          <div className="mt-2.5 font-mono text-[11.5px] tabular-nums text-white/55">
-            <span className="text-white">{count.toLocaleString("en-US")}</span> combinations tried
+
+            {/* branch into candidate decisions, each simulated + ranked */}
+            <div className="px-3 py-3">
+              <div className="flex items-baseline justify-between">
+                <span className="font-mono text-[9.5px] uppercase tracking-[0.16em] text-white/55">
+                  candidate decisions
+                </span>
+                <span className="font-mono text-[9px] uppercase tracking-[0.12em] text-white/40">
+                  {resolved ? "economic ranking" : "simulating"}
+                </span>
+              </div>
+              <div className="mt-2.5 space-y-2 border-l border-white/30">
+                {CANDIDATES.map((c, i) => {
+                  const scanning = i === activeCandidate;
+                  const win = resolved && c.selected;
+                  return (
+                    <div key={c.id} className="flex items-center gap-2.5">
+                      {/* branch tick — fork from the world model */}
+                      <span
+                        className={cn(
+                          "h-px w-3 shrink-0 transition-colors duration-300",
+                          win ? "bg-white" : scanning ? "bg-white/70" : "bg-white/30",
+                        )}
+                        aria-hidden
+                      />
+                      <span
+                        className={cn(
+                          "w-[84px] shrink-0 font-mono text-[11px] leading-none transition-colors duration-300",
+                          win ? "text-white" : scanning ? "text-white/80" : "text-white/45",
+                        )}
+                      >
+                        Candidate {c.id}
+                      </span>
+                      <ScoreBar className="flex-1" value={filled ? c.score : 0} selected={win} scanning={scanning} />
+                      <span
+                        className={cn(
+                          "w-[50px] shrink-0 text-right font-mono text-[9.5px] uppercase tracking-[0.06em] leading-none transition-colors duration-300",
+                          win ? "text-white" : "text-white/35",
+                        )}
+                      >
+                        {resolved ? (c.selected ? "#1 ✓" : `#${c.rank}`) : scanning ? "···" : ""}
+                      </span>
+                    </div>
+                  );
+                })}
+              </div>
+              <div
+                className={cn(
+                  "mt-3 font-mono text-[9.5px] leading-tight transition-colors duration-500",
+                  resolved ? "text-white/40" : "text-white/60",
+                )}
+              >
+                candidate decisions evaluated in the predicted future
+              </div>
+            </div>
           </div>
         </div>
 
         <Flow />
 
-        {/* ---------------- execution ---------------- */}
+        {/* ---------------- decision ---------------- */}
         <div className="md:w-[150px] md:shrink-0">
-          <PanelLabel>execution</PanelLabel>
+          <PanelLabel>decision</PanelLabel>
           <div className="mt-2.5 grid gap-1.5">
-            <ExecBox active={resolved}>
-              economic optimum{resolved && <span className="ml-1.5 text-white">✓</span>}
-            </ExecBox>
-            <ExecBox active={resolved}>constraint gate</ExecBox>
-            <ExecBox active={phase === "exec"} strong>
+            <DecisionBox active={resolved}>
+              economic optimum{resolved && <span className="ml-1.5">✓</span>}
+            </DecisionBox>
+            <DownTick />
+            <DecisionBox active={resolved}>constraint gate</DecisionBox>
+            <DownTick />
+            <DecisionBox active={phase === "execute"} strong>
               recommend / execute
-            </ExecBox>
+            </DecisionBox>
           </div>
           <div className="mt-2.5 font-mono text-[10px] uppercase tracking-[0.12em] text-white/45">
-            {resolved ? "optimum committed" : "awaiting optimum"}
+            {phase === "execute" ? "optimum committed" : resolved ? "ranking candidates" : "evaluating candidates"}
           </div>
         </div>
       </div>
+
+      <CaptionStrip label="current state → future state → candidate simulations → economic optimum" />
     </figure>
   );
 }
@@ -226,12 +237,46 @@ function Flow() {
   );
 }
 
-function ExecBox({
-  active,
+/* economic-outcome bar — selected candidate is bright, the rest muted; the
+   candidate currently being simulated gets a faint pulse. */
+function ScoreBar({
+  value,
+  selected,
+  scanning,
+  className,
+}: {
+  value: number;
+  selected?: boolean;
+  scanning?: boolean;
+  className?: string;
+}) {
+  return (
+    <span className={cn("relative block h-1.5 bg-white/[0.07]", className)} aria-hidden>
+      <span
+        className={cn(
+          "absolute inset-y-0 left-0 transition-[width] duration-700 ease-out",
+          selected ? "bg-white" : scanning ? "bg-white/55 animate-pulse" : "bg-white/35",
+        )}
+        style={{ width: `${value}%` }}
+      />
+    </span>
+  );
+}
+
+function DownTick() {
+  return (
+    <div className="flex justify-center font-mono text-[10px] leading-none text-white/30" aria-hidden>
+      ↓
+    </div>
+  );
+}
+
+function DecisionBox({
+  active = false,
   strong = false,
   children,
 }: {
-  active: boolean;
+  active?: boolean;
   strong?: boolean;
   children: React.ReactNode;
 }) {
@@ -239,7 +284,9 @@ function ExecBox({
     <div
       className={cn(
         "border px-2.5 py-2 font-mono text-[10.5px] uppercase tracking-[0.1em] transition-colors duration-500",
-        active ? cn("border-white text-white", strong && "bg-white/[0.08]") : "border-white/20 text-white/40",
+        active
+          ? cn("border-white text-white", strong && "bg-white/[0.08]")
+          : "border-white/25 text-white/40",
       )}
     >
       {children}
