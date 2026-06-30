@@ -40,9 +40,11 @@ export function Footer() {
           </nav>
         </div>
 
-        <p className="mt-4 overflow-hidden whitespace-nowrap px-6 pb-10 text-[clamp(2rem,6.5vw,9rem)] font-normal leading-none tracking-[-0.03em] text-foreground lg:px-8">
-          Forecast. Simulate. Decide.
-        </p>
+        <div className="mx-auto max-w-content px-6 lg:px-8">
+          <p className="mt-4 whitespace-nowrap pb-10 text-[clamp(2rem,6.5vw,9rem)] font-normal leading-none tracking-[-0.03em] text-foreground">
+            Forecast. Simulate. Decide.
+          </p>
+        </div>
       </div>
     </footer>
   );
