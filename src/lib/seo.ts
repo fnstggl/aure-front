@@ -87,9 +87,9 @@ export const ROUTES: RouteMeta[] = [
   },
   {
     path: "/safety",
-    title: "Safety & data boundaries — Aurelius",
+    title: "Safety — read-only by default, constraint-gated | Aurelius",
     description:
-      "Aurelius is metadata-only, deterministic, auditable, and reversible. Optimization stops at the constraint boundary, customer data stays inside your environment, and it can be disabled instantly.",
+      "Aurelius evaluates infrastructure decisions before it controls them: historical replay and shadow recommendations first, live execution opt-in and human-approved. Recommendations are constraint-gated — economic optimization cannot override explicit SLA, capacity, or placement limits. Metadata only; never used to train a model.",
     name: "Safety",
     priority: 0.9,
     changefreq: "monthly",

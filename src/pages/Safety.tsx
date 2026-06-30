@@ -1,257 +1,314 @@
+import { Link } from "react-router-dom";
 import { Layout } from "@/components/layout/Layout";
-import {
-  Container,
-  Section,
-  SectionEyebrow,
-  SectionHeader,
-  DiagramCard,
-  Reveal,
-} from "@/components/site/primitives";
-import { ConstraintEngineDiagram } from "@/components/diagrams/ConstraintEngineDiagram";
-import { MetadataBoundaryDiagram } from "@/components/diagrams/MetadataBoundaryDiagram";
+import { Reveal, Arrow } from "@/components/site/primitives";
+import { PageFrame, Band, Grid, Kicker, Action } from "@/components/site/structure";
 
-const cannotDoList = [
-  "Cannot delay jobs beyond specified bounds",
-  "Cannot reduce CPU or memory allocations",
-  "Cannot access job data, payloads, or outputs",
-  "Cannot modify scheduler state or configuration",
-  "Cannot override operator decisions",
-  "Cannot execute commands on your infrastructure",
+/* /safety — a restrained safety brief for technical pilot clients. Two kinds of
+   safety, stated plainly: data safety (read-only, metadata-only, never used to
+   train a model) and scheduler safety (constraint-gated recommendations,
+   baseline comparison, human-approved rollout). Same systems-paper design
+   language as the home page and technical report — ruled grid, mono kickers,
+   hairline spec rows. Monochrome by intent: no decorative color. */
+
+const DATA_SAFETY: Spec[] = [
+  {
+    term: "Read-only by default",
+    body: "Evaluation runs on historical telemetry and exported logs. Aurelius does not require production write access to produce a savings analysis.",
+  },
+  {
+    term: "Historical replay before control",
+    body: "Decisions are first measured by replaying your own recorded scheduler history — not by acting on live workloads.",
+  },
+  {
+    term: "Shadow recommendations",
+    body: "In shadow mode Aurelius observes live metadata and emits recommendations only. It does not mutate the live scheduler during evaluation.",
+  },
+  {
+    term: "Metadata, not payloads",
+    body: "Aurelius reads scheduling metadata — timing, resources, capacity, constraints. It does not read prompts, model outputs, training data, or customer payloads.",
+  },
+  {
+    term: "Not used to train a model",
+    body: "Your telemetry is used to evaluate your scheduling decisions. It is not used to train a foundation model and is not shared across customers.",
+  },
 ];
 
-const allowedMetadata = [
-  "Job timing windows",
-  "Requested resources",
-  "Workload class",
-  "Scheduler state",
-  "Capacity availability",
-  "Operator-defined constraints",
-  "Regional placement options",
-  "Historical run metadata",
+const SCHEDULER_SAFETY: Spec[] = [
+  {
+    term: "Constraint gates, not metrics",
+    body: "SLA, latency, capacity, placement, and policy limits are explicit gates evaluated before a candidate can be recommended — not numbers reported after the fact.",
+  },
+  {
+    term: "Unsafe candidates are rejected",
+    body: "A candidate that violates any gate is discarded before it reaches a recommendation. Economic optimization cannot override an explicit safety constraint.",
+  },
+  {
+    term: "Compared against your baseline",
+    body: "Every recommendation is measured against your current production scheduler before it is surfaced, so you see the counterfactual rather than a claim.",
+  },
+  {
+    term: "Degrades safely under uncertainty",
+    body: "When forecasts are low-confidence, Aurelius falls back to the conservative decision instead of acting on a weak prediction.",
+  },
+  {
+    term: "Human-approved rollout",
+    body: "Moving from recommendation to live execution is an explicit, operator-approved step. Nothing rolls out on its own.",
+  },
 ];
 
-const blockedData = [
-  "Prompts",
-  "Model outputs",
-  "Training data",
-  "Customer payloads",
-  "Source code",
-  "Secrets",
-  "User data",
-  "Proprietary datasets",
-  "Application contents",
+const ADOPTION = [
+  { n: "01", label: "Historical backtest", note: "your recorded traces" },
+  { n: "02", label: "Shadow run", note: "live metadata · read-only" },
+  { n: "03", label: "Bounded recommendation", note: "human-approved" },
+  { n: "04", label: "Controlled execution", note: "optional · opt-in" },
 ];
 
-const trustCopy = [
-  "Reads scheduler metadata only — never prompts, outputs, training data, payloads, or code.",
-  "Metadata is not sold, shared, or used to train external models.",
-  "Designed to deploy inside your environment, so workload data does not leave it.",
-  "Shadow mode is read-only by default.",
-  "Operators control thresholds, constraints, and rollout mode.",
+const WILL_NOT = [
+  "Take write access to production schedulers for an initial evaluation.",
+  "Mutate live workloads during historical backtests or shadow runs.",
+  "Improve economics by violating an explicit SLA, latency, capacity, or placement constraint.",
+  "Use your telemetry to train a general-purpose model.",
 ];
-
-function Check() {
-  return (
-    <svg width="13" height="13" viewBox="0 0 14 14" fill="none" aria-hidden className="mt-0.5 shrink-0">
-      <path d="M2 7.5L5.5 11 12 3.5" stroke="#ffffff" strokeWidth="1.6" strokeLinecap="square" strokeLinejoin="miter" />
-    </svg>
-  );
-}
-
-function Cross() {
-  return (
-    <svg width="13" height="13" viewBox="0 0 14 14" fill="none" aria-hidden className="mt-0.5 shrink-0">
-      <path d="M3.5 3.5L10.5 10.5M10.5 3.5L3.5 10.5" stroke="hsl(var(--destructive))" strokeWidth="1.6" strokeLinecap="square" />
-    </svg>
-  );
-}
 
 export default function Safety() {
   return (
     <Layout>
-      {/* Page header */}
-      <section className="relative overflow-hidden pb-12 pt-32 md:pt-40">
-        <div className="pointer-events-none absolute inset-0 bg-dotgrid opacity-50" aria-hidden />
-        <Container className="relative">
-          <Reveal>
-            <SectionEyebrow>Safety</SectionEyebrow>
-          </Reveal>
-          <Reveal delay={80}>
-            <h1 className="mt-6 max-w-3xl text-balance text-[clamp(1.9rem,4.4vw,3rem)] font-medium leading-[1.08] tracking-tight text-foreground">
-              Safe by default, by construction
-            </h1>
-          </Reveal>
-          <Reveal delay={140}>
-            <p className="mt-5 max-w-2xl text-[15px] leading-relaxed text-white/68 md:text-base">
-              Operational and data boundaries. Aurelius is constrained in what it can do —
-              metadata-only, deterministic, auditable, and reversible — so teams can evaluate
-              savings without exposing payloads or risking production.
-            </p>
-          </Reveal>
-        </Container>
-      </section>
-
-      {/* Safe by default = two things */}
-      <Section>
-        <Container>
-          <Reveal>
-            <p className="font-mono text-[11px] uppercase tracking-[0.2em] text-white/42">
-              Safe by default means two things
-            </p>
-          </Reveal>
-          <div className="mt-7 grid overflow-hidden border border-white bg-black md:grid-cols-2">
-            <Reveal className="bg-black p-7">
-              <div className="font-mono text-[12px] tabular-nums text-white">01 / Operational safety</div>
-              <p className="mt-3 text-[14px] leading-relaxed text-white">
-                Candidates must pass hard constraints — SLA, capacity, power, residency, policy —
-                before they can ever be recommended.
-              </p>
-            </Reveal>
-            <Reveal delay={120} className="bg-black p-7 border-t border-white md:border-l md:border-t-0">
-              <div className="font-mono text-[12px] tabular-nums text-white">02 / Data safety</div>
-              <p className="mt-3 text-[14px] leading-relaxed text-white">
-                Aurelius evaluates scheduler metadata, not customer payloads. Workload data stays
-                inside your environment.
-              </p>
-            </Reveal>
-          </div>
-        </Container>
-      </Section>
-
-      {/* Operational safety — constraint engine */}
-      <Section alt>
-        <Container>
-          <Reveal>
-            <SectionHeader
-              eyebrow="Operational safety"
-              title="Optimization stops at the constraint boundary"
-              intro="Every candidate is checked against hard operational gates. If it violates SLA, capacity, power, residency, or policy, it is rejected before execution — and the rejection is recorded."
-            />
-          </Reveal>
-          <Reveal delay={140} className="mt-12">
-            <ConstraintEngineDiagram fig="fig.01" />
-          </Reveal>
-        </Container>
-      </Section>
-
-      {/* Data boundary */}
-      <Section>
-        <Container>
-          <Reveal>
-            <SectionHeader
-              eyebrow="Data boundary"
-              title="Metadata only. Customer data stays inside your environment."
-              revealIntro
-              intro="Aurelius reads the scheduler metadata required to evaluate timing, placement, constraints, and expected economic outcome. It does not inspect prompts, model outputs, training data, customer payloads, or application code."
-            />
-          </Reveal>
-
-          <Reveal delay={140} className="mt-12">
-            <MetadataBoundaryDiagram fig="fig.02" />
-          </Reveal>
-
-          {/* Allowed / blocked split */}
-          <div className="mt-10 grid overflow-hidden border border-white bg-black md:grid-cols-2">
-            <Reveal className="bg-black p-7">
-              <div className="mb-5 flex items-center gap-2.5 font-mono text-[11px] uppercase tracking-[0.16em] text-white">
-                <span className="h-px w-5 bg-white" aria-hidden />
-                Allowed · metadata
-              </div>
-              <ul className="grid gap-2.5">
-                {allowedMetadata.map((item) => (
-                  <li key={item} className="flex items-start gap-2.5 text-[13.5px] text-white">
-                    <Check />
-                    {item}
-                  </li>
-                ))}
-              </ul>
-            </Reveal>
-            <Reveal delay={120} className="bg-black p-7 border-t border-white md:border-l md:border-t-0">
-              <div className="mb-5 flex items-center gap-2.5 font-mono text-[11px] uppercase tracking-[0.16em] text-destructive/80">
-                <span className="h-px w-5 bg-destructive/50" aria-hidden />
-                Blocked · customer data
-              </div>
-              <ul className="grid gap-2.5">
-                {blockedData.map((item) => (
-                  <li key={item} className="flex items-start gap-2.5 text-[13.5px] text-white">
-                    <Cross />
-                    {item}
-                  </li>
-                ))}
-              </ul>
-            </Reveal>
-          </div>
-
-          {/* Trust posture */}
-          <Reveal delay={160}>
-            <ul className="mt-10 divide-y divide-white border-y border-white">
-              {trustCopy.map((item) => (
-                <li key={item} className="flex items-start gap-3 py-3.5 text-[14px] leading-relaxed text-white">
-                  <span className="mt-2 h-1 w-1 shrink-0 rounded-full bg-white" aria-hidden />
-                  {item}
-                </li>
-              ))}
-            </ul>
-          </Reveal>
-        </Container>
-      </Section>
-
-      {/* What Aurelius cannot do */}
-      <Section alt>
-        <Container>
-          <Reveal>
-            <SectionHeader eyebrow="Boundaries" title="What Aurelius cannot do" />
-          </Reveal>
-          <ul className="mt-10 divide-y divide-white border-y border-white">
-            {cannotDoList.map((item, i) => (
-              <Reveal as="li" key={item} delay={i * 60} className="flex items-center gap-4 py-4">
-                <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden className="shrink-0">
-                  <circle cx="7" cy="7" r="6" stroke="#ffffff" strokeWidth="1" />
-                  <path d="M4.5 4.5l5 5" stroke="hsl(0 72% 51% / 0.8)" strokeWidth="1.3" strokeLinecap="round" />
-                </svg>
-                <span className="text-[14px] text-white">{item}</span>
+      <PageFrame>
+        {/* ============================== Masthead ============================== */}
+        <Band className="border-t border-border">
+          <Grid>
+            <div className="col-span-1 px-6 pb-14 pt-32 sm:px-8 md:col-span-11 md:pt-36 lg:px-10">
+              <Reveal>
+                <Kicker index="—">Safety</Kicker>
               </Reveal>
-            ))}
-          </ul>
-        </Container>
-      </Section>
+              <Reveal delay={60}>
+                <h1 className="mt-7 max-w-3xl text-balance text-[clamp(2rem,4.6vw,3.2rem)] font-medium leading-[1.04] tracking-[-0.03em] text-foreground">
+                  Read-only by default. Constraint-gated by design.
+                </h1>
+              </Reveal>
+              <Reveal delay={120}>
+                <p className="mt-6 max-w-2xl text-[15px] leading-relaxed text-white/58">
+                  Aurelius evaluates infrastructure decisions before it controls them. Historical
+                  replay and shadow recommendations come first; live execution is opt-in and
+                  human-approved.
+                </p>
+              </Reveal>
+              <Reveal delay={160}>
+                <p className="mt-4 max-w-2xl text-[13.5px] leading-relaxed text-white/40">
+                  Every recommendation is checked against explicit SLA, capacity, placement, and
+                  policy constraints before it is surfaced — economic optimization cannot override
+                  them. Aurelius reads scheduler metadata to evaluate decisions, never customer
+                  payloads, and never to train a foundation model. Workload data stays inside your
+                  environment.
+                </p>
+              </Reveal>
+              <Reveal delay={200}>
+                <div className="mt-9 flex flex-wrap items-center gap-x-6 gap-y-2 font-mono text-[11px] uppercase tracking-[0.16em] text-white/34">
+                  <span>Read-only by default</span>
+                  <span className="text-white/14" aria-hidden>·</span>
+                  <span>Shadow-first</span>
+                  <span className="text-white/14" aria-hidden>·</span>
+                  <span>Human-approved rollout</span>
+                  <span className="text-white/14" aria-hidden>·</span>
+                  <span>Reversible</span>
+                </div>
+              </Reveal>
+            </div>
+          </Grid>
+        </Band>
 
-      {/* Determinism + kill switch */}
-      <Section>
-        <Container>
-          <Reveal>
-            <SectionHeader
-              eyebrow="Determinism"
-              title="Same inputs, same decisions"
-              intro="No randomness in the decision pipeline. No stochastic sampling. Every optimization recommendation, safety-gate trigger, and fallback activation is logged with full context — auditable and exportable. If you ask why a decision was made, the system provides a traceable answer."
-            />
-          </Reveal>
-          <div className="mt-10 grid overflow-hidden border border-white bg-black md:grid-cols-2">
-            <Reveal className="bg-black p-6">
-              <div className="mb-3 font-mono text-[11px] uppercase tracking-[0.16em] text-white">
-                Kill switch &amp; control
+        {/* ============================== Data safety ============================== */}
+        <Band className="py-20 md:py-28 lg:py-32">
+          <Grid>
+            <div className="col-span-1 px-6 sm:px-8 md:col-span-10 lg:px-10">
+              <Reveal>
+                <Kicker index="01">Data safety</Kicker>
+              </Reveal>
+              <Reveal delay={60}>
+                <h2 className="mt-6 max-w-2xl text-balance text-[clamp(1.6rem,3.2vw,2.3rem)] font-medium leading-[1.08] tracking-[-0.02em] text-foreground">
+                  Your data is evaluated, not absorbed.
+                </h2>
+              </Reveal>
+              <Reveal delay={120}>
+                <p className="mt-5 max-w-2xl text-[14.5px] leading-relaxed text-white/52">
+                  Aurelius keeps historical replay, shadow recommendation, and live execution
+                  separate. The first two never touch your production control plane, and what they
+                  read is scheduler metadata — not the work itself.
+                </p>
+              </Reveal>
+              <Reveal delay={160} className="mt-10">
+                <SpecList items={DATA_SAFETY} />
+              </Reveal>
+            </div>
+          </Grid>
+        </Band>
+
+        {/* ============================ Scheduler safety ============================ */}
+        <Band className="py-20 md:py-28 lg:py-32">
+          <Grid>
+            <div className="col-span-1 px-6 sm:px-8 md:col-span-10 lg:px-10">
+              <Reveal>
+                <Kicker index="02">Scheduler safety</Kicker>
+              </Reveal>
+              <Reveal delay={60}>
+                <h2 className="mt-6 max-w-2xl text-balance text-[clamp(1.6rem,3.2vw,2.3rem)] font-medium leading-[1.08] tracking-[-0.02em] text-foreground">
+                  Economics never override constraints.
+                </h2>
+              </Reveal>
+              <Reveal delay={120}>
+                <p className="mt-5 max-w-2xl text-[14.5px] leading-relaxed text-white/52">
+                  A recommendation only exists if it passes the operator&rsquo;s hard constraints and
+                  beats the current baseline. Safety means a cheaper decision that breaks latency,
+                  SLA, placement, or capacity is not a valid decision.
+                </p>
+              </Reveal>
+              <Reveal delay={160} className="mt-10">
+                <SpecList items={SCHEDULER_SAFETY} />
+              </Reveal>
+            </div>
+          </Grid>
+        </Band>
+
+        {/* ============================== Adoption path ============================== */}
+        <Band className="py-20 md:py-28 lg:py-32">
+          <Grid>
+            <div className="col-span-1 px-6 sm:px-8 md:col-span-11 lg:px-10">
+              <Reveal>
+                <Kicker index="03">Adoption path</Kicker>
+              </Reveal>
+              <Reveal delay={60}>
+                <h2 className="mt-6 max-w-2xl text-balance text-[clamp(1.6rem,3.2vw,2.3rem)] font-medium leading-[1.08] tracking-[-0.02em] text-foreground">
+                  Historical replay before control.
+                </h2>
+              </Reveal>
+              <Reveal delay={120}>
+                <p className="mt-5 max-w-2xl text-[14.5px] leading-relaxed text-white/52">
+                  Each stage is gated by the one before it. You can stop at any stage, and live
+                  execution is never the default.
+                </p>
+              </Reveal>
+              <Reveal delay={160}>
+                <div className="mt-10 flex flex-col gap-y-4 md:flex-row md:flex-wrap md:items-center md:gap-x-4">
+                  {ADOPTION.map((s, i) => (
+                    <div key={s.label} className="flex items-center gap-4">
+                      <div className="flex flex-wrap items-baseline gap-x-2.5 gap-y-1">
+                        <span className="font-mono text-[11px] tabular-nums text-white/55">{s.n}</span>
+                        <span className="font-mono text-[12px] uppercase tracking-[0.14em] text-white/72">
+                          {s.label}
+                        </span>
+                        <span className="ml-1 border border-border-strong px-1.5 py-0.5 font-mono text-[9px] uppercase tracking-[0.16em] text-white/40">
+                          {s.note}
+                        </span>
+                      </div>
+                      {i < ADOPTION.length - 1 && (
+                        <Arrow className="hidden shrink-0 text-white/22 md:block" />
+                      )}
+                    </div>
+                  ))}
+                </div>
+              </Reveal>
+            </div>
+          </Grid>
+        </Band>
+
+        {/* ============================== Boundaries ============================== */}
+        <Band className="py-20 md:py-28 lg:py-32">
+          <Grid>
+            <div className="col-span-1 px-6 sm:px-8 md:col-span-10 lg:px-10">
+              <Reveal>
+                <Kicker index="04">Boundaries</Kicker>
+              </Reveal>
+              <Reveal delay={60}>
+                <h2 className="mt-6 max-w-2xl text-balance text-[clamp(1.6rem,3.2vw,2.3rem)] font-medium leading-[1.08] tracking-[-0.02em] text-foreground">
+                  What Aurelius will not do by default.
+                </h2>
+              </Reveal>
+              <Reveal delay={120} className="mt-9">
+                <ul>
+                  {WILL_NOT.map((item) => (
+                    <li
+                      key={item}
+                      className="flex items-start gap-4 border-t border-border py-4 first:border-t-0"
+                    >
+                      <span className="mt-2 h-px w-4 shrink-0 bg-white/40" aria-hidden />
+                      <span className="max-w-2xl text-[14.5px] leading-relaxed text-white/70">
+                        {item}
+                      </span>
+                    </li>
+                  ))}
+                </ul>
+              </Reveal>
+            </div>
+          </Grid>
+        </Band>
+
+        {/* ============================== CTA ============================== */}
+        <Band divide={false} className="py-24 md:py-32 lg:py-40">
+          <Grid>
+            <div className="col-span-1 px-6 sm:px-8 md:col-span-10 lg:px-10">
+              <Reveal>
+                <Kicker index="05">Request access</Kicker>
+              </Reveal>
+              <Reveal delay={60}>
+                <h2 className="mt-7 max-w-3xl text-balance text-[clamp(2rem,5.4vw,3.6rem)] font-medium leading-[1.02] tracking-[-0.03em] text-foreground">
+                  Start with a read-only evaluation.
+                </h2>
+              </Reveal>
+              <Reveal delay={120}>
+                <p className="mt-6 max-w-xl text-[15px] leading-relaxed text-white/55">
+                  Run Aurelius against your recorded scheduler metadata. Historical replay first,
+                  shadow mode next, control only if and when you decide. Metadata only. No payload
+                  access. No production changes.
+                </p>
+              </Reveal>
+              <Reveal delay={180}>
+                <div className="mt-9 flex flex-col items-start gap-3 sm:flex-row sm:items-center">
+                  <Action to="/contact" variant="primary" withArrow>
+                    Request a shadow-mode evaluation
+                  </Action>
+                  <Action to="/technical-report" variant="secondary">
+                    Read Technical Report
+                  </Action>
+                </div>
+              </Reveal>
+              <div className="mt-12">
+                <Link
+                  to="/"
+                  className="font-mono text-[12px] uppercase tracking-[0.18em] text-white/40 transition-colors hover:text-white/80"
+                >
+                  ← Back to home
+                </Link>
               </div>
-              <p className="text-[13.5px] leading-relaxed text-white">
-                Aurelius can be disabled instantly via a single environment variable — no code
-                changes, no deployment. Dry-run mode is the default; live mode is opt-in, explicitly
-                enabled. Operators retain full ownership of every threshold and mode switch.
-              </p>
-            </Reveal>
-            <Reveal delay={120} className="bg-black p-6 border-t border-white md:border-l md:border-t-0">
-              <div className="mb-3 font-mono text-[11px] uppercase tracking-[0.16em] text-white">
-                Deployment model
-              </div>
-              <pre className="whitespace-pre-wrap font-mono text-[12px] leading-relaxed text-white">
-{`Aurelius (sidecar / control layer)
-  ├─ Reads scheduler metadata
-  ├─ Evaluates future conditions
-  ├─ Produces decisions
-  └─ Logs outcomes (append-only)`}
-              </pre>
-            </Reveal>
-          </div>
-        </Container>
-      </Section>
+            </div>
+          </Grid>
+        </Band>
+      </PageFrame>
     </Layout>
+  );
+}
+
+/* ------------------------------------------------------------------ */
+/* Local presentation helpers                                          */
+/* ------------------------------------------------------------------ */
+
+type Spec = { term: string; body: string };
+
+/* Spec-sheet rows: mono-weight term on the left rail, plain-English clause on
+   the right. Hairline-divided, the way a systems paper lists properties. */
+function SpecList({ items }: { items: Spec[] }) {
+  return (
+    <div>
+      {items.map((it) => (
+        <div
+          key={it.term}
+          className="grid grid-cols-1 gap-1.5 border-t border-border py-5 first:border-t-0 md:grid-cols-12 md:gap-6"
+        >
+          <div className="md:col-span-4">
+            <span className="text-[14px] font-medium tracking-tight text-foreground">{it.term}</span>
+          </div>
+          <p className="text-[13.5px] leading-relaxed text-white/52 md:col-span-8">{it.body}</p>
+        </div>
+      ))}
+    </div>
   );
 }
