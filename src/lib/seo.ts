@@ -87,9 +87,9 @@ export const ROUTES: RouteMeta[] = [
   },
   {
     path: "/safety",
-    title: "Safety & data boundaries · Aurelius",
+    title: "Safety: evaluation-first, read-only architecture | Aurelius",
     description:
-      "Aurelius is metadata-only, deterministic, auditable, and reversible. Optimization stops at the constraint boundary, customer data stays inside your environment, and it can be disabled instantly.",
+      "Aurelius begins as an analysis tool, not a control system. Every evaluation starts offline. It reads scheduler metadata such as queue state, capacity, and job history, never prompts or payloads, replays your own recorded traces, validates against your configured hard constraints, and compares against your baseline. Shadow recommendations and any production integration are operator-approved and optional.",
     name: "Safety",
     priority: 0.9,
     changefreq: "monthly",
