@@ -60,7 +60,7 @@ export default function Index() {
                   </div>
                 </Reveal>
                 <Reveal delay={180}>
-                  <p className="mt-6 text-[13px] uppercase leading-relaxed tracking-[0.05em] text-white/80">
+                  <p className="mt-6 text-[13px] leading-relaxed text-white/80">
                     Working with a small batch of infrastructure operators.
                   </p>
                 </Reveal>

@@ -370,7 +370,7 @@
     /* ~12% smaller and nudged slightly lower so the field reads as a framed
        plate rather than a dominant full-bleed image. The datacenter art is
        black-on-black, so the revealed margin is seamless. */
-    transform: translateY(3%) scale(0.88);
+    transform: translateY(1.9%) scale(0.88);
     transform-origin: center;
     animation: hero-breathe 26s ease-in-out infinite;
   }
@@ -383,7 +383,7 @@
     background-position: center;
     background-repeat: no-repeat;
     opacity: 0.72;
-    transform: translateY(3%) scale(0.88);
+    transform: translateY(1.9%) scale(0.88);
     transform-origin: center;
     mix-blend-mode: screen;
     -webkit-mask-image: linear-gradient(100deg, transparent 38%, #000 50%, transparent 62%);
