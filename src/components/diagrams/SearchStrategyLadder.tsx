@@ -20,7 +20,7 @@ const RUNGS: { cond: string; strategy: string; note: string; strong?: boolean }[
   {
     cond: "Structured medium spaces",
     strategy: "beam-style search + local improvement",
-    note: "keeps coupled hypotheses alive — captures cross-surface interactions",
+    note: "keeps coupled hypotheses alive, captures cross-surface interactions",
     strong: true,
   },
   {
@@ -63,12 +63,12 @@ export function SearchStrategyLadder({ className }: { className?: string }) {
         {/* regret audit — the discipline, not the internals */}
         <div className="mt-4 border-t border-white/15 pt-3.5">
           <span className="font-mono text-[10px] leading-snug text-white/55">
-            Where exact enumeration is tractable, the approximate search is scored against it —{" "}
+            Where exact enumeration is tractable, the approximate search is scored against it,{" "}
             <span className="text-white/85">regret is measured, not assumed.</span>
           </span>
         </div>
       </div>
-      <CaptionStrip label="fig.03 — coupled decision bundles, evaluated by a size-aware search" />
+      <CaptionStrip label="fig.03 · coupled decision bundles, evaluated by a size-aware search" />
     </figure>
   );
 }

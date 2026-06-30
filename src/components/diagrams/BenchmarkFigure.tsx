@@ -29,7 +29,7 @@ const RGAP = 56;
 export function BenchmarkFigure({ className }: { className?: string }) {
   return (
     <figure className={cn("relative overflow-hidden border border-white bg-black", className)}>
-      <PlateHeader fig="fig.04" title="result — uncapped high-load replay" />
+      <PlateHeader fig="fig.04" title="result · uncapped high-load replay" />
       <div className="relative">
         <svg
           viewBox="0 0 760 300"
@@ -81,7 +81,7 @@ export function BenchmarkFigure({ className }: { className?: string }) {
           </text>
         </svg>
       </div>
-      <CaptionStrip label="fig.04 — Δ SLA-safe goodput/$ vs production-class scheduler · uncapped high-load replay, not a guarantee" />
+      <CaptionStrip label="fig.04 · Δ SLA-safe goodput/$ vs production-class scheduler · uncapped high-load replay, not a guarantee" />
     </figure>
   );
 }

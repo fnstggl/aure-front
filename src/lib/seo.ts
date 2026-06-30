@@ -36,14 +36,14 @@ export const SITE = {
   name: "Aurelius",
   /** og:image / twitter:image used across pages. */
   image: "https://runaurelius.com/opengraph.png",
-  imageAlt: "Aurelius — the control layer for economically efficient GPU fleets",
+  imageAlt: "Aurelius · the control layer for economically efficient GPU fleets",
   twitterCard: "summary_large_image",
   locale: "en_US",
   themeColor: "#0a0a0a",
   /** Falls back to these when a path isn't in ROUTES (e.g. 404). */
-  defaultTitle: "Aurelius — The control layer for economically efficient GPU fleets",
+  defaultTitle: "Aurelius · The control layer for economically efficient GPU fleets",
   defaultDescription:
-    "Aurelius evaluates when workloads should run, where they should run, and when optimization is safe — before execution. Shadow-mode first. Constraint-aware by default. Built for schedulers, platform teams, and GPU fleet operators.",
+    "Aurelius evaluates when workloads should run, where they should run, and when optimization is safe, before execution. Shadow-mode first. Constraint-aware by default. Built for schedulers, platform teams, and GPU fleet operators.",
   /**
    * Official Organization profile URLs for JSON-LD `sameAs`. Intentionally
    * empty: no LinkedIn/GitHub/X/Crunchbase URLs exist in the repo or on the
@@ -60,7 +60,7 @@ export const SITE = {
 export const ROUTES: RouteMeta[] = [
   {
     path: "/",
-    title: "Aurelius — Constraint-aware orchestration for AI infrastructure",
+    title: "Aurelius · Constraint-aware orchestration for AI infrastructure",
     description:
       "Aurelius increases SLA-safe goodput per dollar by optimizing scheduling, placement, admission, routing, capacity, and energy decisions. Backtested on public production traces. Shadow-mode first, read-only by default.",
     name: "Platform",
@@ -69,25 +69,25 @@ export const ROUTES: RouteMeta[] = [
   },
   {
     path: "/technical-report",
-    title: "Technical Report — Aurelius: Predictive World Models for AI Infrastructure",
+    title: "Technical Report · Aurelius: Predictive World Models for AI Infrastructure",
     description:
-      "Aurelius forecasts future cluster state and simulates coupled candidate decisions before execution. In an uncapped high-load public-trace replay across PJM/ERCOT/CAISO price windows it averages +724% SLA-safe goodput per dollar vs a production-class scheduler baseline — Pareto-safe, at ~84% fewer GPU-hours.",
+      "Aurelius forecasts future cluster state and simulates coupled candidate decisions before execution. In an uncapped high-load public-trace replay across PJM/ERCOT/CAISO price windows it averages +724% SLA-safe goodput per dollar vs a production-class scheduler baseline, Pareto-safe at ~84% fewer GPU-hours.",
     name: "Technical Report",
     priority: 0.9,
     changefreq: "monthly",
   },
   {
     path: "/how-it-works",
-    title: "How it works — Aurelius advisory control layer for GPU scheduling",
+    title: "How it works · Aurelius advisory control layer for GPU scheduling",
     description:
-      "How Aurelius works: an advisory layer that reads scheduler metadata, forecasts energy conditions with explicit uncertainty, and filters risky decisions before execution — your scheduler stays in control.",
+      "How Aurelius works: an advisory layer that reads scheduler metadata, forecasts energy conditions with explicit uncertainty, and filters risky decisions before execution, so your scheduler stays in control.",
     name: "How it works",
     priority: 0.9,
     changefreq: "monthly",
   },
   {
     path: "/safety",
-    title: "Safety & data boundaries — Aurelius",
+    title: "Safety & data boundaries · Aurelius",
     description:
       "Aurelius is metadata-only, deterministic, auditable, and reversible. Optimization stops at the constraint boundary, customer data stays inside your environment, and it can be disabled instantly.",
     name: "Safety",
@@ -96,16 +96,16 @@ export const ROUTES: RouteMeta[] = [
   },
   {
     path: "/shadow-audit",
-    title: "Shadow audit — prove GPU savings with zero execution risk | Aurelius",
+    title: "Shadow audit · prove GPU savings with zero execution risk | Aurelius",
     description:
-      "Run Aurelius in dry-run shadow mode against your real workloads. See approved and skipped decisions, simulated energy, cost, and carbon savings, and proof that SLAs hold — with no execution impact.",
+      "Run Aurelius in dry-run shadow mode against your real workloads. See approved and skipped decisions, simulated energy, cost, and carbon savings, and proof that SLAs hold, with no execution impact.",
     name: "Shadow audit",
     priority: 0.9,
     changefreq: "monthly",
   },
   {
     path: "/docs",
-    title: "Documentation — Aurelius technical reference",
+    title: "Documentation · Aurelius technical reference",
     description:
       "Technical reference for infrastructure engineers integrating the Aurelius control layer: architecture, configuration, execution modes, and security. Full documentation for pilot participants.",
     name: "Docs",
@@ -114,7 +114,7 @@ export const ROUTES: RouteMeta[] = [
   },
   {
     path: "/contact",
-    title: "Request access — Aurelius shadow-mode evaluation",
+    title: "Request access · Aurelius shadow-mode evaluation",
     description:
       "Request a read-only, shadow-mode evaluation of Aurelius using scheduler metadata. Historical replay and live shadow deployments supported. No payload access, no execution impact.",
     name: "Request access",
@@ -123,9 +123,9 @@ export const ROUTES: RouteMeta[] = [
   },
   {
     path: "/privacy",
-    title: "Privacy policy — Aurelius",
+    title: "Privacy policy · Aurelius",
     description:
-      "How Aurelius collects, uses, and protects information. Metadata-only by design, shadow-mode first — the same restraint that governs the product governs your data.",
+      "How Aurelius collects, uses, and protects information. Metadata-only by design, shadow-mode first; the same restraint that governs the product governs your data.",
     name: "Privacy policy",
     priority: 0.3,
     changefreq: "yearly",

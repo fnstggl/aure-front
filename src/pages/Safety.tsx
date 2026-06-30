@@ -43,7 +43,7 @@ const blockedData = [
 ];
 
 const trustCopy = [
-  "Reads scheduler metadata only — never prompts, outputs, training data, payloads, or code.",
+  "Reads scheduler metadata only, never prompts, outputs, training data, payloads, or code.",
   "Metadata is not sold, shared, or used to train external models.",
   "Designed to deploy inside your environment, so workload data does not leave it.",
   "Shadow mode is read-only by default.",
@@ -83,8 +83,7 @@ export default function Safety() {
           </Reveal>
           <Reveal delay={140}>
             <p className="mt-5 max-w-2xl text-[15px] leading-relaxed text-white/68 md:text-base">
-              Operational and data boundaries. Aurelius is constrained in what it can do —
-              metadata-only, deterministic, auditable, and reversible — so teams can evaluate
+              Operational and data boundaries. Aurelius is constrained in what it can do (metadata-only, deterministic, auditable, and reversible) so teams can evaluate
               savings without exposing payloads or risking production.
             </p>
           </Reveal>
@@ -103,7 +102,7 @@ export default function Safety() {
             <Reveal className="bg-black p-7">
               <div className="font-mono text-[12px] tabular-nums text-white">01 / Operational safety</div>
               <p className="mt-3 text-[14px] leading-relaxed text-white">
-                Candidates must pass hard constraints — SLA, capacity, power, residency, policy —
+                Candidates must pass hard constraints (SLA, capacity, power, residency, policy)
                 before they can ever be recommended.
               </p>
             </Reveal>
@@ -118,14 +117,14 @@ export default function Safety() {
         </Container>
       </Section>
 
-      {/* Operational safety — constraint engine */}
+      {/* Operational safety, constraint engine */}
       <Section alt>
         <Container>
           <Reveal>
             <SectionHeader
               eyebrow="Operational safety"
               title="Optimization stops at the constraint boundary"
-              intro="Every candidate is checked against hard operational gates. If it violates SLA, capacity, power, residency, or policy, it is rejected before execution — and the rejection is recorded."
+              intro="Every candidate is checked against hard operational gates. If it violates SLA, capacity, power, residency, or policy, it is rejected before execution, and the rejection is recorded."
             />
           </Reveal>
           <Reveal delay={140} className="mt-12">
@@ -223,7 +222,7 @@ export default function Safety() {
             <SectionHeader
               eyebrow="Determinism"
               title="Same inputs, same decisions"
-              intro="No randomness in the decision pipeline. No stochastic sampling. Every optimization recommendation, safety-gate trigger, and fallback activation is logged with full context — auditable and exportable. If you ask why a decision was made, the system provides a traceable answer."
+              intro="No randomness in the decision pipeline. No stochastic sampling. Every optimization recommendation, safety-gate trigger, and fallback activation is logged with full context, auditable and exportable. If you ask why a decision was made, the system provides a traceable answer."
             />
           </Reveal>
           <div className="mt-10 grid overflow-hidden border border-white bg-black md:grid-cols-2">
@@ -232,7 +231,7 @@ export default function Safety() {
                 Kill switch &amp; control
               </div>
               <p className="text-[13.5px] leading-relaxed text-white">
-                Aurelius can be disabled instantly via a single environment variable — no code
+                Aurelius can be disabled instantly via a single environment variable, no code
                 changes, no deployment. Dry-run mode is the default; live mode is opt-in, explicitly
                 enabled. Operators retain full ownership of every threshold and mode switch.
               </p>

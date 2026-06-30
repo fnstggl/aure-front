@@ -39,7 +39,7 @@ export function MetadataBoundaryDiagram({ fig = "fig.08", title = "data boundary
         ))}
 
         {/* blocked data — stays inside */}
-        <Annotation x={70} y={296} state="dim" size={10.5} track={0.5}>STAYS INSIDE — NEVER CROSSES</Annotation>
+        <Annotation x={70} y={296} state="dim" size={10.5} track={0.5}>STAYS INSIDE · NEVER CROSSES</Annotation>
         {BLOCKED.map((b, i) => {
           const x = 70 + i * 132;
           return (

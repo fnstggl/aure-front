@@ -196,7 +196,7 @@ export default function Contact() {
                               />
                             </FormControl>
                             <p className="font-mono text-[11px] text-white/45">
-                              Metadata only — never share secrets or customer data.
+                              Metadata only. Never share secrets or customer data.
                             </p>
                             <FormMessage />
                           </FormItem>
@@ -208,7 +208,7 @@ export default function Contact() {
                         disabled={isSubmitting}
                         className="inline-flex h-11 w-full items-center justify-center bg-foreground px-6 text-sm font-medium tracking-tight text-background transition-all duration-200 ease-premium hover:bg-white active:translate-y-px disabled:opacity-50"
                       >
-                        {isSubmitting ? "Submitting…" : submitted ? "Submitted — we'll be in touch" : "Submit request"}
+                        {isSubmitting ? "Submitting…" : submitted ? "Submitted, we'll be in touch" : "Submit request"}
                       </button>
                     </form>
                   </Form>

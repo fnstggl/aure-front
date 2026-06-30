@@ -70,7 +70,7 @@ export default function Index() {
                     <span className="text-white/18">·</span>
                     <span><span className="text-white/50">−84%</span> GPU-hours</span>
                     <span className="text-white/18">·</span>
-                    <span className="uppercase tracking-[0.16em]">Uncapped high-load replay · vs production scheduler</span>
+                    <span className="uppercase tracking-[0.16em]">~1.5M replayed requests · vs production scheduler</span>
                   </div>
                 </Reveal>
               </div>
@@ -152,7 +152,7 @@ export default function Index() {
               </Reveal>
               <Reveal delay={120}>
                 <p className="mt-6 max-w-sm text-[14px] leading-relaxed text-white/52">
-                  Validated through offline replay and read-only shadow mode before any rollout —
+                  Validated through offline replay and read-only shadow mode before any rollout,
                   measured against the operator&rsquo;s own scheduler.
                 </p>
               </Reveal>
@@ -268,7 +268,7 @@ function StatMoment() {
         average SLA-safe goodput per dollar vs a production scheduler
       </p>
       <p className="mt-6 max-w-md font-mono text-[11px] uppercase leading-relaxed tracking-[0.14em] text-white/42">
-        Mean of +698% / +718% / +755% across PJM, ERCOT, and CAISO — uncapped high-load replay of the full selected benchmark windows, Pareto-safe at ~84% fewer GPU-hours. Simulated replay, not a production deployment.
+        Mean of +698% / +718% / +755% across PJM, ERCOT, and CAISO. Uncapped replay of public production traces (~1.5M replayed requests). Pareto-safe at ~84% fewer GPU-hours. Simulated replay, not a production deployment.
       </p>
     </div>
   );

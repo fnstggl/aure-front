@@ -125,7 +125,7 @@ export function ArchitecturePipeline({
           </g>
         </svg>
       </div>
-      <CaptionStrip label={`${fig} — telemetry → replay → shadow → savings → rollout`} />
+      <CaptionStrip label={`${fig} · telemetry → replay → shadow → savings → rollout`} />
     </figure>
   );
 }
