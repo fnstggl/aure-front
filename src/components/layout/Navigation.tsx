@@ -23,13 +23,13 @@ export function Navigation() {
         <div className="flex items-center gap-1 sm:gap-3">
           <Link
             to="/technical-report"
-            className="px-2 py-2 font-mono text-[11.5px] uppercase tracking-[0.06em] text-white/52 transition-colors duration-200 hover:text-white/90 sm:px-3"
+            className="hidden sm:block px-2 py-2 font-mono text-[11.5px] uppercase tracking-[0.06em] text-white/52 transition-colors duration-200 hover:text-white/90 sm:px-3"
           >
             <ScrambleText text="Technical Report" />
           </Link>
           <Link
             to="/safety"
-            className="px-2 py-2 font-mono text-[11.5px] uppercase tracking-[0.06em] text-white/52 transition-colors duration-200 hover:text-white/90 sm:px-3"
+            className="hidden sm:block px-2 py-2 font-mono text-[11.5px] uppercase tracking-[0.06em] text-white/52 transition-colors duration-200 hover:text-white/90 sm:px-3"
           >
             <ScrambleText text="Safety" />
           </Link>
