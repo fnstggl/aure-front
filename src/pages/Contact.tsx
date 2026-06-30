@@ -84,7 +84,7 @@ export default function Contact() {
             {/* Context column */}
             <div className="lg:col-span-5">
               <Reveal>
-                <SectionEyebrow>Request access</SectionEyebrow>
+                <SectionEyebrow>Get access</SectionEyebrow>
               </Reveal>
               <Reveal delay={80}>
                 <h1 className="mt-6 text-balance text-[clamp(1.9rem,4vw,2.8rem)] font-normal leading-[1.08] tracking-tight text-foreground">

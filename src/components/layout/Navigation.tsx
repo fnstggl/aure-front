@@ -37,7 +37,7 @@ export function Navigation() {
             to="/contact"
             className="inline-flex h-9 items-center border border-border-strong px-3 font-mono text-[11.5px] uppercase tracking-[0.06em] text-foreground/90 transition-all duration-200 ease-premium hover:border-white/45 hover:text-foreground active:translate-y-px sm:px-4"
           >
-            <ScrambleText text="Request access" />
+            <ScrambleText text="Get access" />
           </Link>
         </div>
       </nav>
