@@ -37,7 +37,7 @@ export function ShadowModeAuditDiagram({ fig = "fig.07", title = "shadow audit" 
       <MobileScaleFit width={760}>
           {/* ledger header */}
           <div className="flex items-center justify-between border-b border-white px-5 py-3">
-            <span className="font-mono text-[11px] uppercase tracking-[0.18em] text-white">audit.log — counterfactual ledger</span>
+            <span className="font-mono text-[11px] uppercase tracking-[0.18em] text-white">audit.log · counterfactual ledger</span>
             <span className="flex items-center gap-1.5 font-mono text-[10px] uppercase tracking-wider text-white">
               <span className="h-1.5 w-1.5 bg-white" /> append-only
             </span>

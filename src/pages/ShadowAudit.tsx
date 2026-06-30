@@ -29,14 +29,14 @@ export default function ShadowAudit() {
           </Reveal>
           <Reveal delay={80}>
             <h1 className="mt-6 max-w-3xl text-balance text-[clamp(1.9rem,4.4vw,3rem)] font-medium leading-[1.08] tracking-tight text-foreground">
-              See what would happen — without changing anything
+              See what would happen, without changing anything
             </h1>
           </Reveal>
           <Reveal delay={140}>
             <p className="mt-5 max-w-2xl text-[15px] leading-relaxed text-white/62 md:text-base">
               A shadow audit runs Aurelius in dry-run mode against your existing workloads. Nothing
               changes. No permissions beyond read access to job metadata. Aurelius records the
-              decisions it would have made — without executing any of them.
+              decisions it would have made, without executing any of them.
             </p>
           </Reveal>
           <Reveal delay={220} className="mt-10">

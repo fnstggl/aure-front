@@ -66,11 +66,11 @@ export default function Index() {
                 </Reveal>
                 <Reveal delay={240}>
                   <div className="mt-8 flex flex-wrap items-center justify-center gap-x-5 gap-y-1.5 font-mono text-[10.5px] tracking-[0.12em] text-white/32">
-                    <span><span className="text-white/50">+191%</span> SLA-safe goodput / $</span>
+                    <span><span className="text-white/50">+724%</span> avg SLA-safe goodput / $</span>
                     <span className="text-white/18">·</span>
-                    <span><span className="text-white/50">−25%</span> GPU-hours</span>
+                    <span><span className="text-white/50">−84%</span> GPU-hours</span>
                     <span className="text-white/18">·</span>
-                    <span className="uppercase tracking-[0.16em]">Measured on bounded Azure/Mooncake replay</span>
+                    <span className="uppercase tracking-[0.16em]">~1.5M replayed requests · vs production scheduler</span>
                   </div>
                 </Reveal>
               </div>
@@ -152,13 +152,13 @@ export default function Index() {
               </Reveal>
               <Reveal delay={120}>
                 <p className="mt-6 max-w-sm text-[14px] leading-relaxed text-white/52">
-                  Validated through offline replay and read-only shadow mode before any rollout —
+                  Validated through offline replay and read-only shadow mode before any rollout,
                   measured against the operator&rsquo;s own scheduler.
                 </p>
               </Reveal>
               <Reveal delay={160}>
                 <ul className="mt-7 grid gap-y-3">
-                  {["Offline replay", "Read-only shadow mode", "Bounded Azure/Mooncake replay"].map((item) => (
+                  {["Offline replay", "Read-only shadow mode", "Uncapped high-load replay"].map((item) => (
                     <li key={item} className="flex items-center gap-3 font-mono text-[12.5px] text-white/62">
                       <span className="inline-block h-px w-4 shrink-0 bg-white/45" aria-hidden />
                       {item}
@@ -262,13 +262,13 @@ function StatMoment() {
   return (
     <div className="text-center md:text-left">
       <div className="text-[clamp(3.6rem,8.5vw,6.8rem)] font-medium leading-[0.9] tracking-[-0.04em] text-foreground">
-        +191%
+        +724%
       </div>
       <p className="mt-4 text-[clamp(1.05rem,2.4vw,1.6rem)] font-medium tracking-tight text-white/80">
-        higher SLA-safe goodput per dollar
+        average SLA-safe goodput per dollar vs a production scheduler
       </p>
       <p className="mt-6 max-w-md font-mono text-[11px] uppercase leading-relaxed tracking-[0.14em] text-white/42">
-        Measured on bounded Azure/Mooncake replay with public PJM/ERCOT/CAISO price traces; Pareto-safe vs strongest SLA-aware baseline.
+        Mean of +698% / +718% / +755% across PJM, ERCOT, and CAISO. Uncapped replay of public production traces (~1.5M replayed requests). Pareto-safe at ~84% fewer GPU-hours. Simulated replay, not a production deployment.
       </p>
     </div>
   );

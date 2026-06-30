@@ -59,7 +59,7 @@ export function WorldModelState({ className }: { className?: string }) {
           </span>
         </div>
       </div>
-      <CaptionStrip label="fig.02 — cluster state advanced one control period at a time" />
+      <CaptionStrip label="fig.02 · cluster state advanced one control period at a time" />
     </figure>
   );
 }

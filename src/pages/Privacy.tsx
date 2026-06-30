@@ -38,7 +38,7 @@ const policySections: PolicySection[] = [
         <ul>
           <li>
             <span className="text-foreground/90">Information you provide.</span> When you contact us,
-            request a pilot, or sign up for updates, we collect the details you submit — typically your
+            request a pilot, or sign up for updates, we collect the details you submit, typically your
             name, work email, company, and the contents of your message.
           </li>
           <li>
@@ -48,7 +48,7 @@ const policySections: PolicySection[] = [
           </li>
           <li>
             <span className="text-foreground/90">Scheduler metadata.</span> Where the Aurelius
-            software is deployed inside your environment, it reads operational scheduler metadata —
+            software is deployed inside your environment, it reads operational scheduler metadata,
             job timing windows, requested resources, workload class, capacity availability, and
             operator-defined constraints. It does not read prompts, model outputs, training data,
             customer payloads, source code, secrets, or other application contents.
@@ -110,7 +110,7 @@ const policySections: PolicySection[] = [
         <ul>
           <li>
             <span className="text-foreground/90">Service providers.</span> With vendors who process
-            data on our behalf — such as hosting, analytics, and email — under contractual obligations
+            data on our behalf (such as hosting, analytics, and email) under contractual obligations
             to protect it and use it only for the services they provide to us.
           </li>
           <li>
@@ -237,7 +237,7 @@ export default function Privacy() {
           <Reveal delay={140}>
             <p className="mt-5 max-w-2xl text-[15px] leading-relaxed text-white/62 md:text-base">
               How Aurelius collects, uses, and protects information. Metadata-only by design,
-              shadow-mode first — the same restraint that governs the product governs your data.
+              shadow-mode first, the same restraint that governs the product governs your data.
             </p>
           </Reveal>
           <Reveal delay={200}>

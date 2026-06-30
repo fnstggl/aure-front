@@ -29,8 +29,8 @@ export default function HowItWorks() {
           <Reveal delay={140}>
             <p className="mt-5 max-w-2xl text-[15px] leading-relaxed text-white/62 md:text-base">
               Technical documentation for infrastructure engineers. Aurelius evaluates pending
-              decisions before they reach execution — observing metadata, forecasting conditions,
-              and filtering risk — without touching the execution path.
+              decisions before they reach execution (observing metadata, forecasting conditions,
+              and filtering risk) without touching the execution path.
             </p>
           </Reveal>
         </Container>
@@ -60,7 +60,7 @@ export default function HowItWorks() {
               eyebrow="Forecasting layer"
               title="Short-horizon forecasts with explicit uncertainty"
               revealIntro
-              intro="Aurelius predicts energy cost and carbon intensity using lag-based signals derived from historical patterns and real-time grid data. Every forecast carries uncertainty bounds — and when uncertainty exceeds threshold, a deterministic conservative fallback applies. No black-box models."
+              intro="Aurelius predicts energy cost and carbon intensity using lag-based signals derived from historical patterns and real-time grid data. Every forecast carries uncertainty bounds, and when uncertainty exceeds threshold, a deterministic conservative fallback applies. No black-box models."
             />
           </Reveal>
           <Reveal delay={140} className="mt-12">
@@ -129,13 +129,13 @@ export default function HowItWorks() {
             <SectionHeader
               eyebrow="Latency-safe mode"
               title="Workloads behave exactly as they would without Aurelius"
-              intro="Latency-safe mode enforces a zero-slack requirement: jobs complete within their original bounds, start times are preserved, and there is no power throttling. If optimization cannot be achieved within these constraints, an invisible fallback applies. The only difference is lower cost and carbon — when safe."
+              intro="Latency-safe mode enforces a zero-slack requirement: jobs complete within their original bounds, start times are preserved, and there is no power throttling. If optimization cannot be achieved within these constraints, an invisible fallback applies. The only difference is lower cost and carbon, when safe."
             />
           </Reveal>
           <Reveal delay={140}>
             <p className="mt-8 max-w-2xl border-l border-white pl-5 text-[14px] leading-relaxed text-white">
               Most savings come from time-shifting batch and training workloads away from peak
-              pricing windows — not from throttling or resource reduction.
+              pricing windows, not from throttling or resource reduction.
             </p>
           </Reveal>
         </Container>

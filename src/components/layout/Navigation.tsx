@@ -2,13 +2,13 @@ import { Link } from "react-router-dom";
 import { ScrambleText } from "@/components/site/ScrambleText";
 
 /* Absolutely minimal header: the wordmark, the one secondary destination
-   (the technical report), and a single action. No page menu — the landing
+   (the technical report), and a single action. No page menu, the landing
    page is the surface. The two nav labels carry the matrix scramble on hover. */
 export function Navigation() {
   return (
     <header className="fixed left-0 right-0 top-0 z-50 glass-nav">
       <nav className="mx-auto flex h-16 max-w-content items-center justify-between px-6 lg:px-8">
-        <Link to="/" className="flex items-center" aria-label="Aurelius — home">
+        <Link to="/" className="flex items-center" aria-label="Aurelius, home">
           <img
             src="/aure_logo.png"
             alt="Aurelius"

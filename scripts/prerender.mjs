@@ -109,7 +109,7 @@ async function renderBody(page, url, minText = 150) {
 /** Strip the JSON-LD block and retarget head tags for the noindex 404 doc. */
 function buildNotFoundDoc(baseHtml, body) {
   let html = baseHtml;
-  html = html.replace(/<title>[\s\S]*?<\/title>/, "<title>Page not found — Aurelius</title>");
+  html = html.replace(/<title>[\s\S]*?<\/title>/, "<title>Page not found · Aurelius</title>");
   html = html.replace(
     /(<meta name="robots" content=")[^"]*(")/,
     "$1noindex, follow$2",

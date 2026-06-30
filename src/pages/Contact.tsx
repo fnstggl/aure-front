@@ -98,7 +98,7 @@ export default function Contact() {
               </Reveal>
               <Reveal delay={200}>
                 <ul className="mt-8 space-y-2.5">
-                  {["Metadata only", "Read-only shadow mode", "Counterfactual savings report", "+191% higher goodput/$ on public production traces"].map((t) => (
+                  {["Metadata only", "Read-only shadow mode", "Counterfactual savings report", "+724% avg SLA-safe goodput/$ vs a production scheduler (uncapped high-load replay)"].map((t) => (
                     <li key={t} className="flex items-center gap-3 font-mono text-[12px] text-white/55">
                       <span className="inline-block h-1 w-1 shrink-0 bg-white" aria-hidden />
                       {t}
@@ -196,7 +196,7 @@ export default function Contact() {
                               />
                             </FormControl>
                             <p className="font-mono text-[11px] text-white/45">
-                              Metadata only — never share secrets or customer data.
+                              Metadata only. Never share secrets or customer data.
                             </p>
                             <FormMessage />
                           </FormItem>
@@ -208,7 +208,7 @@ export default function Contact() {
                         disabled={isSubmitting}
                         className="inline-flex h-11 w-full items-center justify-center bg-foreground px-6 text-sm font-medium tracking-tight text-background transition-all duration-200 ease-premium hover:bg-white active:translate-y-px disabled:opacity-50"
                       >
-                        {isSubmitting ? "Submitting…" : submitted ? "Submitted — we'll be in touch" : "Submit request"}
+                        {isSubmitting ? "Submitting…" : submitted ? "Submitted, we'll be in touch" : "Submit request"}
                       </button>
                     </form>
                   </Form>
