@@ -302,12 +302,17 @@
   50% { opacity: 0.55; }
 }
 
-/* the lone survivor's restrained pulse: its neighbours briefly illuminate once
-   per cycle, then rest. Peak brightness is per-cell via --pulse-peak. */
-@keyframes neighbor-pulse {
+/* when the search converges, the survivor emits one soft pulse and its
+   immediate neighbours illuminate once alongside it, then rest. Single
+   iteration per planning cycle. Neighbour peak is per-cell via --pulse-peak. */
+@keyframes survivor-pulse {
+  0% { opacity: 0.92; transform: scale(1); }
+  35% { opacity: 1; transform: scale(1.45); }
+  100% { opacity: 0.92; transform: scale(1); }
+}
+@keyframes neighbor-pulse-once {
   0% { opacity: 0; }
-  5% { opacity: var(--pulse-peak, 0.3); }
-  16% { opacity: 0; }
+  35% { opacity: var(--pulse-peak, 0.3); }
   100% { opacity: 0; }
 }
 
@@ -315,7 +320,8 @@
   .anim-breathe { animation: node-breathe 6s ease-in-out infinite; }
   .anim-cursor { animation: cursor-blink 1.2s step-end infinite; }
   .grid-cell-anim { animation: grid-shimmer 2.6s ease-in-out infinite; }
-  .cell-pulse { animation: neighbor-pulse 4.6s ease-in-out infinite; }
+  .survivor-pulse-once { animation: survivor-pulse 900ms ease-out 1 both; }
+  .cell-pulse-once { animation: neighbor-pulse-once 900ms ease-out 1 both; }
   .flow-dash {
     stroke-dasharray: 2 8;
     animation: dash-move 9s linear infinite;

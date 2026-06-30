@@ -4,24 +4,28 @@ import { useInView } from "@/hooks/useInView";
 import { usePrefersReducedMotion } from "@/hooks/usePrefersReducedMotion";
 
 /* ============================================================================
-   FIG.01 — one idea, told almost entirely through the search:
-   Aurelius evaluates millions of possible futures before one decision.
+   FIG.01 — the planning cycle, told almost entirely through the search:
+   Aurelius evaluates millions of possible futures before one decision, then
+   does it again. The figure loops, slowly, like an instrument left running.
 
      CURRENT STATE     the cluster inputs the decision starts from
           ↓
-     WORLD MODEL       a dense field drifts in brightness, like stars, while a
-                       counter climbs through ~millions of simulated futures.
-                       Then it does not "select" — it CONVERGES: the field's
-                       entropy collapses from the edges inward (a JS progress
-                       value drives each cell, by distance from centre) until a
-                       single square is all that remains. Nothing moves;
-                       everything else simply disappears. The survivor then
-                       emits one soft, restrained pulse every few seconds.
+     WORLD MODEL       1. SIMULATING  a dense field drifts in brightness, like
+                          stars, while a counter climbs through ~millions of
+                          simulated futures.
+                       2. CONVERGING  the field's entropy collapses from the
+                          edges inward (a JS progress value drives each cell by
+                          distance from centre) until one square dominates.
+                       3. DECIDED     the survivor emits a single soft pulse;
+                          the outcome fades in beneath.
+                       4. HOLD        the decision rests for a beat.
+                       5. RESET       the full candidate field softly returns,
+                          and the cycle restarts with a new total.
           ↓
-     SELECTED PLAN     stated, not illustrated. No check, no card, no list.
+     SELECTED PLAN     stated, not illustrated. No check, no card.
 
-   95% of the figure is search; selection is left implicit. Pure black plate,
-   white ink, no color. Reduced motion shows the resolved survivor.
+   Slow and restrained; no spinners, bars, bounce, or glow. Pure black plate,
+   white ink, no color. Reduced motion shows the static resolved state.
    ============================================================================ */
 
 const CURRENT_STATE = ["Cluster telemetry", "Workload queue", "Capacity state", "SLA targets"];
@@ -55,60 +59,72 @@ const CELL_META = Array.from({ length: CELLS }, (_, i) => {
   };
 });
 
-const TARGET = 2_641_882; // simulated futures explored before the decision
+/* Simulated-future totals, rotated each cycle so the number varies pass to pass
+   while staying in the ~2–3M band. */
+const TARGETS = [2_641_882, 2_873_104, 2_487_339, 2_956_018, 2_312_540, 2_744_667];
 
-const ALIVE_MS = 4800;
+const ALIVE_MS = 4500;
 const CONVERGE_MS = 2600;
+const DECIDED_MS = 3200; // single pulse + label fade-in + ~2s hold
+const RESET_MS = 1300;
 const COUNT_MS = 90;
 const PROG_MS = 55;
 
-type Phase = "alive" | "converge" | "decided";
+type Phase = "simulate" | "converge" | "decided" | "reset";
 
 export function WorldModelArchitecture({ className }: { className?: string }) {
   const { ref, inView } = useInView();
   const reduced = usePrefersReducedMotion();
   const [phase, setPhase] = useState<Phase>("decided");
-  const [count, setCount] = useState(TARGET);
+  const [cycle, setCycle] = useState(0);
+  const [count, setCount] = useState(TARGETS[0]);
   const [progress, setProgress] = useState(1);
 
-  // One pass when the figure enters view: alive -> converge -> decided. The
-  // resolved survivor otherwise (and for reduced motion / SSR).
+  const target = TARGETS[cycle % TARGETS.length];
+
+  // Start (or restart, each cycle) a pass when in view; static resolved state
+  // for reduced motion / SSR.
   useEffect(() => {
     if (reduced || !inView) {
       setPhase("decided");
-      setCount(TARGET);
+      setCount(target);
       setProgress(1);
       return;
     }
-    setCount(Math.round(TARGET * 0.9));
+    setCount(Math.round(target * 0.9));
     setProgress(0);
-    setPhase("alive");
-  }, [inView, reduced]);
+    setPhase("simulate");
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [inView, reduced, cycle]);
 
-  // Phase machine. "decided" is terminal: the answer is inevitable, it stays.
+  // Phase machine: simulate → converge → decided → reset → (next cycle). Loops.
   useEffect(() => {
     if (reduced || !inView) return;
     let id: number;
-    if (phase === "alive") {
+    if (phase === "simulate") {
       id = window.setTimeout(() => {
-        setCount(TARGET);
+        setCount(target);
         setProgress(0);
         setPhase("converge");
       }, ALIVE_MS);
     } else if (phase === "converge") {
       id = window.setTimeout(() => setPhase("decided"), CONVERGE_MS);
+    } else if (phase === "decided") {
+      id = window.setTimeout(() => setPhase("reset"), DECIDED_MS);
+    } else {
+      id = window.setTimeout(() => setCycle((c) => c + 1), RESET_MS);
     }
     return () => window.clearTimeout(id);
-  }, [phase, inView, reduced]);
+  }, [phase, inView, reduced, target]);
 
   // Ease the counter up toward the total while the field is alive.
   useEffect(() => {
-    if (reduced || !inView || phase !== "alive") return;
+    if (reduced || !inView || phase !== "simulate") return;
     const id = window.setInterval(() => {
-      setCount((c) => (c >= TARGET ? TARGET : Math.min(TARGET, c + Math.max(1500, Math.round((TARGET - c) * 0.07)))));
+      setCount((c) => (c >= target ? target : Math.min(target, c + Math.max(1500, Math.round((target - c) * 0.07)))));
     }, COUNT_MS);
     return () => window.clearInterval(id);
-  }, [phase, inView, reduced]);
+  }, [phase, inView, reduced, target]);
 
   // Drive the collapse: progress 0→1 across the converge phase. Each cell winks
   // out as progress passes its deathPoint, so the field caves in from the edges.
@@ -181,15 +197,25 @@ export function WorldModelArchitecture({ className }: { className?: string }) {
 
         <Connector />
 
-        {/* ---------------- selected plan (stated, not illustrated) ---------------- */}
-        <div className="flex justify-center pt-1">
-          <span
-            className={cn(
-              "font-mono text-[11px] uppercase leading-none tracking-[0.28em] text-white transition-opacity duration-700",
-              decided ? "opacity-100" : "opacity-0",
-            )}
-          >
+        {/* ---------------- selected plan (stated, fades in after the pulse) -------- */}
+        <div
+          className={cn(
+            "flex flex-col items-center gap-1.5 pt-1 text-center transition-opacity",
+            decided ? "opacity-100" : "opacity-0",
+          )}
+          style={{
+            transitionDuration: decided ? "700ms" : "400ms",
+            transitionDelay: decided ? "700ms" : "0ms",
+          }}
+        >
+          <span className="font-mono text-[11px] uppercase leading-none tracking-[0.28em] text-white">
             Selected plan
+          </span>
+          <span className="font-mono text-[10px] uppercase leading-none tracking-[0.14em] text-white/72">
+            Highest projected goodput / $
+          </span>
+          <span className="font-mono text-[10px] uppercase leading-none tracking-[0.14em] text-white/48">
+            SLA constraints satisfied
           </span>
         </div>
       </div>
@@ -199,32 +225,44 @@ export function WorldModelArchitecture({ className }: { className?: string }) {
 
 type CellMeta = (typeof CELL_META)[number];
 
-/* Per-cell appearance by phase. Alive: drift like stars. Converge: hold `base`
-   until progress passes `deathPoint`, then fade to nothing — edges first, so
-   the field caves inward with no motion. Decided: only the survivor, its
-   immediate neighbours pulsing faintly. */
+/* Per-cell appearance by phase. Simulate: drift like stars. Converge: hold
+   `base` until progress passes `deathPoint`, then fade — edges first, so the
+   field caves inward with no motion. Decided: the survivor pulses once and its
+   neighbours illuminate once. Reset: every cell eases back to `base`, the full
+   candidate field softly returning before the next pass. */
 function cellState(m: CellMeta, phase: Phase, progress: number, reduced: boolean): {
   className: string;
   style: React.CSSProperties;
 } {
-  if (phase === "alive" && !reduced) {
+  if (reduced) {
+    return { className: "", style: { opacity: m.isWinner ? WINNER_OP : 0 } };
+  }
+
+  if (phase === "simulate") {
     return {
       className: "grid-cell-anim",
       style: { animationDelay: `${m.delay}ms`, animationDuration: `${m.dur}ms` },
     };
   }
 
-  if (phase === "converge" && !reduced) {
+  if (phase === "converge") {
     const op = m.isWinner ? WINNER_OP : progress >= m.deathPoint ? 0 : m.base;
     return { className: "transition-opacity duration-300 ease-out", style: { opacity: op } };
   }
 
-  // decided (or reduced / SSR): the lone survivor, neighbours pulsing faintly.
-  if (m.isWinner) return { className: "", style: { opacity: WINNER_OP } };
-  if (!reduced && m.isNeighbor) {
-    return { className: "cell-pulse", style: { "--pulse-peak": m.ortho ? 0.3 : 0.16 } as React.CSSProperties };
+  if (phase === "decided") {
+    if (m.isWinner) return { className: "survivor-pulse-once origin-center", style: {} };
+    if (m.isNeighbor) {
+      return { className: "cell-pulse-once", style: { "--pulse-peak": m.ortho ? 0.3 : 0.16 } as React.CSSProperties };
+    }
+    return { className: "", style: { opacity: 0 } };
   }
-  return { className: "", style: { opacity: 0 } };
+
+  // reset: the candidate field softly returns
+  return {
+    className: "transition-opacity ease-in-out",
+    style: { opacity: m.base, transitionDuration: `${RESET_MS}ms` },
+  };
 }
 
 function PanelLabel({ children }: { children: React.ReactNode }) {
