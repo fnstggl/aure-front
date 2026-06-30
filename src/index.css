@@ -163,9 +163,20 @@
     text-rendering: optimizeLegibility;
   }
 
+  /* Site-wide text selection: a solid pure-white block with pure-black text.
+     No transparency, gradients, shadows, or rounded corners — crisp 90° edges,
+     the browser default rectangle. Applies to every element (headings, body,
+     nav, buttons, code blocks, the technical report). ::-moz-selection must be
+     its own rule so Firefox still applies it. */
   ::selection {
-    background: hsl(var(--signal) / 0.28);
-    color: hsl(var(--foreground));
+    background-color: #ffffff;
+    color: #000000;
+    text-shadow: none;
+  }
+  ::-moz-selection {
+    background-color: #ffffff;
+    color: #000000;
+    text-shadow: none;
   }
 
   :focus-visible {
@@ -301,15 +312,34 @@
 /* fig.01 world-model search space — cells flicker on a staggered wave so the
    grid reads as a compute engine exploring a large space (not a static plate).
    Per-cell delay/duration are set inline; reduced motion freezes it globally. */
+/* fig.01 search field: every cell drifts in brightness, slowly, like stars,
+   while the world model is "alive". On convergence the cells fade to a single
+   survivor (driven inline, per-cell, by distance from centre). */
 @keyframes grid-shimmer {
-  0%, 100% { opacity: 0.14; }
-  50% { opacity: 0.6; }
+  0%, 100% { opacity: 0.12; }
+  50% { opacity: 0.55; }
+}
+
+/* when the search converges, the survivor emits one soft pulse and its
+   immediate neighbours illuminate once alongside it, then rest. Single
+   iteration per planning cycle. Neighbour peak is per-cell via --pulse-peak. */
+@keyframes survivor-pulse {
+  0% { opacity: 0.92; transform: scale(1); }
+  35% { opacity: 1; transform: scale(1.45); }
+  100% { opacity: 0.92; transform: scale(1); }
+}
+@keyframes neighbor-pulse-once {
+  0% { opacity: 0; }
+  35% { opacity: var(--pulse-peak, 0.3); }
+  100% { opacity: 0; }
 }
 
 @layer utilities {
   .anim-breathe { animation: node-breathe 6s ease-in-out infinite; }
   .anim-cursor { animation: cursor-blink 1.2s step-end infinite; }
-  .grid-cell-anim { animation: grid-shimmer 2.6s ease-in-out infinite; }
+  .grid-cell-anim { animation: grid-shimmer 2.6s ease-in-out infinite both; }
+  .survivor-pulse-once { animation: survivor-pulse 900ms ease-out 1 both; }
+  .cell-pulse-once { animation: neighbor-pulse-once 900ms ease-out 1 both; }
   .flow-dash {
     stroke-dasharray: 2 8;
     animation: dash-move 9s linear infinite;

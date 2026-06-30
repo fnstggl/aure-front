@@ -4,85 +4,141 @@ import { useInView } from "@/hooks/useInView";
 import { usePrefersReducedMotion } from "@/hooks/usePrefersReducedMotion";
 
 /* ============================================================================
-   FIG.01 — the predictive control engine, drawn as a vertical pipeline.
+   FIG.01 — the planning cycle, told almost entirely through the search:
+   Aurelius evaluates millions of possible futures before one decision, then
+   does it again. The figure loops, slowly, like an instrument left running.
 
-   The story, top to bottom, is the product's differentiator:
+     CURRENT STATE     the cluster inputs the decision starts from
+          ↓
+     WORLD MODEL       1. SIMULATING  a dense field drifts in brightness, like
+                          stars, while a counter climbs through ~millions of
+                          simulated futures.
+                       2. CONVERGING  the field's entropy collapses from the
+                          edges inward (a JS progress value drives each cell by
+                          distance from centre) until one square dominates.
+                       3. DECIDED     the survivor emits a single soft pulse;
+                          the outcome fades in beneath.
+                       4. HOLD        the decision rests for a beat.
+                       5. RESET       the full candidate field softly returns,
+                          and the cycle restarts with a new total.
+          ↓
+     SELECTED PLAN     stated, not illustrated. No check, no card.
 
-     CURRENT STATE          the cluster inputs the decision starts from
-          ↓
-     WORLD MODEL            simulates a very large space of candidate futures
-          ↓                 (a live counter reports ~millions explored)
-     CONSTRAINT VALIDATION  infeasible futures are filtered out; the set shrinks
-          ↓
-     ECONOMIC RANKING       the survivors are ranked by economic outcome
-          ↓
-     SELECTED PLAN ✓        the lowest-cost, constraint-valid plan is committed
-
-   It is deliberately a compute engine, not a spreadsheet: a dense field of
-   cells flickers while the counter climbs through a few million simulated
-   futures, settling on a different total each pass. Pure black plate, white
-   ink, no color. Reduced motion collapses to the resolved state.
+   Slow and restrained; no spinners, bars, bounce, or glow. Pure black plate,
+   white ink, no color. Reduced motion shows the static resolved state.
    ============================================================================ */
 
 const CURRENT_STATE = ["Cluster telemetry", "Workload queue", "Capacity state", "SLA targets"];
 
-/* Totals the counter settles on, rotated each pass so the number varies on
-   every showing while staying in the ~2–3M band. */
+const GRID_COLS = 24;
+const GRID_ROWS = 8;
+const CELLS = GRID_COLS * GRID_ROWS; // 192
+const WIN_ROW = Math.floor(GRID_ROWS / 2); // 4
+const WIN_COL = Math.floor(GRID_COLS / 2); // 12
+const WINNER_OP = 0.92;
+
+/* Deterministic pseudo-random in [0,1) — stable across SSR and client. */
+const rand = (n: number) => {
+  const x = Math.sin(n * 12.9898 + 78.233) * 43758.5453;
+  return x - Math.floor(x);
+};
+
+/* Diagonal anisotropy: measuring distance along rotated (diagonal) axes with
+   unequal weights turns the iso-distance contours into tilted ellipses, so the
+   collapse reads as diagonal rather than as perfectly concentric rings. */
+const DIAG_U = 0.62; // main diagonal (row + col)
+const DIAG_V = 1.18; // anti-diagonal (row - col)
+
+const CELL_RAW = Array.from({ length: CELLS }, (_, i) => {
+  const dRow = Math.floor(i / GRID_COLS) - WIN_ROW;
+  const dCol = (i % GRID_COLS) - WIN_COL;
+  const distD = Math.hypot((dRow + dCol) * DIAG_U, (dRow - dCol) * DIAG_V);
+  return { i, dRow, dCol, cheb: Math.max(Math.abs(dRow), Math.abs(dCol)), distD };
+});
+const MAX_D = Math.max(...CELL_RAW.map((c) => c.distD));
+
+/* Per-cell geometry, precomputed once. `deathPoint` is where in the convergence
+   (0→1) a cell winks out. Distance sets the base (far goes first, the survivor's
+   neighbours last); per-cell noise roughens the front and a gentle diagonal
+   sweep makes it asymmetric, so the collapse never looks like a uniform circle.
+   The twinkle `delay` follows a diagonal wave so the simulating field already
+   moves along the same axis the collapse will. */
+const CELL_META = CELL_RAW.map((c) => {
+  const nd = c.distD / MAX_D; // 0 at survivor, ~1 at the diagonal extremes
+  const isWinner = c.cheb === 0;
+  const noise = rand(c.i * 3.17 + 1) - 0.5; // -0.5..0.5
+  const sweep = (c.dRow + c.dCol) / 40; // mild directional (diagonal) bias
+  const deathPoint = isWinner ? 2 : Math.min(0.95, Math.max(0.04, 1 - nd + noise * 0.17 + sweep * 0.12));
+  return {
+    isWinner,
+    isNeighbor: c.cheb === 1,
+    ortho: c.dRow === 0 || c.dCol === 0,
+    deathPoint,
+    base: 0.22 + (1 - nd) * 0.45,
+    delay: Math.round((c.dRow + c.dCol) * 95 + 1700 + rand(c.i * 1.7) * 600),
+    dur: Math.round(3600 + rand(c.i * 2.3) * 1700),
+  };
+});
+
+/* Simulated-future totals, rotated each cycle so the number varies pass to pass
+   while staying in the ~2–3M band. */
 const TARGETS = [2_641_882, 2_873_104, 2_487_339, 2_956_018, 2_312_540, 2_744_667];
 
-const CELLS = 192; // world-model search field
-const FILTER_ROWS = [26, 11, 3]; // candidate set shrinking under constraints
-const RANKS = [
-  { n: "#1", w: 100 },
-  { n: "#2", w: 66 },
-  { n: "#3", w: 41 },
-];
-
-const SIMULATE_MS = 5200;
-const LOCKED_MS = 2600;
+const ALIVE_MS = 4500;
+const CONVERGE_MS = 2600;
+const DECIDED_MS = 3200; // single pulse + label fade-in + ~2s hold
+const RESET_MS = 1300;
 const COUNT_MS = 90;
+const PROG_MS = 55;
 
-type Phase = "simulate" | "locked";
+type Phase = "simulate" | "converge" | "decided" | "reset";
 
 export function WorldModelArchitecture({ className }: { className?: string }) {
   const { ref, inView } = useInView();
   const reduced = usePrefersReducedMotion();
-  const [phase, setPhase] = useState<Phase>("locked");
+  const [phase, setPhase] = useState<Phase>("decided");
   const [cycle, setCycle] = useState(0);
   const [count, setCount] = useState(TARGETS[0]);
+  const [progress, setProgress] = useState(1);
 
   const target = TARGETS[cycle % TARGETS.length];
 
-  // Begin a fresh pass when the figure enters view (or each new cycle); the
-  // resolved/locked state otherwise. Counting starts ~10% below the target.
+  // Start (or restart, each cycle) a pass when in view; static resolved state
+  // for reduced motion / SSR.
   useEffect(() => {
     if (reduced || !inView) {
-      setPhase("locked");
+      setPhase("decided");
       setCount(target);
+      setProgress(1);
       return;
     }
     setCount(Math.round(target * 0.9));
+    setProgress(0);
     setPhase("simulate");
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [inView, reduced, cycle]);
 
-  // Phase machine: simulate for a beat, lock the result, then loop to the next
-  // cycle (which rotates the target and restarts the count via the effect above).
+  // Phase machine: simulate → converge → decided → reset → (next cycle). Loops.
   useEffect(() => {
     if (reduced || !inView) return;
     let id: number;
     if (phase === "simulate") {
       id = window.setTimeout(() => {
         setCount(target);
-        setPhase("locked");
-      }, SIMULATE_MS);
+        setProgress(0);
+        setPhase("converge");
+      }, ALIVE_MS);
+    } else if (phase === "converge") {
+      id = window.setTimeout(() => setPhase("decided"), CONVERGE_MS);
+    } else if (phase === "decided") {
+      id = window.setTimeout(() => setPhase("reset"), DECIDED_MS);
     } else {
-      id = window.setTimeout(() => setCycle((c) => c + 1), LOCKED_MS);
+      id = window.setTimeout(() => setCycle((c) => c + 1), RESET_MS);
     }
     return () => window.clearTimeout(id);
   }, [phase, inView, reduced, target]);
 
-  // Ease the counter up toward its target — decelerating, never frantic.
+  // Ease the counter up toward the total while the field is alive.
   useEffect(() => {
     if (reduced || !inView || phase !== "simulate") return;
     const id = window.setInterval(() => {
@@ -91,8 +147,21 @@ export function WorldModelArchitecture({ className }: { className?: string }) {
     return () => window.clearInterval(id);
   }, [phase, inView, reduced, target]);
 
-  const locked = phase === "locked";
-  const active = !locked && !reduced;
+  // Drive the collapse: progress 0→1 across the converge phase. Each cell winks
+  // out as progress passes its deathPoint, so the field caves in from the edges.
+  useEffect(() => {
+    if (reduced || !inView || phase !== "converge") return;
+    const id = window.setInterval(() => {
+      setProgress((p) => {
+        const next = Math.min(1, p + PROG_MS / CONVERGE_MS);
+        if (next >= 1) window.clearInterval(id);
+        return next;
+      });
+    }, PROG_MS);
+    return () => window.clearInterval(id);
+  }, [phase, inView, reduced]);
+
+  const decided = phase === "decided";
 
   return (
     <figure ref={ref} className={cn("relative overflow-hidden border border-white bg-black", className)}>
@@ -107,8 +176,8 @@ export function WorldModelArchitecture({ className }: { className?: string }) {
           </span>
         </div>
         <span className="flex items-center gap-1.5 font-mono text-[9.5px] uppercase leading-none tracking-[0.18em] text-white/55">
-          <span className={cn("inline-block h-1.5 w-1.5", locked ? "bg-white" : "bg-white/70")} aria-hidden />
-          {locked ? "Locked" : "Simulating"}
+          <span className={cn("inline-block h-1.5 w-1.5", decided ? "bg-white" : "bg-white/70")} aria-hidden />
+          {decided ? "Decided" : "Simulating"}
         </span>
       </div>
 
@@ -126,31 +195,18 @@ export function WorldModelArchitecture({ className }: { className?: string }) {
           ))}
         </div>
 
-        <Down />
+        <Connector />
 
         {/* ---------------- world model (the engine) ---------------- */}
         <PanelLabel>World model</PanelLabel>
-        <div className="mt-2.5 border border-white px-3.5 pb-3 pt-3">
-          <div className="flex flex-wrap gap-[3px]">
-            {Array.from({ length: CELLS }, (_, i) => {
-              const baseOp = 0.16 + ((i * 41) % 50) / 100; // 0.16–0.65, deterministic
-              const delay = (i % 32) * 70 + ((i * 13) % 40) * 6;
-              const dur = 2100 + ((i * 29) % 1500);
-              return (
-                <span
-                  key={i}
-                  aria-hidden
-                  className={cn("h-1.5 w-1.5 bg-white", active && "grid-cell-anim")}
-                  style={
-                    active
-                      ? { animationDelay: `${delay}ms`, animationDuration: `${dur}ms` }
-                      : { opacity: locked ? baseOp * 0.7 : baseOp }
-                  }
-                />
-              );
+        <div className="mt-2.5 border border-white px-3.5 pb-3 pt-3.5">
+          <div className="mx-auto grid w-fit gap-[3px]" style={{ gridTemplateColumns: `repeat(${GRID_COLS}, 6px)` }}>
+            {CELL_META.map((m, i) => {
+              const { className: cellClass, style } = cellState(m, phase, progress, reduced);
+              return <span key={i} aria-hidden className={cn("h-1.5 w-1.5 bg-white", cellClass)} style={style} />;
             })}
           </div>
-          <div className="mt-3 flex items-baseline gap-2 border-t border-white/15 pt-2.5">
+          <div className="mt-3.5 flex items-baseline gap-2 border-t border-white/15 pt-2.5">
             <span className="font-mono text-[15px] font-medium tabular-nums leading-none text-white">
               {count.toLocaleString("en-US")}
             </span>
@@ -160,78 +216,91 @@ export function WorldModelArchitecture({ className }: { className?: string }) {
           </div>
         </div>
 
-        <Down />
+        <Connector />
 
-        {/* ---------------- constraint validation (the set shrinks) ---------------- */}
-        <PanelLabel>Constraint validation</PanelLabel>
-        <div className="mt-2.5 grid gap-[5px]">
-          {FILTER_ROWS.map((n, r) => (
-            <div key={r} className="flex flex-wrap gap-[3px]">
-              {Array.from({ length: n }, (_, i) => (
-                <span key={i} aria-hidden className="h-1.5 w-1.5 bg-white" style={{ opacity: 0.8 - r * 0.2 }} />
-              ))}
-            </div>
-          ))}
-        </div>
-
-        <Down />
-
-        {/* ---------------- economic ranking ---------------- */}
-        <PanelLabel>Economic ranking</PanelLabel>
-        <div className="mt-2.5 grid gap-2">
-          {RANKS.map((r, i) => (
-            <div key={r.n} className="flex items-center gap-3">
-              <span className={cn("font-mono text-[11px] tabular-nums leading-none", i === 0 ? "text-white" : "text-white/55")}>
-                {r.n}
-              </span>
-              <span className="relative h-1.5 w-full max-w-[180px] bg-white/[0.06]">
-                <span
-                  className={cn("absolute inset-y-0 left-0", i === 0 ? "bg-white/70" : "bg-white/35")}
-                  style={{ width: `${r.w}%` }}
-                />
-              </span>
-            </div>
-          ))}
-        </div>
-
-        <Down />
-
-        {/* ---------------- selected plan ---------------- */}
+        {/* ---------------- selected plan (stated, fades in after the pulse) -------- */}
         <div
           className={cn(
-            "border px-4 py-3.5 transition-colors duration-500",
-            locked ? "border-white bg-white/[0.06]" : "border-white/35",
+            "flex flex-col items-center gap-1.5 pt-1 text-center transition-opacity",
+            decided ? "opacity-100" : "opacity-0",
           )}
+          style={{
+            transitionDuration: decided ? "700ms" : "400ms",
+            transitionDelay: decided ? "700ms" : "0ms",
+          }}
         >
-          <div className="flex items-center gap-2 font-mono text-[11px] uppercase tracking-[0.16em] text-white">
+          <span className="font-mono text-[11px] uppercase leading-none tracking-[0.28em] text-white">
             Selected plan
-            <span className={cn("transition-opacity duration-500", locked ? "opacity-100" : "opacity-30")} aria-hidden>
-              ✓
-            </span>
-          </div>
-          <div className="mt-2.5 grid gap-1 font-mono text-[10.5px] uppercase tracking-[0.08em] text-white/62">
-            <span>Lowest-cost admissible plan</span>
-            <span>All constraints satisfied</span>
-          </div>
-          <div className="mt-3 font-mono text-[9.5px] uppercase tracking-[0.16em] text-white/45">
-            Recommend / Execute
-          </div>
+          </span>
+          <span className="font-mono text-[10px] uppercase leading-none tracking-[0.14em] text-white/72">
+            Highest projected goodput / $
+          </span>
+          <span className="font-mono text-[10px] uppercase leading-none tracking-[0.14em] text-white/48">
+            SLA constraints satisfied
+          </span>
         </div>
       </div>
     </figure>
   );
 }
 
+type CellMeta = (typeof CELL_META)[number];
+
+/* Per-cell appearance by phase. Simulate: drift like stars. Converge: hold
+   `base` until progress passes `deathPoint`, then fade — edges first, so the
+   field caves inward with no motion. Decided: the survivor pulses once and its
+   neighbours illuminate once. Reset: every cell eases back to `base`, the full
+   candidate field softly returning before the next pass. */
+function cellState(m: CellMeta, phase: Phase, progress: number, reduced: boolean): {
+  className: string;
+  style: React.CSSProperties;
+} {
+  if (reduced) {
+    return { className: "", style: { opacity: m.isWinner ? WINNER_OP : 0 } };
+  }
+
+  const twinkle = {
+    className: "grid-cell-anim",
+    style: { animationDelay: `${m.delay}ms`, animationDuration: `${m.dur}ms` },
+  };
+
+  if (phase === "simulate") return twinkle;
+
+  if (phase === "converge") {
+    // The survivor settles to a steady bright as the field caves in around it.
+    if (m.isWinner) return { className: "transition-opacity duration-300 ease-out", style: { opacity: WINNER_OP } };
+    // Where the collapse front has passed, the cell fades out; everywhere else
+    // it keeps twinkling, uninterrupted, so the ripple flows into the collapse.
+    if (progress >= m.deathPoint) {
+      return { className: "transition-opacity ease-out", style: { opacity: 0, transitionDuration: "450ms" } };
+    }
+    return twinkle;
+  }
+
+  if (phase === "decided") {
+    if (m.isWinner) return { className: "survivor-pulse-once origin-center", style: {} };
+    if (m.isNeighbor) {
+      return { className: "cell-pulse-once", style: { "--pulse-peak": m.ortho ? 0.3 : 0.16 } as React.CSSProperties };
+    }
+    return { className: "", style: { opacity: 0 } };
+  }
+
+  // reset: the candidate field softly returns
+  return {
+    className: "transition-opacity ease-in-out",
+    style: { opacity: m.base, transitionDuration: `${RESET_MS}ms` },
+  };
+}
+
 function PanelLabel({ children }: { children: React.ReactNode }) {
   return <span className="font-mono text-[10px] uppercase tracking-[0.18em] text-white/55">{children}</span>;
 }
 
-/* Directional connector between stages — a short rule and a downward arrow. */
-function Down() {
+/* Quiet structural connector between stages — a hairline, no UI arrow. */
+function Connector() {
   return (
-    <div className="flex flex-col items-center gap-1 py-3" aria-hidden>
-      <span className="h-3 w-px bg-white/20" />
-      <span className="font-mono text-[11px] leading-none text-white/35">↓</span>
+    <div className="flex justify-center py-3.5" aria-hidden>
+      <span className="h-5 w-px bg-white/18" />
     </div>
   );
 }
