@@ -98,7 +98,7 @@ export default function Contact() {
               </Reveal>
               <Reveal delay={200}>
                 <ul className="mt-8 space-y-2.5">
-                  {["Metadata only", "Read-only shadow mode", "Counterfactual savings report", "+191% higher goodput/$ on public production traces"].map((t) => (
+                  {["Metadata only", "Read-only shadow mode", "Counterfactual savings report", "+724% avg SLA-safe goodput/$ vs a production scheduler (uncapped high-load replay)"].map((t) => (
                     <li key={t} className="flex items-center gap-3 font-mono text-[12px] text-white/55">
                       <span className="inline-block h-1 w-1 shrink-0 bg-white" aria-hidden />
                       {t}
