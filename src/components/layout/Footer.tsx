@@ -40,10 +40,19 @@ export function Footer() {
           </nav>
         </div>
 
-        <div className="mx-auto max-w-content px-6 lg:px-8">
-          <p className="mt-4 whitespace-nowrap pb-10 text-[clamp(2rem,6.5vw,9rem)] font-normal leading-none tracking-[-0.03em] text-foreground">
+        {/* headline: pl-0 so "F" sits exactly on the grid line */}
+        <div className="mx-auto max-w-content pl-0 pr-6 lg:pr-8">
+          <p className="mt-4 whitespace-nowrap text-[clamp(2rem,6.5vw,9rem)] font-normal leading-none tracking-[-0.03em] text-foreground">
             Forecast. Simulate. Decide.
           </p>
+          <div className="mt-3 pb-8 flex flex-col gap-1">
+            <span className="text-[10px] font-normal tracking-[0.02em] text-white/30">
+              Predictive orchestration for AI infrastructure.
+            </span>
+            <span className="text-[10px] font-normal tracking-[0.02em] text-white/30">
+              © {new Date().getFullYear()} Aurelius
+            </span>
+          </div>
         </div>
       </div>
     </footer>
