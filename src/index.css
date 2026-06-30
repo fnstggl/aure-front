@@ -319,7 +319,7 @@
 @layer utilities {
   .anim-breathe { animation: node-breathe 6s ease-in-out infinite; }
   .anim-cursor { animation: cursor-blink 1.2s step-end infinite; }
-  .grid-cell-anim { animation: grid-shimmer 2.6s ease-in-out infinite; }
+  .grid-cell-anim { animation: grid-shimmer 2.6s ease-in-out infinite both; }
   .survivor-pulse-once { animation: survivor-pulse 900ms ease-out 1 both; }
   .cell-pulse-once { animation: neighbor-pulse-once 900ms ease-out 1 both; }
   .flow-dash {

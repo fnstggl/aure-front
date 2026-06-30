@@ -35,27 +35,48 @@ const GRID_ROWS = 8;
 const CELLS = GRID_COLS * GRID_ROWS; // 192
 const WIN_ROW = Math.floor(GRID_ROWS / 2); // 4
 const WIN_COL = Math.floor(GRID_COLS / 2); // 12
-const MAX_D = Math.hypot(WIN_ROW, WIN_COL);
 const WINNER_OP = 0.92;
 
+/* Deterministic pseudo-random in [0,1) — stable across SSR and client. */
+const rand = (n: number) => {
+  const x = Math.sin(n * 12.9898 + 78.233) * 43758.5453;
+  return x - Math.floor(x);
+};
+
+/* Diagonal anisotropy: measuring distance along rotated (diagonal) axes with
+   unequal weights turns the iso-distance contours into tilted ellipses, so the
+   collapse reads as diagonal rather than as perfectly concentric rings. */
+const DIAG_U = 0.62; // main diagonal (row + col)
+const DIAG_V = 1.18; // anti-diagonal (row - col)
+
+const CELL_RAW = Array.from({ length: CELLS }, (_, i) => {
+  const dRow = Math.floor(i / GRID_COLS) - WIN_ROW;
+  const dCol = (i % GRID_COLS) - WIN_COL;
+  const distD = Math.hypot((dRow + dCol) * DIAG_U, (dRow - dCol) * DIAG_V);
+  return { i, dRow, dCol, cheb: Math.max(Math.abs(dRow), Math.abs(dCol)), distD };
+});
+const MAX_D = Math.max(...CELL_RAW.map((c) => c.distD));
+
 /* Per-cell geometry, precomputed once. `deathPoint` is where in the convergence
-   (0→1) a cell winks out: far cells (near 0) go first, the survivor's
-   neighbours (near 1) go last. `base` brightens toward the centre. */
-const CELL_META = Array.from({ length: CELLS }, (_, i) => {
-  const row = Math.floor(i / GRID_COLS);
-  const col = i % GRID_COLS;
-  const dRow = row - WIN_ROW;
-  const dCol = col - WIN_COL;
-  const cheb = Math.max(Math.abs(dRow), Math.abs(dCol));
-  const nd = Math.hypot(dRow, dCol) / MAX_D; // 0 at survivor, ~1 at corners
+   (0→1) a cell winks out. Distance sets the base (far goes first, the survivor's
+   neighbours last); per-cell noise roughens the front and a gentle diagonal
+   sweep makes it asymmetric, so the collapse never looks like a uniform circle.
+   The twinkle `delay` follows a diagonal wave so the simulating field already
+   moves along the same axis the collapse will. */
+const CELL_META = CELL_RAW.map((c) => {
+  const nd = c.distD / MAX_D; // 0 at survivor, ~1 at the diagonal extremes
+  const isWinner = c.cheb === 0;
+  const noise = rand(c.i * 3.17 + 1) - 0.5; // -0.5..0.5
+  const sweep = (c.dRow + c.dCol) / 40; // mild directional (diagonal) bias
+  const deathPoint = isWinner ? 2 : Math.min(0.95, Math.max(0.04, 1 - nd + noise * 0.17 + sweep * 0.12));
   return {
-    isWinner: cheb === 0,
-    isNeighbor: cheb === 1,
-    ortho: dRow === 0 || dCol === 0,
-    deathPoint: 1 - nd,
+    isWinner,
+    isNeighbor: c.cheb === 1,
+    ortho: c.dRow === 0 || c.dCol === 0,
+    deathPoint,
     base: 0.22 + (1 - nd) * 0.45,
-    delay: (i % GRID_COLS) * 90 + ((i * 17) % 30) * 8,
-    dur: 4200 + ((i * 53) % 2800),
+    delay: Math.round((c.dRow + c.dCol) * 95 + 1700 + rand(c.i * 1.7) * 600),
+    dur: Math.round(3600 + rand(c.i * 2.3) * 1700),
   };
 });
 
@@ -238,16 +259,22 @@ function cellState(m: CellMeta, phase: Phase, progress: number, reduced: boolean
     return { className: "", style: { opacity: m.isWinner ? WINNER_OP : 0 } };
   }
 
-  if (phase === "simulate") {
-    return {
-      className: "grid-cell-anim",
-      style: { animationDelay: `${m.delay}ms`, animationDuration: `${m.dur}ms` },
-    };
-  }
+  const twinkle = {
+    className: "grid-cell-anim",
+    style: { animationDelay: `${m.delay}ms`, animationDuration: `${m.dur}ms` },
+  };
+
+  if (phase === "simulate") return twinkle;
 
   if (phase === "converge") {
-    const op = m.isWinner ? WINNER_OP : progress >= m.deathPoint ? 0 : m.base;
-    return { className: "transition-opacity duration-300 ease-out", style: { opacity: op } };
+    // The survivor settles to a steady bright as the field caves in around it.
+    if (m.isWinner) return { className: "transition-opacity duration-300 ease-out", style: { opacity: WINNER_OP } };
+    // Where the collapse front has passed, the cell fades out; everywhere else
+    // it keeps twinkling, uninterrupted, so the ripple flows into the collapse.
+    if (progress >= m.deathPoint) {
+      return { className: "transition-opacity ease-out", style: { opacity: 0, transitionDuration: "450ms" } };
+    }
+    return twinkle;
   }
 
   if (phase === "decided") {
