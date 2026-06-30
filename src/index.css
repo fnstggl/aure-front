@@ -362,7 +362,7 @@
   .hero-field {
     position: absolute;
     inset: 0;
-    background-image: url("/datacenter_back.webp");
+    background-image: url("/datacenter_back_new.webp");
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;
@@ -378,7 +378,7 @@
   .hero-field-shimmer {
     position: absolute;
     inset: 0;
-    background-image: url("/datacenter_back.webp");
+    background-image: url("/datacenter_back_new.webp");
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;

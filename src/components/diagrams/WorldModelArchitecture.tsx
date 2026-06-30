@@ -95,7 +95,7 @@ export function WorldModelArchitecture({ className }: { className?: string }) {
   const active = !locked && !reduced;
 
   return (
-    <figure ref={ref} className={cn("relative overflow-hidden border border-white bg-black", className)}>
+    <figure ref={ref} className={cn("relative overflow-hidden border border-white bg-black uppercase", className)}>
       {/* figure label */}
       <div className="flex items-center justify-between gap-3 border-b border-white px-4 py-2.5">
         <div className="flex items-center gap-3">

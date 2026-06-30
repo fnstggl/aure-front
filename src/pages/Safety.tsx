@@ -194,7 +194,7 @@ export default function Safety() {
    The footer states, plainly, what never crosses back. */
 function InitialEvaluationFigure() {
   return (
-    <figure className="max-w-xl">
+    <figure className="max-w-xl uppercase">
       <div className="border border-border">
         <div className="flex flex-col items-center px-6 py-11 sm:py-12">
           {/* Operator side */}

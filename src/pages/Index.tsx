@@ -60,15 +60,15 @@ export default function Index() {
                   </div>
                 </Reveal>
                 <Reveal delay={180}>
-                  <p className="mt-6 text-[13px] leading-relaxed text-white/80">
+                  <p className="mt-6 text-[13px] uppercase leading-relaxed tracking-[0.05em] text-white/80">
                     Working with a small batch of infrastructure operators.
                   </p>
                 </Reveal>
                 <Reveal delay={240}>
                   <div className="mt-8 flex flex-wrap items-center justify-center gap-x-5 gap-y-1.5 font-mono text-[10.5px] uppercase tracking-[0.05em] text-white/32">
-                    <span><span className="text-white/50">+724%</span> avg SLA-safe goodput / $</span>
+                    <span><span className="text-white">+724%</span> avg SLA-safe goodput / $</span>
                     <span className="text-white/18">·</span>
-                    <span><span className="text-white/50">−84%</span> GPU-hours</span>
+                    <span><span className="text-white">−84%</span> GPU-hours</span>
                     <span className="text-white/18">·</span>
                     <span className="uppercase tracking-[0.06em]">~1.5M replayed requests · vs production scheduler</span>
                   </div>

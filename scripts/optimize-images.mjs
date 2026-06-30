@@ -22,6 +22,7 @@ const pub = path.join(root, "public");
 // high-frequency dotted pattern with alpha that WebP actually makes larger.)
 const TARGETS = [
   { src: "datacenter_back.png", quality: 80 },
+  { src: "datacenter_back_new.png", quality: 80 },
   { src: "mobile_background.png", quality: 80 },
 ];
 
