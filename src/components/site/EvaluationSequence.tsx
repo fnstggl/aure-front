@@ -31,7 +31,7 @@ const STAGES: { name: string; desc: string }[] = [
 
 export function EvaluationSequence() {
   return (
-    <ol className="max-w-xl uppercase">
+    <ol className="max-w-xl">
       {STAGES.map((s, i) => {
         const last = i === STAGES.length - 1;
         return (
