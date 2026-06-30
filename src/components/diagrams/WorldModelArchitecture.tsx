@@ -4,80 +4,82 @@ import { useInView } from "@/hooks/useInView";
 import { usePrefersReducedMotion } from "@/hooks/usePrefersReducedMotion";
 
 /* ============================================================================
-   FIG.01 — the predictive control engine, drawn as a vertical pipeline.
-
-   The story, top to bottom, is the product's differentiator:
+   FIG.01 — the predictive control engine, drawn as one memorable idea:
+   Aurelius explores an enormous space of possible futures before it decides.
 
      CURRENT STATE          the cluster inputs the decision starts from
           ↓
-     WORLD MODEL            simulates a very large space of candidate futures
-          ↓                 (a live counter reports ~millions explored)
-     CONSTRAINT VALIDATION  infeasible futures are filtered out; the set shrinks
+     WORLD MODEL            a dense field of cells flickers like a GPU at work
+          ↓                 while a counter climbs through ~millions of
+                            simulated futures
+          ↓                 then the field collapses: every cell fades but one,
+                            which brightens and detaches
           ↓
-     ECONOMIC RANKING       the survivors are ranked by economic outcome
-          ↓
-     SELECTED PLAN ✓        the lowest-cost, constraint-valid plan is committed
+     SELECTED PLAN ✓        that single survivor becomes the committed plan;
+                            "all constraints satisfied" resolves a beat later
 
-   It is deliberately a compute engine, not a spreadsheet: a dense field of
-   cells flickers while the counter climbs through a few million simulated
-   futures, settling on a different total each pass. Pure black plate, white
-   ink, no color. Reduced motion collapses to the resolved state.
+   Constraint validation and ranking are real but are implementation detail, so
+   they are left out of the figure — the memorable claim is millions → one. Pure
+   black plate, white ink, no color. Reduced motion shows the resolved state.
    ============================================================================ */
 
 const CURRENT_STATE = ["Cluster telemetry", "Workload queue", "Capacity state", "SLA targets"];
 
 /* Totals the counter settles on, rotated each pass so the number varies on
    every showing while staying in the ~2–3M band. */
-const TARGETS = [2_641_882, 2_873_104, 2_487_339, 2_956_018, 2_312_540, 2_744_667];
+const TARGETS = [2_641_882, 2_873_104, 2_487_339, 2_956_018, 2_312_540, 2_805_805];
+/* Which cell survives the collapse — rotated so it lands somewhere different. */
+const WINNERS = [97, 64, 131, 45, 112, 78];
 
-const CELLS = 192; // world-model search field
-const FILTER_ROWS = [26, 11, 3]; // candidate set shrinking under constraints
-const RANKS = [
-  { n: "#1", w: 100 },
-  { n: "#2", w: 66 },
-  { n: "#3", w: 41 },
-];
+const CELLS = 192;
 
-const SIMULATE_MS = 5200;
-const LOCKED_MS = 2600;
+const SIMULATE_MS = 4200;
+const COLLAPSE_MS = 1900;
+const SELECT_MS = 3200;
+const CHECK_DELAY = 850; // "all constraints satisfied" resolves a beat into select
 const COUNT_MS = 90;
 
-type Phase = "simulate" | "locked";
+type Phase = "simulate" | "collapse" | "select";
 
 export function WorldModelArchitecture({ className }: { className?: string }) {
   const { ref, inView } = useInView();
   const reduced = usePrefersReducedMotion();
-  const [phase, setPhase] = useState<Phase>("locked");
+  const [phase, setPhase] = useState<Phase>("select");
   const [cycle, setCycle] = useState(0);
   const [count, setCount] = useState(TARGETS[0]);
+  const [checked, setChecked] = useState(true);
 
   const target = TARGETS[cycle % TARGETS.length];
+  const winner = WINNERS[cycle % WINNERS.length];
 
-  // Begin a fresh pass when the figure enters view (or each new cycle); the
-  // resolved/locked state otherwise. Counting starts ~10% below the target.
+  // Start a fresh pass when the figure enters view (or each new cycle); the
+  // resolved state otherwise. Counting starts ~10% below the target.
   useEffect(() => {
     if (reduced || !inView) {
-      setPhase("locked");
+      setPhase("select");
       setCount(target);
+      setChecked(true);
       return;
     }
     setCount(Math.round(target * 0.9));
+    setChecked(false);
     setPhase("simulate");
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [inView, reduced, cycle]);
 
-  // Phase machine: simulate for a beat, lock the result, then loop to the next
-  // cycle (which rotates the target and restarts the count via the effect above).
+  // Phase machine: simulate → collapse → select → loop to the next cycle.
   useEffect(() => {
     if (reduced || !inView) return;
     let id: number;
     if (phase === "simulate") {
       id = window.setTimeout(() => {
         setCount(target);
-        setPhase("locked");
+        setPhase("collapse");
       }, SIMULATE_MS);
+    } else if (phase === "collapse") {
+      id = window.setTimeout(() => setPhase("select"), COLLAPSE_MS);
     } else {
-      id = window.setTimeout(() => setCycle((c) => c + 1), LOCKED_MS);
+      id = window.setTimeout(() => setCycle((c) => c + 1), SELECT_MS);
     }
     return () => window.clearTimeout(id);
   }, [phase, inView, reduced, target]);
@@ -91,8 +93,21 @@ export function WorldModelArchitecture({ className }: { className?: string }) {
     return () => window.clearInterval(id);
   }, [phase, inView, reduced, target]);
 
-  const locked = phase === "locked";
-  const active = !locked && !reduced;
+  // "All constraints satisfied" resolves a beat after the plan is selected.
+  useEffect(() => {
+    if (phase !== "select") return;
+    if (reduced || !inView) {
+      setChecked(true);
+      return;
+    }
+    const id = window.setTimeout(() => setChecked(true), CHECK_DELAY);
+    return () => window.clearTimeout(id);
+  }, [phase, inView, reduced]);
+
+  const simulating = phase === "simulate";
+  const collapsing = phase === "collapse";
+  const selected = phase === "select";
+  const active = simulating && !reduced; // cells shimmer only while simulating
 
   return (
     <figure ref={ref} className={cn("relative overflow-hidden border border-white bg-black", className)}>
@@ -107,8 +122,8 @@ export function WorldModelArchitecture({ className }: { className?: string }) {
           </span>
         </div>
         <span className="flex items-center gap-1.5 font-mono text-[9.5px] uppercase leading-none tracking-[0.18em] text-white/55">
-          <span className={cn("inline-block h-1.5 w-1.5", locked ? "bg-white" : "bg-white/70")} aria-hidden />
-          {locked ? "Locked" : "Simulating"}
+          <span className={cn("inline-block h-1.5 w-1.5", selected ? "bg-white" : "bg-white/70")} aria-hidden />
+          {selected ? "Locked" : "Simulating"}
         </span>
       </div>
 
@@ -133,19 +148,29 @@ export function WorldModelArchitecture({ className }: { className?: string }) {
         <div className="mt-2.5 border border-white px-3.5 pb-3 pt-3">
           <div className="flex flex-wrap gap-[3px]">
             {Array.from({ length: CELLS }, (_, i) => {
-              const baseOp = 0.16 + ((i * 41) % 50) / 100; // 0.16–0.65, deterministic
-              const delay = (i % 32) * 70 + ((i * 13) % 40) * 6;
-              const dur = 2100 + ((i * 29) % 1500);
+              const isWinner = i === winner;
+              if (active) {
+                const delay = (i % 32) * 70 + ((i * 13) % 40) * 6;
+                const dur = 2100 + ((i * 29) % 1500);
+                return (
+                  <span
+                    key={i}
+                    aria-hidden
+                    className="grid-cell-anim h-1.5 w-1.5 bg-white"
+                    style={{ animationDelay: `${delay}ms`, animationDuration: `${dur}ms` }}
+                  />
+                );
+              }
+              // collapsed / resolved: every cell fades but the one survivor
               return (
                 <span
                   key={i}
                   aria-hidden
-                  className={cn("h-1.5 w-1.5 bg-white", active && "grid-cell-anim")}
-                  style={
-                    active
-                      ? { animationDelay: `${delay}ms`, animationDuration: `${dur}ms` }
-                      : { opacity: locked ? baseOp * 0.7 : baseOp }
-                  }
+                  className={cn(
+                    "h-1.5 w-1.5 origin-center bg-white transition-all duration-[1100ms] ease-out",
+                    isWinner && "scale-[1.7]",
+                  )}
+                  style={{ opacity: isWinner ? 1 : 0.045 }}
                 />
               );
             })}
@@ -160,61 +185,35 @@ export function WorldModelArchitecture({ className }: { className?: string }) {
           </div>
         </div>
 
-        <Down />
+        <Down dropping={collapsing} />
 
-        {/* ---------------- constraint validation (the set shrinks) ---------------- */}
-        <PanelLabel>Constraint validation</PanelLabel>
-        <div className="mt-2.5 grid gap-[5px]">
-          {FILTER_ROWS.map((n, r) => (
-            <div key={r} className="flex flex-wrap gap-[3px]">
-              {Array.from({ length: n }, (_, i) => (
-                <span key={i} aria-hidden className="h-1.5 w-1.5 bg-white" style={{ opacity: 0.8 - r * 0.2 }} />
-              ))}
-            </div>
-          ))}
-        </div>
-
-        <Down />
-
-        {/* ---------------- economic ranking ---------------- */}
-        <PanelLabel>Economic ranking</PanelLabel>
-        <div className="mt-2.5 grid gap-2">
-          {RANKS.map((r, i) => (
-            <div key={r.n} className="flex items-center gap-3">
-              <span className={cn("font-mono text-[11px] tabular-nums leading-none", i === 0 ? "text-white" : "text-white/55")}>
-                {r.n}
-              </span>
-              <span className="relative h-1.5 w-full max-w-[180px] bg-white/[0.06]">
-                <span
-                  className={cn("absolute inset-y-0 left-0", i === 0 ? "bg-white/70" : "bg-white/35")}
-                  style={{ width: `${r.w}%` }}
-                />
-              </span>
-            </div>
-          ))}
-        </div>
-
-        <Down />
-
-        {/* ---------------- selected plan ---------------- */}
-        <div
-          className={cn(
-            "border px-4 py-3.5 transition-colors duration-500",
-            locked ? "border-white bg-white/[0.06]" : "border-white/35",
-          )}
-        >
-          <div className="flex items-center gap-2 font-mono text-[11px] uppercase tracking-[0.16em] text-white">
-            Selected plan
-            <span className={cn("transition-opacity duration-500", locked ? "opacity-100" : "opacity-30")} aria-hidden>
-              ✓
-            </span>
+        {/* ---------------- selected plan (the output, not a card) ---------------- */}
+        <div className="flex flex-col items-center pt-1 text-center">
+          <PanelLabel>Selected plan</PanelLabel>
+          <div
+            className={cn(
+              "mt-4 transition-all duration-500 ease-out",
+              selected ? "scale-100 opacity-100" : "scale-90 opacity-0",
+            )}
+            aria-hidden
+          >
+            <Check />
           </div>
-          <div className="mt-2.5 grid gap-1 font-mono text-[10.5px] uppercase tracking-[0.08em] text-white/62">
-            <span>Lowest-cost admissible plan</span>
-            <span>All constraints satisfied</span>
+          <div
+            className={cn(
+              "mt-4 font-mono text-[12px] uppercase tracking-[0.12em] text-white transition-opacity duration-500",
+              selected ? "opacity-100" : "opacity-0",
+            )}
+          >
+            Lowest-cost admissible plan
           </div>
-          <div className="mt-3 font-mono text-[9.5px] uppercase tracking-[0.16em] text-white/45">
-            Recommend / Execute
+          <div
+            className={cn(
+              "mt-2.5 font-mono text-[12px] uppercase tracking-[0.12em] text-white/55 transition-opacity duration-700",
+              checked ? "opacity-100" : "opacity-0",
+            )}
+          >
+            All constraints satisfied
           </div>
         </div>
       </div>
@@ -226,12 +225,24 @@ function PanelLabel({ children }: { children: React.ReactNode }) {
   return <span className="font-mono text-[10px] uppercase tracking-[0.18em] text-white/55">{children}</span>;
 }
 
-/* Directional connector between stages — a short rule and a downward arrow. */
-function Down() {
+/* Directional connector between stages — a short rule and a downward arrow.
+   When `dropping`, a bright cell falls through it: the survivor detaching. */
+function Down({ dropping = false }: { dropping?: boolean }) {
   return (
-    <div className="flex flex-col items-center gap-1 py-3" aria-hidden>
+    <div className="relative flex flex-col items-center gap-1 py-3" aria-hidden>
       <span className="h-3 w-px bg-white/20" />
       <span className="font-mono text-[11px] leading-none text-white/35">↓</span>
+      {dropping && <span className="detach-dot absolute left-1/2 top-1 h-1.5 w-1.5 bg-white" />}
     </div>
+  );
+}
+
+/* The committed plan, drawn as a single resolved check — the output of the
+   search rather than a UI control. */
+function Check() {
+  return (
+    <svg width="26" height="26" viewBox="0 0 26 26" fill="none" aria-hidden>
+      <path d="M4 13.5L10 19.5 22 6.5" stroke="#ffffff" strokeWidth="1.75" strokeLinecap="square" />
+    </svg>
   );
 }
