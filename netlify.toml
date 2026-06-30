@@ -1,14 +1,25 @@
 # Netlify configuration for the Aurelius marketing site.
 #
 # This is a client-rendered single-page app: Vite builds a static bundle and
-# react-router (BrowserRouter) handles routing in the browser. Two things must
-# be configured for it to deploy cleanly on Netlify:
+# react-router (BrowserRouter) handles routing in the browser. The build also
+# prerenders each route's body to static HTML (scripts/prerender.mjs), so every
+# indexable route ships as a real, content-filled file in dist/.
+#
+# Deploy notes:
 #   1. Deploy-safe caching so a new deploy never serves a stale entry document.
-#   2. A catch-all rewrite to index.html so client-side routes resolve.
+#   2. The prerender step needs headless Chromium — installed below and cached
+#      inside node_modules via PLAYWRIGHT_BROWSERS_PATH=0.
+#   3. Because every valid route is a real prerendered file, unknown URLs fall
+#      through to a real 404 (404.html) instead of a soft-200 SPA shell.
 
 [build]
-  command = "npm run build"
+  command = "npx playwright install chromium && npm run build"
   publish = "dist"
+
+[build.environment]
+  # Install Playwright's Chromium into node_modules so Netlify's dependency
+  # cache persists it across builds (avoids re-downloading every deploy).
+  PLAYWRIGHT_BROWSERS_PATH = "0"
 
 # --- Caching ---------------------------------------------------------------
 # Default for every path: never let the browser cache the HTML document.
@@ -31,12 +42,14 @@
   [headers.values]
     Cache-Control = "public, max-age=31536000, immutable"
 
-# --- SPA fallback ----------------------------------------------------------
-# Real files are served when they exist (hashed assets, favicons, robots.txt,
-# images, ...). For every other path, return index.html with a 200 so
-# BrowserRouter can take over. Without this, deep links and hard refreshes on
-# routes like /how-it-works, /safety or /docs 404 on Netlify.
+# --- Unknown routes -> real 404 --------------------------------------------
+# Every valid route is prerendered to its own dist/<route>/index.html, so deep
+# links and hard refreshes resolve to a real static file (served before this
+# non-forced redirect). Anything that does NOT match a file falls through here
+# and is served the prerendered 404 document with a genuine 404 status — no more
+# soft-200 SPA shell on unknown URLs. The in-app NotFound route still handles
+# client-side navigation to bad paths without a server round-trip.
 [[redirects]]
   from = "/*"
-  to = "/index.html"
-  status = 200
+  to = "/404.html"
+  status = 404

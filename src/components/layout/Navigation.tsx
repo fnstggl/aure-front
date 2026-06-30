@@ -9,7 +9,15 @@ export function Navigation() {
     <header className="fixed left-0 right-0 top-0 z-50 glass-nav">
       <nav className="mx-auto flex h-16 max-w-content items-center justify-between px-6 lg:px-8">
         <Link to="/" className="flex items-center" aria-label="Aurelius — home">
-          <img src="/aure_logo.png" alt="Aurelius" className="h-5 w-auto" />
+          <img
+            src="/aure_logo.png"
+            alt="Aurelius"
+            width={1186}
+            height={322}
+            fetchPriority="high"
+            decoding="async"
+            className="h-5 w-auto"
+          />
         </Link>
 
         <div className="flex items-center gap-1 sm:gap-3">

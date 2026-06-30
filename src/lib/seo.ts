@@ -44,6 +44,13 @@ export const SITE = {
   defaultTitle: "Aurelius — The control layer for economically efficient GPU fleets",
   defaultDescription:
     "Aurelius evaluates when workloads should run, where they should run, and when optimization is safe — before execution. Shadow-mode first. Constraint-aware by default. Built for schedulers, platform teams, and GPU fleet operators.",
+  /**
+   * Official Organization profile URLs for JSON-LD `sameAs`. Intentionally
+   * empty: no LinkedIn/GitHub/X/Crunchbase URLs exist in the repo or on the
+   * site yet. Populate ONLY with real, verified URLs — see TODO in
+   * organizationNode(). Never invent these.
+   */
+  sameAs: [] as readonly string[],
 } as const;
 
 /**
@@ -147,6 +154,7 @@ export const ROBOTS_NOINDEX = "noindex, follow";
 const ORG_ID = `${SITE.origin}/#organization`;
 const WEBSITE_ID = `${SITE.origin}/#website`;
 const SOFTWARE_ID = `${SITE.origin}/#software`;
+const TECH_REPORT_PATH = "/technical-report";
 
 function organizationNode() {
   return {
@@ -159,6 +167,15 @@ function organizationNode() {
       url: `${SITE.origin}/aure_logo.png`,
     },
     description: SITE.defaultDescription,
+    // Real contact surface on the site (the /contact request-access route).
+    contactPoint: {
+      "@type": "ContactPoint",
+      contactType: "sales",
+      url: `${SITE.origin}/contact`,
+    },
+    // TODO(business): populate `sameAs` (SITE.sameAs) with official profile
+    // URLs once they exist — see note on SITE.sameAs. Omitted, not invented.
+    ...(SITE.sameAs.length ? { sameAs: SITE.sameAs } : {}),
   };
 }
 
@@ -202,6 +219,29 @@ function breadcrumbNode(route: RouteMeta) {
   };
 }
 
+/**
+ * TechArticle for the technical report — a long-form, citable engineering
+ * document. No author/date are invented: authorship is attributed to the
+ * organization (the only verifiable entity), and `datePublished` is left out
+ * until a real date is available rather than guessed.
+ */
+function techArticleNode(route: RouteMeta) {
+  return {
+    "@type": "TechArticle",
+    "@id": `${routeUrl(route.path)}#techarticle`,
+    headline: route.title,
+    description: route.description,
+    inLanguage: "en",
+    image: SITE.image,
+    author: { "@id": ORG_ID },
+    publisher: { "@id": ORG_ID },
+    isPartOf: { "@id": WEBSITE_ID },
+    mainEntityOfPage: { "@id": `${routeUrl(route.path)}#webpage` },
+    // TODO(business): add `datePublished` / `dateModified` when a canonical
+    // publish date is available — omitted rather than fabricated.
+  };
+}
+
 function webPageNode(route: RouteMeta) {
   return {
     "@type": "WebPage",
@@ -221,6 +261,7 @@ function webPageNode(route: RouteMeta) {
 export function buildJsonLd(route: RouteMeta): string {
   const graph: unknown[] = [organizationNode(), websiteNode()];
   if (route.path === "/") graph.push(softwareApplicationNode());
+  if (route.path === TECH_REPORT_PATH) graph.push(techArticleNode(route));
   graph.push(breadcrumbNode(route), webPageNode(route));
   const doc = { "@context": "https://schema.org", "@graph": graph };
   // Escape "<" to keep the payload from prematurely closing the <script> tag.
