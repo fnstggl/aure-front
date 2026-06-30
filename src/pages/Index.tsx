@@ -31,7 +31,7 @@ export default function Index() {
               small margin, without bleeding off the sides. */}
           <div
             className="absolute inset-0 z-0 bg-no-repeat sm:hidden"
-            style={{ backgroundImage: "url('/mobile_background.png')", backgroundSize: "95%", backgroundPosition: "50% 35%" }}
+            style={{ backgroundImage: "url('/mobile_background.webp')", backgroundSize: "95%", backgroundPosition: "50% 35%" }}
             aria-hidden
           />
           {/* desktop: preserved dotted horn field (animated) */}

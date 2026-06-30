@@ -14,7 +14,7 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
-import { supabase } from "@/integrations/supabase/safeClient";
+import { getSupabaseClient } from "@/integrations/supabase/safeClient";
 import { Container, SectionEyebrow, Reveal } from "@/components/site/primitives";
 
 const contactSchema = z.object({
@@ -41,16 +41,18 @@ export default function Contact() {
   });
 
   const onSubmit = async (data: ContactFormValues) => {
-    if (!supabase) {
-      toast({
-        title: "Form not configured",
-        description: "Set VITE_SUPABASE_URL and VITE_SUPABASE_PUBLISHABLE_KEY to enable submissions.",
-        variant: "destructive",
-      });
-      return;
-    }
     setIsSubmitting(true);
     try {
+      // Supabase SDK is loaded on demand here (not at page load).
+      const supabase = await getSupabaseClient();
+      if (!supabase) {
+        toast({
+          title: "Form not configured",
+          description: "Set VITE_SUPABASE_URL and VITE_SUPABASE_PUBLISHABLE_KEY to enable submissions.",
+          variant: "destructive",
+        });
+        return;
+      }
       const { error } = await supabase.from("pilot_requests").insert({
         name: data.name,
         organization: data.organization,

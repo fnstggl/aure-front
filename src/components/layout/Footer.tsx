@@ -14,6 +14,10 @@ export function Footer() {
         src="/hand-dots.png"
         alt=""
         aria-hidden
+        width={2880}
+        height={1620}
+        loading="lazy"
+        decoding="async"
         className="pointer-events-none absolute bottom-0 -right-[80px] z-0 block w-[230px] select-none opacity-80 sm:-right-[120px] sm:w-[360px]"
         onError={(e) => {
           e.currentTarget.style.display = "none";
@@ -23,7 +27,15 @@ export function Footer() {
         <div className="flex flex-col gap-10 sm:flex-row sm:items-start sm:justify-between">
           <div className="max-w-xs">
             <Link to="/" className="flex items-center" aria-label="Aurelius — home">
-              <img src="/aure_logo.png" alt="Aurelius" className="h-5 w-auto" />
+              <img
+                src="/aure_logo.png"
+                alt="Aurelius"
+                width={1186}
+                height={322}
+                loading="lazy"
+                decoding="async"
+                className="h-5 w-auto"
+              />
             </Link>
             <p className="mt-4 text-[13.5px] leading-relaxed text-white/42">
               Predictive orchestration for AI infrastructure. Forecast first.
