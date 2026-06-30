@@ -87,7 +87,7 @@ export default function Contact() {
                 <SectionEyebrow>Request access</SectionEyebrow>
               </Reveal>
               <Reveal delay={80}>
-                <h1 className="mt-6 text-balance text-[clamp(1.9rem,4vw,2.8rem)] font-medium leading-[1.08] tracking-tight text-foreground">
+                <h1 className="mt-6 text-balance text-[clamp(1.9rem,4vw,2.8rem)] font-normal leading-[1.08] tracking-tight text-foreground">
                   See how much economic value Aurelius could unlock for your fleet
                 </h1>
               </Reveal>
@@ -120,7 +120,7 @@ export default function Contact() {
                           name="name"
                           render={({ field }) => (
                             <FormItem>
-                              <FormLabel className="font-mono text-[11px] uppercase tracking-[0.1em] text-white">
+                              <FormLabel className="font-mono text-[11px] uppercase tracking-[0.04em] text-white">
                                 Name
                               </FormLabel>
                               <FormControl>
@@ -135,7 +135,7 @@ export default function Contact() {
                           name="email"
                           render={({ field }) => (
                             <FormItem>
-                              <FormLabel className="font-mono text-[11px] uppercase tracking-[0.1em] text-white">
+                              <FormLabel className="font-mono text-[11px] uppercase tracking-[0.04em] text-white">
                                 Email
                               </FormLabel>
                               <FormControl>
@@ -153,7 +153,7 @@ export default function Contact() {
                           name="organization"
                           render={({ field }) => (
                             <FormItem>
-                              <FormLabel className="font-mono text-[11px] uppercase tracking-[0.1em] text-white">
+                              <FormLabel className="font-mono text-[11px] uppercase tracking-[0.04em] text-white">
                                 Organization
                               </FormLabel>
                               <FormControl>
@@ -168,7 +168,7 @@ export default function Contact() {
                           name="role"
                           render={({ field }) => (
                             <FormItem>
-                              <FormLabel className="font-mono text-[11px] uppercase tracking-[0.1em] text-white">
+                              <FormLabel className="font-mono text-[11px] uppercase tracking-[0.04em] text-white">
                                 Role
                               </FormLabel>
                               <FormControl>
@@ -185,7 +185,7 @@ export default function Contact() {
                         name="compute_environment"
                         render={({ field }) => (
                           <FormItem>
-                            <FormLabel className="font-mono text-[11px] uppercase tracking-[0.1em] text-white">
+                            <FormLabel className="font-mono text-[11px] uppercase tracking-[0.04em] text-white">
                               Compute environment
                             </FormLabel>
                             <FormControl>

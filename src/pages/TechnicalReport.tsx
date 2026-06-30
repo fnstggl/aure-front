@@ -60,7 +60,7 @@ export default function TechnicalReport() {
                 <Kicker index="·">Aurelius Technical Report</Kicker>
               </Reveal>
               <Reveal delay={60}>
-                <h1 className="mt-7 max-w-3xl text-balance text-[clamp(2rem,4.6vw,3.2rem)] font-medium leading-[1.04] tracking-[-0.03em] text-foreground">
+                <h1 className="mt-7 max-w-3xl text-balance text-[clamp(2rem,4.6vw,3.2rem)] font-normal leading-[1.04] tracking-[-0.03em] text-foreground">
                   Predictive World Models for AI Infrastructure
                 </h1>
               </Reveal>
@@ -78,7 +78,7 @@ export default function TechnicalReport() {
               {/* headline result */}
               <Reveal delay={200}>
                 <div className="mt-10 max-w-2xl border-l-2 border-white/35 pl-5">
-                  <div className="text-[clamp(1.45rem,3.6vw,2.2rem)] font-medium leading-[1.1] tracking-[-0.02em] text-foreground">
+                  <div className="text-[clamp(1.45rem,3.6vw,2.2rem)] font-normal leading-[1.1] tracking-[-0.03em] text-foreground">
                     +724% average SLA-safe goodput per dollar
                   </div>
                   <p className="mt-3.5 font-mono text-[11.5px] leading-relaxed text-white/46">
@@ -90,7 +90,7 @@ export default function TechnicalReport() {
               </Reveal>
 
               <Reveal delay={240}>
-                <div className="mt-9 flex flex-wrap items-center gap-x-6 gap-y-2 font-mono text-[11px] uppercase tracking-[0.16em] text-white/34">
+                <div className="mt-9 flex flex-wrap items-center gap-x-6 gap-y-2 font-mono text-[11px] uppercase tracking-[0.06em] text-white/34">
                   <span>Version 0.4</span>
                   <span className="text-white/14">·</span>
                   <span>Updated 30 June 2026</span>
@@ -112,7 +112,7 @@ export default function TechnicalReport() {
             {/* Sticky contents */}
             <aside className="col-span-1 hidden border-r border-border px-6 py-14 md:col-span-3 md:block lg:px-10">
               <div className="sticky top-24">
-                <div className="font-mono text-[10px] uppercase tracking-[0.22em] text-white/32">
+                <div className="font-mono text-[10px] uppercase tracking-[0.08em] text-white/32">
                   Contents
                 </div>
                 <nav className="mt-5">
@@ -576,7 +576,7 @@ export default function TechnicalReport() {
                   </Action>
                   <Link
                     to="/"
-                    className="font-mono text-[12px] uppercase tracking-[0.18em] text-white/40 transition-colors hover:text-white/80"
+                    className="font-mono text-[12px] uppercase tracking-[0.07em] text-white/40 transition-colors hover:text-white/80"
                   >
                     ← Back to home
                   </Link>
@@ -665,7 +665,7 @@ export default function TechnicalReport() {
                     <div key={rel.v}>
                       <div className="flex items-baseline gap-3">
                         <span className="font-mono text-[12px] text-white/80">{rel.v}</span>
-                        <span className="font-mono text-[11px] uppercase tracking-[0.14em] text-white/40">
+                        <span className="font-mono text-[11px] uppercase tracking-[0.05em] text-white/40">
                           {rel.date}
                         </span>
                       </div>
@@ -736,7 +736,7 @@ function Sec({
     <section id={id} className="scroll-mt-24 border-t border-border py-12 first:border-t-0 first:pt-0 md:py-14">
       <div className="mb-7 flex items-baseline gap-4">
         <span className="font-mono text-[12px] tabular-nums text-white/70">{n}</span>
-        <h2 className="text-[clamp(1.3rem,2.6vw,1.8rem)] font-medium tracking-[-0.02em] text-foreground">
+        <h2 className="text-[clamp(1.3rem,2.6vw,1.8rem)] font-normal tracking-[-0.03em] text-foreground">
           {title.replace(/^\d+\s·\s/, "")}
         </h2>
       </div>
@@ -873,7 +873,7 @@ function Figure({ children }: { children: React.ReactNode }) {
 
 function Caption({ children, className }: { children: React.ReactNode; className?: string }) {
   return (
-    <div className={"mb-3 font-mono text-[11px] uppercase tracking-[0.16em] text-white/40 " + (className ?? "")}>
+    <div className={"mb-3 font-mono text-[11px] uppercase tracking-[0.06em] text-white/40 " + (className ?? "")}>
       {children}
     </div>
   );
@@ -899,7 +899,7 @@ function ResultTable({
             {head.map((h) => (
               <th
                 key={h}
-                className="px-3 py-2.5 font-mono text-[10.5px] uppercase tracking-[0.1em] text-white/50"
+                className="px-3 py-2.5 font-mono text-[10.5px] uppercase tracking-[0.04em] text-white/50"
               >
                 {h}
               </th>
@@ -961,13 +961,13 @@ function SurfaceGroups() {
           <div className="flex flex-wrap items-center gap-x-3 gap-y-1">
             <span
               className={
-                "font-mono text-[11px] uppercase tracking-[0.12em] " +
+                "font-mono text-[11px] uppercase tracking-[0.05em] " +
                 (s.tier === "Active decision levers" ? "text-white" : "text-white/55")
               }
             >
               {s.tier}
             </span>
-            <span className="font-mono text-[10px] uppercase tracking-[0.1em] text-white/35">{s.tierNote}</span>
+            <span className="font-mono text-[10px] uppercase tracking-[0.04em] text-white/35">{s.tierNote}</span>
           </div>
           <div className="mt-2.5 flex flex-wrap gap-x-2 gap-y-1.5">
             {s.groups.map((g) => (
@@ -993,7 +993,7 @@ function PrintButton() {
     <button
       type="button"
       onClick={() => window.print()}
-      className="font-mono text-[11px] uppercase tracking-[0.16em] text-white/45 underline-offset-4 transition-colors hover:text-white/80 hover:underline"
+      className="font-mono text-[11px] uppercase tracking-[0.06em] text-white/45 underline-offset-4 transition-colors hover:text-white/80 hover:underline"
     >
       Print / Save as PDF
     </button>

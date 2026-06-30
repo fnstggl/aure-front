@@ -15,10 +15,11 @@
     <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
     <link rel="manifest" href="/site.webmanifest" />
 
-    <!-- Self-hosted fonts (see src/styles/fonts.css). Preload the two body
-         weights used above the fold; the rest load via @font-face on demand. -->
-    <link rel="preload" as="font" type="font/woff2" href="/fonts/geist-400.woff2" crossorigin />
-    <link rel="preload" as="font" type="font/woff2" href="/fonts/geist-500.woff2" crossorigin />
+    <!-- Self-hosted fonts (see src/styles/fonts.css). IBM Plex Mono is the
+         critical above-the-fold web font (nav + metric row); headline/display
+         uses the system Helvetica Now Display stack, so there is nothing to
+         preload for it. The rest load via @font-face on demand. -->
+    <link rel="preload" as="font" type="font/woff2" href="/fonts/ibm-plex-mono-400.woff2" crossorigin />
 
     <!-- Preload the LCP hero background per breakpoint (desktop vs mobile art). -->
     <link rel="preload" as="image" href="/datacenter_back.webp" media="(min-width: 640px)" />

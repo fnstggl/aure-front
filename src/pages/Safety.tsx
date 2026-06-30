@@ -76,7 +76,7 @@ export default function Safety() {
                 <Kicker>Safety</Kicker>
               </Reveal>
               <Reveal delay={60}>
-                <h1 className="mt-7 max-w-[20ch] text-balance text-[clamp(2rem,4.6vw,3.2rem)] font-medium leading-[1.05] tracking-[-0.03em] text-foreground">
+                <h1 className="mt-7 max-w-[20ch] text-balance text-[clamp(2rem,4.6vw,3.2rem)] font-normal leading-[1.05] tracking-[-0.03em] text-foreground">
                   Aurelius begins as an analysis tool, not a control system.
                 </h1>
               </Reveal>
@@ -106,7 +106,7 @@ export default function Safety() {
                 <Kicker>Initial evaluation</Kicker>
               </Reveal>
               <Reveal delay={60}>
-                <h2 className="mt-6 max-w-2xl text-balance text-[clamp(1.55rem,3vw,2.1rem)] font-medium leading-[1.1] tracking-[-0.02em] text-foreground">
+                <h2 className="mt-6 max-w-2xl text-balance text-[clamp(1.55rem,3vw,2.1rem)] font-normal leading-[1.1] tracking-[-0.03em] text-foreground">
                   Metadata flows in. Nothing flows back.
                 </h2>
               </Reveal>
@@ -132,7 +132,7 @@ export default function Safety() {
                 <Kicker>What Aurelius can access</Kicker>
               </Reveal>
               <Reveal delay={60}>
-                <h2 className="mt-6 max-w-2xl text-balance text-[clamp(1.55rem,3vw,2.1rem)] font-medium leading-[1.1] tracking-[-0.02em] text-foreground">
+                <h2 className="mt-6 max-w-2xl text-balance text-[clamp(1.55rem,3vw,2.1rem)] font-normal leading-[1.1] tracking-[-0.03em] text-foreground">
                   Read-only means scheduler metadata, not the work itself.
                 </h2>
               </Reveal>
@@ -158,7 +158,7 @@ export default function Safety() {
                 <Kicker>How evaluation works</Kicker>
               </Reveal>
               <Reveal delay={60}>
-                <h2 className="mt-6 max-w-2xl text-balance text-[clamp(1.55rem,3vw,2.1rem)] font-medium leading-[1.1] tracking-[-0.02em] text-foreground">
+                <h2 className="mt-6 max-w-2xl text-balance text-[clamp(1.55rem,3vw,2.1rem)] font-normal leading-[1.1] tracking-[-0.03em] text-foreground">
                   Constraints are checked before a recommendation exists.
                 </h2>
               </Reveal>
@@ -184,7 +184,7 @@ export default function Safety() {
                 <Kicker>Operator control</Kicker>
               </Reveal>
               <Reveal delay={60}>
-                <p className="mt-7 max-w-2xl text-balance text-[clamp(1.25rem,2.4vw,1.7rem)] font-medium leading-[1.3] tracking-[-0.015em] text-white/88">
+                <p className="mt-7 max-w-2xl text-balance text-[clamp(1.25rem,2.4vw,1.7rem)] font-normal leading-[1.3] tracking-[-0.03em] text-white/88">
                   By default, Aurelius evaluates historical scheduler behavior and produces
                   recommendations. It does not modify production infrastructure unless an operator
                   explicitly enables production integration.
@@ -200,7 +200,7 @@ export default function Safety() {
               <div className="mt-14">
                 <Link
                   to="/"
-                  className="font-mono text-[12px] uppercase tracking-[0.18em] text-white/35 transition-colors hover:text-white/75"
+                  className="font-mono text-[12px] uppercase tracking-[0.07em] text-white/35 transition-colors hover:text-white/75"
                 >
                   ← Back to home
                 </Link>
@@ -230,7 +230,7 @@ function InitialEvaluationFigure() {
 
           {/* the one and only connection. Read-only, inbound to Aurelius. */}
           <div className="flex flex-col items-center py-4">
-            <span className="font-mono text-[10px] uppercase tracking-[0.16em] text-white/45">
+            <span className="font-mono text-[10px] uppercase tracking-[0.06em] text-white/45">
               read-only metadata
             </span>
             <Arrow className="mt-2 rotate-90 text-white/35" />
@@ -244,7 +244,7 @@ function InitialEvaluationFigure() {
           />
         </div>
 
-        <figcaption className="flex flex-col gap-1 border-t border-border px-6 py-4 text-center font-mono text-[10.5px] uppercase tracking-[0.16em] text-white/42 sm:flex-row sm:justify-center sm:gap-0">
+        <figcaption className="flex flex-col gap-1 border-t border-border px-6 py-4 text-center font-mono text-[10.5px] uppercase tracking-[0.06em] text-white/42 sm:flex-row sm:justify-center sm:gap-0">
           <span>No production changes</span>
           <span className="hidden px-2 text-white/16 sm:inline" aria-hidden>·</span>
           <span>No workload movement</span>
@@ -269,7 +269,7 @@ function Node({
 }) {
   return (
     <div className="w-full max-w-[18rem] border border-border-strong px-5 py-4 text-center">
-      <div className="font-mono text-[10px] uppercase tracking-[0.2em] text-white/40">{label}</div>
+      <div className="font-mono text-[10px] uppercase tracking-[0.08em] text-white/40">{label}</div>
       <div className="mt-1.5 text-[15px] font-medium tracking-tight text-foreground">{title}</div>
       {sub && <div className="mt-2 font-mono text-[11px] leading-relaxed text-white/45">{sub}</div>}
       {lines && (
@@ -291,7 +291,7 @@ function AccessTable() {
   return (
     <div className="grid grid-cols-1 border border-border md:grid-cols-2">
       <div className="px-6 py-7 md:px-8">
-        <div className="flex items-center gap-2.5 font-mono text-[10.5px] uppercase tracking-[0.18em] text-white/60">
+        <div className="flex items-center gap-2.5 font-mono text-[10.5px] uppercase tracking-[0.07em] text-white/60">
           <Check />
           Reads · scheduler metadata
         </div>
@@ -304,7 +304,7 @@ function AccessTable() {
         </ul>
       </div>
       <div className="border-t border-border px-6 py-7 md:border-l md:border-t-0 md:px-8">
-        <div className="flex items-center gap-2.5 font-mono text-[10.5px] uppercase tracking-[0.18em] text-white/38">
+        <div className="flex items-center gap-2.5 font-mono text-[10.5px] uppercase tracking-[0.07em] text-white/38">
           <Cross />
           Does not access during evaluation
         </div>

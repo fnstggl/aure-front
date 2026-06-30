@@ -2,6 +2,24 @@
 @tailwind components;
 @tailwind utilities;
 
+/* ------------------------------------------------------------------
+   Display typeface: Helvetica Now Display (Regular).
+   This is a licensed Monotype font and is NOT bundled. To activate the
+   exact face, drop the licensed woff2 files into /public/fonts and
+   uncomment the @font-face blocks below — no other change is needed,
+   the family is already first in the `sans`/`display` stacks.
+   Until then the stack degrades to Neue Haas Grotesk Display / Helvetica
+   Neue (see tailwind.config.ts). IBM Plex Mono IS bundled (OFL).
+   --------------------------------------------------------------------
+   @font-face {
+     font-family: "Helvetica Now Display";
+     font-style: normal;
+     font-weight: 400;
+     font-display: swap;
+     src: url("/fonts/helvetica-now-display-400.woff2") format("woff2");
+   }
+   ------------------------------------------------------------------ */
+
 /* ============================================================
    Aurelius Design System
    Dependable · precise · quiet · deeply technical.
@@ -139,7 +157,7 @@
 
   body {
     @apply bg-background text-foreground antialiased;
-    font-family: "Geist", "Inter", system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+    font-family: "Helvetica Now Display", "Neue Haas Grotesk Display", "Helvetica Neue", Helvetica, Arial, sans-serif;
     font-feature-settings: "ss01", "cv01";
     -webkit-font-smoothing: antialiased;
     text-rendering: optimizeLegibility;
@@ -158,7 +176,7 @@
 
 @layer utilities {
   .font-mono {
-    font-family: "Geist Mono", "IBM Plex Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
+    font-family: "IBM Plex Mono", "Geist Mono", "SF Mono", ui-monospace, monospace;
   }
 
   .glass-nav {

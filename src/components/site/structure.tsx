@@ -91,7 +91,7 @@ export function Kicker({
   return (
     <div
       className={cn(
-        "flex items-center gap-3 font-mono text-[10.5px] uppercase leading-none tracking-[0.24em] text-white/42",
+        "flex items-center gap-3 font-mono text-[10.5px] uppercase leading-none tracking-[0.08em] text-white/42",
         className,
       )}
     >
@@ -105,7 +105,7 @@ export function Kicker({
 /* Action — the single button style for the redesigned surfaces. Sharp corners,
    restrained. Primary = solid; secondary = hairline ghost with a gold hover. */
 const actionBase =
-  "group inline-flex h-11 items-center justify-center gap-2 px-6 text-[13.5px] font-medium tracking-tight transition-all duration-200 ease-premium active:translate-y-px focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-white/40";
+  "group inline-flex h-11 items-center justify-center gap-2 px-6 text-[13.5px] font-normal tracking-tight transition-all duration-200 ease-premium active:translate-y-px focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-white/40";
 
 export function Action({
   to,

@@ -24,6 +24,9 @@ const cssOut = path.join(root, "src", "styles", "fonts.css");
 const FAMILIES = [
   { css: "Geist", file: "geist", weights: [300, 400, 500, 600, 700] },
   { css: "Geist Mono", file: "geist-mono", weights: [400, 500, 600] },
+  // IBM Plex Mono is IBM's official OFL-licensed font, served by Google Fonts.
+  // Self-hosted (the real font, not a substitute) for mono labels/nav/metrics.
+  { css: "IBM Plex Mono", file: "ibm-plex-mono", weights: [400, 500, 600] },
 ];
 
 const UA =
