@@ -91,7 +91,7 @@ export default function TechnicalReport() {
 
               <Reveal delay={240}>
                 <div className="mt-9 flex flex-wrap items-center gap-x-6 gap-y-2 font-mono text-[11px] uppercase tracking-[0.16em] text-white/34">
-                  <span>Version 0.2</span>
+                  <span>Version 0.4</span>
                   <span className="text-white/14">·</span>
                   <span>Updated 30 June 2026</span>
                   <span className="text-white/14">·</span>
@@ -655,8 +655,10 @@ export default function TechnicalReport() {
               {/* Version history — methodology, not headline numbers */}
               <Sec n="·" id="version-history" title="Version History">
                 <p className={`${PT} max-w-[68ch]`}>
-                  This documents how the evaluation evolved, not how the headline number moved. Each
-                  revision records a methodological change.
+                  This documents how the public technical report evolved, not every internal
+                  experiment. Each revision records a methodological or structural change visible in
+                  the report, reconstructed from the repository&rsquo;s commit history; dates are
+                  actual revision dates.
                 </p>
                 <div className="mt-6 grid max-w-[72ch] gap-y-8">
                   {VERSION_HISTORY.map((rel) => (
@@ -808,24 +810,45 @@ const REFERENCES: { n: number; cite: string; url: string; host: string }[] = [
   },
 ];
 
-/* Version history — methodology changes only, deliberately not a log of headline
-   percentages (a benchmark that became more realistic, not a number that grew). */
+/* Version history — methodology/structure changes to the public report only,
+   reconstructed from the repository's commit history (dates are real commit
+   dates). Deliberately not a log of headline percentages: a benchmark that
+   became more realistic, not a number that grew. Same-day commits are folded
+   into one revision; number-only swaps and copy/polish commits are excluded. */
 const VERSION_HISTORY: { v: string; date: string; items: string[] }[] = [
   {
-    v: "v0.2",
+    v: "v0.4",
     date: "30 June 2026",
     items: [
-      "Introduced uncapped, production-scale replay (~1.5M requests) as the primary benchmark.",
+      "Primary benchmark changed to uncapped, production-scale replay (~1.5M replayed requests).",
       "Added the production-class scheduler baseline, assembled from real serving-stack components.",
-      "Added a candidate-regret audit against exhaustive ground truth.",
-      "Reported per-market deltas and GPU-hours from the same uncapped replay.",
+      "Moved Benchmark V1 to an appendix and separated the candidate-generation explanation alongside it.",
+      "Added an explicit replay-scale and scope disclosure to the headline and methodology.",
+    ],
+  },
+  {
+    v: "v0.3",
+    date: "29 June 2026",
+    items: [
+      "Refocused the report on the physics-guided candidate-generation finding.",
+      "Added candidate-regret validation against exhaustive-search ground truth.",
+      "Expanded the search and candidate-generation methodology.",
+    ],
+  },
+  {
+    v: "v0.2",
+    date: "28 June 2026",
+    items: [
+      "Rewritten as a grounded systems report (forecast, simulate, decide).",
+      "Added the predictive world-model architecture explanation and figures.",
+      "Added multi-market evaluation and the SLA-aware baseline definition; generalized implementation detail for public release.",
     ],
   },
   {
     v: "v0.1",
-    date: "Initial",
+    date: "26 June 2026",
     items: [
-      "Initial capped replay benchmark, scored against the strongest SLA-aware baseline.",
+      "Initial public technical report: single-trace replay against a baseline scheduler.",
     ],
   },
 ];

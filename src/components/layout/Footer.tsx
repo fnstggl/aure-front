@@ -41,10 +41,6 @@ export function Footer() {
               Predictive orchestration for AI infrastructure. Forecast first.
               Simulate before execution.
             </p>
-            <span className="mt-4 flex items-center gap-2 font-mono text-[10.5px] uppercase tracking-[0.16em] text-white/30">
-              <span className="inline-block h-1 w-1 bg-white/30" aria-hidden />
-              Forecast → Simulate → Decide
-            </span>
           </div>
 
           <nav aria-label="Footer">
@@ -63,8 +59,12 @@ export function Footer() {
           </nav>
         </div>
 
-        <div className="mt-12 flex flex-col gap-2 border-t border-border pt-6 sm:flex-row sm:items-center sm:justify-between">
+        <div className="mt-12 flex flex-col gap-3 border-t border-border pt-6">
           <span className="font-mono text-[11px] text-white/28">© {new Date().getFullYear()} Aurelius</span>
+          <span className="flex items-center gap-2 font-mono text-[10.5px] uppercase tracking-[0.16em] text-white/30">
+            <span className="inline-block h-1 w-1 bg-white/30" aria-hidden />
+            Forecast → Simulate → Decide
+          </span>
         </div>
       </div>
     </footer>
