@@ -21,7 +21,7 @@ const FACETS: { name: string; detail: string }[] = [
 
 export function WorldModelState({ className }: { className?: string }) {
   return (
-    <figure className={cn("relative overflow-hidden border border-white bg-black", className)}>
+    <figure className={cn("relative overflow-hidden border border-white bg-black uppercase", className)}>
       <PlateHeader fig="fig.02" title="predictive world model" />
       <div className="px-4 py-5">
         <div className="flex flex-col gap-2.5 md:flex-row md:items-stretch md:gap-3">

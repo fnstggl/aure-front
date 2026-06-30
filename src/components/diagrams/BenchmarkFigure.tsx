@@ -28,7 +28,7 @@ const RGAP = 56;
 
 export function BenchmarkFigure({ className }: { className?: string }) {
   return (
-    <figure className={cn("relative overflow-hidden border border-white bg-black", className)}>
+    <figure className={cn("relative overflow-hidden border border-white bg-black uppercase", className)}>
       <PlateHeader fig="fig.04" title="result · uncapped high-load replay" />
       <div className="relative">
         <svg

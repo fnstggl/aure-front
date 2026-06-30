@@ -33,7 +33,7 @@ const RUNGS: { cond: string; strategy: string; note: string; strong?: boolean }[
 
 export function SearchStrategyLadder({ className }: { className?: string }) {
   return (
-    <figure className={cn("relative overflow-hidden border border-white bg-black", className)}>
+    <figure className={cn("relative overflow-hidden border border-white bg-black uppercase", className)}>
       <PlateHeader fig="fig.03" title="coupled-bundle search" />
       <div className="px-4 py-5">
         <div className="grid gap-2.5">
