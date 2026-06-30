@@ -3,20 +3,20 @@ import { Layout } from "@/components/layout/Layout";
 import { Reveal, Arrow } from "@/components/site/primitives";
 import { PageFrame, Band, Grid, Kicker } from "@/components/site/structure";
 
-/* /safety — a calm, architecture-first safety brief for infrastructure
+/* /safety. A calm, architecture-first safety brief for infrastructure
    engineers evaluating a pilot. The message the reader should leave with:
-   "Aurelius begins as an analysis tool, not a control system — it reads
-   recorded scheduler metadata, replays my own traces offline, and never
-   touches production unless I later choose."
+   Aurelius begins as an analysis tool, not a control system. It reads recorded
+   scheduler metadata, replays the operator's own traces offline, and never
+   modifies production unless the operator explicitly enables it.
 
    Deliberately quieter than the Technical Report: no interior rails, no
    figure-number kickers, generous whitespace. One architectural figure (a
-   one-way metadata flow), one access table, one evaluation sequence. Reasoning
-   is shown as mechanism, not asserted as a promise; absolutes are softened to
-   design intent and operator-configured behaviour. Monochrome by intent. */
+   one-way metadata flow), one access table, one evaluation sequence. Behaviour
+   is described, not promised; constraint language stays factual. Monochrome by
+   intent. Short declarative sentences, no em dashes. */
 
-/* What read-only means, concretely — the operator's confidence rests on the
-   contrast between these two columns. */
+/* What read-only means, concretely. Operator confidence rests on the contrast
+   between these two columns. */
 const READS = [
   "Queue state and depth",
   "GPU and resource availability",
@@ -26,17 +26,17 @@ const READS = [
   "Resource utilization",
 ];
 
-const DOES_NOT_READ = [
-  "Prompts and inputs",
+const NOT_ACCESSED = [
+  "Prompts",
   "Model outputs",
   "Training datasets",
   "Customer payloads",
-  "Application code",
-  "Secrets and credentials",
+  "Secrets",
+  "Credentials",
 ];
 
-/* How an evaluation actually runs. The first four stages are offline or
-   read-only; production is the optional terminal, never the default. */
+/* How an evaluation actually runs. The first stages are offline or read-only.
+   Production is the optional terminal, never the default. */
 const STAGES: { name: string; desc: string }[] = [
   {
     name: "Historical replay",
@@ -44,11 +44,11 @@ const STAGES: { name: string; desc: string }[] = [
   },
   {
     name: "Constraint validation",
-    desc: "Candidates that violate your configured SLA, capacity, or placement limits are filtered before they can become a recommendation.",
+    desc: "Candidates that violate your configured hard constraints, such as SLA, capacity, or placement limits, are filtered before they become a recommendation.",
   },
   {
     name: "Baseline comparison",
-    desc: "Each remaining candidate is measured against your current scheduler, so a recommendation is a counterfactual rather than a claim.",
+    desc: "Each remaining candidate is measured against your current scheduler, so a recommendation is grounded in your own recorded results rather than a generic claim.",
   },
   {
     name: "Shadow recommendation",
@@ -82,17 +82,16 @@ export default function Safety() {
               </Reveal>
               <Reveal delay={120}>
                 <p className="mt-7 max-w-2xl text-[15.5px] leading-relaxed text-white/60">
-                  Aurelius does not begin by controlling infrastructure. Every engagement starts as a
-                  historical replay against your recorded scheduler traces — evaluated entirely
-                  offline, before shadow mode, before any optional production integration.
+                  Every evaluation begins as a historical replay against recorded scheduler traces.
+                  Aurelius evaluates scheduling decisions entirely offline before any shadow mode or
+                  optional production integration.
                 </p>
               </Reveal>
               <Reveal delay={170}>
                 <p className="mt-5 max-w-2xl text-[14.5px] leading-relaxed text-white/45">
                   Unlike systems that immediately participate in production scheduling, Aurelius is
-                  designed to begin entirely offline. Historical replay lets you evaluate scheduling
-                  decisions on your own recorded workloads before any interaction with a live control
-                  plane.
+                  designed to begin entirely offline, on your own recorded workloads, before any
+                  interaction with a live control plane.
                 </p>
               </Reveal>
             </div>
@@ -134,13 +133,13 @@ export default function Safety() {
               </Reveal>
               <Reveal delay={60}>
                 <h2 className="mt-6 max-w-2xl text-balance text-[clamp(1.55rem,3vw,2.1rem)] font-medium leading-[1.1] tracking-[-0.02em] text-foreground">
-                  Read-only means scheduler metadata — not the work itself.
+                  Read-only means scheduler metadata, not the work itself.
                 </h2>
               </Reveal>
               <Reveal delay={110}>
                 <p className="mt-5 max-w-xl text-[14.5px] leading-relaxed text-white/52">
-                  Aurelius reads the metadata a scheduler already exposes to reason about timing,
-                  placement, and capacity. It does not read prompts, model outputs, training data, or
+                  Aurelius reads scheduler metadata such as queue state, capacity, and job history.
+                  During evaluation it does not access prompts, model outputs, training data, or
                   customer payloads, and that telemetry is not used to train a foundation model.
                 </p>
               </Reveal>
@@ -165,10 +164,9 @@ export default function Safety() {
               </Reveal>
               <Reveal delay={110}>
                 <p className="mt-5 max-w-xl text-[14.5px] leading-relaxed text-white/52">
-                  A recommendation is the output of a sequence that runs mostly offline. A cheaper
-                  decision that breaks your latency, SLA, placement, or capacity limits is filtered
-                  out before it reaches you — economics do not get to override an operator-configured
-                  constraint.
+                  A recommendation is the output of a sequence that runs mostly offline.
+                  Recommendations that violate configured hard constraints, such as latency, SLA,
+                  placement, or capacity limits, are filtered before presentation.
                 </p>
               </Reveal>
               <Reveal delay={150} className="mt-12">
@@ -178,18 +176,25 @@ export default function Safety() {
           </Grid>
         </Band>
 
-        {/* ===================== Deployment philosophy (no CTA) ===================== */}
+        {/* ===================== Operator control (no CTA) ===================== */}
         <Band rails={false} divide={false} className="py-24 md:py-32">
           <Grid>
             <div className="col-span-1 px-6 sm:px-8 md:col-span-10 lg:px-10">
               <Reveal>
-                <Kicker>Deployment philosophy</Kicker>
+                <Kicker>Operator control</Kicker>
               </Reveal>
               <Reveal delay={60}>
                 <p className="mt-7 max-w-2xl text-balance text-[clamp(1.25rem,2.4vw,1.7rem)] font-medium leading-[1.3] tracking-[-0.015em] text-white/88">
-                  Aurelius is designed to earn trust incrementally. Historical replay precedes shadow
-                  recommendations, shadow recommendations precede any optional production integration,
-                  and operators retain control at every stage.
+                  By default, Aurelius evaluates historical scheduler behavior and produces
+                  recommendations. It does not modify production infrastructure unless an operator
+                  explicitly enables production integration.
+                </p>
+              </Reveal>
+              <Reveal delay={110}>
+                <p className="mt-6 max-w-2xl text-[14.5px] leading-relaxed text-white/50">
+                  Historical replay precedes shadow recommendations. Shadow recommendations precede
+                  any optional production integration. Operators remain in control throughout every
+                  stage.
                 </p>
               </Reveal>
               <div className="mt-14">
@@ -209,11 +214,11 @@ export default function Safety() {
 }
 
 /* ------------------------------------------------------------------ */
-/* Figure — one-way metadata flow                                      */
+/* Figure. One-way metadata flow.                                      */
 /* ------------------------------------------------------------------ */
 
 /* The single architectural figure. Metadata moves in one direction, from the
-   operator's scheduler into Aurelius; Aurelius's outputs stay on its own side.
+   operator's scheduler into Aurelius. Aurelius's outputs stay on its own side.
    The footer states, plainly, what never crosses back. */
 function InitialEvaluationFigure() {
   return (
@@ -223,7 +228,7 @@ function InitialEvaluationFigure() {
           {/* Operator side */}
           <Node label="Your infrastructure" title="Scheduler" sub="queue state · capacity · job history" />
 
-          {/* the one and only connection — read-only, inbound to Aurelius */}
+          {/* the one and only connection. Read-only, inbound to Aurelius. */}
           <div className="flex flex-col items-center py-4">
             <span className="font-mono text-[10px] uppercase tracking-[0.16em] text-white/45">
               read-only metadata
@@ -231,11 +236,11 @@ function InitialEvaluationFigure() {
             <Arrow className="mt-2 rotate-90 text-white/35" />
           </div>
 
-          {/* Aurelius side — produces analysis that stays on its side */}
+          {/* Aurelius side. Produces analysis that stays on its side. */}
           <Node
             label="Aurelius"
             title="Offline evaluation"
-            lines={["Historical replay", "Counterfactual analysis", "Savings report"]}
+            lines={["Offline replay", "Baseline comparison", "Savings report"]}
           />
         </div>
 
@@ -279,7 +284,7 @@ function Node({
 }
 
 /* ------------------------------------------------------------------ */
-/* Access table — Reads / Does not read                                */
+/* Access table. Reads / Does not access during evaluation.            */
 /* ------------------------------------------------------------------ */
 
 function AccessTable() {
@@ -288,7 +293,7 @@ function AccessTable() {
       <div className="px-6 py-7 md:px-8">
         <div className="flex items-center gap-2.5 font-mono text-[10.5px] uppercase tracking-[0.18em] text-white/60">
           <Check />
-          Reads — scheduler metadata
+          Reads · scheduler metadata
         </div>
         <ul className="mt-6 grid gap-3.5">
           {READS.map((r) => (
@@ -301,10 +306,10 @@ function AccessTable() {
       <div className="border-t border-border px-6 py-7 md:border-l md:border-t-0 md:px-8">
         <div className="flex items-center gap-2.5 font-mono text-[10.5px] uppercase tracking-[0.18em] text-white/38">
           <Cross />
-          Does not read
+          Does not access during evaluation
         </div>
         <ul className="mt-6 grid gap-3.5">
-          {DOES_NOT_READ.map((r) => (
+          {NOT_ACCESSED.map((r) => (
             <li key={r} className="text-[14px] leading-snug text-white/42">
               {r}
             </li>
@@ -332,7 +337,7 @@ function Cross() {
 }
 
 /* ------------------------------------------------------------------ */
-/* Evaluation sequence — calm vertical timeline, not a funnel          */
+/* Evaluation sequence. Calm vertical timeline, not a funnel.          */
 /* ------------------------------------------------------------------ */
 
 function EvaluationSequence() {
