@@ -6,7 +6,7 @@ import { WorldModelArchitecture } from "@/components/diagrams/WorldModelArchitec
 import { WorldModelState } from "@/components/diagrams/WorldModelState";
 import { SearchStrategyLadder } from "@/components/diagrams/SearchStrategyLadder";
 import { BenchmarkFigure } from "@/components/diagrams/BenchmarkFigure";
-import { ArchitecturePipeline } from "@/components/diagrams/ArchitecturePipeline";
+import { EvaluationSequence } from "@/components/site/EvaluationSequence";
 
 /* /technical-report — a systems technical report about what Aurelius is and the
    central finding behind it: a correct predictive world model and objective
@@ -521,10 +521,12 @@ export default function TechnicalReport() {
                   requests, constraints), never payloads or model outputs. Candidate scoring runs
                   read-only; unsafe candidates are rejected at the constraint gate before execution; and
                   when confidence is low the controller falls back deterministically. The path from
-                  telemetry to any production change is staged and reversible:
+                  telemetry to any production change is staged and reversible, and constraints are
+                  checked before a recommendation exists:
                 </p>
                 <Figure>
-                  <ArchitecturePipeline fig="fig.05" title="deployment path" />
+                  <Caption>fig.05 · evaluation &amp; deployment sequence</Caption>
+                  <EvaluationSequence />
                 </Figure>
               </Sec>
 
