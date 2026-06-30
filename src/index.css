@@ -3,28 +3,22 @@
 @tailwind utilities;
 
 /* ------------------------------------------------------------------
-   Display typeface: Helvetica Now Display (licensed Monotype font, self-
-   hosted from /public/fonts). It is first in the `sans`/`display` stacks
-   (tailwind.config.ts) so all headline/body text renders in the exact
-   face. Regular (400) carries the Etched headline look; Medium (500) is
-   used only for inline emphasis. IBM Plex Mono (OFL) handles mono labels.
+   Display typeface: Helvetica Now Display (Regular).
+   This is a licensed Monotype font and is NOT bundled. To activate the
+   exact face, drop the licensed woff2 files into /public/fonts and
+   uncomment the @font-face blocks below — no other change is needed,
+   the family is already first in the `sans`/`display` stacks.
+   Until then the stack degrades to Neue Haas Grotesk Display / Helvetica
+   Neue (see tailwind.config.ts). IBM Plex Mono IS bundled (OFL).
+   --------------------------------------------------------------------
+   @font-face {
+     font-family: "Helvetica Now Display";
+     font-style: normal;
+     font-weight: 400;
+     font-display: swap;
+     src: url("/fonts/helvetica-now-display-400.woff2") format("woff2");
+   }
    ------------------------------------------------------------------ */
-@font-face {
-  font-family: "Helvetica Now Display";
-  font-style: normal;
-  font-weight: 400;
-  font-display: swap;
-  src: url("/fonts/HelveticaNowDisplay-Regular.woff2") format("woff2"),
-       url("/fonts/HelveticaNowDisplay-Regular.woff") format("woff");
-}
-@font-face {
-  font-family: "Helvetica Now Display";
-  font-style: normal;
-  font-weight: 500;
-  font-display: swap;
-  src: url("/fonts/HelveticaNowDisplay-Medium.woff2") format("woff2"),
-       url("/fonts/HelveticaNowDisplay-Medium.woff") format("woff");
-}
 
 /* ============================================================
    Aurelius Design System
