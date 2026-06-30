@@ -87,9 +87,9 @@ export const ROUTES: RouteMeta[] = [
   },
   {
     path: "/safety",
-    title: "Safety — read-only by default, constraint-gated | Aurelius",
+    title: "Safety — evaluation-first, read-only architecture | Aurelius",
     description:
-      "Aurelius evaluates infrastructure decisions before it controls them: historical replay and shadow recommendations first, live execution opt-in and human-approved. Recommendations are constraint-gated — economic optimization cannot override explicit SLA, capacity, or placement limits. Metadata only; never used to train a model.",
+      "Aurelius begins as an analysis tool, not a control system. Every engagement starts offline: it reads recorded scheduler metadata — queue state, capacity, job history, not prompts or payloads — replays your own traces, validates against your configured constraints, and compares to your baseline. Shadow recommendations and any production integration are operator-approved and optional.",
     name: "Safety",
     priority: 0.9,
     changefreq: "monthly",
