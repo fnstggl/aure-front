@@ -294,23 +294,28 @@
 /* fig.01 world-model search space — cells flicker on a staggered wave so the
    grid reads as a compute engine exploring a large space (not a static plate).
    Per-cell delay/duration are set inline; reduced motion freezes it globally. */
+/* fig.01 search field: every cell drifts in brightness, slowly, like stars,
+   while the world model is "alive". On convergence the cells fade to a single
+   survivor (driven inline, per-cell, by distance from centre). */
 @keyframes grid-shimmer {
-  0%, 100% { opacity: 0.14; }
-  50% { opacity: 0.6; }
+  0%, 100% { opacity: 0.12; }
+  50% { opacity: 0.55; }
 }
 
-/* the chosen square detaching from the field and dropping toward the result */
-@keyframes detach-drop {
-  0% { transform: translate(-50%, -10px); opacity: 0; }
-  30% { opacity: 1; }
-  100% { transform: translate(-50%, 14px); opacity: 0; }
+/* the lone survivor's restrained pulse: its neighbours briefly illuminate once
+   per cycle, then rest. Peak brightness is per-cell via --pulse-peak. */
+@keyframes neighbor-pulse {
+  0% { opacity: 0; }
+  5% { opacity: var(--pulse-peak, 0.3); }
+  16% { opacity: 0; }
+  100% { opacity: 0; }
 }
 
 @layer utilities {
   .anim-breathe { animation: node-breathe 6s ease-in-out infinite; }
   .anim-cursor { animation: cursor-blink 1.2s step-end infinite; }
   .grid-cell-anim { animation: grid-shimmer 2.6s ease-in-out infinite; }
-  .detach-dot { animation: detach-drop 1.4s ease-in infinite; }
+  .cell-pulse { animation: neighbor-pulse 4.6s ease-in-out infinite; }
   .flow-dash {
     stroke-dasharray: 2 8;
     animation: dash-move 9s linear infinite;
