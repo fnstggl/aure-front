@@ -40,7 +40,7 @@ export function Footer() {
           </nav>
         </div>
 
-        <p className="mt-4 overflow-hidden whitespace-nowrap px-6 text-[clamp(2rem,6.5vw,9rem)] font-normal leading-none tracking-[-0.03em] text-foreground lg:px-8">
+        <p className="mt-4 overflow-hidden whitespace-nowrap px-6 pb-10 text-[clamp(2rem,6.5vw,9rem)] font-normal leading-none tracking-[-0.03em] text-foreground lg:px-8">
           Forecast. Simulate. Decide.
         </p>
       </div>
