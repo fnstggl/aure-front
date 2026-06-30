@@ -227,7 +227,7 @@ export default function Index() {
           <Grid>
             <div className="col-span-1 px-6 sm:px-8 md:col-span-10 lg:px-10">
               <Reveal>
-                <Kicker index="05">Request access</Kicker>
+                <Kicker index="05">Get access</Kicker>
               </Reveal>
               <Reveal delay={60}>
                 <h2 className="mt-7 max-w-3xl text-balance text-[clamp(2rem,5.4vw,3.6rem)] font-normal leading-[1.02] tracking-[-0.03em] text-foreground">

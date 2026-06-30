@@ -113,7 +113,7 @@ export default function ShadowAudit() {
             </Reveal>
             <Reveal delay={120} className="mt-8 flex justify-center">
               <CTAButton to="/contact" variant="primary" withArrow>
-                Request access
+                Get access
               </CTAButton>
             </Reveal>
           </div>

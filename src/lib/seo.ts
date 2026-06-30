@@ -114,10 +114,10 @@ export const ROUTES: RouteMeta[] = [
   },
   {
     path: "/contact",
-    title: "Request access · Aurelius shadow-mode evaluation",
+    title: "Get access · Aurelius shadow-mode evaluation",
     description:
       "Request a read-only, shadow-mode evaluation of Aurelius using scheduler metadata. Historical replay and live shadow deployments supported. No payload access, no execution impact.",
-    name: "Request access",
+    name: "Get access",
     priority: 0.8,
     changefreq: "monthly",
   },

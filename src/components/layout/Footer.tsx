@@ -2,14 +2,13 @@ import { Link } from "react-router-dom";
 
 const footerLinks = [
   { label: "Technical Report", href: "/technical-report" },
-  { label: "Request access", href: "/contact" },
+  { label: "Get Access", href: "/contact" },
   { label: "Privacy", href: "/privacy" },
 ];
 
 export function Footer() {
   return (
     <footer className="relative overflow-hidden border-t border-border bg-background">
-      {/* decorative dotted hand, bottom-right corner */}
       <img
         src="/hand-dots.png"
         alt=""
@@ -23,27 +22,9 @@ export function Footer() {
           e.currentTarget.style.display = "none";
         }}
       />
-      <div className="relative z-10 mx-auto max-w-content px-6 py-14 lg:px-8">
-        <div className="flex flex-col gap-10 sm:flex-row sm:items-start sm:justify-between">
-          <div className="max-w-xs">
-            <Link to="/" className="flex items-center" aria-label="Aurelius home">
-              <img
-                src="/aure_logo.png"
-                alt="Aurelius"
-                width={1186}
-                height={322}
-                loading="lazy"
-                decoding="async"
-                className="h-5 w-auto"
-              />
-            </Link>
-            <p className="mt-4 text-[13.5px] leading-relaxed text-white/42">
-              Predictive orchestration for AI infrastructure. Forecast first.
-              Simulate before execution.
-            </p>
-          </div>
-
-          <nav aria-label="Footer">
+      <div className="relative z-10 pt-10 pb-0">
+        <div className="mx-auto max-w-content px-6 lg:px-8">
+          <nav aria-label="Footer" className="flex justify-end">
             <ul className="flex flex-wrap gap-x-8 gap-y-3">
               {footerLinks.map((item) => (
                 <li key={item.href}>
@@ -59,12 +40,19 @@ export function Footer() {
           </nav>
         </div>
 
-        <div className="mt-12 flex flex-col gap-3">
-          <span className="font-mono text-[11px] text-white/28">© {new Date().getFullYear()} Aurelius</span>
-          <span className="flex items-center gap-2 font-mono text-[10.5px] uppercase tracking-[0.06em] text-white/30">
-            <span className="inline-block h-1 w-1 bg-white/30" aria-hidden />
-            Forecast → Simulate → Decide
-          </span>
+        {/* headline: pl-0 so "F" sits exactly on the grid line */}
+        <div className="mx-auto max-w-content pl-0 pr-6 lg:pr-8">
+          <p className="mt-4 whitespace-nowrap text-[clamp(2rem,6.5vw,9rem)] font-normal leading-none tracking-[-0.03em] text-foreground">
+            Forecast. Simulate. Decide.
+          </p>
+          <div className="mt-3 pb-8 flex flex-col gap-1">
+            <span className="text-[10px] font-normal tracking-[0.02em] text-white/30">
+              Predictive orchestration for AI infrastructure.
+            </span>
+            <span className="text-[10px] font-normal tracking-[0.02em] text-white/30">
+              © {new Date().getFullYear()} Aurelius
+            </span>
+          </div>
         </div>
       </div>
     </footer>
