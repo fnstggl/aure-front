@@ -49,7 +49,7 @@ export function Footer() {
                 <li key={item.href}>
                   <Link
                     to={item.href}
-                    className="text-[13.5px] tracking-tight text-white/48 transition-colors duration-200 hover:text-white/85"
+                    className="font-mono text-[11px] uppercase tracking-[0.06em] text-white/48 transition-colors duration-200 hover:text-white/85"
                   >
                     {item.label}
                   </Link>
@@ -61,7 +61,7 @@ export function Footer() {
 
         <div className="mt-12 flex flex-col gap-3 border-t border-border pt-6">
           <span className="font-mono text-[11px] text-white/28">© {new Date().getFullYear()} Aurelius</span>
-          <span className="flex items-center gap-2 font-mono text-[10.5px] uppercase tracking-[0.16em] text-white/30">
+          <span className="flex items-center gap-2 font-mono text-[10.5px] uppercase tracking-[0.06em] text-white/30">
             <span className="inline-block h-1 w-1 bg-white/30" aria-hidden />
             Forecast → Simulate → Decide
           </span>

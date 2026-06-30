@@ -14,8 +14,14 @@ export default {
     },
     extend: {
       fontFamily: {
-        sans: ["Geist", "Inter", "system-ui", "-apple-system", "BlinkMacSystemFont", "sans-serif"],
-        mono: ["Geist Mono", "IBM Plex Mono", "ui-monospace", "SFMono-Regular", "Menlo", "monospace"],
+        // Display / headline + body: Helvetica Now Display (Regular). Until the
+        // licensed Helvetica Now Display woff2 is added to /public/fonts (see the
+        // commented @font-face in index.css), this degrades to the Neue Haas /
+        // Helvetica Neue stack — never to a Google substitute.
+        sans: ['"Helvetica Now Display"', '"Neue Haas Grotesk Display"', '"Helvetica Neue"', "Helvetica", "Arial", "sans-serif"],
+        display: ['"Helvetica Now Display"', '"Neue Haas Grotesk Display"', '"Helvetica Neue"', "Helvetica", "Arial", "sans-serif"],
+        // Labels / nav / metrics / captions: self-hosted IBM Plex Mono (real font).
+        mono: ['"IBM Plex Mono"', '"Geist Mono"', '"SF Mono"', "ui-monospace", "monospace"],
       },
       colors: {
         border: "hsl(var(--border))",

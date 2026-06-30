@@ -45,7 +45,7 @@ export default function Index() {
             <div className="flex flex-1 items-center justify-center">
               <div className="mx-auto w-full max-w-[72rem] translate-y-[5vh] px-6 pb-16 pt-32 text-center sm:px-8">
                 <Reveal>
-                  <h1 className="mx-auto max-w-[22ch] text-[clamp(1.35rem,2.5vw,1.75rem)] font-medium leading-[1.2] tracking-[-0.015em] text-foreground sm:max-w-none sm:whitespace-nowrap">
+                  <h1 className="mx-auto max-w-[22ch] text-[clamp(1.35rem,2.5vw,1.75rem)] font-normal leading-[1.2] tracking-[-0.03em] text-foreground sm:max-w-none sm:whitespace-nowrap">
                     The optimal scheduling decision depends on constraints that haven&rsquo;t emerged yet.
                   </h1>
                 </Reveal>
@@ -65,12 +65,12 @@ export default function Index() {
                   </p>
                 </Reveal>
                 <Reveal delay={240}>
-                  <div className="mt-8 flex flex-wrap items-center justify-center gap-x-5 gap-y-1.5 font-mono text-[10.5px] tracking-[0.12em] text-white/32">
+                  <div className="mt-8 flex flex-wrap items-center justify-center gap-x-5 gap-y-1.5 font-mono text-[10.5px] uppercase tracking-[0.05em] text-white/32">
                     <span><span className="text-white/50">+724%</span> avg SLA-safe goodput / $</span>
                     <span className="text-white/18">·</span>
                     <span><span className="text-white/50">−84%</span> GPU-hours</span>
                     <span className="text-white/18">·</span>
-                    <span className="uppercase tracking-[0.16em]">~1.5M replayed requests · vs production scheduler</span>
+                    <span className="uppercase tracking-[0.06em]">~1.5M replayed requests · vs production scheduler</span>
                   </div>
                 </Reveal>
               </div>
@@ -88,7 +88,7 @@ export default function Index() {
               <ScrollWordReveal
                 as="h2"
                 text="Most infrastructure waste is created because schedulers optimize before future constraints are visible."
-                className="mt-6 text-balance text-[clamp(1.6rem,3.2vw,2.3rem)] font-medium leading-[1.08] tracking-[-0.02em] text-foreground"
+                className="mt-6 text-balance text-[clamp(1.6rem,3.2vw,2.3rem)] font-normal leading-[1.08] tracking-[-0.03em] text-foreground"
               />
               <Reveal delay={120}>
                 <p className="mt-6 max-w-2xl text-[14.5px] leading-relaxed text-white/52">
@@ -109,7 +109,7 @@ export default function Index() {
                 <Kicker index="02">Architecture</Kicker>
               </Reveal>
               <Reveal delay={60}>
-                <h2 className="mt-6 text-balance text-[clamp(1.6rem,3.2vw,2.3rem)] font-medium leading-[1.08] tracking-[-0.02em] text-foreground">
+                <h2 className="mt-6 text-balance text-[clamp(1.6rem,3.2vw,2.3rem)] font-normal leading-[1.08] tracking-[-0.03em] text-foreground">
                   Forecast. Simulate. Rank by Economics.
                 </h2>
               </Reveal>
@@ -146,7 +146,7 @@ export default function Index() {
                 <Kicker index="03">Evidence</Kicker>
               </Reveal>
               <Reveal delay={60}>
-                <h2 className="mt-6 text-balance text-[clamp(1.6rem,3.2vw,2.3rem)] font-medium leading-[1.08] tracking-[-0.02em] text-foreground">
+                <h2 className="mt-6 text-balance text-[clamp(1.6rem,3.2vw,2.3rem)] font-normal leading-[1.08] tracking-[-0.03em] text-foreground">
                   Backtested on public production traces.
                 </h2>
               </Reveal>
@@ -183,7 +183,7 @@ export default function Index() {
                 <Kicker index="04">Evaluation</Kicker>
               </Reveal>
               <Reveal delay={60}>
-                <h2 className="mt-6 max-w-2xl text-balance text-[clamp(1.6rem,3.2vw,2.3rem)] font-medium leading-[1.08] tracking-[-0.02em] text-foreground">
+                <h2 className="mt-6 max-w-2xl text-balance text-[clamp(1.6rem,3.2vw,2.3rem)] font-normal leading-[1.08] tracking-[-0.03em] text-foreground">
                   Read-only until you decide otherwise.
                 </h2>
               </Reveal>
@@ -202,11 +202,11 @@ export default function Index() {
                         <span className="font-mono text-[11px] tabular-nums text-white/55">
                           {String(i + 1).padStart(2, "0")}
                         </span>
-                        <span className="font-mono text-[12px] uppercase tracking-[0.14em] text-white/72">
+                        <span className="font-mono text-[12px] uppercase tracking-[0.05em] text-white/72">
                           {step}
                         </span>
                         {i === 0 && (
-                          <span className="ml-1 border border-border-strong px-1.5 py-0.5 font-mono text-[9px] uppercase tracking-[0.18em] text-white/40">
+                          <span className="ml-1 border border-border-strong px-1.5 py-0.5 font-mono text-[9px] uppercase tracking-[0.07em] text-white/40">
                             Week 1
                           </span>
                         )}
@@ -230,7 +230,7 @@ export default function Index() {
                 <Kicker index="05">Request access</Kicker>
               </Reveal>
               <Reveal delay={60}>
-                <h2 className="mt-7 max-w-3xl text-balance text-[clamp(2rem,5.4vw,3.6rem)] font-medium leading-[1.02] tracking-[-0.03em] text-foreground">
+                <h2 className="mt-7 max-w-3xl text-balance text-[clamp(2rem,5.4vw,3.6rem)] font-normal leading-[1.02] tracking-[-0.03em] text-foreground">
                   Run a read-only savings audit.
                 </h2>
               </Reveal>
@@ -261,13 +261,13 @@ export default function Index() {
 function StatMoment() {
   return (
     <div className="text-center md:text-left">
-      <div className="text-[clamp(3.6rem,8.5vw,6.8rem)] font-medium leading-[0.9] tracking-[-0.04em] text-foreground">
+      <div className="text-[clamp(3.6rem,8.5vw,6.8rem)] font-normal leading-[0.9] tracking-[-0.04em] text-foreground">
         +724%
       </div>
-      <p className="mt-4 text-[clamp(1.05rem,2.4vw,1.6rem)] font-medium tracking-tight text-white/80">
+      <p className="mt-4 text-[clamp(1.05rem,2.4vw,1.6rem)] font-normal tracking-tight text-white/80">
         average SLA-safe goodput per dollar vs a production scheduler
       </p>
-      <p className="mt-6 max-w-md font-mono text-[11px] uppercase leading-relaxed tracking-[0.14em] text-white/42">
+      <p className="mt-6 max-w-md font-mono text-[11px] uppercase leading-relaxed tracking-[0.05em] text-white/42">
         Mean of +698% / +718% / +755% across PJM, ERCOT, and CAISO. Uncapped replay of public production traces (~1.5M replayed requests). Pareto-safe at ~84% fewer GPU-hours. Simulated replay, not a production deployment.
       </p>
     </div>

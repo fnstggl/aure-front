@@ -5,9 +5,10 @@ import { PlateHeader, CaptionStrip } from "./plate";
    fig.03 — coupled-bundle search, drawn as a decision ladder.
 
    Aurelius evaluates coupled decision bundles rather than tuning one knob at a
-   time. The search method scales with the size of the space, and where exact
-   enumeration is tractable the approximate search is checked against it. Exact
-   thresholds and tuning are intentionally omitted. No motion.
+   time, using a hierarchical search that adapts to the size of the space: exact
+   where enumeration is tractable, bounded where it is not, with the approximate
+   search checked against the exact optimum wherever both are feasible. Internal
+   structure, thresholds, and tuning are intentionally omitted. No motion.
    ============================================================================ */
 
 const RUNGS: { cond: string; strategy: string; note: string; strong?: boolean }[] = [
@@ -19,7 +20,7 @@ const RUNGS: { cond: string; strategy: string; note: string; strong?: boolean }[
   },
   {
     cond: "Structured medium spaces",
-    strategy: "beam-style search + local improvement",
+    strategy: "hierarchical, coupling-aware search",
     note: "keeps coupled hypotheses alive, captures cross-surface interactions",
     strong: true,
   },
@@ -44,7 +45,7 @@ export function SearchStrategyLadder({ className }: { className?: string }) {
                 r.strong ? "border-white" : "border-white/25",
               )}
             >
-              <span className="w-[176px] shrink-0 font-mono text-[10.5px] uppercase tracking-[0.12em] text-white/55">
+              <span className="w-[176px] shrink-0 font-mono text-[10.5px] uppercase tracking-[0.06em] text-white/55">
                 {r.cond}
               </span>
               <span
@@ -68,7 +69,7 @@ export function SearchStrategyLadder({ className }: { className?: string }) {
           </span>
         </div>
       </div>
-      <CaptionStrip label="fig.03 · coupled decision bundles, evaluated by a size-aware search" />
+      <CaptionStrip label="fig.03 · coupled decision bundles, evaluated by a hierarchical, size-aware search" />
     </figure>
   );
 }
