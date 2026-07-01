@@ -39,14 +39,24 @@ export function Footer() {
               ))}
             </ul>
           </nav>
+
+          {/* mobile only: quiet tagline + copyright below links */}
+          <div className="sm:hidden mt-8 pb-8 flex flex-col gap-1">
+            <span className="text-[10px] font-normal tracking-[0.02em] text-white/28">
+              Predictive orchestration for AI infrastructure.
+            </span>
+            <span className="text-[10px] font-normal tracking-[0.02em] text-white/28">
+              © {new Date().getFullYear()} Aurelius
+            </span>
+          </div>
         </div>
 
-        {/* headline: pl-0 so "F" sits exactly on the grid line */}
-        <div className="mx-auto max-w-content pl-0 pr-6 lg:pr-8">
-          <p className="mt-10 sm:mt-4 whitespace-nowrap text-[clamp(2rem,6.5vw,9rem)] font-normal leading-none tracking-[-0.03em] text-foreground">
+        {/* desktop: large headline */}
+        <div className="hidden sm:block mx-auto max-w-content pl-0 pr-6 lg:pr-8">
+          <p className="mt-4 whitespace-nowrap text-[clamp(2rem,6.5vw,9rem)] font-normal leading-none tracking-[-0.03em] text-foreground">
             Forecast. Simulate. Decide.
           </p>
-          <div className="hidden sm:flex mt-3 pb-8 flex-col gap-1">
+          <div className="mt-3 pb-8 flex flex-col gap-1">
             <span className="text-[10px] font-normal tracking-[0.02em] text-white/30">
               Predictive orchestration for AI infrastructure.
             </span>
@@ -54,7 +64,6 @@ export function Footer() {
               © {new Date().getFullYear()} Aurelius
             </span>
           </div>
-          <div className="sm:hidden pb-8" />
         </div>
       </div>
     </footer>
