@@ -75,8 +75,15 @@ const CELL_META = CELL_RAW.map((c) => {
     ortho: c.dRow === 0 || c.dCol === 0,
     deathPoint,
     base: 0.22 + (1 - nd) * 0.45,
-    delay: Math.round((c.dRow + c.dCol) * 95 + 1700 + rand(c.i * 1.7) * 600),
-    dur: Math.round(3600 + rand(c.i * 2.3) * 1700),
+    // Simulate twinkle: each dot gets its own brightness band (lo→hi) and its
+    // own speed, so the field reads as many different intensities moving at
+    // once — a livelier, more dynamic search rather than a uniform pulse. The
+    // onset delay keeps a gentle diagonal lead-in but is compressed so the
+    // whole field is active (not half-dim) well before the collapse.
+    lo: 0.05 + rand(c.i * 4.1 + 2) * 0.18,
+    hi: 0.38 + rand(c.i * 5.9 + 3) * 0.55,
+    delay: Math.round((c.dRow + c.dCol) * 50 + 850 + rand(c.i * 1.7) * 700),
+    dur: Math.round(2400 + rand(c.i * 2.3) * 3200),
   };
 });
 
@@ -261,7 +268,12 @@ function cellState(m: CellMeta, phase: Phase, progress: number, reduced: boolean
 
   const twinkle = {
     className: "grid-cell-anim",
-    style: { animationDelay: `${m.delay}ms`, animationDuration: `${m.dur}ms` },
+    style: {
+      animationDelay: `${m.delay}ms`,
+      animationDuration: `${m.dur}ms`,
+      "--cell-lo": m.lo,
+      "--cell-hi": m.hi,
+    } as React.CSSProperties,
   };
 
   if (phase === "simulate") return twinkle;
@@ -296,11 +308,12 @@ function PanelLabel({ children }: { children: React.ReactNode }) {
   return <span className="font-mono text-[10px] uppercase tracking-[0.18em] text-white/55">{children}</span>;
 }
 
-/* Quiet structural connector between stages — a hairline, no UI arrow. */
+/* Structural connector between stages — a visible schematic line, so the flow
+   from one stage to the next reads clearly. No end nodes, no UI arrow. */
 function Connector() {
   return (
-    <div className="flex justify-center py-3.5" aria-hidden>
-      <span className="h-5 w-px bg-white/18" />
+    <div className="flex justify-center py-2.5" aria-hidden>
+      <span className="h-8 w-px bg-white/35" />
     </div>
   );
 }
