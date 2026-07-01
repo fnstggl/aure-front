@@ -41,8 +41,8 @@ export function Footer() {
           </nav>
         </div>
 
-        {/* headline: pl-0 so "F" sits exactly on the grid line */}
-        <div className="mx-auto max-w-content pl-0 pr-6 lg:pr-8">
+        {/* desktop: pl-0 aligns "F" with grid line; mobile: pl-6 aligns with nav links */}
+        <div className="mx-auto max-w-content pl-6 sm:pl-0 pr-6 lg:pr-8">
           <p className="mt-10 sm:mt-4 whitespace-nowrap text-[clamp(2rem,6.5vw,9rem)] font-normal leading-none tracking-[-0.03em] text-foreground">
             Forecast. Simulate. Decide.
           </p>
