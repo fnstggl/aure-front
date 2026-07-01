@@ -248,12 +248,10 @@ export default function TechnicalReport() {
               {/* 05 — Surfaces */}
               <Sec n="05" id="surfaces" title="05 · Candidate Decision Surfaces">
                 <p className={P}>
-                  A candidate is a bundle of decisions across several surfaces. Aurelius distinguishes
-                  surfaces that are <Em>active decision levers today</Em> (they change the scored
-                  economic outcome and are optimized) from surfaces that are{" "}
-                  <Em>modeled but not yet optimized</Em>, and <Em>future surfaces</Em> that are
-                  represented but not actuated. A decision can only be recommended on an active lever,
-                  so the report cannot claim a surface that is not wired.
+                  Candidate decisions are evaluated as coupled bundles across the active optimization
+                  surfaces Aurelius can actually score today. The planner only recommends decisions on{" "}
+                  <Em>wired levers</Em>, so the report does not imply support for surfaces that are
+                  merely modeled, experimental, or future work.
                 </p>
                 <SurfaceGroups />
               </Sec>
@@ -930,7 +928,9 @@ function ResultTable({
   );
 }
 
-/* Candidate surfaces — public-facing categories only (no field-level detail). */
+/* Candidate surfaces — public-facing categories only (no field-level detail).
+   Only surfaces that are wired and optimized today are listed; modeled and
+   future surfaces are intentionally omitted from the visible levers. */
 const SURFACE_GROUPS: { tier: string; tierNote: string; groups: string[] }[] = [
   {
     tier: "Active decision levers",
@@ -939,19 +939,7 @@ const SURFACE_GROUPS: { tier: string; tierNote: string; groups: string[] }[] = [
       "Workload timing (admission, ordering, deferral)",
       "Placement & routing",
       "Capacity & batching",
-      "Cache & prewarm state",
-      "Precision / speculation / clock policy",
     ],
-  },
-  {
-    tier: "Modeled, not yet optimized",
-    tierNote: "represented in the physics, not yet a live lever",
-    groups: ["Co-location of background work", "Prefill / decode allocation"],
-  },
-  {
-    tier: "Future surfaces",
-    tierNote: "represented, not actuated today",
-    groups: ["Energy- & cost-aware timing", "Cache placement"],
   },
 ];
 
