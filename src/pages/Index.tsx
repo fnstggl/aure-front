@@ -268,7 +268,7 @@ function StatMoment() {
         average SLA-safe goodput per dollar vs a production scheduler
       </p>
       <p className="mt-6 max-w-md font-mono text-[11px] uppercase leading-relaxed tracking-[0.05em] text-white/42">
-        Mean of +698% / +718% / +755% across PJM, ERCOT, and CAISO. Uncapped replay of public production traces (~1.5M replayed requests). Pareto-safe at ~84% fewer GPU-hours. Simulated replay, not a production deployment.
+        Pareto-safe at ~84% fewer GPU-hours. Mean of +698% / +718% / +755% across PJM, ERCOT, and CAISO. Uncapped replay of public production traces (~1.5M replayed requests). Simulated replay, not a production deployment.
       </p>
     </div>
   );
