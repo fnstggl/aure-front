@@ -316,8 +316,8 @@
    while the world model is "alive". On convergence the cells fade to a single
    survivor (driven inline, per-cell, by distance from centre). */
 @keyframes grid-shimmer {
-  0%, 100% { opacity: 0.12; }
-  50% { opacity: 0.55; }
+  0%, 100% { opacity: var(--cell-lo, 0.12); }
+  50% { opacity: var(--cell-hi, 0.55); }
 }
 
 /* when the search converges, the survivor emits one soft pulse and its
