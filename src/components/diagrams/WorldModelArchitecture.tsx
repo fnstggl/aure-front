@@ -308,15 +308,12 @@ function PanelLabel({ children }: { children: React.ReactNode }) {
   return <span className="font-mono text-[10px] uppercase tracking-[0.18em] text-white/55">{children}</span>;
 }
 
-/* Structural connector between stages — a visible schematic line with a small
-   terminal node at each end, so the flow from one stage to the next reads
-   clearly. No UI arrow. */
+/* Structural connector between stages — a visible schematic line, so the flow
+   from one stage to the next reads clearly. No end nodes, no UI arrow. */
 function Connector() {
   return (
-    <div className="flex flex-col items-center py-2.5" aria-hidden>
-      <span className="h-1 w-1 rounded-full bg-white/45" />
-      <span className="h-7 w-px bg-white/35" />
-      <span className="h-1 w-1 rounded-full bg-white/45" />
+    <div className="flex justify-center py-2.5" aria-hidden>
+      <span className="h-8 w-px bg-white/35" />
     </div>
   );
 }
