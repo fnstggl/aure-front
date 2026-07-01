@@ -928,17 +928,26 @@ function ResultTable({
   );
 }
 
-/* Candidate surfaces — public-facing categories only (no field-level detail).
-   Only surfaces that are wired and optimized today are listed; modeled and
-   future surfaces are intentionally omitted from the visible levers. */
+/* Candidate surfaces — the connected surfaces Aurelius optimizes by default.
+   Only wired-and-scored surfaces are listed; modeled and future surfaces are
+   intentionally omitted from the visible levers. */
 const SURFACE_GROUPS: { tier: string; tierNote: string; groups: string[] }[] = [
   {
     tier: "Active decision levers",
-    tierNote: "optimized today; changes the scored economic outcome",
+    tierNote: "connected and optimized by default; changes the scored economic outcome",
     groups: [
-      "Workload timing (admission, ordering, deferral)",
-      "Placement & routing",
-      "Capacity & batching",
+      "Capacity policy",
+      "Capacity multiplier",
+      "Ordering policy",
+      "Admission policy",
+      "Batching policy",
+      "Routing policy",
+      "Prewarm policy",
+      "Placement policy",
+      "Migration policy",
+      "Precision policy",
+      "Speculative decoding",
+      "Clock / DVFS",
     ],
   },
 ];

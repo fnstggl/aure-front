@@ -267,18 +267,8 @@ function StatMoment() {
       <p className="mt-4 text-[clamp(1.05rem,2.4vw,1.6rem)] font-normal tracking-tight text-white/80">
         average SLA-safe goodput per dollar vs a production scheduler
       </p>
-      {/* Secondary proof: the gain came from efficiency, not extra GPU capacity.
-          Clearly visible but kept well below the +724% headline. */}
-      <div className="mt-7 flex items-baseline gap-3">
-        <span className="text-[clamp(1.5rem,3.4vw,2.4rem)] font-normal leading-none tracking-[-0.03em] text-foreground">
-          −84%
-        </span>
-        <span className="text-[13.5px] leading-snug tracking-tight text-white/60">
-          GPU-hours at the same replayed load
-        </span>
-      </div>
-      <p className="mt-7 max-w-md font-mono text-[11px] uppercase leading-relaxed tracking-[0.05em] text-white/42">
-        Mean of +698% / +718% / +755% across PJM, ERCOT, and CAISO while using ~84% fewer GPU-hours. Uncapped replay of ~1.5M requests on public production traces. Simulated replay, not a production deployment.
+      <p className="mt-6 max-w-md font-mono text-[11px] uppercase leading-relaxed tracking-[0.05em] text-white/42">
+        Pareto-safe at ~84% fewer GPU-hours. Mean of +698% / +718% / +755% across PJM, ERCOT, and CAISO. Uncapped replay of public production traces (~1.5M replayed requests). Simulated replay, not a production deployment.
       </p>
     </div>
   );
