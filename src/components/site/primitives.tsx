@@ -85,9 +85,11 @@ export function Reveal({
 export function SectionEyebrow({
   children,
   className,
+  noLine,
 }: {
   children: React.ReactNode;
   className?: string;
+  noLine?: boolean;
 }) {
   return (
     <div
@@ -96,7 +98,7 @@ export function SectionEyebrow({
         className,
       )}
     >
-      <span className="h-px w-7 bg-white/15" aria-hidden />
+      {!noLine && <span className="h-px w-7 bg-white/15" aria-hidden />}
       {children}
     </div>
   );
