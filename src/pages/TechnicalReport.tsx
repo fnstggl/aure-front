@@ -199,7 +199,7 @@ export default function TechnicalReport() {
                 </p>
                 <p className={`${P} mt-4`}>
                   Crucially, it evaluates <Em>coupled action bundles</Em>, not one knob. Workload
-                  timing, placement, routing, capacity, batching, and the precision/speculation/clock
+                  timing, placement, routing, capacity, batching, and the precision/clock
                   policy are scored together, because those decisions interact, and, as this report
                   shows, the interactions are exactly where the economic value lives.
                 </p>
@@ -402,7 +402,7 @@ export default function TechnicalReport() {
                   deterministic, causal heuristic that reacts to recent observable load and sets the
                   serving-stack levers a real modern GPU-fleet deployment runs. It is not a strawman and
                   it is not an Aurelius component; it sees no future prices, no future workload, and
-                  none of Aurelius&rsquo; economic, precision, clock, migration, or speculative-decoding
+                  none of Aurelius&rsquo; economic, precision, clock, or migration
                   arbitrage. It is assembled, in general terms, from the controls that production serving
                   stacks and cluster schedulers actually expose:
                 </p>
@@ -946,7 +946,6 @@ const SURFACE_GROUPS: { tier: string; tierNote: string; groups: string[] }[] = [
       "Placement policy",
       "Migration policy",
       "Precision policy",
-      "Speculative decoding",
       "Clock / DVFS",
     ],
   },
