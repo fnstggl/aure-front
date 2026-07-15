@@ -19,7 +19,7 @@ import fitz  # PyMuPDF
 
 HERE = pathlib.Path(__file__).resolve().parent
 OUT_DIR = HERE.parent
-PDF_NAME = "Aurelius_Fleet_Trajectory_Memo_v3.pdf"
+PDF_NAME = "Aurelius_Fleet_Trajectory_Memo_v4.pdf"
 EXPECTED_PAGES = 4
 
 METADATA = {

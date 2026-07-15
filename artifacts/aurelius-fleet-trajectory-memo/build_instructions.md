@@ -1,4 +1,4 @@
-# Build instructions - Aurelius fleet-trajectory memo (v3)
+# Build instructions - Aurelius fleet-trajectory memo (v4)
 
 Standalone, sendable four-page US Letter PDF organized around one idea:
 choose the best fleet trajectory, not just the best next action. Independent
@@ -6,14 +6,16 @@ of the six-page memo in `artifacts/aurelius-technical-memo/` (unchanged), the
 full technical report, and the website.
 
     artifacts/aurelius-fleet-trajectory-memo/
-      Aurelius_Fleet_Trajectory_Memo_v3.pdf   <- attach this (current)
+      Aurelius_Fleet_Trajectory_Memo_v4.pdf   <- attach this (current)
+      Aurelius_Fleet_Trajectory_Memo_v3.pdf   <- prior version, kept for reference
       Aurelius_Fleet_Trajectory_Memo_v2.pdf   <- prior version, kept for reference
       claim_ledger.md                         claims, language policy, sources (do not send)
       build_instructions.md                   this file
       source/
-        memo.html                             single-file source (HTML + inline CSS + inline SVG) — v3
+        memo.html                             single-file source (HTML + inline CSS + inline SVG) — v4
+        memo_v3.html                          v3 source snapshot (reference only)
         memo_v2.html                          v2 source snapshot (reference only)
-        build.py                              build + QA script (emits v3)
+        build.py                              build + QA script (emits v4)
         fonts/                                Helvetica Now Display woff2 (copied from /public/fonts)
       rendered/                               page-1..4.png, contact-sheet.png,
                                               text-layer.txt, links.txt (regenerated per build)
@@ -29,7 +31,8 @@ Pipeline: headless Chromium print-to-PDF (`--no-pdf-header-footer`,
 with `overflow: hidden` and `flex-shrink: 0` on every direct child), then
 PyMuPDF stamps metadata, optimizes, renders per-page PNGs plus a 2x2 contact
 sheet, extracts the text layer and links, and runs the language checks below.
-To emit v2 instead, set `PDF_NAME` in build.py and point it at `memo_v2.html`.
+To emit v2 or v3 instead, set `PDF_NAME` in build.py and point `print_pdf` at
+`memo_v2.html` / `memo_v3.html`.
 
 ## Automated checks (build.py fails them loudly)
 
@@ -38,26 +41,73 @@ To emit v2 instead, set `PDF_NAME` in build.py and point it at `memo_v2.html`.
 - Banned phrases absent (see claim_ledger.md), including em and en dashes.
 - "constructed production-informed replay baseline" present on pages 1 and 4.
 
-## v3 design system (do not drift)
+## v4 figure grammar (the change from v3)
 
-- **Black and white only.** No accent color of any kind. The selected
-  trajectory and the winning result are shown through heavier line weight,
-  solid black fill, black square markers, and gray suppression of
-  non-selected paths — never color.
+v3 fixed the palette and type. v4 rebuilds the figure *geometry* so every
+diagram reads as one designed system rather than a plotted chart. Do not drift
+from this grammar; do not "just thicken lines."
+
+- **One coordinate system.** Every inline SVG uses `viewBox="0 0 520 H"`, so
+  one user unit is about one point (the plate content column is ~520pt wide).
+  Stroke widths are therefore literal point values. Do **not** use
+  `vector-effect: non-scaling-stroke` (it renders too thin at this scale).
+  Nodes and turns land on an 8pt grid; routing is orthogonal (right angles),
+  never free diagonals.
+- **Four semantic line weights, one meaning each:**
+  - Selected trajectory / result: **1.5pt `#111110`** (a single unbroken heavy
+    spine; also the FIG 04b sequence spine and the FIG 04a bars in solid fill).
+  - Feasible, lower-ranked: **0.75pt `#8C8C8C`** (~45%), with open square nodes
+    (plate-fill, gray stroke).
+  - Rejected: **0.75pt `#BDBDBD`** (~25%), terminated by a clean black **x**
+    (two 1.5pt strokes); rejected paths carry no intermediate nodes.
+  - Structural guide (header rules, axes): **0.5pt `#D2D2D2`** (~18%).
+- **Nodes.** Root / live state = filled black square (11-12pt). Selected node =
+  filled black 7pt square. Feasible node = open 6pt square. Rejection = black x.
+  Arrowheads are one consistent triangle (10x10). The actuation boundary is a
+  dashed vertical `#111110` 0.75pt line (`stroke-dasharray="2 3"`).
+- **Rendering.** Every SVG root group sets `shape-rendering="geometricPrecision"`,
+  `text-rendering="geometricPrecision"`, `stroke-linecap="butt"`,
+  `stroke-linejoin="miter"`. Colors are literal hex in presentation attributes
+  (CSS `var()` does not resolve inside SVG attributes).
+- **All figure text is uppercase Helvetica**, tracked, secondary `#6E6A62` /
+  emphasis `#111110`. This includes the page-2 figure, now a comparison matrix.
+
+### Per figure
+- **FIG 01** (page 1): one live state forks into an orthogonal lane tree over
+  NOW..T+3 — two rejected lanes terminate at gate columns with x, two feasible
+  lanes run gray with open nodes, the selected lane is a straight heavy spine
+  that crosses the actuation boundary into the control plane.
+- **FIG 02** (page 2): the search-strategy ablation is an uppercase comparison
+  matrix (SEARCH SPACE / COMPLETION / RELATIVE GP/$ / DELTA / MECHANISM). The
+  baseline row is separated by a major rule; the hierarchical row is the
+  selected result (top major rule, black, larger ratio).
+- **FIG 03** (page 3): the same trajectory grammar as FIG 01, detailed for one
+  control period — A rejected at T+2 (x), B feasible/lower-ranked (gray), C the
+  selected spine across the boundary.
+- **FIG 04a** (page 4): three market bars in solid black measured from the
+  1.00x baseline axis, with a dashed mean 8.24x reference.
+- **FIG 04b** (page 4): a single spine of stage nodes with an outlined diamond
+  fidelity gate; counterfactuals are scored only if that gate passes.
+
+## Divider system (standardized in v4)
+
+- Major rule (header underline, section rules, matrix header/emphasis):
+  **0.75pt solid `#111110`**.
+- Figure frame (plate border): **0.75pt `rgba(17,17,16,0.62)`** — quieter than
+  the content lines on purpose, so the selected spine is the heaviest mark.
+- Minor rule (plate header/caption, footer, soft separators):
+  **0.5pt `rgba(17,17,16,0.20)`**.
+- Table row rule: **0.5pt `rgba(17,17,16,0.15)`**.
+
+## Design invariants (unchanged since v3)
+
+- **Black and white only.** No accent color of any kind (grayscale-safe: the
+  only chromatic content is the warm paper tone itself). Selection is shown
+  through weight, solid black fill, black nodes, and gray suppression, never
+  color.
 - **One type family: Helvetica Now Display** (400 + 500). No monospace, no
-  second family. IBM Plex Mono was removed from this artifact.
-- **All figure labels, metadata, table labels, and page markers are
-  uppercase Helvetica**, cleanly tracked (~0.14em), not excessively. Body
-  and headline copy stay sentence case.
-- **Unified figure grammar.** Every figure is a bordered plate with a
-  Helvetica uppercase header rule (`FIG NN · title` left, qualifier right)
-  and a matching caption strip. Same line weights by role: selected 2.6pt
-  black; secondary/rejected 1.2pt gray (`#97948C`); rejection = clean black
-  X; selected node = filled black square; feasible-lower = gray square.
-- **Hard geometry only.** Straight lines, exact node placement, crisp
-  90-degree/consistent-slope turns, dashed actuation boundary. No curves, no
-  soft fan-outs, no ornamental micro-lines, no registration crosses, no
-  figure-tag boxes.
+  second family. Body and headline copy stay sentence case; all labels and
+  figure text are uppercase.
 - Warm off-white page (`#F1F0EC`) on all four pages; plates on `#FBFAF8`.
 - Fonts are licensed assets already present in this repository at
   `/public/fonts`; nothing new is downloaded.
@@ -67,12 +117,14 @@ To emit v2 instead, set `PDF_NAME` in build.py and point it at `memo_v2.html`.
 - Each `.page` is a column flex container. Without `flex-shrink: 0` on
   children, an overflowing page silently crushes the SVG figures to zero
   height instead of clipping; keep that rule.
-- Do not put `font-variant-numeric: tabular-nums` on Helvetica Now text:
-  its tabular feature gives commas, periods, and hyphens digit-width
-  advances, which reads as `3 . 62 ×`. Right-align cells instead.
-- SVG viewBox width is 744 units across a ~520pt content column
-  (1 unit is about 0.70pt). Keep figure label font-size at or above 9.4
-  units (about 6.6pt effective) and everything inside x = 0..744.
+- Do not put `font-variant-numeric: tabular-nums` on Helvetica Now text: its
+  tabular feature gives commas, periods, and hyphens digit-width advances,
+  which reads as `3 . 62 x`. Right-align cells instead.
+- Because the SVG viewBox width (~520) now matches the content column, figures
+  are no longer downscaled the way the v3 744-unit figures were, so a taller
+  viewBox costs real page height. Keep figure viewBox heights tight (FIG 01
+  160, FIG 03 200, FIG 04a 84, FIG 04b 56) or pages 2 and 4 overflow their
+  footers.
 
 ## PDF metadata (stamped by build.py)
 
