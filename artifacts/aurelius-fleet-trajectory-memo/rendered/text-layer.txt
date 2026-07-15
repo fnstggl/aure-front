@@ -2,7 +2,7 @@
 AURELIUS
 A PREDICTIVE SUPERVISORY LAYER FOR GPU FLEETS
 TECHNICAL MEMO
-PAGE 01 / 04
+PAGE 01 / 03
 Choose the best fleet trajectory, not just
 the best next action.
 ONE LIVE FLEET STATE · MANY COUNTERFACTUAL FUTURES · ONE SAFE TRAJECTORY SELECTED BEFORE
@@ -21,26 +21,30 @@ REJECTED · CONSTRAINT GATE
 REJECTED · CONSTRAINT GATE
 CANDI DATE EVALUATI ON NEVER WRITES TO THE LIVE FLEET
 METADATA ONLY
-Kubernetes, Slurm, serving schedulers, autoscalers, and
-fleet-management systems already own specialized control
-and execution decisions. Aurelius adds a pre-execution
-planning layer above them.
-Before a decision is committed, Aurelius forks the current
-fleet state into competing simulated trajectories. Each
-trajectory applies a different coupled policy across the
-controls implemented for that workload, including batching,
-routing, placement, capacity, prewarming, admission,
-migration, precision, speculative decoding, and GPU clock
-policy.
-The fleet state is then advanced through the planning
-horizon. Each trajectory changes queue progression,
-capacity use, placement and topology pressure, replica
-warm state, SLA outcomes, and modeled infrastructure cost.
-Trajectories that violate configured SLA, capacity, power,
-residency, placement, or policy constraints are rejected
-before ranking. The highest-scoring feasible policy is
-returned to the existing control plane, which remains
-authoritative and executes through its normal interfaces.
+MIRROR FLEET STATE
+→
+GENERATE COUPLED
+POLICIES
+→ADVANCE EACH TRAJECTORY →
+REJECT INFEASIBLE AND
+RETURN ONE
+Aurelius adds a pre-execution planning layer above
+Kubernetes, Slurm, serving schedulers, autoscalers, and fleet-
+management systems. Before a decision is committed, it forks
+the current fleet state into competing simulated trajectories,
+each applying a different coupled policy across the
+implemented controls: batching, routing, placement, capacity,
+prewarming, admission, migration, precision, speculative
+decoding, and GPU clock.
+Each trajectory runs against isolated simulated state. The
+model carries queue, capacity, placement and topology,
+replica warm state, and configured constraints, advanced
+across the planning horizon. Trajectories that violate
+configured constraints are rejected before ranking, and the
+highest-scoring feasible policy is returned to the existing
+control plane.
+Aurelius reads scheduler and fleet metadata, evaluates trajectories in isolated simulated state, and returns a constrained policy
+through the existing control plane. It never writes directly to the live fleet.
 8.24×
 mean SLA-safe goodput per modeled
 infrastructure dollar versus a constructed
@@ -56,13 +60,13 @@ windows with lower SLA violation rates
 Simulated, load-dependent evidence from selected public-trace windows. Not a production result and not an estimate of performance
 against a particular fleet or internal scheduler.
 AURELIUS · TECHNICAL MEMO
-PAGE 01 / 04
+PAGE 01 / 03
 
 
 ===== PAGE 2 =====
 AURELIUS
 TECHNICAL MEMO
-PAGE 02 / 04
+PAGE 02 / 03
 The optimizer cannot choose a future it never
 represents.
 The uncapped ablation reran the exact harness, windows, and load behind the 8.24× headline and varied one
@@ -144,72 +148,16 @@ Production anchors reproduced published values exactly; the hierarchical arm rep
 search regret where exhaustive enumeration was tractable, at approximately 40 candidate evaluations per decision. Neither validates the simulator or
 establishes production savings.
 AURELIUS · TECHNICAL MEMO
-PAGE 02 / 04
+PAGE 02 / 03
 
 
 ===== PAGE 3 =====
 AURELIUS
 TECHNICAL MEMO
-PAGE 03 / 04
-One fleet. Many futures. Simulated before execution.
-F I G 0 3   STATE-TRANSITI ON S CHEMATI C · ONE CONTROL PERI OD
-GATE → RANK → RETURN
-STATE(T)
-STATE(T+1)
-STATE(T+2)
-STATE(T+3)
-ACTUATION BOUNDARY
-CONTROL PLANE EXECUTES
-TRAJECTORY A · REJECTED AT T+2
-SLA TOLERANCE EXCEEDED
-TRAJECTORY C · SELECTED · HIGHEST MODELED GP/$
-TRAJECTORY B · FEASIBLE, LOWER RANKED
-EACH CANDI DATE RUNS AGAI NST I S OLATED SI MULATED STATE
-NEVER WRITES TO THE LIVE FLEET
-Live fleet state: queue, capacity, placement, topology, replica state, and configured constraints, advanced one control period at a time.
-01
-Mirror the fleet.
-A persistent state-transition model carries queue state,
-capacity, placement and locality, replica warm and cold
-state, migrations in flight, configured constraints, and the
-modeled cost basis across control periods.
-02
-Generate coupled policies.
-A regime-specific generator proposes a bounded set of
-policies based on the workload, operating conditions,
-implemented controls, and configured constraints.
-Previously validated candidates are retained as controls.
-03
-Advance each trajectory.
-Every candidate is simulated independently over the
-planning horizon. Forecasts use only information
-available at the decision timestamp. Future arrivals, future
-prices, and future outcomes are not supplied to the
-planner.
-04
-Reject infeasible trajectories and return the
-winner.
-Hard constraints reject infeasible trajectories before
-economic ranking. The highest-scoring feasible policy is
-returned as a recommendation. When forecast
-confidence falls below the configured threshold, Aurelius
-returns the configured deterministic fallback policy.
-Aurelius sits above Kubernetes, Slurm, serving schedulers, routing systems, autoscalers, and fleet-management systems. It evaluates
-how their decisions interact across a shared planning horizon. It does not replace them, write cluster state, or bypass operator-
-configured constraints.
-The proposed historical replay requires scheduler and fleet metadata. It does not require customer identity, request payloads, model
-outputs, or proprietary weights.
-AURELIUS · TECHNICAL MEMO
-PAGE 03 / 04
-
-
-===== PAGE 4 =====
-AURELIUS
-TECHNICAL MEMO
-PAGE 04 / 04
+PAGE 03 / 03
 A signal too large to ignore and too simulated to trust without
 operator data.
-F I G 0 4   UNCAPPED REPLAY · SLA- SAFE GOODPUT PER DOLLAR VS THE CONSTRUCTED BASELI NE
+F I G 0 3   UNCAPPED REPLAY · SLA- SAFE GOODPUT PER DOLLAR VS THE CONSTRUCTED BASELI NE
 THREE MARKET WI NDOWS
 PJM
 ERCOT
@@ -270,4 +218,4 @@ beckett@runaurelius.com
 runaurelius.com
 Complete methodology, references, benchmark tables, limitations, and mechanism audits are in the supporting full technical report.
 AURELIUS · TECHNICAL MEMO · RUNAURELIUS COM
-PAGE 04 / 04
+PAGE 03 / 03

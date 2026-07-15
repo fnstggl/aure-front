@@ -87,10 +87,14 @@
   /* ============ page 1 ============ */
   .p1-head { margin-top: 20pt; font-size: 31pt; line-height: 1.06; letter-spacing: -0.023em; max-width: 7.2in; }
   .p1-phrase { margin-top: 11pt; font-size: 7.8pt; font-weight: 500; text-transform: uppercase; letter-spacing: 0.15em; color: var(--ink-2); }
-  .p1-body { margin-top: 13pt; display: flex; gap: 28pt; }
+  .p1-flow { display: flex; align-items: center; margin-top: 12pt; border-top: 0.75pt solid var(--rule-major); border-bottom: 0.5pt solid var(--rule-minor); padding: 7pt 0; }
+  .p1-flow .step { flex: 1 1 0; text-align: center; font-size: 7.3pt; font-weight: 500; text-transform: uppercase; letter-spacing: 0.1em; color: var(--ink); line-height: 1.2; }
+  .p1-flow .arw { flex: 0 0 auto; color: var(--ink-3); font-size: 8.5pt; padding: 0 2pt; }
+  .p1-body { margin-top: 11pt; display: flex; gap: 28pt; }
   .p1-body .col { flex: 1 1 0; }
-  .p1-body p { font-size: 9.6pt; line-height: 1.5; color: var(--ink-2); }
+  .p1-body p { font-size: 9.4pt; line-height: 1.48; color: var(--ink-2); }
   .p1-body p + p { margin-top: 6pt; }
+  .p1-boundary { margin-top: 10pt; font-size: 9.3pt; line-height: 1.45; color: var(--ink); max-width: 7.2in; }
   .p1-metrics { display: flex; align-items: stretch; gap: 22pt; margin-top: 13pt; border-top: 0.75pt solid var(--rule-major); padding-top: 12pt; }
   .p1-metrics .hero { flex: 0 0 2.7in; }
   .p1-metrics .hero .v { font-size: 43pt; font-weight: 500; letter-spacing: -0.025em; line-height: 1; color: var(--ink); }
@@ -176,7 +180,7 @@
       <div class="wm">AURELIUS</div>
       <div class="cat">A predictive supervisory layer for GPU fleets</div>
     </div>
-    <div class="mt">Technical memo<br/>Page 01 / 04</div>
+    <div class="mt">Technical memo<br/>Page 01 / 03</div>
   </div>
 
   <h1 class="p1-head">Choose the best fleet trajectory, not just the best next action.</h1>
@@ -243,26 +247,32 @@
     </div>
   </div>
 
+  <div class="p1-flow">
+    <span class="step">Mirror fleet state</span><span class="arw">&rarr;</span>
+    <span class="step">Generate coupled policies</span><span class="arw">&rarr;</span>
+    <span class="step">Advance each trajectory</span><span class="arw">&rarr;</span>
+    <span class="step">Reject infeasible and return one</span>
+  </div>
+
   <div class="p1-body">
     <div class="col">
-      <p>Kubernetes, Slurm, serving schedulers, autoscalers, and fleet-management systems already own
-      specialized control and execution decisions. Aurelius adds a pre-execution planning layer above
-      them.</p>
-      <p>Before a decision is committed, Aurelius forks the current fleet state into competing simulated
-      trajectories. Each trajectory applies a different coupled policy across the controls implemented
-      for that workload, including batching, routing, placement, capacity, prewarming, admission,
-      migration, precision, speculative decoding, and GPU clock policy.</p>
+      <p>Aurelius adds a pre-execution planning layer above Kubernetes, Slurm, serving schedulers,
+      autoscalers, and fleet-management systems. Before a decision is committed, it forks the current
+      fleet state into competing simulated trajectories, each applying a different coupled policy across
+      the implemented controls: batching, routing, placement, capacity, prewarming, admission, migration,
+      precision, speculative decoding, and GPU clock.</p>
     </div>
     <div class="col">
-      <p>The fleet state is then advanced through the planning horizon. Each trajectory changes queue
-      progression, capacity use, placement and topology pressure, replica warm state, SLA outcomes, and
-      modeled infrastructure cost.</p>
-      <p>Trajectories that violate configured SLA, capacity, power, residency, placement, or policy
-      constraints are rejected before ranking. The highest-scoring feasible policy is returned to the
-      existing control plane, which remains authoritative and executes through its normal
-      interfaces.</p>
+      <p>Each trajectory runs against isolated simulated state. The model carries queue, capacity,
+      placement and topology, replica warm state, and configured constraints, advanced across the
+      planning horizon. Trajectories that violate configured constraints are rejected before ranking, and
+      the highest-scoring feasible policy is returned to the existing control plane.</p>
     </div>
   </div>
+
+  <p class="p1-boundary">Aurelius reads scheduler and fleet metadata, evaluates trajectories in isolated
+  simulated state, and returns a constrained policy through the existing control plane. It never writes
+  directly to the live fleet.</p>
 
   <div class="p1-metrics">
     <div class="hero">
@@ -283,7 +293,7 @@
 
   <div class="ft">
     <span>Aurelius &middot; Technical memo</span>
-    <span>Page 01 / 04</span>
+    <span>Page 01 / 03</span>
   </div>
 </section>
 
@@ -293,7 +303,7 @@
 <section class="page">
   <div class="hd">
     <span class="wm">AURELIUS</span>
-    <div class="mt">Technical memo<br/>Page 02 / 04</div>
+    <div class="mt">Technical memo<br/>Page 02 / 03</div>
   </div>
 
   <h1 class="headline" style="margin-top: 15pt;">The optimizer cannot choose a future it never
@@ -415,147 +425,24 @@
 
   <div class="ft">
     <span>Aurelius &middot; Technical memo</span>
-    <span>Page 02 / 04</span>
+    <span>Page 02 / 03</span>
   </div>
 </section>
 
 <!-- ================================================================= -->
-<!-- PAGE 3 · HOW THE ARCHITECTURE WORKS                                -->
+<!-- PAGE 3 · SCOPE, LIMITS, AND THE VALIDATION ASK                     -->
 <!-- ================================================================= -->
 <section class="page">
   <div class="hd">
     <span class="wm">AURELIUS</span>
-    <div class="mt">Technical memo<br/>Page 03 / 04</div>
-  </div>
-
-  <h1 class="headline" style="margin-top: 18pt;">One fleet. Many futures. Simulated before execution.</h1>
-
-  <div class="plate" style="margin-top: 12pt;">
-    <div class="plate-hd">
-      <span><b>FIG 03</b> &nbsp;State-transition schematic &middot; one control period</span>
-      <span>Gate &rarr; rank &rarr; return</span>
-    </div>
-    <svg viewBox="0 0 520 200" role="img"
-         aria-label="The live fleet state advances through state t+1, t+2, t+3 along three candidate trajectories. Trajectory A is rejected when queue growth exceeds the configured SLA tolerance at t+2, marked with a black x. Trajectory B is feasible but lower-ranked, shown in gray. Trajectory C satisfies the configured constraints with the highest modeled goodput per dollar, is selected as a heavy black line, and crosses the actuation boundary to the existing control systems.">
-      <g font-family="Helvetica Now Display, Helvetica, Arial, sans-serif"
-         shape-rendering="geometricPrecision" text-rendering="geometricPrecision"
-         stroke-linecap="butt" stroke-linejoin="miter">
-        <!-- structural guide + column headers -->
-        <line x1="40" y1="24" x2="448" y2="24" stroke="#D2D2D2" stroke-width="0.5"/>
-        <g font-size="7.5" font-weight="500" letter-spacing="1" fill="#6E6A62" text-anchor="middle" stroke="none">
-          <text x="56" y="16">STATE(T)</text>
-          <text x="184" y="16">STATE(T+1)</text>
-          <text x="312" y="16">STATE(T+2)</text>
-          <text x="432" y="16">STATE(T+3)</text>
-        </g>
-
-        <!-- trajectory A: rejected at t+2 (light + x); flush fork at x=92 -->
-        <polyline points="56,112 92,112 92,48 312,48" fill="none" stroke="#BDBDBD" stroke-width="0.75"/>
-        <path d="M306.5 42.5 l11 11 M317.5 42.5 l-11 11" stroke="#111110" stroke-width="1.5" fill="none"/>
-
-        <!-- trajectory B: feasible, lower-ranked (gray); flush fork at x=92 -->
-        <polyline points="56,112 92,112 92,176 432,176" fill="none" stroke="#8C8C8C" stroke-width="0.75"/>
-
-        <!-- trajectory C: selected (heavy black spine across boundary) -->
-        <polyline points="56,112 504,112" fill="none" stroke="#111110" stroke-width="1.5"/>
-        <path d="M494 107 L504 112 L494 117 Z" fill="#111110" stroke="none"/>
-
-        <!-- actuation boundary -->
-        <line x1="464" y1="36" x2="464" y2="188" stroke="#111110" stroke-width="0.75" stroke-dasharray="2 3"/>
-        <g stroke="none">
-          <text x="464" y="30" font-size="7" font-weight="500" letter-spacing="0.7" fill="#6E6A62" text-anchor="middle">ACTUATION BOUNDARY</text>
-          <text x="514" y="128" font-size="7.5" font-weight="500" letter-spacing="0.5" fill="#111110" text-anchor="end">CONTROL PLANE EXECUTES</text>
-
-          <!-- annotations -->
-          <text x="326" y="45" font-size="7.5" font-weight="500" letter-spacing="0.4" fill="#111110">TRAJECTORY A &middot; REJECTED AT T+2</text>
-          <text x="326" y="57" font-size="7" font-weight="500" letter-spacing="0.4" fill="#6E6A62">SLA TOLERANCE EXCEEDED</text>
-          <text x="128" y="104" font-size="7.5" font-weight="500" letter-spacing="0.4" fill="#111110">TRAJECTORY C &middot; SELECTED &middot; HIGHEST MODELED GP/$</text>
-          <text x="196" y="168" font-size="7.5" font-weight="500" letter-spacing="0.4" fill="#3A3833">TRAJECTORY B &middot; FEASIBLE, LOWER RANKED</text>
-        </g>
-      </g>
-    </svg>
-    <div class="plate-cap">
-      <span>Each candidate runs against isolated simulated state</span>
-      <span>Never writes to the live fleet</span>
-    </div>
-  </div>
-
-  <p class="p3-cap">Live fleet state: queue, capacity, placement, topology, replica state, and configured
-  constraints, advanced one control period at a time.</p>
-
-  <div class="p3-stages">
-    <div class="col">
-      <div class="p3-st">
-        <span class="n">01</span>
-        <div>
-          <div class="t">Mirror the fleet.</div>
-          <p class="d">A persistent state-transition model carries queue state, capacity, placement and
-          locality, replica warm and cold state, migrations in flight, configured constraints, and the
-          modeled cost basis across control periods.</p>
-        </div>
-      </div>
-      <div class="p3-st">
-        <span class="n">02</span>
-        <div>
-          <div class="t">Generate coupled policies.</div>
-          <p class="d">A regime-specific generator proposes a bounded set of policies based on the
-          workload, operating conditions, implemented controls, and configured constraints. Previously
-          validated candidates are retained as controls.</p>
-        </div>
-      </div>
-    </div>
-    <div class="col">
-      <div class="p3-st">
-        <span class="n">03</span>
-        <div>
-          <div class="t">Advance each trajectory.</div>
-          <p class="d">Every candidate is simulated independently over the planning horizon. Forecasts
-          use only information available at the decision timestamp. Future arrivals, future prices, and
-          future outcomes are not supplied to the planner.</p>
-        </div>
-      </div>
-      <div class="p3-st">
-        <span class="n">04</span>
-        <div>
-          <div class="t">Reject infeasible trajectories and return the winner.</div>
-          <p class="d">Hard constraints reject infeasible trajectories before economic ranking. The
-          highest-scoring feasible policy is returned as a recommendation. When forecast confidence
-          falls below the configured threshold, Aurelius returns the configured deterministic fallback
-          policy.</p>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <div class="p3-bound">
-    <p>Aurelius sits above Kubernetes, Slurm, serving schedulers, routing systems, autoscalers, and
-    fleet-management systems. It evaluates how their decisions interact across a shared planning
-    horizon. It does not replace them, write cluster state, or bypass operator-configured
-    constraints.</p>
-    <p>The proposed historical replay requires scheduler and fleet metadata. It does not require
-    customer identity, request payloads, model outputs, or proprietary weights.</p>
-  </div>
-
-  <div class="ft">
-    <span>Aurelius &middot; Technical memo</span>
-    <span>Page 03 / 04</span>
-  </div>
-</section>
-
-<!-- ================================================================= -->
-<!-- PAGE 4 · SCOPE, LIMITS, AND THE VALIDATION ASK                     -->
-<!-- ================================================================= -->
-<section class="page">
-  <div class="hd">
-    <span class="wm">AURELIUS</span>
-    <div class="mt">Technical memo<br/>Page 04 / 04</div>
+    <div class="mt">Technical memo<br/>Page 03 / 03</div>
   </div>
 
   <h1 class="headline" style="margin-top: 13pt; font-size: 18pt;">A signal too large to ignore and too simulated
   to trust without operator data.</h1>
 
   <div class="figbar">
-    <span><b>FIG 04</b> &nbsp;Uncapped replay &middot; SLA-safe goodput per dollar vs the constructed baseline</span>
+    <span><b>FIG 03</b> &nbsp;Uncapped replay &middot; SLA-safe goodput per dollar vs the constructed baseline</span>
     <span>Three market windows</span>
   </div>
   <svg viewBox="0 0 520 84" style="margin-top: 5pt;" role="img"
@@ -696,7 +583,7 @@
 
   <div class="ft">
     <span>Aurelius &middot; Technical memo &middot; runaurelius.com</span>
-    <span>Page 04 / 04</span>
+    <span>Page 03 / 03</span>
   </div>
 </section>
 

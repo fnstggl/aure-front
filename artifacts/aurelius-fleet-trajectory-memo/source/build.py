@@ -20,7 +20,7 @@ import fitz  # PyMuPDF
 HERE = pathlib.Path(__file__).resolve().parent
 OUT_DIR = HERE.parent
 PDF_NAME = "Aurelius_Fleet_Trajectory_Memo_v4.pdf"
-EXPECTED_PAGES = 4
+EXPECTED_PAGES = 3
 
 METADATA = {
     "title": "Aurelius - Counterfactual Planning for GPU Fleets",
@@ -42,7 +42,7 @@ BANNED_PHRASES = [
     "—",  # em dash
     "–",  # en dash
 ]
-REQUIRED_ON_PAGES = {"constructed production-informed replay baseline": [1, 4]}
+REQUIRED_ON_PAGES = {"constructed production-informed replay baseline": [1, 3]}
 
 DEFAULT_CHROMIUM_CANDIDATES = [
     "/opt/pw-browsers/chromium-1194/chrome-linux/chrome",
@@ -140,7 +140,7 @@ def language_checks(doc: fitz.Document) -> list[str]:
             if phrase.lower() not in pages_text[pno - 1].lower().replace("\n", " "):
                 problems.append(f"required phrase missing on page {pno}: {phrase!r}")
     for i, t in enumerate(pages_text, start=1):
-        if t.upper().count(f"PAGE 0{i} / 04") < 2:
+        if t.upper().count(f"PAGE 0{i} / 03") < 2:
             problems.append(f"footer missing on page {i} (overflow?)")
     return problems
 

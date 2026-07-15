@@ -1,6 +1,6 @@
 # Build instructions - Aurelius fleet-trajectory memo (v4)
 
-Standalone, sendable four-page US Letter PDF organized around one idea:
+Standalone, sendable three-page US Letter PDF organized around one idea:
 choose the best fleet trajectory, not just the best next action. Independent
 of the six-page memo in `artifacts/aurelius-technical-memo/` (unchanged), the
 full technical report, and the website.
@@ -17,14 +17,14 @@ full technical report, and the website.
         memo_v2.html                          v2 source snapshot (reference only)
         build.py                              build + QA script (emits v4)
         fonts/                                Helvetica Now Display woff2 (copied from /public/fonts)
-      rendered/                               page-1..4.png, contact-sheet.png,
+      rendered/                               page-1..3.png, contact-sheet.png,
                                               text-layer.txt, links.txt (regenerated per build)
 
 ## Rebuild
 
     pip install pymupdf pillow
     cd artifacts/aurelius-fleet-trajectory-memo/source
-    python3 build.py        # auto-finds Chromium; asserts exactly 4 pages
+    python3 build.py        # auto-finds Chromium; asserts exactly 3 pages
 
 Pipeline: headless Chromium print-to-PDF (`--no-pdf-header-footer`,
 `@page { size: Letter; margin: 0 }`, fixed 8.5in x 11in flex-column pages
@@ -36,10 +36,10 @@ To emit v2 or v3 instead, set `PDF_NAME` in build.py and point `print_pdf` at
 
 ## Automated checks (build.py fails them loudly)
 
-- Exactly 4 pages; "PAGE 0N / 04" present twice per page in the text layer
+- Exactly 3 pages; "PAGE 0N / 03" present twice per page in the text layer
   (header and footer; one occurrence means the footer overflowed off-page).
 - Banned phrases absent (see claim_ledger.md), including em and en dashes.
-- "constructed production-informed replay baseline" present on pages 1 and 4.
+- "constructed production-informed replay baseline" present on pages 1 and 3.
 
 ## v4 figure grammar (the change from v3)
 
@@ -55,16 +55,15 @@ from this grammar; do not "just thicken lines."
   never free diagonals.
 - **Four semantic line weights, one meaning each:**
   - Selected trajectory / result: **1.5pt `#111110`** (a single unbroken heavy
-    spine; also the FIG 04b sequence spine and the FIG 04a bars in solid fill).
-  - Feasible, lower-ranked: **0.75pt `#8C8C8C`** (~45%), with open square nodes
-    (plate-fill, gray stroke).
+    spine; also the FIG 03b sequence spine and the FIG 03a bars in solid fill).
+  - Feasible, lower-ranked: **0.75pt `#8C8C8C`** (~45%).
   - Rejected: **0.75pt `#BDBDBD`** (~25%), terminated by a clean black **x**
-    (two 1.5pt strokes); rejected paths carry no intermediate nodes.
+    (two 1.5pt strokes).
   - Structural guide (header rules, axes): **0.5pt `#D2D2D2`** (~18%).
-- **Nodes.** Root / live state = filled black square (11-12pt). Selected node =
-  filled black 7pt square. Feasible node = open 6pt square. Rejection = black x.
-  Arrowheads are one consistent triangle (10x10). The actuation boundary is a
-  dashed vertical `#111110` 0.75pt line (`stroke-dasharray="2 3"`).
+- **No node squares.** Trajectories are clean lines only. Branches fork from a
+  single flush vertical; rejection is a black x; the returned trajectory ends in
+  one consistent arrowhead (10x10). The actuation boundary is a dashed vertical
+  `#111110` 0.75pt line (`stroke-dasharray="2 3"`).
 - **Rendering.** Every SVG root group sets `shape-rendering="geometricPrecision"`,
   `text-rendering="geometricPrecision"`, `stroke-linecap="butt"`,
   `stroke-linejoin="miter"`. Colors are literal hex in presentation attributes
@@ -72,22 +71,28 @@ from this grammar; do not "just thicken lines."
 - **All figure text is uppercase Helvetica**, tracked, secondary `#6E6A62` /
   emphasis `#111110`. This includes the page-2 figure, now a comparison matrix.
 
+The memo is three pages (three ideas): architecture, controlled ablation,
+result + validation. Page 1 absorbs the former page-3 architecture detail as a
+thin four-step process strip (MIRROR FLEET STATE -> GENERATE COUPLED POLICIES ->
+ADVANCE EACH TRAJECTORY -> REJECT INFEASIBLE AND RETURN ONE) plus one boundary
+sentence below the diagram; the second branching diagram was removed as
+redundant with FIG 01.
+
 ### Per figure
-- **FIG 01** (page 1): one live state forks into an orthogonal lane tree over
-  NOW..T+3 — two rejected lanes terminate at gate columns with x, two feasible
-  lanes run gray with open nodes, the selected lane is a straight heavy spine
-  that crosses the actuation boundary into the control plane.
+- **FIG 01** (page 1): one live state forks (from a single flush vertical) into
+  an orthogonal lane tree over NOW..T+3 — two rejected lanes terminate at gate
+  columns with x, two feasible lanes run gray, the selected lane is a straight
+  heavy spine that crosses the actuation boundary into the control plane.
 - **FIG 02** (page 2): the search-strategy ablation is an uppercase comparison
   matrix (SEARCH SPACE / COMPLETION / RELATIVE GP/$ / DELTA / MECHANISM). The
   baseline row is separated by a major rule; the hierarchical row is the
   selected result (top major rule, black, larger ratio).
-- **FIG 03** (page 3): the same trajectory grammar as FIG 01, detailed for one
-  control period — A rejected at T+2 (x), B feasible/lower-ranked (gray), C the
-  selected spine across the boundary.
-- **FIG 04a** (page 4): three market bars in solid black measured from the
+- **FIG 03a** (page 3): three market bars in solid black measured from the
   1.00x baseline axis, with a dashed mean 8.24x reference.
-- **FIG 04b** (page 4): a single spine of stage nodes with an outlined diamond
-  fidelity gate; counterfactuals are scored only if that gate passes.
+- **FIG 03b** (page 3): a single spine with plain vertical stage ticks (recorded
+  baseline, reconstruct, fidelity gate, freeze, held-out counterfactual,
+  shadow-mode decision); counterfactuals are scored only if the fidelity gate
+  passes.
 
 ## Divider system (standardized in v4)
 
@@ -108,7 +113,7 @@ from this grammar; do not "just thicken lines."
 - **One type family: Helvetica Now Display** (400 + 500). No monospace, no
   second family. Body and headline copy stay sentence case; all labels and
   figure text are uppercase.
-- Warm off-white page (`#F1F0EC`) on all four pages; plates on `#FBFAF8`.
+- Warm off-white page (`#F1F0EC`) on all three pages; plates on `#FBFAF8`.
 - Fonts are licensed assets already present in this repository at
   `/public/fonts`; nothing new is downloaded.
 
@@ -123,7 +128,7 @@ from this grammar; do not "just thicken lines."
 - Because the SVG viewBox width (~520) now matches the content column, figures
   are no longer downscaled the way the v3 744-unit figures were, so a taller
   viewBox costs real page height. Keep figure viewBox heights tight (FIG 01
-  160, FIG 03 200, FIG 04a 84, FIG 04b 56) or pages 2 and 4 overflow their
+  160, FIG 03a 84, FIG 03b 56) or pages 2 and 3 overflow their
   footers.
 
 ## PDF metadata (stamped by build.py)
