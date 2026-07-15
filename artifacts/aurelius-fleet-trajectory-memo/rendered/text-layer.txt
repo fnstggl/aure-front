@@ -192,15 +192,14 @@ OUTPUT
 Matched SLA, GPU-hour, utilization, completed-work, and agreed economic comparisons; simulator-fidelity results;
 sensitivity analysis; attribution by active policy dimension; failure cases and negative findings; and a recommendation
 on whether recommendation-only shadow mode is warranted.
-REQUESTED NEXT STEP
-A short scoping session with one engineering owner to select a bounded historical window, validate the
-minimum metadata schema, and agree on replay acceptance criteria.
-If Aurelius cannot reproduce baseline behavior and improve the pre-registered primary metric on held-out telemetry, the evaluation
-stops. If it can, the next step is recommendation-only shadow mode.
+PROPOSED VALIDATION
+Use one bounded historical window to estimate how much farther-ahead planning could have improved
+goodput per dollar under the fleet's actual workload and constraints.
+Read-only metadata only. No payloads, production writes, or unrestricted infrastructure access.
 Beckett Zahedi
 FOUNDER · AURELIUS
 beckett@runaurelius.com
 runaurelius.com
 Complete methodology, references, benchmark tables, limitations, and mechanism audits are in the supporting full technical report.
-AURELIUS · TECHNICAL MEMO · RUNAURELIUS COM
+AURELIUS · TECHNICAL MEMO · RUNAURELIUS.COM
 PAGE 03 / 03
