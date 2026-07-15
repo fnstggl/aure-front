@@ -24,7 +24,7 @@ EXPECTED_PAGES = 3
 
 METADATA = {
     "title": "Aurelius - Counterfactual Planning for GPU Fleets",
-    "author": "Beckett Zahedi",
+    "author": "Aurelius",
     "subject": "Fleet-Trajectory Architecture, Public-Replay Evidence, and Historical Validation",
 }
 

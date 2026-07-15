@@ -62,6 +62,7 @@
   /* ---- header / footer ---- */
   .hd { display: flex; align-items: flex-end; justify-content: space-between; padding-bottom: 8pt; border-bottom: 0.75pt solid var(--rule-major); }
   .hd .wm { font-size: 12.5pt; font-weight: 500; letter-spacing: 0.02em; line-height: 1; }
+  .hd .wm-logo { display: block; height: 15.5pt; width: auto; }
   .hd .cat { margin-top: 4.5pt; font-size: 7.4pt; font-weight: 500; text-transform: uppercase; letter-spacing: 0.14em; color: var(--ink-3); }
   .hd .mt { font-size: 7.4pt; font-weight: 500; text-transform: uppercase; letter-spacing: 0.14em; color: var(--ink-2); text-align: right; line-height: 1.75; }
   .ft {
@@ -163,11 +164,13 @@
   .p4-ask { margin-top: 7pt; border-top: 0.75pt solid var(--rule-major); padding-top: 6pt; }
   .p4-ask .txt { margin-top: 3pt; font-size: 11pt; line-height: 1.36; font-weight: 500; color: var(--ink); max-width: 7.1in; }
   .p4-ask .fin { margin-top: 5pt; font-size: 9.2pt; line-height: 1.4; color: var(--ink-2); max-width: 7.1in; }
-  .p4-contact { display: flex; gap: 20pt; align-items: baseline; margin-top: 8pt; }
-  .p4-contact .nm { font-size: 10.5pt; font-weight: 500; white-space: nowrap; }
+  .p4-contact { display: flex; gap: 18pt; align-items: center; margin-top: 8pt; }
+  .p4-contact .wm-mark { height: 12.5pt; width: auto; }
   .p4-contact .rl { font-size: 7.4pt; font-weight: 500; text-transform: uppercase; letter-spacing: 0.13em; color: var(--ink-3); white-space: nowrap; }
   .p4-contact .ch { font-size: 9pt; white-space: nowrap; }
   .p4-contact .ch a { border-bottom: 0.5pt solid var(--rule-minor); padding-bottom: 0.5pt; }
+  .p4-contact .tc { font-size: 9pt; color: var(--ink-3); white-space: nowrap; }
+  .p4-contact .tc a { color: var(--ink-2); border-bottom: 0.5pt solid var(--rule-minor); padding-bottom: 0.5pt; }
 </style>
 </head>
 <body>
@@ -178,7 +181,7 @@
 <section class="page">
   <div class="hd">
     <div>
-      <div class="wm">AURELIUS</div>
+      <img class="wm-logo" src="aurelius-wordmark.png" alt="Aurelius"/>
       <div class="cat">A predictive supervisory layer for GPU fleets</div>
     </div>
     <div class="mt">Technical memo<br/>Page 01 / 03</div>
@@ -274,7 +277,7 @@
 <!-- ================================================================= -->
 <section class="page">
   <div class="hd">
-    <span class="wm">AURELIUS</span>
+    <img class="wm-logo" src="aurelius-wordmark.png" alt="Aurelius"/>
     <div class="mt">Technical memo<br/>Page 02 / 03</div>
   </div>
 
@@ -406,7 +409,7 @@
 <!-- ================================================================= -->
 <section class="page">
   <div class="hd">
-    <span class="wm">AURELIUS</span>
+    <img class="wm-logo" src="aurelius-wordmark.png" alt="Aurelius"/>
     <div class="mt">Technical memo<br/>Page 03 / 03</div>
   </div>
 
@@ -543,17 +546,16 @@
   </div>
 
   <div class="p4-contact">
-    <span class="nm">Beckett Zahedi</span>
-    <span class="rl">Founder &middot; Aurelius</span>
-    <span class="ch"><a href="mailto:beckett@runaurelius.com">beckett@runaurelius.com</a></span>
+    <img class="wm-mark" src="aurelius-wordmark.png" alt="Aurelius"/>
     <span class="ch"><a href="https://runaurelius.com">runaurelius.com</a></span>
+    <span class="tc"><span class="rl">Technical contact</span> &middot; <a href="mailto:beckett@runaurelius.com">beckett@runaurelius.com</a></span>
   </div>
   <p style="margin-top: 5pt; font-size: 8.3pt; line-height: 1.4; color: var(--ink-3);">Complete
   methodology, references, benchmark tables, limitations, and mechanism audits are in the supporting
   full technical report.</p>
 
   <div class="ft">
-    <span>Aurelius &middot; Technical memo &middot; runaurelius.com</span>
+    <span>Aurelius &middot; Technical memo</span>
     <span>Page 03 / 03</span>
   </div>
 </section>

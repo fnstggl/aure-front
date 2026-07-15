@@ -1,5 +1,4 @@
 ===== PAGE 1 =====
-AURELIUS
 A PREDICTIVE SUPERVISORY LAYER FOR GPU FLEETS
 TECHNICAL MEMO
 PAGE 01 / 03
@@ -49,7 +48,6 @@ PAGE 01 / 03
 
 
 ===== PAGE 2 =====
-AURELIUS
 TECHNICAL MEMO
 PAGE 02 / 03
 The optimizer cannot choose a future it never
@@ -137,7 +135,6 @@ PAGE 02 / 03
 
 
 ===== PAGE 3 =====
-AURELIUS
 TECHNICAL MEMO
 PAGE 03 / 03
 A signal too large to ignore and too simulated to trust without
@@ -196,10 +193,8 @@ PROPOSED VALIDATION
 Use one bounded historical window to estimate how much farther-ahead planning could have improved
 goodput per dollar under the fleet's actual workload and constraints.
 Read-only metadata only. No payloads, production writes, or unrestricted infrastructure access.
-Beckett Zahedi
-FOUNDER · AURELIUS
-beckett@runaurelius.com
 runaurelius.com
+TECHNICAL CONTACT · beckett@runaurelius.com
 Complete methodology, references, benchmark tables, limitations, and mechanism audits are in the supporting full technical report.
-AURELIUS · TECHNICAL MEMO · RUNAURELIUS.COM
+AURELIUS · TECHNICAL MEMO
 PAGE 03 / 03
