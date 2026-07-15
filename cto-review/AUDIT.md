@@ -111,10 +111,10 @@ baseline) is identical across arms, so the headline gap is *attributable*:
 | Single lever (clock only) | does not complete under load |
 | Fixed joint-policy grid (24 policies) | 3.62x |
 | Search the fixed grid (bounded beam ≈ exhaustive of grid) | 4.85x |
-| Coupled search beyond any grid (hierarchical) | **8.29x = the +724% headline** |
+| Coupled search beyond any grid (hierarchical) | **8.24x = the +724% headline** |
 
 The ladder says the value is the search, and specifically the *representation*
-of coupled policies no fixed grid contains (the 4.85x → 8.29x jump). It is not
+of coupled policies no fixed grid contains (the 4.85x → 8.24x jump). It is not
 the baseline being weak (every joint arm beats it) and not the model being
 generous (identical model across arms). On a smaller window where the whole
 space can be enumerated (`research/PHYSICS_GUIDED_PLANNER_RESULTS.md`), the same
@@ -142,8 +142,8 @@ the proof arms the number.
    followed by "a number that size demands an explanation, and the report gives
    two: the regime and the mechanism."
 3. **§05 "Where the value comes from: only the search changed"** is now the
-   *quantitative* uncapped ablation (PR #128): the 1.00x → 3.62x → 4.85x → 8.29x
-   ladder, with the 8.29x arm being the headline. This replaces the earlier
+   *quantitative* uncapped ablation (PR #128): the 1.00x → 3.62x → 4.85x → 8.24x
+   ladder, with the 8.24x arm being the headline. This replaces the earlier
    qualitative claim with real numbers in the same regime as the headline.
 4. **§06** presents the uncapped 724% result with both tables and the honest
    baseline description.

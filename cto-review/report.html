@@ -21,7 +21,7 @@
 *{margin:0;padding:0;box-sizing:border-box}
 html{-webkit-print-color-adjust:exact;print-color-adjust:exact}
 body{background:var(--bg);color:var(--fg);font-family:var(--sans);
-  font-feature-settings:"ss01","cv01";-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility;
+  font-feature-settings:"ss01","cv01","liga" 0,"clig" 0;font-variant-ligatures:none;-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility;
   font-size:14px;line-height:1.6}
 .page{width:820px;margin:0 auto;padding:0 0 4px}
 .mono{font-family:var(--mono)}
@@ -133,13 +133,13 @@ td.mn{font-family:var(--mono)}
   <div class="mast">
     <div class="brand"><img class="logo" src="LOGO_SRC" alt="Aurelius"><span class="brandlab">Technical Report</span></div>
     <h1>Simulate the fleet forward. Choose the best decision sequence before committing the next action.</h1>
-    <p class="sub">A supervisory layer that forecasts the fleet forward, simulates many coupled futures under constraints, and returns one policy for the existing stack to execute.</p>
-    <p class="lead">Aurelius sits above the scheduler. It does not replace Kubernetes, Slurm, or a serving router, and it never touches payloads. Each control period it forks the current fleet state into many counterfactual trajectories, one per candidate coupled policy, advances each under SLA, capacity, power, and policy constraints, discards the ones that violate, and hands the highest&#8209;scoring feasible policy back to the stack to run.</p>
+    <p class="sub">A supervisory layer that forecasts fleet conditions, evaluates multi&#8209;step control sequences under hard constraints, and returns the next policy to the existing control plane.</p>
+    <p class="lead">Aurelius sits above the scheduler. It does not replace Kubernetes, Slurm, or a serving router, and it never touches payloads. At each control period, Aurelius reads the current fleet state and generates candidate multi&#8209;step policies. It simulates each policy across the planning horizon, rejects candidates that violate SLA, capacity, power, or operator constraints, and returns the first action from the highest&#8209;scoring feasible sequence.</p>
 
     <div class="result">
       <div class="big">+724% average SLA&#8209;safe goodput per dollar</div>
       <div class="cap">Mean of +698% / +718% / +755% (PJM / ERCOT / CAISO), an 8.24&#215; gp/$ ratio vs a reconstructed production&#8209;class baseline · uncapped replay of public production traces (1.55M requests) · better SLA at ~84% fewer GPU&#8209;hours</div>
-      <div class="find">A number that size demands an explanation, and the report gives two. The <span class="em">regime</span>: under heavy load a fixed&#8209;policy scheduler loses efficiency while a trajectory optimizer keeps adapting. The <span class="em">mechanism</span>: on the same benchmark, with the simulator, objective, cost model, and gates held fixed across every arm, the result climbs from 3.62&#215; the baseline on a fixed, predefined set of policies to the full headline only once the planner can form additional valid combinations of the same implemented controls, not only the predefined set. The increase came from what the architecture could represent, not from changing the simulator.</div>
+      <div class="find">The result is driven by two effects. First, the fixed&#8209;policy baseline loses efficiency as the uncapped replay becomes saturated, while Aurelius re&#8209;evaluates its policy at each control period. Second, the ablation shows that the largest additional gain appears when the planner can evaluate valid policy combinations outside the original predefined set. The simulator, objective, cost model, constraints, and replay inputs remain fixed across every arm.</div>
     </div>
 
     <div class="metarow">
@@ -156,25 +156,25 @@ td.mn{font-family:var(--mono)}
     <section>
       <div class="sechead"><span class="n">00</span><h2>Abstract</h2></div>
       <p class="t">Conventional infrastructure stacks, including the unified control planes that consolidate a fleet into one view, optimize the next decision: the next placement, the next scale action, the next route, each chosen locally against the state visible now. Aurelius changes what gets optimized. It treats the fleet as a system with a trajectory, forecasts that trajectory forward, and optimizes the path rather than the step.</p>
-      <p class="t">Concretely, Aurelius is not a forecasting dashboard or a scheduler replacement. It is a supervisory layer that forks the current fleet state into many counterfactual trajectories, applies coupled policies across the controls the stack already exposes, advances each trajectory under hard constraints, kills the ones that violate, and returns one policy for the existing scheduler to execute.</p>
-      <p class="t">In an uncapped replay of three selected public production&#8209;trace windows totaling <span class="em">1.55 million requests</span> (the PJM, ERCOT, and CAISO expensive&#8209;power windows), Aurelius reaches an <span class="em">8.24&#215; mean gp/$ ratio</span> against a reconstructed production&#8209;class baseline, where <span class="em">gp/$</span> is SLA&#8209;safe goodput, SLA&#8209;compliant served tokens, per infrastructure dollar. That is a <span class="em">+724% average</span> gain (per market +698% / +718% / +755%), while holding SLA strictly better and using <span class="em">~84% fewer GPU&#8209;hours</span>. It is a Pareto win, not goodput bought by spending more. The magnitude is load&#8209;dependent and requires operator&#8209;data validation.</p>
-      <p class="t">A result that large is only worth reading if it is explained and defended, so this report does both. §07 gives the regime that produces the magnitude, a fixed policy losing efficiency under heavy load while a trajectory optimizer keeps adapting. §05 gives the mechanism, measured directly: on the exact uncapped benchmark, with the model, objective, cost model, and gates held fixed across every arm and only the planner's representable policies and search varied, the result climbs from a single&#8209;lever policy that cannot even complete the replay, to <span class="em">3.62&#215;</span> the baseline on a fixed, predefined set of policies, to the full <span class="em">8.24&#215;</span> headline once the planner can form additional valid combinations of the same implemented controls. The value was not in the model or the objective. It was in what the architecture could represent and search.</p>
-      <p class="tn">Scope, stated once and meant throughout: these are deterministic simulated replays on public production traces. The headline ratio is load&#8209;dependent and is quoted only with its scope (§07). This is directional evidence that requires live&#8209;telemetry calibration before any production claim, not a deployment. Throughout, Aurelius runs read&#8209;only and needs only scheduler metadata, never payloads or model weights.</p>
+      <p class="t">Aurelius is a supervisory control layer that operates above the existing scheduler. Each control period it generates candidate multi&#8209;step policies over the controls the stack exposes, simulates them under hard constraints, and returns the first action of the highest&#8209;scoring feasible sequence.</p>
+      <p class="t">In an uncapped replay of three selected public production&#8209;trace windows totaling <span class="em">1.55 million requests</span> (the PJM, ERCOT, and CAISO expensive&#8209;power windows), Aurelius reaches an <span class="em">8.24&#215; mean gp/$ ratio</span> against a reconstructed production&#8209;class baseline, where <span class="em">gp/$</span> is SLA&#8209;safe goodput, SLA&#8209;compliant served tokens, per infrastructure dollar. That is a <span class="em">+724% average</span> gain (per market +698% / +718% / +755%), while holding SLA strictly better and using <span class="em">~84% fewer GPU&#8209;hours</span>. Aurelius also lowers GPU&#8209;hours and SLA&#8209;violation rates, so the gain is not produced by increasing spend or relaxing SLA. The magnitude is load&#8209;dependent and requires operator&#8209;data validation.</p>
+      <p class="t">Sections 05&#8211;07 separate the operating conditions that produce the magnitude from the architectural mechanism measured by the ablation. Because the model, objective, cost assumptions, and gates were fixed, the difference is attributable to the policies the planner could represent and evaluate.</p>
+      <p class="tn">All reported results are deterministic simulated replays of public production traces. The ratio is load&#8209;dependent and applies only to the selected uncapped windows (§07). Results require live&#8209;telemetry calibration before any production claim, and are not a deployment. Aurelius runs read&#8209;only and needs only scheduler metadata, never payloads or model weights.</p>
     </section>
 
     <!-- 01 THE SHIFT -->
     <section>
-      <div class="sechead"><span class="n">01</span><h2>The shift is in what you optimize</h2></div>
+      <div class="sechead"><span class="n">01</span><h2>From one&#8209;step control to multi&#8209;period planning</h2></div>
       <p class="t">Most schedulers, and the control planes above them, optimize a current&#8209;state or local objective: availability, fairness, utilization, latency, queue state, immediate capacity, immediate price. Each is reasonable in isolation. But the economic outcome of a decision is set by constraints that arrive <em class="em">after</em> it is made: power and capacity headroom, congestion, memory and topology pressure, demand, and the price of power, which on wholesale markets can move several&#8209;fold within a day.</p>
-      <p class="t">Consolidating telemetry into one control plane is necessary, and it is not the missing piece. A unified present answers the question <em>what is the best next decision given everything I can see now</em>. It does not answer <em>what is the best sequence of decisions given what is about to happen</em>. Those are different questions, and the second is where the compounding waste lives, because once a job lands its costs are largely locked in and an observe&#8209;then&#8209;decide loop cannot price a constraint it has not yet seen.</p>
-      <p class="t">Aurelius closes that gap by moving from an <span class="em">observe, decide</span> loop to an <span class="em">observe, forecast, simulate, decide</span> loop. It is a different control architecture, not another scheduler, and it changes the question from the next decision to the trajectory.</p>
+      <p class="t">Unified telemetry improves current&#8209;state decisions, but it does not account for constraints that arise later in the planning horizon. A current&#8209;state control plane can choose an action based on the conditions visible now. It cannot compare how alternative action sequences evolve under forecasted demand, capacity, topology, and power conditions. That distinction matters because placement, capacity, and routing decisions create downstream costs that may be expensive to reverse.</p>
+      <p class="t">Aurelius closes that gap by moving from an <span class="em">observe, decide</span> loop to an <span class="em">observe, forecast, simulate, decide</span> loop. It is a different control architecture, not another scheduler.</p>
     </section>
 
     <!-- 02 WHAT IT IS -->
     <section>
-      <div class="sechead"><span class="n">02</span><h2>What Aurelius does each control period</h2></div>
-      <p class="t">At each control period, Aurelius reads the current fleet state and forecasts conditions across a finite planning horizon. It generates candidate sequences of coupled control actions, rolls each sequence through the world model, rejects trajectories that violate hard constraints, and scores the rest by risk&#8209;adjusted SLA&#8209;safe goodput per dollar. Only the first action from the highest&#8209;scoring feasible sequence is returned to the existing control plane; Aurelius then replans from the next observed state.</p>
-      <p class="t">The word that carries the architecture is <span class="em">coupled</span>. Aurelius does not tune one knob. Workload timing, placement, routing, capacity, batching, and the precision and clock policy are scored together as one bundle, because those decisions interact, and, as the finding shows, the interaction is exactly where the economic value lives.</p>
+      <div class="sechead"><span class="n">02</span><h2>Control loop</h2></div>
+      <p class="t">At each control period, Aurelius reads the current fleet state and forecasts conditions across a finite planning horizon. It generates candidate sequences of coupled control actions, rolls each sequence through the predictive fleet model, rejects trajectories that violate hard constraints, and scores the rest by risk&#8209;adjusted SLA&#8209;safe goodput per dollar. Only the first action from the highest&#8209;scoring feasible sequence is returned to the existing control plane; Aurelius then replans from the next observed state.</p>
+      <p class="t">Aurelius evaluates the controls jointly. Workload timing, placement, routing, capacity, batching, precision, and clock policy are represented as a coupled control bundle because changing one can alter the value of the others. Evaluating these controls independently can therefore miss combinations that improve SLA&#8209;safe goodput per dollar.</p>
       <figure>
         <div class="plate">
           <div class="lab">
@@ -188,7 +188,7 @@ td.mn{font-family:var(--mono)}
               <span class="chip">Capacity state</span><span class="chip">SLA targets</span>
             </div>
             <div class="conn"><span></span></div>
-            <div class="pl">Predictive world model</div>
+            <div class="pl">Predictive fleet model</div>
             <div class="wm">
               <svg id="grid" width="100%" viewBox="0 0 408 132" preserveAspectRatio="xMidYMid meet" aria-hidden="true"></svg>
               <div class="count">
@@ -208,18 +208,18 @@ td.mn{font-family:var(--mono)}
       </figure>
     </section>
 
-    <!-- 03 WORLD MODEL -->
+    <!-- 03 PREDICTIVE FLEET MODEL -->
     <section>
-      <div class="sechead"><span class="n">03</span><h2>The predictive world model</h2></div>
-      <p class="t">Aurelius maintains a persistent world model of the cluster: a forward model of the fleet, not a snapshot of free GPUs. It carries replica warm and cold state, server and rack capacity, placement and locality, queue dynamics, in&#8209;flight migrations, and the operator&#8209;cost basis, and it advances that state one control period at a time so a candidate decision is scored against the state it will actually meet.</p>
-      <p class="t">Candidate policies are evaluated on read&#8209;only simulated future states, so scoring never mutates the live cluster. Every input is tagged by provenance, measured, trace&#8209;derived, benchmark&#8209;calibrated, or modeled, so no result silently treats a modeled value as a measured one.</p>
+      <div class="sechead"><span class="n">03</span><h2>Predictive fleet model</h2></div>
+      <p class="t">Aurelius maintains a forward model of replica state, server and rack capacity, placement and locality, queue dynamics, in&#8209;flight migrations, and operator cost. The model advances this state one control period at a time, allowing each candidate sequence to be scored against its projected downstream fleet state.</p>
+      <p class="t">Candidate policies are evaluated on read&#8209;only simulated future states, so scoring never mutates the live cluster. Each input is labeled as measured, trace&#8209;derived, benchmark&#8209;calibrated, or modeled.</p>
     </section>
 
     <!-- 04 CANDIDATE FUTURES -->
     <section>
-      <div class="sechead"><span class="n">04</span><h2>Which futures get evaluated is a first&#8209;class step</h2></div>
-      <p class="t">Because the controls interact, Aurelius evaluates coupled bundles rather than tuning one knob, and which bundles it evaluates is itself a first&#8209;class step, not an afterthought. A forecast&#8209;guided generator proposes a focused set of high&#8209;value coupled bundles implied by the operating regime, always including the known&#8209;strong candidates so a high&#8209;value option is never silently dropped. The set is then searched in a way that captures cross&#8209;surface coupling, widening to more surfaces only when a decision is close and stopping early when the choice is clear.</p>
-      <p class="t">Where exact enumeration is tractable, the bounded search is scored against it, so any regret is <span class="em">measured</span> rather than assumed. That discipline is what surfaced the finding in §05, and it is what lets a several&#8209;fold headline be defended rather than asserted.</p>
+      <div class="sechead"><span class="n">04</span><h2>Candidate generation and search</h2></div>
+      <p class="t">Because the controls interact, candidate generation affects the quality of the result. A forecast&#8209;guided generator proposes a focused set of coupled policies for the current operating regime and always includes the predefined strong candidates. Hierarchical search then evaluates interactions across control dimensions, expands when the leading candidates are close, and stops early when the ranking is stable.</p>
+      <p class="t">Where exhaustive enumeration is tractable, the bounded search is compared against it and search regret is measured directly.</p>
       <div class="surf">
         <div><span class="st">Decision levers represented by Aurelius</span><span class="sn">scored as coupled bundles; each changes the projected economic outcome</span></div>
         <div class="row">
@@ -235,37 +235,37 @@ td.mn{font-family:var(--mono)}
 
     <!-- 05 THE FINDING -->
     <section>
-      <div class="sechead"><span class="n">05</span><h2>The limit was representation, not search effort</h2></div>
-      <p class="t">The thesis of this report is a claim about where orchestration value actually sits, and it is not in a better next decision. Most production systems optimize one decision at a time and re&#8209;plan after it executes. Aurelius evaluates sequences of coupled decisions across multiple future control periods, then commits only the first step of the highest&#8209;scoring feasible trajectory it finds. That evaluation, over forecasted trajectories rather than the state visible now, is where the value current orchestration leaves on the table is recovered.</p>
-      <p class="t">The claim is testable, and the test is controlled. On the exact uncapped benchmark that produces the headline in §06, the forecast, simulator, objective, cost model, gates, replay inputs, and baseline remained fixed. Only two things varied: the planner's representable policy space and the procedure used to search it. Every arm sees the same world and is judged the same way, so the headline gap can be pinned to representation and search, not to a weaker baseline or a more generous model.</p>
+      <div class="sechead"><span class="n">05</span><h2>Ablation: policy representation vs. search effort</h2></div>
+      <p class="t">Most production control loops optimize one action at a time and re&#8209;plan after execution. Aurelius instead evaluates sequences of coupled actions across multiple future control periods, then commits only the first action from the highest&#8209;scoring feasible sequence.</p>
+      <p class="t">The ablation holds the forecast, simulator, objective, cost model, gates, replay inputs, and baseline fixed. Only two things varied: the planner's representable policy space and the procedure used to search it. Every arm receives identical replay inputs and is evaluated under identical scoring and constraint logic.</p>
       <div class="cap mt">Table 1 · Same uncapped harness, varying only representable policies and search · SLA&#8209;safe goodput/$ relative to the reconstructed baseline (mean across PJM, ERCOT, CAISO)</div>
       <table>
         <thead><tr><th>Search strategy</th><th>gp/$ vs baseline</th><th>SLA vs baseline</th><th>Note</th></tr></thead>
         <tbody>
           <tr><td>Reconstructed production&#8209;class baseline</td><td class="mn">1.00&#215;</td><td class="mn">&#8211;</td><td>reference anchor</td></tr>
-          <tr><td>Single lever (clock only)</td><td class="mn">does not complete</td><td class="mn">&#8211;</td><td>replay cost blows up under load</td></tr>
+          <tr><td>Single lever (clock only)</td><td class="mn">does not complete</td><td class="mn">&#8211;</td><td>times out under uncapped load</td></tr>
           <tr><td>Fixed set of 24 predefined policies</td><td class="e">3.62&#215;</td><td class="mn">~4&#215; lower</td><td>coupling, no search</td></tr>
           <tr><td>Search that fixed set (bounded)</td><td class="e">4.85&#215;</td><td class="mn">~4&#215; lower</td><td>matches full enumeration of the set</td></tr>
-          <tr><td>Expanded coupled&#8209;policy space, same controls</td><td class="e">8.24&#215;</td><td class="mn">lowest, ~18&#215; lower</td><td>the +724% headline arm</td></tr>
+          <tr><td>Expanded coupled&#8209;policy space, same controls</td><td class="e">8.24&#215;</td><td class="mn">lowest, ~18&#215; lower</td><td>8.24&#215; configuration</td></tr>
         </tbody>
       </table>
-      <p class="tnote">Every arm is scored against the same byte&#8209;identical baseline (130,538.91 / 130,178.26 / 130,000.36 gp/$ across the three markets); the coupled&#8209;search arm is the §06 headline configuration, quoted at the headline value (8.24&#215;). Simulated; every completing arm also lowers the SLA&#8209;violation rate, the coupled arm the most (to ~0.002).</p>
-      <p class="t" style="margin-top:16px">A word on the two settings compared, because the distinction is the whole point. The <em class="em">fixed set of 24 predefined policies</em> is a discrete set enumerated in advance over four implemented controls: batching, capacity, precision, and clock. The expanded arm constructs additional valid combinations of <em class="em">those same four controls</em>. It introduces no new control, and every policy runs through the identical simulator, objective, cost model, and safety gates.</p>
-      <p class="t">Read top to bottom, the ladder says three things:</p>
+      <p class="tnote">Every arm is scored against the same baseline (130,538.91 / 130,178.26 / 130,000.36 gp/$ across the three markets); the coupled&#8209;search arm is the §06 configuration, quoted at 8.24&#215;. Simulated; every completing arm also lowers the SLA&#8209;violation rate, the coupled arm the most (to ~0.002).</p>
+      <p class="t" style="margin-top:16px">The predefined grid contains 24 policies over four implemented controls: batching, capacity, precision, and clock. The expanded arm constructs additional valid combinations of those same four controls. It introduces no new control, and all policies are evaluated under the same simulator, objective, cost model, and safety gates.</p>
+      <p class="t">The ablation supports three conclusions:</p>
       <ul class="h">
-        <li><span class="m"></span><span><span class="em">A coherent joint policy already produces a large gain.</span> The fixed set of 24 predefined policies evaluates batching, capacity, precision, and clock jointly rather than independently. That alone reaches 3.62&#215; the reconstructed baseline and reduces SLA violations by roughly fourfold.</span></li>
-        <li><span class="m"></span><span><span class="em">More search over the same fixed set adds little.</span> Bounded search over those 24 policies reaches 4.85&#215;, essentially matching exhaustive evaluation of the same set at 4.84&#215;. The planner is therefore already finding the best policy available within that predefined candidate set.</span></li>
-        <li><span class="m"></span><span><span class="em">The remaining gain comes from expanding the representable policy space.</span> The increase from 4.85&#215; to 8.24&#215; appears when Aurelius can construct additional valid combinations of those same four controls rather than being restricted to the original 24 policies. The limiting factor was not search effort. It was which coupled policies the planner was able to represent and evaluate.</span></li>
+        <li><span class="m"></span><span>Jointly setting the four controls reaches 3.62&#215; the reconstructed baseline and reduces SLA violations by approximately fourfold.</span></li>
+        <li><span class="m"></span><span>Searching the same 24&#8209;policy set provides limited additional gain: bounded search reaches 4.85&#215;, matching exhaustive evaluation of the same set at 4.84&#215;.</span></li>
+        <li><span class="m"></span><span>The remaining gain comes from expanding the representable policy space: the increase from 4.85&#215; to 8.24&#215; appears when Aurelius constructs additional valid combinations of those same four controls rather than being restricted to the original 24 policies.</span></li>
       </ul>
-      <p class="t" style="margin-top:14px">The result is controlled in two ways. The increase was not created by changing the simulator, objective, cost model, or constraints, which remained fixed across every arm; it came only from expanding which coupled policies the planner could represent and evaluate. And where a window is small enough to enumerate the entire space, that same bounded search has matched the exhaustive optimum exactly, so the value is captured rather than stumbled onto. Whether the simulator's absolute magnitude transfers to a real fleet is a separate question, and the purpose of the historical replay proposed in §11.</p>
-      <div class="callout warn">One exclusion, stated plainly. An aggressive low&#8209;precision (int4) mode scores higher still, but its quality cost is not yet modeled, so it is <span class="hl">excluded from every headline</span> and reported only as a labeled diagnostic ceiling. The headline&#8209;safe result uses the precision band whose quality can be defended.</div>
+      <p class="t" style="margin-top:14px">The simulator, objective, cost model, constraints, and replay inputs remain fixed across every arm. In windows where complete enumeration is tractable, bounded search matches the exhaustive optimum exactly. Transfer of the absolute magnitude to a real fleet requires validation on operator telemetry, as described in §11.</p>
+      <div class="callout warn">The aggressive int4 mode is excluded from the reported result because its quality cost is not yet modeled. The reported result uses only precision settings with defensible quality assumptions.</div>
     </section>
 
     <!-- 06 THE HEADLINE RESULT -->
     <section>
-      <div class="sechead"><span class="n">06</span><h2>The headline result: uncapped replay at production&#8209;scale volume</h2></div>
-      <p class="t">The headline replays the full selected windows with the per&#8209;period request cap removed, so each runs at its natural, production&#8209;scale request volume: PJM ~577k, ERCOT ~443k, CAISO ~530k, about 1.55M in total. Both policies run the identical load. Because no operator's internal scheduler is publicly available, the benchmark uses a reconstructed production&#8209;class baseline assembled from established components used in modern serving stacks: continuous (iteration&#8209;level) batching<span class="rf">[1][2]</span>, SLA&#8209;aware ordering and admission<span class="rf">[3]</span>, prefix&#8209;cache&#8209;aware routing<span class="rf">[4]</span>, topology&#8209;aware placement<span class="rf">[5]</span>, backlog&#8209;driven autoscaling<span class="rf">[6]</span>, and warm&#8209;pool headroom. It is not any particular operator's proprietary scheduler; it is the best reproducible approximation of a capable production stack using public mechanisms and data. Defined once here, it is called the <span class="em">production&#8209;class baseline</span> from now on, and the comparison isolates the effect of how Aurelius combines and searches the same implemented controls.</p>
-      <p class="t">At that volume the naive SLA&#8209;aware policy does not complete: its no&#8209;batching, no&#8209;admission replay cost grows super&#8209;linearly and times out, so it is a reference only. The production&#8209;class baseline and Aurelius both complete, which makes them the primary, production&#8209;comparable comparison: the policy built from real serving&#8209;stack components is the bar Aurelius has to beat.</p>
+      <div class="sechead"><span class="n">06</span><h2>Uncapped replay results</h2></div>
+      <p class="t">The benchmark replays the full selected windows with the per&#8209;period request cap removed, so each runs at its natural, production&#8209;scale request volume: PJM ~577k, ERCOT ~443k, CAISO ~530k, about 1.55M in total. Both policies run the identical load. Because no operator's internal scheduler is publicly available, the benchmark uses a reconstructed production&#8209;class baseline assembled from established components used in modern serving stacks: continuous (iteration&#8209;level) batching<span class="rf">[1][2]</span>, SLA&#8209;aware ordering and admission<span class="rf">[3]</span>, prefix&#8209;cache&#8209;aware routing<span class="rf">[4]</span>, topology&#8209;aware placement<span class="rf">[5]</span>, backlog&#8209;driven autoscaling<span class="rf">[6]</span>, and warm&#8209;pool headroom. It is a reproducible approximation of a capable production stack using public mechanisms and data, not any particular operator's proprietary scheduler.</p>
+      <p class="t">At that volume the naive SLA&#8209;aware policy does not complete: its no&#8209;batching, no&#8209;admission replay cost grows super&#8209;linearly and times out, so it is reported as a reference only. The reconstructed production&#8209;class baseline and Aurelius both complete, so it is the primary comparison.</p>
       <div class="cap mt">Table 2 · Uncapped high&#8209;load replay · Aurelius vs production&#8209;class baseline</div>
       <table>
         <thead><tr><th>Market</th><th>Aurelius gp/$</th><th>Production gp/$</th><th>&#916; %</th><th>SLA (Aur.)</th><th>SLA (Prod.)</th><th>Requests</th></tr></thead>
@@ -276,7 +276,7 @@ td.mn{font-family:var(--mono)}
           <tr><td>Average / total</td><td class="mn">&#8211;</td><td class="mn">&#8211;</td><td class="e">+723.7%</td><td class="mn">&#8211;</td><td class="mn">&#8211;</td><td class="mn">1,549,249</td></tr>
         </tbody>
       </table>
-      <p class="tnote">gp/$ and SLA&#8209;violation rates read directly from run output. &#916;% is per market (Aurelius &#8722; production) &#247; production; the +724% headline is the equal&#8209;weighted average of the three (723.7%, shown unrounded). SLA violations fall from ~3.8&#8211;4.6% to ~0.1&#8211;0.2%.</p>
+      <p class="tnote">gp/$ and SLA&#8209;violation rates read directly from run output. &#916;% is per market (Aurelius &#8722; production) &#247; production; the reported +724% is the equal&#8209;weighted average of the three (723.7%, shown unrounded). SLA violations fall from ~3.8&#8211;4.6% to ~0.1&#8211;0.2%.</p>
       <div class="cap mt">Table 3 · GPU&#8209;hours at the same uncapped load</div>
       <table>
         <thead><tr><th>Market</th><th>Aurelius GPU&#8209;h</th><th>Production GPU&#8209;h</th><th>&#916; GPU&#8209;hours</th></tr></thead>
@@ -287,40 +287,39 @@ td.mn{font-family:var(--mono)}
           <tr><td>Total</td><td class="mn">173.1</td><td class="mn">1,115.1</td><td class="e">&#8722;84.5%</td></tr>
         </tbody>
       </table>
-      <p class="tnote">Same served requests both arms; the reduction is (production &#8722; Aurelius) &#247; production. Aurelius earns more SLA&#8209;safe goodput on far fewer GPU&#8209;hours because the coupled bundle packs more work per GPU&#8209;hour while holding SLA, which is why the win is Pareto and not paid for in spend.</p>
+      <p class="tnote">Same served requests both arms; the reduction is (production &#8722; Aurelius) &#247; production. At the same request volume, Aurelius completes more SLA&#8209;compliant work with fewer GPU&#8209;hours and a lower SLA&#8209;violation rate.</p>
     </section>
 
     <!-- 07 HOW TO READ IT -->
     <section>
-      <div class="sechead"><span class="n">07</span><h2>How to read a several&#8209;fold number</h2></div>
-      <p class="t">A sevenfold gap is unusual, so the report is explicit about the two effects that compound to produce it, and about where its edges are.</p>
-      <p class="t"><span class="em">Two effects that compound.</span> Under the selected heavy load, the fixed&#8209;policy baseline loses efficiency as the replay becomes saturated, its goodput per dollar falling toward a similar floor in each market because a fixed policy hits the same saturation under the same load, while Aurelius continues adapting its coupled policy. The ablation in §05 then shows that the largest incremental increase appears when the planner is no longer limited to the predefined policy set. Both effects are real, and neither alone is the whole number.</p>
-      <p class="t"><span class="em">Where its edges are.</span> The multiple is load&#8209;dependent. It moves with the per&#8209;period request volume and with how stressed the fleet is, so it is quoted only with its uncapped, full&#8209;window scope, never as a fleet constant. What does not depend on the load is the attribution in §05: the value comes from representing and searching coupled futures, and the direction holds across every load tested.</p>
-      <div class="callout">Read the several&#8209;fold number as two things at once: a stress signal, showing how far a fixed policy falls behind under load, and a mechanism, the coupled search that reaches policies a fixed, predefined set cannot express. It is not a fleet constant, and this report never quotes it as one.</div>
+      <div class="sechead"><span class="n">07</span><h2>Drivers of the 8.24&#215; result</h2></div>
+      <p class="t">The 8.24&#215; ratio is driven by two effects. First, the reconstructed baseline loses efficiency as the uncapped replay becomes saturated, while Aurelius re&#8209;evaluates its coupled policy at each control period. Second, the ablation in §05 shows that expanding the representable policy space produces the largest incremental gain under the same simulator, objective, cost model, and constraints.</p>
+      <p class="t">The magnitude is load&#8209;dependent. It changes with request volume and fleet saturation and should not be extrapolated as a constant across workloads or operating conditions. The reported ratio applies only to the selected uncapped high&#8209;load windows.</p>
+      <p class="t">The mechanism result is separate from the absolute magnitude: across the tested loads, jointly representing and evaluating coupled policies outperforms restricting the planner to the predefined policy set. Validation on operator telemetry is still required to determine the size of that effect on a real fleet.</p>
     </section>
 
     <!-- 08 WHAT IS NEW -->
     <section>
-      <div class="sechead"><span class="n">08</span><h2>What is actually new here</h2></div>
-      <p class="t">The individual pieces are not new, and this report does not claim they are. Forecasting, model&#8209;predictive control, digital twins of infrastructure, SLO&#8209;aware scheduling, and unified control planes all exist and are well understood. Aurelius's claim is narrower, and more durable for it.</p>
-      <p class="t">What Aurelius optimizes is the fleet's <span class="em">forecasted trajectory</span>, evaluated as coupled futures rather than independent next&#8209;decisions, and the binding constraint on the result is not the model or the objective but <span class="em">which coupled futures the planner can represent and evaluate</span>. The ablation in §05 is the evidence: on an identical stack, varying only which policies the planner could represent and how it searched them moved the result from a policy that cannot complete the replay, to 3.62&#215; the baseline on a fixed, predefined set of policies, to 8.24&#215; once the planner could form additional valid combinations of the same implemented controls. That is a claim about where the value lives in fleet optimization, and it is testable on any fleet that keeps historical scheduler metadata.</p>
+      <div class="sechead"><span class="n">08</span><h2>Technical contribution</h2></div>
+      <p class="t">Aurelius combines established methods in forecasting, model&#8209;predictive control, infrastructure simulation, SLO&#8209;aware scheduling, and unified control planes around a multi&#8209;period fleet&#8209;control objective.</p>
+      <p class="t">The ablation isolates the contribution of representable policy space and coupled evaluation while holding the simulator and scoring environment fixed. The same mechanism can be tested on any fleet with sufficiently detailed historical scheduler metadata.</p>
     </section>
 
     <!-- 09 SAFETY -->
     <section>
-      <div class="sechead"><span class="n">09</span><h2>Safety and the deployment path</h2></div>
-      <p class="t">Aurelius is <span class="em">read&#8209;only and metadata&#8209;only</span>. It reads only the metadata a scheduler already exposes, job timing, resource requests, constraints, and never payloads, model weights, or model outputs. Candidate scoring runs on simulated futures, so it writes nothing to the live cluster. Unsafe candidates are rejected at the constraint gate before any recommendation exists, and when confidence is low the controller falls back deterministically to the stack's default.</p>
-      <p class="t">The path from telemetry to any production change is staged and reversible: historical replay of past decisions first, then recommendation&#8209;only shadow mode alongside the live scheduler, then optional actuation on workloads explicitly in scope. Aurelius does not directly write fleet state. It returns a constrained recommendation through the existing control plane, which remains authoritative and owns execution.</p>
+      <div class="sechead"><span class="n">09</span><h2>Safety and deployment</h2></div>
+      <p class="t">Aurelius is <span class="em">read&#8209;only and metadata&#8209;only</span>. It reads only the metadata a scheduler already exposes, job timing, resource requests, constraints, and never payloads, model weights, or model outputs. Candidate scoring runs on simulated futures, so it writes nothing to the live cluster. Candidates that violate hard constraints are discarded before scoring and cannot be returned to the control plane. When confidence is low the controller falls back deterministically to the stack's default.</p>
+      <p class="t">Validation proceeds in three stages: historical replay, recommendation&#8209;only shadow mode, and optional actuation on explicitly scoped workloads. Aurelius does not directly write fleet state; it returns a constrained recommendation to the existing control plane, which remains authoritative and executes any approved action.</p>
     </section>
 
     <!-- 10 LIMITATIONS -->
     <section>
       <div class="sechead"><span class="n">10</span><h2>Limitations</h2></div>
       <ul class="h">
-        <li><span class="m"></span><span>Every number here is deterministic simulated replay of public traces: directional evidence of achievable savings, not a guarantee for any specific fleet, and not a production deployment.</span></li>
-        <li><span class="m"></span><span>The +724% headline is load&#8209;dependent. Part of the gap is a fixed&#8209;policy scheduler degrading under heavy uncapped load while Aurelius adapts, so it is reported only with its uncapped, full&#8209;window scope and never as a fleet constant.</span></li>
-        <li><span class="m"></span><span>Magnitudes are simulator&#8209;inferred and depend on the serving model's precision and batching bands. The most robust findings are the <em class="em">direction of the effect</em> and its <em class="em">attribution to representable policy space and coupled evaluation</em>, not any single percentage.</span></li>
-        <li><span class="m"></span><span>Aggressive low&#8209;precision is excluded from every headline until its quality cost is modeled.</span></li>
+        <li><span class="m"></span><span>Every number here is deterministic simulated replay of public traces: evidence from simulation, not a production estimate, guarantee, or deployment.</span></li>
+        <li><span class="m"></span><span>The +724% figure is load&#8209;dependent. Part of the gap is a fixed&#8209;policy scheduler degrading under heavy uncapped load while Aurelius adapts, so it is reported only with its uncapped, full&#8209;window scope and never as a fleet constant.</span></li>
+        <li><span class="m"></span><span>Magnitudes are simulator&#8209;inferred and depend on the serving model's precision and batching bands. The mechanism attribution is more defensible than the absolute percentage, which remains simulator&#8209;dependent.</span></li>
+        <li><span class="m"></span><span>Aggressive low&#8209;precision is excluded from the reported result until its quality cost is modeled.</span></li>
         <li><span class="m"></span><span>Simulator fidelity must still be tested against real operator telemetry, which is the only way to isolate model error, and the largest gains appear during expensive&#8209;power windows.</span></li>
         <li><span class="m"></span><span>Some controls are modeled but not yet active production levers, and several constraints are represented but not yet forecast inputs.</span></li>
       </ul>
@@ -328,9 +327,9 @@ td.mn{font-family:var(--mono)}
 
     <!-- 11 THE ASK -->
     <section>
-      <div class="sechead"><span class="n">11</span><h2>Validating the finding on a real fleet</h2></div>
-      <p class="t">The next step is not a bigger simulation, it is calibration against reality. The baseline here is a reproducible public approximation assembled from established mechanisms; the next honest test is replay against an operator's own historical decisions. Given read&#8209;only historical scheduler metadata, Aurelius would replay that fleet's recorded behavior, simulate the coupled counterfactuals, and produce an audited estimate of the SLA&#8209;safe goodput per dollar left on the table, with no production changes and no payload access.</p>
-      <p class="t">The test has a built&#8209;in honesty gate. Before scoring any counterfactual improvement, Aurelius first has to reproduce the operator's recorded baseline behavior within agreed tolerances. If it cannot reconstruct that behavior and improve a pre&#8209;agreed metric on held&#8209;out telemetry, the test ends. If it can, the next step is recommendation&#8209;only shadow mode. That is the fastest, lowest&#8209;risk way to find out whether the result generalizes, and the quickest way to prove it wrong.</p>
+      <div class="sechead"><span class="n">11</span><h2>Validation on operator telemetry</h2></div>
+      <p class="t">The next validation step is replay on operator telemetry. The public baseline should next be replaced with an operator's recorded decisions and fleet state. Given read&#8209;only historical scheduler metadata, Aurelius would replay that fleet's recorded behavior, simulate the coupled counterfactuals, and estimate the change in SLA&#8209;safe goodput per dollar under the same arrivals, infrastructure state, and operator constraints, with no production changes and no payload access.</p>
+      <p class="t">The evaluation begins with a baseline&#8209;reconstruction check. The calibrated simulator must reproduce recorded queue, execution, resource&#8209;use, and SLA outcomes within agreed tolerances. Only after that check passes are counterfactual policies evaluated on held&#8209;out historical windows. If either the fidelity criteria or the pre&#8209;agreed performance criterion fails, the evaluation stops without any production change. A successful replay would support recommendation&#8209;only shadow mode. A failed replay would end the evaluation without affecting production.</p>
     </section>
 
     <!-- REFERENCES -->
@@ -340,7 +339,7 @@ td.mn{font-family:var(--mono)}
       <ul class="h">
         <li><span class="m"></span><span><span class="em">Primary metric.</span> SLA&#8209;safe goodput per infrastructure dollar. The numerator is SLA&#8209;compliant served tokens, tokens served within their latency or deadline target; work served outside that target is excluded, so goodput bought by breaking SLA does not count. The denominator, modeled infrastructure cost, is the sum of three terms: GPU cost (active GPU&#8209;hours, including warm&#8209;held replicas, at a fixed hardware cost basis), energy cost (GPU energy at the prevailing wholesale electricity price), and network cost (including migration). The GPU cost basis is hardware only, so energy is counted once, at the market price. This is a modeled benchmark cost, not full operator TCO.</span></li>
         <li><span class="m"></span><span><span class="em">Windows and load.</span> The expensive&#8209;power windows of PJM, ERCOT, and CAISO, replayed uncapped at full volume (~577k / ~443k / ~530k requests, ~1.55M total), three control&#8209;period decisions per window.</span></li>
-        <li><span class="m"></span><span><span class="em">Configuration.</span> Deterministic replay under a fixed seed; every policy is scored on the same windows under the same simulator, cost model, and constraint gates. Forecasts use only history up to each decision, and per&#8209;request execution time is replayed rather than predicted, so no policy sees the future. The baseline's goodput per dollar reproduces byte&#8209;identically across runs (130,538.91 / 130,178.26 / 130,000.36 gp/$). At each decision the hierarchical search evaluates roughly 75 coupled policies out of a representable space of about 4.7M.</span></li>
+        <li><span class="m"></span><span><span class="em">Configuration.</span> Deterministic replay under a fixed seed; every policy is scored on the same windows under the same simulator, cost model, and constraint gates. Forecasts use only history up to each decision, and per&#8209;request execution time is replayed rather than predicted; no forecast uses information recorded after the decision timestamp. The baseline's goodput per dollar reproduces exactly across deterministic runs (130,538.91 / 130,178.26 / 130,000.36 gp/$). At each decision the hierarchical search evaluates roughly 75 coupled policies out of a representable space of about 4.7M.</span></li>
       </ul>
       <p class="tn" style="margin-top:24px">The reconstructed production&#8209;class baseline (§06) is assembled from established production serving and cluster&#8209;scheduling techniques ([1]&#8211;[6]), cited for the realism of the baseline mechanisms, not for any Aurelius result. The public workload and electricity&#8209;price data are cited at [7] and [8].</p>
       <ol class="refs">

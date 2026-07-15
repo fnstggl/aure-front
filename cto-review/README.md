@@ -33,5 +33,5 @@ inlined from `../public/aure_logo.png`. No external dependencies.
   schematic. Deliberately the light counterpart to the dark report so the two
   read as one set. `runaurelius.com` in the footer.
 - One typeface, no accent color, no em dashes. §05 carries the PR #128 uncapped
-  search ablation (1.00x -> 3.62x -> 4.85x -> 8.29x), which attributes the
+  search ablation (1.00x -> 3.62x -> 4.85x -> 8.24x), which attributes the
   headline to the search.
