@@ -1,0 +1,197 @@
+===== PAGE 1 =====
+AURELIUS
+A predictive supervisory layer for GPU fleets
+Technical memo · July 2026
+Choose the best fleet trajectory, not
+just the best next action.
+One live fleet state. Many counterfactual futures. One safe trajectory.
+now
+t+1
+t+2
+t+3
+rejected · hard gate
+rejected · hard gate
+selected · highest value · all gates passed
+one live fleet state
+many counterfactual futures
+one safe trajectory
+Kubernetes, Slurm, serving schedulers, and autoscalers
+already make and execute control decisions well. Aurelius
+adds a pre-execution simulation layer above them. Before
+decisions execute, it forks the live fleet state into
+competing simulated futures, each applying a different
+coupled control strategy across batching, routing,
+placement, capacity, prewarming, admission, migration,
+precision, and clock.
+Each trajectory advances queues, topology pressure,
+warm state, capacity, SLA risk, and cost through time.
+Trajectories that violate hard SLA, capacity, power, or
+policy constraints are rejected. The highest-value feasible
+trajectory is returned to the existing control plane, which
+stays authoritative and executes.
+8.24×
+SLA-safe goodput per dollar vs
+a production-class composite,
+uncapped public replay
+84.5%
+fewer GPU-hours at identical
+replayed load
+1,549,249
+replayed requests across three
+market windows
+3 of 3
+market windows with better
+SLA outcomes
+Simulated, load-dependent evidence from selected public-trace windows. Not a production result or an estimate for a particular fleet. Full
+result and scope on page 4.
+Aurelius · technical memo
+Page 1 of 4
+
+
+===== PAGE 2 =====
+AURELIUS
+Technical memo · 02
+The optimizer cannot choose a future it never
+represents.
+In the ablation behind the architecture, the simulator, forecast, objective, cost model, and safety gates
+were held constant. Only the set of futures available to the planner changed.
+Single-surface search
+-4.47%
+goodput/$ vs baseline
+SLA gate failed.
+173.5% value forfeited vs exhaustive
+search.
+Physics-guided candidates
++100.48%
+goodput/$ vs baseline
+SLA gate passed.
+30.3% regret vs exhaustive search.
+Coupled trajectory search
++161.31%
+goodput/$ vs baseline
+SLA gate passed.
+0% measured search regret vs
+exhaustive.
+The winning strategy combined lower precision, aggressive batching, and a higher clock. No isolated-knob
+search represented that future: tuned one surface at a time, each move looked worse, so the bundle was never
+proposed. Once the coupled trajectory entered the candidate set, the unchanged simulator selected it.
+The value was not hidden in a better score. It was hidden in a
+future the previous search never considered.
+Benchmark V1, frozen cap-controlled continuity harness, primary market window. Regret is measured against exhaustive
+enumeration where enumeration is tractable, at roughly 40 trajectory evaluations per decision. Complete methodology in the full
+technical report.
+Aurelius · technical memo
+Page 2 of 4
+
+
+===== PAGE 3 =====
+AURELIUS
+Technical memo · 03
+One fleet. Many futures. Simulated before
+execution.
+now
+t+1
+t+2
+t+3
+live state
+trajectory A
+fails a hard SLA gate at t+2 · eliminated
+trajectory B
+feasible · lower value
+trajectory C · best safe future · selected
+existing systems
+execute
+Each trajectory advances queues, topology pressure, warm state, capacity, SLA risk, and cost through t+1, t+2, t+3. Every
+future runs read-only: candidate evaluation never touches the live fleet.
+1
+Mirror the fleet.
+A persistent world model
+carries capacity, placement,
+warm state, queues,
+migrations in flight, and the
+operator cost basis,
+advanced period by period.
+2
+Generate competing
+coupled trajectories.
+Physics-guided generation
+proposes a bounded set of
+coupled strategies across the
+control surfaces, never one
+knob at a time. Known-strong
+candidates are always
+retained.
+3
+Run each future forward,
+read-only.
+Every candidate trajectory is
+simulated against forecast
+conditions using only
+information available at the
+decision point. No future truth
+leaks in.
+4
+Reject unsafe futures.
+Return the winner.
+Hard SLA, capacity, power,
+and policy gates eliminate
+trajectories outright. The best
+feasible future is
+recommended, with a
+deterministic fallback when
+confidence is low.
+Aurelius sits above Kubernetes, Slurm, serving schedulers, routing systems, autoscalers, and fleet-management systems. It
+coordinates their decisions against a common anticipated future. It does not replace them. It reads scheduler metadata only,
+never payloads, model outputs, or weights.
+Aurelius · technical memo
+Page 3 of 4
+
+
+===== PAGE 4 =====
+AURELIUS
+Technical memo · 04
+A signal too large to ignore and too simulated to trust
+without operator data.
+composite baseline · 0
+PJM
+ERCOT
+CAISO
++698.1%
++717.8%
++755.3%
+avg +723.7% · 8.24× baseline
+SLA-safe goodput per dollar vs the constructed production-class composite. Same replayed load per window, 1,549,249 requests
+total, 84.5% fewer GPU-hours, better SLA in all three windows.
+What this establishes
+Predictive coupled planning found substantially more
+efficient safe trajectories than the constructed public-replay
+composite under the selected uncapped windows.
+What this does not establish
+Expected performance against a particular fleet or internal
+scheduler. The result is simulated and load-dependent, and
+its magnitude is sensitive partly to modeled precision and
+batching behavior.
+Test one bounded historical window.
+Input
+Anonymized scheduler metadata from one representative workload or cluster window. No customer
+identity, payloads, model outputs, weights, production actuation, or live integration.
+Process
+Reconstruct the historical baseline and evaluate Aurelius counterfactual trajectories under identical
+recorded conditions, with a protocol fixed before any data moves.
+Output
+Matched SLA, GPU-hour, utilization, and economic comparisons; simulator-fidelity checks; sensitivity
+analysis; failure cases and negative findings; and a verdict on whether shadow mode is warranted.
+The ask
+Identify one technically appropriate owner and one bounded historical dataset on
+which this can be tested.
+Beckett Zahedi
+Founder · Aurelius
+beckett@runaurelius.com
+runaurelius.com
+Complete methodology,
+citations, limitations, and
+version history are in the
+supporting full technical
+report.
+Aurelius · technical memo · July 2026
+Page 4 of 4

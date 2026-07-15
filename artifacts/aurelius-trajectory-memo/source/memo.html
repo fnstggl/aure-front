@@ -1,0 +1,537 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<title>Aurelius - Choose the Best Fleet Trajectory, Not Just the Best Next Action</title>
+<style>
+  @font-face {
+    font-family: "Helvetica Now Display";
+    font-style: normal; font-weight: 400;
+    src: url("fonts/HelveticaNowDisplay-Regular.woff2") format("woff2");
+  }
+  @font-face {
+    font-family: "Helvetica Now Display";
+    font-style: normal; font-weight: 500;
+    src: url("fonts/HelveticaNowDisplay-Medium.woff2") format("woff2");
+  }
+  @font-face {
+    font-family: "IBM Plex Mono";
+    font-style: normal; font-weight: 400;
+    src: url("fonts/ibm-plex-mono-400.woff2") format("woff2");
+  }
+  @font-face {
+    font-family: "IBM Plex Mono";
+    font-style: normal; font-weight: 500;
+    src: url("fonts/ibm-plex-mono-500.woff2") format("woff2");
+  }
+
+  :root {
+    --paper: #FBFAF7;
+    --ink: #161513;
+    --ink-2: #3B3934;
+    --ink-3: #6E6A60;
+    --hair: rgba(22, 21, 19, 0.28);
+    --hair-soft: rgba(22, 21, 19, 0.14);
+    --dark: #060605;
+    --w-92: rgba(244, 243, 240, 0.94);
+    --w-72: rgba(244, 243, 240, 0.74);
+    --w-52: rgba(244, 243, 240, 0.54);
+    --w-hair: rgba(244, 243, 240, 0.24);
+    --gold: #B8A06F;
+    --gold-deep: #8A7147;
+    --sans: "Helvetica Now Display", "Helvetica Neue", Helvetica, Arial, sans-serif;
+    --mono: "IBM Plex Mono", "SF Mono", ui-monospace, monospace;
+  }
+
+  @page { size: Letter; margin: 0; }
+  * { box-sizing: border-box; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  html, body { margin: 0; padding: 0; }
+  body { font-family: var(--sans); color: var(--ink); font-size: 10.5pt; line-height: 1.5; background: #E9E7E1; }
+  .page {
+    position: relative; width: 8.5in; height: 11in; overflow: hidden;
+    background: var(--paper); padding: 0.55in 0.62in 0.46in;
+    display: flex; flex-direction: column;
+    page-break-after: always; break-after: page;
+  }
+  .page:last-child { page-break-after: auto; break-after: auto; }
+  @media screen {
+    body { display: flex; flex-direction: column; align-items: center; gap: 18px; padding: 24px 0; }
+    .page { outline: 1px solid rgba(0,0,0,0.18); }
+  }
+  a { color: inherit; text-decoration: none; }
+  p { margin: 0; }
+  h1, h2 { margin: 0; font-weight: 500; }
+
+  /* header / footer */
+  .hd { display: flex; align-items: baseline; justify-content: space-between; flex: 0 0 auto; }
+  .hd .wm { font-size: 12pt; font-weight: 500; letter-spacing: 0.01em; }
+  .hd .mt { font-family: var(--mono); font-size: 8pt; color: var(--ink-3); }
+  .ft {
+    margin-top: auto; flex: 0 0 auto; display: flex; justify-content: space-between;
+    border-top: 0.6pt solid var(--hair-soft); padding-top: 7pt;
+    font-family: var(--mono); font-size: 8pt; color: var(--ink-3);
+  }
+  .ft--dark { border-top-color: var(--w-hair); color: var(--w-52); }
+
+  .headline { font-size: 24pt; line-height: 1.14; letter-spacing: -0.018em; max-width: 6.9in; }
+
+  /* ============ page 1 (dark) ============ */
+  .page--dark { background: var(--dark); color: var(--w-92); }
+  .page--dark .hd .wm { color: #F4F3F0; font-size: 15pt; }
+  .page--dark .hd .mt { color: var(--w-52); }
+  .p1-cat { margin-top: 2pt; font-size: 9pt; color: var(--w-52); }
+  .p1-head { margin-top: 30pt; font-size: 31pt; line-height: 1.12; letter-spacing: -0.02em; color: #F4F3F0; max-width: 7in; }
+  .p1-phrase { margin-top: 12pt; font-size: 12.5pt; font-weight: 500; color: var(--w-72); }
+  .p1-body { margin-top: 22pt; display: flex; gap: 26pt; }
+  .p1-body p { flex: 1 1 0; font-size: 10pt; line-height: 1.55; color: var(--w-72); }
+  .p1-stats { display: flex; gap: 22pt; margin-top: 20pt; border-top: 0.7pt solid var(--w-hair); padding-top: 12pt; }
+  .p1-stats .s { flex: 1 1 0; }
+  .p1-stats .v { font-size: 23pt; font-weight: 500; letter-spacing: -0.015em; color: #F4F3F0; line-height: 1.05; }
+  .p1-stats .v--gold { color: var(--gold); }
+  .p1-stats .l { margin-top: 4pt; font-size: 8.5pt; line-height: 1.4; color: var(--w-52); }
+  .p1-qualify { margin-top: 14pt; font-size: 9pt; color: var(--w-52); }
+
+  /* ============ light pages ============ */
+  .lead { margin-top: 12pt; font-size: 11.5pt; line-height: 1.5; color: var(--ink-2); max-width: 6.8in; }
+  .body { font-size: 10.5pt; line-height: 1.52; color: var(--ink-2); }
+  .small { font-size: 9.5pt; line-height: 1.5; color: var(--ink-3); }
+  .capline { font-size: 9.5pt; line-height: 1.5; color: var(--ink-3); }
+
+  /* page 2 ablation columns */
+  .ablation { display: flex; gap: 26pt; margin-top: 22pt; border-top: 0.8pt solid var(--hair); padding-top: 16pt; }
+  .ablation .col { flex: 1 1 0; }
+  .ablation .name { font-size: 10.5pt; font-weight: 500; color: var(--ink); margin-top: 10pt; }
+  .ablation .delta { font-size: 27pt; font-weight: 500; letter-spacing: -0.02em; line-height: 1.05; margin-top: 6pt; }
+  .ablation .delta--miss { color: var(--ink-3); }
+  .ablation .delta--mid { color: var(--ink); }
+  .ablation .delta--win { color: var(--gold-deep); }
+  .ablation .fact { margin-top: 5pt; font-size: 9.5pt; line-height: 1.45; color: var(--ink-2); }
+  .ablation .fact b { font-weight: 500; }
+  .punch { margin-top: 26pt; }
+  .punch .rule { width: 0.62in; height: 2.2pt; background: var(--gold); }
+  .punch .txt { margin-top: 10pt; font-size: 17pt; line-height: 1.3; letter-spacing: -0.012em; font-weight: 500; color: var(--ink); max-width: 6.6in; }
+
+  /* page 3 stages */
+  .stages4 { display: flex; gap: 22pt; margin-top: 18pt; }
+  .stages4 .st { flex: 1 1 0; }
+  .stages4 .n { font-family: var(--mono); font-size: 9pt; color: var(--ink-3); }
+  .stages4 .t { margin-top: 3pt; font-size: 10.5pt; font-weight: 500; color: var(--ink); line-height: 1.3; }
+  .stages4 .d { margin-top: 4pt; font-size: 9pt; line-height: 1.45; color: var(--ink-3); }
+  .boundary3 { margin-top: 20pt; border-top: 0.6pt solid var(--hair-soft); padding-top: 10pt; font-size: 9.5pt; line-height: 1.5; color: var(--ink-3); max-width: 7.1in; }
+
+  /* page 4 */
+  .establish { display: flex; gap: 26pt; margin-top: 16pt; }
+  .establish .col { flex: 1 1 0; }
+  .sub { font-size: 10pt; font-weight: 500; color: var(--ink); }
+  .establish p.body { margin-top: 4pt; font-size: 9.8pt; }
+  .test { margin-top: 18pt; }
+  .test h2 { font-size: 15.5pt; letter-spacing: -0.012em; }
+  .test .row { display: flex; gap: 16pt; margin-top: 9pt; }
+  .test .lbl { flex: 0 0 0.85in; font-family: var(--mono); font-size: 8.5pt; color: var(--ink-3); padding-top: 1.5pt; }
+  .test .txt { flex: 1; font-size: 9.8pt; line-height: 1.5; color: var(--ink-2); }
+  .ask4 { margin-top: 16pt; border-top: 0.8pt solid var(--hair); padding-top: 10pt; }
+  .ask4 .lbl { font-family: var(--mono); font-size: 8.5pt; color: var(--ink-3); }
+  .ask4 .txt { margin-top: 4pt; font-size: 13.5pt; line-height: 1.35; letter-spacing: -0.01em; font-weight: 500; color: var(--ink); max-width: 6.6in; }
+  .contact4 { display: flex; gap: 20pt; align-items: baseline; margin-top: 16pt; }
+  .contact4 .nm { font-size: 10.5pt; font-weight: 500; white-space: nowrap; }
+  .contact4 .rl { font-size: 8.5pt; color: var(--ink-3); white-space: nowrap; }
+  .contact4 .ch { font-family: var(--mono); font-size: 9pt; white-space: nowrap; }
+  .contact4 .ch a { border-bottom: 0.6pt solid var(--hair); padding-bottom: 0.5pt; }
+  .contact4 .note { font-size: 8.5pt; line-height: 1.45; color: var(--ink-3); margin-left: auto; max-width: 2.6in; }
+</style>
+</head>
+<body>
+
+<!-- ================================================================= -->
+<!-- PAGE 1 · THE IDEA (dark)                                          -->
+<!-- ================================================================= -->
+<section class="page page--dark">
+  <div class="hd">
+    <div>
+      <div class="wm">AURELIUS</div>
+      <div class="p1-cat">A predictive supervisory layer for GPU fleets</div>
+    </div>
+    <span class="mt">Technical memo &middot; July 2026</span>
+  </div>
+
+  <h1 class="p1-head">Choose the best fleet trajectory, not just the best next action.</h1>
+  <p class="p1-phrase">One live fleet state. Many counterfactual futures. One safe trajectory.</p>
+
+  <!-- dominant visual -->
+  <svg viewBox="0 0 744 252" style="display:block; width:100%; margin-top: 20pt;" role="img"
+       aria-label="One live fleet state forks into many counterfactual futures; unsafe trajectories are rejected at hard gates; the one safe, highest-value trajectory is returned to the existing control plane.">
+    <g font-family="IBM Plex Mono, monospace">
+      <!-- time axis -->
+      <line x1="150" y1="26" x2="600" y2="26" stroke="rgba(244,243,240,0.24)" stroke-width="0.8"/>
+      <text x="120" y="18" font-size="12" fill="rgba(244,243,240,0.54)" text-anchor="middle">now</text>
+      <text x="280" y="18" font-size="12" fill="rgba(244,243,240,0.54)" text-anchor="middle">t+1</text>
+      <text x="420" y="18" font-size="12" fill="rgba(244,243,240,0.54)" text-anchor="middle">t+2</text>
+      <text x="560" y="18" font-size="12" fill="rgba(244,243,240,0.54)" text-anchor="middle">t+3</text>
+      <line x1="120" y1="30" x2="120" y2="228" stroke="rgba(244,243,240,0.14)" stroke-width="0.8"/>
+
+      <!-- live state node -->
+      <rect x="113" y="121" width="14" height="14" fill="#F4F3F0"/>
+
+      <!-- trajectories -->
+      <g fill="none" stroke-width="1.3">
+        <!-- T1: rejected at t+2 -->
+        <polyline points="127,128 280,64 420,50" stroke="rgba(244,243,240,0.34)"/>
+        <!-- T2 -->
+        <polyline points="127,128 280,92 420,84 560,76" stroke="rgba(244,243,240,0.5)"/>
+        <!-- T3 -->
+        <polyline points="127,128 280,114 420,110 560,106" stroke="rgba(244,243,240,0.5)"/>
+        <!-- T4: selected (gold) -->
+        <polyline points="127,128 280,140 420,136 560,132 686,132" stroke="#B8A06F" stroke-width="2.3"/>
+        <!-- T5 -->
+        <polyline points="127,128 280,170 420,178 560,186" stroke="rgba(244,243,240,0.5)"/>
+        <!-- T6: rejected at t+1 -->
+        <polyline points="127,128 280,206" stroke="rgba(244,243,240,0.34)"/>
+      </g>
+
+      <!-- checkpoint markers -->
+      <g fill="rgba(244,243,240,0.55)">
+        <rect x="277" y="61" width="6" height="6" opacity="0.55"/>
+        <rect x="277" y="89" width="6" height="6"/>
+        <rect x="417" y="81" width="6" height="6"/>
+        <rect x="557" y="73" width="6" height="6"/>
+        <rect x="277" y="111" width="6" height="6"/>
+        <rect x="417" y="107" width="6" height="6"/>
+        <rect x="557" y="103" width="6" height="6"/>
+        <rect x="277" y="167" width="6" height="6"/>
+        <rect x="417" y="175" width="6" height="6"/>
+        <rect x="557" y="183" width="6" height="6"/>
+      </g>
+      <g fill="#B8A06F">
+        <rect x="277" y="137" width="6" height="6"/>
+        <rect x="417" y="133" width="6" height="6"/>
+        <rect x="557" y="129" width="6" height="6"/>
+      </g>
+
+      <!-- rejection marks -->
+      <g stroke="rgba(244,243,240,0.66)" stroke-width="1.4">
+        <path d="M415 45 l10 10 M425 45 l-10 10"/>
+        <path d="M275 201 l10 10 M285 201 l-10 10"/>
+      </g>
+      <text x="434" y="48" font-size="11.5" fill="rgba(244,243,240,0.54)">rejected &middot; hard gate</text>
+      <text x="294" y="204" font-size="11.5" fill="rgba(244,243,240,0.54)">rejected &middot; hard gate</text>
+
+      <!-- selected arrowhead + label -->
+      <path d="M686 126.5 L696 132 L686 137.5 Z" fill="#B8A06F"/>
+      <text x="716" y="156" font-size="12.5" fill="#B8A06F" text-anchor="end">selected &middot; highest value &middot; all gates passed</text>
+
+      <!-- bottom structural labels -->
+      <text x="120" y="244" font-size="12" fill="rgba(244,243,240,0.54)" text-anchor="middle">one live fleet state</text>
+      <text x="420" y="244" font-size="12" fill="rgba(244,243,240,0.54)" text-anchor="middle">many counterfactual futures</text>
+      <text x="672" y="244" font-size="12" fill="rgba(244,243,240,0.54)" text-anchor="middle">one safe trajectory</text>
+    </g>
+  </svg>
+
+  <div class="p1-body">
+    <p>Kubernetes, Slurm, serving schedulers, and autoscalers already make and execute control
+    decisions well. Aurelius adds a pre-execution simulation layer above them. Before decisions
+    execute, it forks the live fleet state into competing simulated futures, each applying a
+    different coupled control strategy across batching, routing, placement, capacity, prewarming,
+    admission, migration, precision, and clock.</p>
+    <p>Each trajectory advances queues, topology pressure, warm state, capacity, SLA risk, and cost
+    through time. Trajectories that violate hard SLA, capacity, power, or policy constraints are
+    rejected. The highest-value feasible trajectory is returned to the existing control plane,
+    which stays authoritative and executes.</p>
+  </div>
+
+  <div class="p1-stats">
+    <div class="s">
+      <div class="v v--gold">8.24&times;</div>
+      <div class="l">SLA-safe goodput per dollar vs a production-class composite, uncapped public replay</div>
+    </div>
+    <div class="s">
+      <div class="v">84.5%</div>
+      <div class="l">fewer GPU-hours at identical replayed load</div>
+    </div>
+    <div class="s">
+      <div class="v">1,549,249</div>
+      <div class="l">replayed requests across three market windows</div>
+    </div>
+    <div class="s">
+      <div class="v">3 of 3</div>
+      <div class="l">market windows with better SLA outcomes</div>
+    </div>
+  </div>
+
+  <p class="p1-qualify">Simulated, load-dependent evidence from selected public-trace windows. Not a
+  production result or an estimate for a particular fleet. Full result and scope on page 4.</p>
+
+  <div class="ft ft--dark">
+    <span>Aurelius &middot; technical memo</span>
+    <span>Page 1 of 4</span>
+  </div>
+</section>
+
+<!-- ================================================================= -->
+<!-- PAGE 2 · THE MECHANISM (ablation)                                 -->
+<!-- ================================================================= -->
+<section class="page">
+  <div class="hd">
+    <span class="wm">AURELIUS</span>
+    <span class="mt">Technical memo &middot; 02</span>
+  </div>
+
+  <h1 class="headline" style="margin-top: 26pt;">The optimizer cannot choose a future it never represents.</h1>
+
+  <p class="lead">In the ablation behind the architecture, the simulator, forecast, objective, cost
+  model, and safety gates were held constant. Only the set of futures available to the planner
+  changed.</p>
+
+  <div class="ablation">
+    <div class="col">
+      <svg viewBox="0 0 150 44" style="display:block; width:1.55in;" aria-hidden="true">
+        <polyline points="4,22 146,22" fill="none" stroke="#6E6A60" stroke-width="1.4"/>
+        <rect x="70" y="19" width="6" height="6" fill="#6E6A60"/>
+      </svg>
+      <div class="name">Single-surface search</div>
+      <div class="delta delta--miss">-4.47%</div>
+      <p class="fact">goodput/$ vs baseline<br/><b>SLA gate failed.</b><br/>173.5% value forfeited vs exhaustive search.</p>
+    </div>
+    <div class="col">
+      <svg viewBox="0 0 150 44" style="display:block; width:1.55in;" aria-hidden="true">
+        <g fill="none" stroke="#3B3934" stroke-width="1.4">
+          <polyline points="4,10 146,10"/>
+          <polyline points="4,22 146,22"/>
+          <polyline points="4,34 146,34"/>
+        </g>
+      </svg>
+      <div class="name">Physics-guided candidates</div>
+      <div class="delta delta--mid">+100.48%</div>
+      <p class="fact">goodput/$ vs baseline<br/><b>SLA gate passed.</b><br/>30.3% regret vs exhaustive search.</p>
+    </div>
+    <div class="col">
+      <svg viewBox="0 0 150 44" style="display:block; width:1.55in;" aria-hidden="true">
+        <g fill="none" stroke-width="1.4">
+          <polyline points="4,22 40,10 90,14 146,8" stroke="#3B3934"/>
+          <polyline points="4,22 40,34 90,30 146,36" stroke="#3B3934"/>
+          <polyline points="4,22 40,22 90,20 146,22" stroke="#B8A06F" stroke-width="2.2"/>
+        </g>
+        <rect x="87" y="17" width="6" height="6" fill="#B8A06F"/>
+      </svg>
+      <div class="name">Coupled trajectory search</div>
+      <div class="delta delta--win">+161.31%</div>
+      <p class="fact">goodput/$ vs baseline<br/><b>SLA gate passed.</b><br/>0% measured search regret vs exhaustive.</p>
+    </div>
+  </div>
+
+  <p class="body" style="margin-top: 24pt; max-width: 6.9in;">The winning strategy combined lower precision,
+  aggressive batching, and a higher clock. No isolated-knob search represented that future: tuned
+  one surface at a time, each move looked worse, so the bundle was never proposed. Once the coupled
+  trajectory entered the candidate set, the unchanged simulator selected it.</p>
+
+  <div class="punch">
+    <div class="rule"></div>
+    <p class="txt">The value was not hidden in a better score. It was hidden in a future the
+    previous search never considered.</p>
+  </div>
+
+  <p class="small" style="margin-top: 22pt;">Benchmark V1, frozen cap-controlled continuity harness, primary
+  market window. Regret is measured against exhaustive enumeration where enumeration is tractable,
+  at roughly 40 trajectory evaluations per decision. Complete methodology in the full technical
+  report.</p>
+
+  <div class="ft">
+    <span>Aurelius &middot; technical memo</span>
+    <span>Page 2 of 4</span>
+  </div>
+</section>
+
+<!-- ================================================================= -->
+<!-- PAGE 3 · THE ARCHITECTURE (branching diagram)                     -->
+<!-- ================================================================= -->
+<section class="page">
+  <div class="hd">
+    <span class="wm">AURELIUS</span>
+    <span class="mt">Technical memo &middot; 03</span>
+  </div>
+
+  <h1 class="headline" style="margin-top: 26pt;">One fleet. Many futures. Simulated before execution.</h1>
+
+  <svg viewBox="0 0 744 296" style="display:block; width:100%; margin-top: 18pt;" role="img"
+       aria-label="The live fleet state forks into trajectories A, B, and C, each advanced through t+1, t+2, t+3; trajectory A fails a hard gate and is eliminated; trajectory C is selected as the best safe future and handed to existing systems to execute.">
+    <g font-family="IBM Plex Mono, monospace">
+      <!-- time axis -->
+      <line x1="150" y1="28" x2="600" y2="28" stroke="rgba(22,21,19,0.28)" stroke-width="0.8"/>
+      <text x="120" y="20" font-size="12" fill="#6E6A60" text-anchor="middle">now</text>
+      <text x="280" y="20" font-size="12" fill="#6E6A60" text-anchor="middle">t+1</text>
+      <text x="420" y="20" font-size="12" fill="#6E6A60" text-anchor="middle">t+2</text>
+      <text x="560" y="20" font-size="12" fill="#6E6A60" text-anchor="middle">t+3</text>
+
+      <!-- live state -->
+      <rect x="113" y="141" width="14" height="14" fill="#161513"/>
+      <text x="120" y="176" font-size="12" fill="#3B3934" text-anchor="middle">live state</text>
+
+      <!-- trajectory A: fails at t+2 -->
+      <polyline points="127,148 280,76 420,62" fill="none" stroke="rgba(22,21,19,0.4)" stroke-width="1.3"/>
+      <rect x="277" y="73" width="6" height="6" fill="rgba(22,21,19,0.4)"/>
+      <path d="M415 57 l10 10 M425 57 l-10 10" stroke="#161513" stroke-width="1.5" fill="none"/>
+      <text x="436" y="60" font-size="12" fill="#3B3934">trajectory A</text>
+      <text x="436" y="75" font-size="11.5" fill="#6E6A60">fails a hard SLA gate at t+2 &middot; eliminated</text>
+
+      <!-- trajectory B: feasible, lower value -->
+      <polyline points="127,148 280,148 420,148 560,148" fill="none" stroke="rgba(22,21,19,0.4)" stroke-width="1.3"/>
+      <rect x="277" y="145" width="6" height="6" fill="rgba(22,21,19,0.4)"/>
+      <rect x="417" y="145" width="6" height="6" fill="rgba(22,21,19,0.4)"/>
+      <rect x="557" y="145" width="6" height="6" fill="rgba(22,21,19,0.4)"/>
+      <text x="574" y="144" font-size="12" fill="#3B3934">trajectory B</text>
+      <text x="574" y="159" font-size="11.5" fill="#6E6A60">feasible &middot; lower value</text>
+
+      <!-- trajectory C: selected -->
+      <polyline points="127,148 280,216 420,222 560,222 606,222" fill="none" stroke="#B8A06F" stroke-width="2.3"/>
+      <rect x="277" y="213" width="6" height="6" fill="#B8A06F"/>
+      <rect x="417" y="219" width="6" height="6" fill="#B8A06F"/>
+      <rect x="557" y="219" width="6" height="6" fill="#B8A06F"/>
+      <text x="280" y="244" font-size="12" fill="#8A7147">trajectory C &middot; best safe future &middot; selected</text>
+
+      <!-- handoff -->
+      <path d="M606 216.5 L616 222 L606 227.5 Z" fill="#B8A06F"/>
+      <text x="624" y="219" font-size="12" fill="#161513">existing systems</text>
+      <text x="624" y="233" font-size="12" fill="#161513">execute</text>
+    </g>
+  </svg>
+
+  <p class="capline" style="margin-top: 10pt; max-width: 7in;">Each trajectory advances queues, topology pressure,
+  warm state, capacity, SLA risk, and cost through t+1, t+2, t+3. Every future runs read-only:
+  candidate evaluation never touches the live fleet.</p>
+
+  <div class="stages4">
+    <div class="st">
+      <div class="n">1</div>
+      <div class="t">Mirror the fleet.</div>
+      <p class="d">A persistent world model carries capacity, placement, warm state, queues,
+      migrations in flight, and the operator cost basis, advanced period by period.</p>
+    </div>
+    <div class="st">
+      <div class="n">2</div>
+      <div class="t">Generate competing coupled trajectories.</div>
+      <p class="d">Physics-guided generation proposes a bounded set of coupled strategies across the
+      control surfaces, never one knob at a time. Known-strong candidates are always retained.</p>
+    </div>
+    <div class="st">
+      <div class="n">3</div>
+      <div class="t">Run each future forward, read-only.</div>
+      <p class="d">Every candidate trajectory is simulated against forecast conditions using only
+      information available at the decision point. No future truth leaks in.</p>
+    </div>
+    <div class="st">
+      <div class="n">4</div>
+      <div class="t">Reject unsafe futures. Return the winner.</div>
+      <p class="d">Hard SLA, capacity, power, and policy gates eliminate trajectories outright. The
+      best feasible future is recommended, with a deterministic fallback when confidence is low.</p>
+    </div>
+  </div>
+
+  <p class="boundary3">Aurelius sits above Kubernetes, Slurm, serving schedulers, routing systems,
+  autoscalers, and fleet-management systems. It coordinates their decisions against a common
+  anticipated future. It does not replace them. It reads scheduler metadata only, never payloads,
+  model outputs, or weights.</p>
+
+  <div class="ft">
+    <span>Aurelius &middot; technical memo</span>
+    <span>Page 3 of 4</span>
+  </div>
+</section>
+
+<!-- ================================================================= -->
+<!-- PAGE 4 · THE EVIDENCE AND THE TEST                                -->
+<!-- ================================================================= -->
+<section class="page">
+  <div class="hd">
+    <span class="wm">AURELIUS</span>
+    <span class="mt">Technical memo &middot; 04</span>
+  </div>
+
+  <h1 class="headline" style="margin-top: 24pt; font-size: 21.5pt;">A signal too large to ignore and too simulated
+  to trust without operator data.</h1>
+
+  <svg viewBox="0 0 744 158" style="display:block; width:100%; margin-top: 16pt;" role="img"
+       aria-label="Uncapped public replay: PJM +698.1%, ERCOT +717.8%, CAISO +755.3% SLA-safe goodput per dollar versus the production-class composite; average +723.7%, an 8.24 times baseline.">
+    <g font-family="IBM Plex Mono, monospace">
+      <line x1="120" y1="26" x2="120" y2="128" stroke="#161513" stroke-width="1.4"/>
+      <text x="120" y="146" font-size="11.5" fill="#6E6A60" text-anchor="middle">composite baseline &middot; 0</text>
+
+      <!-- bars: scale 0.6 px/percent -->
+      <rect x="120" y="32"  width="418.9" height="17" fill="none" stroke="#161513" stroke-width="1.2"/>
+      <rect x="120" y="66"  width="430.7" height="17" fill="none" stroke="#161513" stroke-width="1.2"/>
+      <rect x="120" y="100" width="453.2" height="17" fill="none" stroke="#161513" stroke-width="1.2"/>
+      <text x="112" y="45"  font-size="12" fill="#3B3934" text-anchor="end">PJM</text>
+      <text x="112" y="79"  font-size="12" fill="#3B3934" text-anchor="end">ERCOT</text>
+      <text x="112" y="113" font-size="12" fill="#3B3934" text-anchor="end">CAISO</text>
+      <text x="608" y="45"  font-size="13" fill="#161513">+698.1%</text>
+      <text x="608" y="79"  font-size="13" fill="#161513">+717.8%</text>
+      <text x="608" y="113" font-size="13" fill="#161513">+755.3%</text>
+
+      <!-- average marker -->
+      <line x1="554.2" y1="20" x2="554.2" y2="128" stroke="#B8A06F" stroke-width="1.4" stroke-dasharray="5 4"/>
+      <text x="554" y="12" font-size="12.5" fill="#8A7147" text-anchor="middle">avg +723.7% &middot; 8.24&times; baseline</text>
+    </g>
+  </svg>
+
+  <p class="capline" style="margin-top: 6pt;">SLA-safe goodput per dollar vs the constructed production-class
+  composite. Same replayed load per window, 1,549,249 requests total, 84.5% fewer GPU-hours, better
+  SLA in all three windows.</p>
+
+  <div class="establish">
+    <div class="col">
+      <div class="sub">What this establishes</div>
+      <p class="body">Predictive coupled planning found substantially more efficient safe
+      trajectories than the constructed public-replay composite under the selected uncapped
+      windows.</p>
+    </div>
+    <div class="col">
+      <div class="sub">What this does not establish</div>
+      <p class="body">Expected performance against a particular fleet or internal scheduler. The
+      result is simulated and load-dependent, and its magnitude is sensitive partly to modeled
+      precision and batching behavior.</p>
+    </div>
+  </div>
+
+  <div class="test">
+    <h2>Test one bounded historical window.</h2>
+    <div class="row">
+      <span class="lbl">Input</span>
+      <p class="txt">Anonymized scheduler metadata from one representative workload or cluster
+      window. No customer identity, payloads, model outputs, weights, production actuation, or live
+      integration.</p>
+    </div>
+    <div class="row">
+      <span class="lbl">Process</span>
+      <p class="txt">Reconstruct the historical baseline and evaluate Aurelius counterfactual
+      trajectories under identical recorded conditions, with a protocol fixed before any data
+      moves.</p>
+    </div>
+    <div class="row">
+      <span class="lbl">Output</span>
+      <p class="txt">Matched SLA, GPU-hour, utilization, and economic comparisons; simulator-fidelity
+      checks; sensitivity analysis; failure cases and negative findings; and a verdict on whether
+      shadow mode is warranted.</p>
+    </div>
+  </div>
+
+  <div class="ask4">
+    <span class="lbl">The ask</span>
+    <p class="txt">Identify one technically appropriate owner and one bounded historical dataset on
+    which this can be tested.</p>
+  </div>
+
+  <div class="contact4">
+    <span class="nm">Beckett Zahedi</span>
+    <span class="rl">Founder &middot; Aurelius</span>
+    <span class="ch"><a href="mailto:beckett@runaurelius.com">beckett@runaurelius.com</a></span>
+    <span class="ch"><a href="https://runaurelius.com">runaurelius.com</a></span>
+    <p class="note">Complete methodology, citations, limitations, and version history are in the
+    supporting full technical report.</p>
+  </div>
+
+  <div class="ft">
+    <span>Aurelius &middot; technical memo &middot; July 2026</span>
+    <span>Page 4 of 4</span>
+  </div>
+</section>
+
+</body>
+</html>
