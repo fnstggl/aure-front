@@ -37,12 +37,16 @@ the v2 memo uses, the required benchmark language, and every claim decision.
 | Page 3 trajectory annotations (A rejected at t+2 on SLA tolerance; B feasible, lower-ranked; C selected, highest modeled gp/$) | Illustrative schematic of the mechanism, not benchmark data; consistent with gate-then-rank design in report sections 02/07. | Labeled as schematic reasons, all "configured"/"modeled". |
 | Evaluation protocol (reconstruct, fidelity gate, freeze, held-out counterfactual evaluation, shadow-mode decision; pre-registered primary metric; stop rule) | Proposal language for the requested evaluation, extending report section 17 and the Safety staged path. States what WOULD be done; claims no existing simulator fidelity. | "Counterfactual improvements are scored only if that baseline-reconstruction fidelity gate passes." |
 
+| Uncapped search-strategy ablation (page 2): fixed grid 3.62x / +261.9%; regime-specific candidate set without coupled search 3.62x; exhaustive search of the fixed grid 4.84x / +383.6%; bounded coupled search 4.85x / +385.4%; hierarchical coupled-policy search 8.29x / +728.6%; clock-only arm does not complete the uncapped replay within the harness budget; SLA violation rates fall from 0.038-0.046 (baseline) to 0.0022-0.0026 (hierarchical) | New artifact `data/external/mpc_controller/uncapped_search_ablation.json` produced by `scripts/run_uncapped_search_ablation.py` (research repo, 07.2026): identical harness, windows, and load to `request_cap_sweep.json` uncapped cells; production anchors reproduced published gp/$ byte-identically in all three markets (130,538.91 / 130,178.26 / 130,000.36); hierarchical arm reproduced published headline cells within +0.58% / +1.22% / -0.003%. Summary in `research/UNCAPPED_SEARCH_ABLATION_RESULTS.md`. | Page 2 footnote: independent rerun; ratios are unweighted means across markets; hierarchical reproduces the published headline within 1.2 percent per market; the V1 zero-regret audit remains the only regret measurement; neither validates the simulator or establishes production savings. |
+
 ## Claims softened, removed, or changed
 
-- "173.5% value forfeited" and "30.3% regret" were removed from page 2's
-  primary presentation per the design brief; the same information is carried
-  as "Exhaustive optimum: not matched / matched", which is strictly weaker
-  and artifact-consistent.
+- Page 2's primary evidence changed from the frozen V1 ablation to the new
+  uncapped search-strategy ablation (07.2026), which measures the same
+  single-variable question at the headline benchmark's own load. The V1
+  zero-regret audit moved to the page 2 footnote. The V1 percentages
+  (-4.47% / +100.48% / +161.31%) no longer appear in the memo; they remain in
+  the full technical report.
 - The V1 SLA before/after transitions remain omitted entirely (mis-sourced
   for ERCOT/CAISO in the published report; see the six-page memo ledger).
 - All banned phrases above were removed; in particular the former

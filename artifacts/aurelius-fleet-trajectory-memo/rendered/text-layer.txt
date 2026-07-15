@@ -67,50 +67,65 @@ TECHNICAL MEMO · 07.2026
 PAGE 02 / 04
 The optimizer cannot choose a future it never
 represents.
-The frozen V1 ablation held the forecast, simulator, objective, cost model, and constraint gates constant.
-Only the set of policies available to the planner changed.
-Within the frozen V1 primary window, the winning permitted
-policy combined lower precision, more aggressive batching,
-and a higher GPU clock.
-A clock-only search never represented that policy. Tuned one
-control at a time, the required joint policy never entered the
-candidate set.
-Adding the regime-specific candidate set turned a
-regression into a large positive result. Allowing coupled
-search across the implemented policy dimensions increased
-the result again and matched exhaustive enumeration.
-The forecast, simulator, objective, cost model, and constraint
-gates were unchanged.
+The uncapped ablation reran the exact harness, windows, and load behind the 8.24× headline and varied
+one thing: the search strategy available to the planner. The production anchors reproduced the published
+values exactly, in all three markets.
+A clock-only, single-surface search cannot even be scored at
+this load: the policy it selects degrades the simulated fleet until
+the replay itself exceeds the harness budget, in all three
+markets.
+Setting the posture jointly is worth roughly 3.6× on its own: a
+fixed 24-policy grid and the regime-specific candidate set,
+scored without coupled search, select the same policy at this
+load.
+Searching the grid harder is saturated: exhaustive
+enumeration of the fixed grid reaches 4.84×, and the bounded
+coupled search matches it at 4.85× while evaluating far fewer
+candidates.
+The hierarchical coupled-policy search reaches 8.29× with the
+lowest SLA violation rates of any arm. The near-doubling
+beyond every grid-based strategy is value in coupled futures
+no fixed grid represented. The forecast, simulator, objective,
+cost model, and constraint gates were unchanged in every
+arm.
 The value was not hidden in a better score. It was hidden in a future the
 previous search never considered.
-Frozen Benchmark V1, primary market window. Different load and comparison policy from the uncapped replay. Where enumeration was
-tractable, the coupled search matched the exhaustive feasible optimum at approximately 40 candidate evaluations per decision. This
-validates search inside those enumerated spaces; it does not validate the simulator or establish production savings.
+Uncapped search-strategy ablation, 07.2026: an independent rerun of the exact harness, windows, and load behind the headline benchmark.
+Production anchors reproduced published values exactly; the hierarchical arm reproduced the published headline within 1.2 percent per
+market (8.29× here against the published 8.24× mean). Ratios are unweighted means across the three markets. The frozen V1 audit separately
+measured zero search regret where exhaustive enumeration was tractable, at approximately 40 candidate evaluations per decision. Neither
+validates the simulator or establishes production savings.
 AURELIUS · TECHNICAL MEMO
 PAGE 02 / 04
 FIG.02
-S E A R C H - S P A C E A B L A T I O N · F R O Z E N V 1 H A R N E S S
+S E A R C H - S T R A T E G Y A B L A T I O N · U N C A P P E D R E P L A Y
 S I N G L E V A R I A B L E : T H E S E A R C H
-1 · SEARCH SPACE
-GPU clock only
--4.47%
-gp/$ versus the benchmark baseline
-SLA gate: failed
-Exhaustive optimum: not matched
-2 · SEARCH SPACE
-Regime-specific candidate set
-+100.48%
-gp/$ versus the benchmark baseline
-SLA gate: passed
-Exhaustive optimum: not matched
-3 · SEARCH SPACE
-Coupled-policy search
-+161.31%
-gp/$ versus the benchmark baseline
-SLA gate: passed
-Exhaustive optimum: matched
-F O R E C A S T , S I M U L A T O R , O B J E C T I V E , C O S T M O D E L , A N D G A T E S I D E N T I C A L I N E V E R Y A R M
-B E N C H M A R K V 1
+Constructed baseline
+1.00×
+GPU clock only · single surface
+replay exceeds the harness budget
+·
+Fixed 24-policy grid
+3.62×
++261.9%
+Regime-specific candidate set · no coupled
+search
+3.62×
++261.9%
+Exhaustive search of the fixed grid
+4.84×
++383.6%
+Bounded coupled search · generated set
+4.85×
++385.4%
+Hierarchical coupled-policy search
+8.29×
++728.6%
+SLA violation rates fall down the ladder: 0.038 to 0.046 at the baseline; 0.0073 to 0.011 for the grid arms; 0.0022 to 0.0026 for the
+hierarchical search, the lowest of any arm.
+I D E N T I C A L I N P U T S , W I N D O W S , A N D L O A D I N E V E R Y A R M · 1 , 5 4 9 , 2 4 9 R E Q U E S T S
+R E R U N · 0 7 . 2 0 2 6
+DOES NOT COMPLETE
 
 
 ===== PAGE 3 =====

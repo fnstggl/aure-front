@@ -30,8 +30,8 @@ sheet, extracts the text layer and links, and runs the language checks below.
 
 ## Automated checks (build.py fails them loudly)
 
-- Exactly 4 pages; every page footer "Page N of 4" present in the text layer
-  (a missing footer means that page overflowed).
+- Exactly 4 pages; "PAGE 0N / 04" present twice per page in the text layer
+  (header and footer; one occurrence means the footer overflowed off-page).
 - Banned phrases absent (see claim_ledger.md), including em and en dashes.
 - "constructed production-informed replay baseline" present on pages 1 and 4.
 
