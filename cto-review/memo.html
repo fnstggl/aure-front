@@ -6,61 +6,46 @@
 <style>/*FONTS*/</style>
 <style>
 :root{
-  --bg:#f6f6f4; --ink:#141414; --t70:#3a3a3a; --t50:#606060; --t38:#808080;
-  --line:rgba(0,0,0,.12); --line2:rgba(0,0,0,.20);
-  --gold:#9c7b3c;
+  --bg:#f6f6f4; --ink:#141414; --t70:#3a3a3a; --t50:#606060; --t38:#7c7c7c;
+  --line:rgba(0,0,0,.13); --line2:rgba(0,0,0,.22);
   --sans:"Helvetica Now Display","Neue Haas Grotesk Display","Helvetica Neue",Helvetica,Arial,sans-serif;
-  --mono:"IBM Plex Mono","SF Mono",ui-monospace,monospace;
 }
 *{margin:0;padding:0;box-sizing:border-box}
 html{-webkit-print-color-adjust:exact;print-color-adjust:exact}
 body{background:var(--bg);color:var(--ink);font-family:var(--sans);-webkit-font-smoothing:antialiased;
   font-feature-settings:"ss01","cv01";letter-spacing:-0.006em}
-.mono{font-family:var(--mono)}
 .em{font-weight:500}
-.gold{color:var(--gold)}
+.lab{font-family:var(--sans);text-transform:uppercase}
 
 .sheet{width:816px;height:1056px;margin:0 auto;background:var(--bg);position:relative;
   display:flex;flex-direction:column;padding:46px 56px 40px}
-/* corner registration ticks */
 .tk{position:absolute;width:8px;height:8px}
 
-/* header */
-.head{display:flex;align-items:baseline;justify-content:space-between;
-  border-bottom:1px solid var(--line);padding-bottom:14px}
-.wm{font-size:17px;letter-spacing:-0.01em;font-weight:500}
-.wm .d{color:var(--gold)}
-.head .r{font-family:var(--mono);font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--t38)}
+.head{display:flex;align-items:center;justify-content:space-between;
+  border-bottom:1px solid var(--line);padding-bottom:16px}
+.head .logo{height:20px;width:auto;display:block;filter:invert(1)}
+.head .r{font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--t38)}
 
-/* eyebrow + headline */
-.ey{margin-top:40px;display:flex;align-items:center;gap:12px;font-family:var(--mono);font-size:10.5px;
-  letter-spacing:.16em;text-transform:uppercase;color:var(--gold)}
-.ey .bar{height:1px;width:26px;background:var(--gold);opacity:.6}
-h1{margin-top:20px;font-size:41px;line-height:1.04;letter-spacing:-0.035em;font-weight:400;max-width:15ch}
+.ey{margin-top:40px;font-size:10.5px;letter-spacing:.18em;text-transform:uppercase;color:var(--t50)}
+h1{margin-top:18px;font-size:41px;line-height:1.04;letter-spacing:-0.035em;font-weight:400;max-width:15ch}
 h1 .q{color:var(--t50)}
 
-/* schematic */
 .schem{margin-top:34px;border-top:1px solid var(--line);border-bottom:1px solid var(--line);padding:22px 0 18px}
-.schem .cap{font-family:var(--mono);font-size:9.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--t38);margin-bottom:12px;display:flex;justify-content:space-between}
+.schem .cap{font-size:9.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--t38);margin-bottom:12px}
 
-/* body columns */
 .cols{margin-top:30px;display:grid;grid-template-columns:1fr 1fr;gap:34px}
-.col .k{font-family:var(--mono);font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--t38);
+.col .k{font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--t38);
   padding-bottom:9px;margin-bottom:12px;border-bottom:1px solid var(--line)}
 .col p{font-size:13px;line-height:1.62;color:var(--t70)}
 .col p .em{color:var(--ink)}
 
-/* punchline */
 .punch{margin-top:auto;padding-top:26px}
-.punch .line{display:flex;align-items:flex-start;gap:16px}
-.punch .g{flex:0 0 30px;height:2px;background:var(--gold);margin-top:16px}
 .punch h2{font-size:23px;line-height:1.16;letter-spacing:-0.02em;font-weight:400;max-width:30ch}
-.punch .sub{margin-top:12px;margin-left:46px;font-size:12px;line-height:1.5;color:var(--t50);max-width:52ch}
+.punch .sub{margin-top:13px;font-size:12px;line-height:1.5;color:var(--t50);max-width:56ch}
 
-/* footer */
 .foot{margin-top:24px;border-top:1px solid var(--line);padding-top:12px;display:flex;
-  align-items:baseline;justify-content:space-between;font-family:var(--mono);font-size:10px;
-  letter-spacing:.06em;text-transform:uppercase;color:var(--t38)}
+  align-items:baseline;justify-content:space-between;font-size:10px;
+  letter-spacing:.08em;text-transform:uppercase;color:var(--t38)}
 .foot .c{color:var(--t50)}
 @page{size:816px 1056px;margin:0}
 </style>
@@ -73,15 +58,15 @@ h1 .q{color:var(--t50)}
   <span class="tk" style="right:14px;bottom:14px;border-right:1px solid var(--line2);border-bottom:1px solid var(--line2)"></span>
 
   <div class="head">
-    <div class="wm">Aurelius<span class="d">.</span></div>
-    <div class="r">One&#8209;page memo · July 2026</div>
+    <img class="logo" src="LOGO_SRC" alt="Aurelius">
+    <div class="r">Technical Memo</div>
   </div>
 
-  <div class="ey"><span class="bar"></span>The unit of optimization</div>
+  <div class="ey">What Aurelius optimizes</div>
   <h1><span class="q">Everyone optimizes the next decision.</span> Aurelius optimizes the fleet's trajectory.</h1>
 
   <div class="schem">
-    <div class="cap"><span>Fork · Simulate under constraints · Select one</span><span>Fig. one planning cycle</span></div>
+    <div class="cap">Fork · Simulate under constraints · Select one</div>
     <svg width="100%" viewBox="0 0 704 118" preserveAspectRatio="xMidYMid meet" aria-hidden="true" id="schem"></svg>
   </div>
 
@@ -92,67 +77,59 @@ h1 .q{color:var(--t50)}
     </div>
     <div class="col">
       <div class="k">What we found</div>
-      <p>The finding is narrow, and that is why it holds. We held the forecasts, the objective, the simulator, and the constraints constant, and changed only the search. A single&#8209;lever search underperformed and broke SLA. A <span class="em">coupled search over forecasted futures</span> turned it strongly positive and, where exhaustive enumeration was tractable, matched it exactly, at zero measured regret. Under uncapped production load the same architecture separates from a fixed policy by several fold.</p>
+      <p>We changed exactly one thing. Holding the forecasts, the objective, the simulator, and the constraints fixed, we varied only the search the planner runs, so any change in the result is caused by the <span class="em">search</span> and nothing else. A single coherent policy already beats a reactive scheduler several times over. Searching a fixed set of policies saturates quickly. The largest block of value appears only when the search can represent <span class="em">coupled futures that no fixed grid contains</span>.</p>
     </div>
   </div>
 
   <div class="punch">
-    <div class="line">
-      <span class="g"></span>
-      <h2>If that generalizes, it is a different design axis, not a tuning win.</h2>
-    </div>
+    <h2>If that generalizes, it is a different design axis, not a tuning win.</h2>
     <p class="sub">The full technical report carries the numbers, the production&#8209;class baseline, and the method. This page is only the idea.</p>
   </div>
 
   <div class="foot">
     <span>Aurelius · Predictive world models for AI infrastructure</span>
-    <span class="c">Simulated evidence · read&#8209;only · metadata only</span>
+    <span class="c">runaurelius.com</span>
   </div>
 </div>
 
 <script>
-/* Light-mode fork schematic: one current-state node on the left, a fan into a
-   dense column of candidate futures, most faint, a few struck out (rejected),
-   converging to one bold selected policy on the right. Deterministic, static. */
+/* Light-mode fork schematic, black and white only: one current-state marker on
+   the left, a fan into a dense column of candidate futures (most faint, a few
+   struck out as rejected), converging to one bold selected policy on the right.
+   No accent color, no terminal dot. Deterministic, static. */
 (function(){
   var s=document.getElementById('schem'); if(!s) return;
   var W=704,H=118,midY=H/2;
   var xIn=8, xFanA=150, xField=352, xFanB=556, xOut=690;
   var rand=function(n){var x=Math.sin(n*12.9898+4.17)*43758.5453;return x-Math.floor(x);};
-  var N=17, ink='#141414', gold='#9c7b3c', faint='rgba(0,0,0,0.16)';
-  var parts=[];
-  // futures column positions
-  var ys=[];
+  var N=17, ink='#141414';
+  var parts=[], ys=[];
   for(var i=0;i<N;i++){ ys.push(8 + i*(H-34)/(N-1)); }
   var winIdx=Math.round(N*0.46);
-  // fan-in lines (current -> each future)
   for(var i=0;i<N;i++){
     var op=(i===winIdx)?0.0:(0.05+rand(i)*0.10);
     parts.push('<path d="M'+xFanA+','+midY+' C '+(xFanA+70)+','+midY+' '+(xField-70)+','+ys[i]+' '+xField+','+ys[i]+'" fill="none" stroke="'+ink+'" stroke-opacity="'+op.toFixed(3)+'" stroke-width="0.8"/>');
   }
-  // future ticks
   for(var i=0;i<N;i++){
     var rejected=(i!==winIdx)&&(rand(i*7.3)>0.62);
     var isWin=(i===winIdx);
-    var op=isWin?1:(rejected?0.9:(0.14+rand(i*2.1)*0.22));
+    var op=isWin?1:(rejected?0.85:(0.14+rand(i*2.1)*0.22));
     var w=isWin?14:9;
-    var col=isWin?gold:(rejected?'rgba(0,0,0,0.28)':ink);
+    var col=isWin?ink:(rejected?'rgba(0,0,0,0.30)':ink);
     parts.push('<rect x="'+(xField-w/2)+'" y="'+(ys[i]-2.5)+'" width="'+w+'" height="5" fill="'+col+'" fill-opacity="'+op.toFixed(3)+'"/>');
-    if(rejected){ // strike-out mark
-      parts.push('<line x1="'+(xField-9)+'" y1="'+(ys[i]-5)+'" x2="'+(xField+9)+'" y2="'+(ys[i]+5)+'" stroke="'+ink+'" stroke-opacity="0.34" stroke-width="0.9"/>');
+    if(rejected){
+      parts.push('<line x1="'+(xField-9)+'" y1="'+(ys[i]-5)+'" x2="'+(xField+9)+'" y2="'+(ys[i]+5)+'" stroke="'+ink+'" stroke-opacity="0.38" stroke-width="0.9"/>');
     }
   }
-  // fan-out (winner -> selected)
-  parts.push('<path d="M'+xField+','+ys[winIdx]+' C '+(xField+80)+','+ys[winIdx]+' '+(xFanB-40)+','+midY+' '+xFanB+','+midY+'" fill="none" stroke="'+gold+'" stroke-opacity="0.85" stroke-width="1.4"/>');
-  // current-state node (left)
+  // winner -> selected (bold black), ending in a short flat cap (no dot)
+  parts.push('<path d="M'+xField+','+ys[winIdx]+' C '+(xField+80)+','+ys[winIdx]+' '+(xFanB-40)+','+midY+' '+xOut+','+midY+'" fill="none" stroke="'+ink+'" stroke-opacity="0.95" stroke-width="1.6"/>');
+  parts.push('<rect x="'+(xOut-2)+'" y="'+(midY-6)+'" width="3" height="12" fill="'+ink+'"/>');
+  // current-state marker (left)
   parts.push('<circle cx="'+xIn+'" cy="'+midY+'" r="4.5" fill="none" stroke="'+ink+'" stroke-width="1.2"/>');
   parts.push('<line x1="'+(xIn+5)+'" y1="'+midY+'" x2="'+xFanA+'" y2="'+midY+'" stroke="'+ink+'" stroke-opacity="0.5" stroke-width="1"/>');
-  parts.push('<text x="'+xIn+'" y="'+(midY-12)+'" font-family="IBM Plex Mono, monospace" font-size="8.5" letter-spacing="1.4" fill="rgba(0,0,0,0.5)">CURRENT STATE</text>');
-  // selected node (right)
-  parts.push('<circle cx="'+xOut+'" cy="'+midY+'" r="5.5" fill="'+gold+'"/>');
-  parts.push('<text x="'+xOut+'" y="'+(midY-12)+'" text-anchor="end" font-family="IBM Plex Mono, monospace" font-size="8.5" letter-spacing="1.4" fill="'+gold+'">SELECTED POLICY</text>');
-  // field label
-  parts.push('<text x="'+xField+'" y="'+(H-1)+'" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="8" letter-spacing="1.2" fill="rgba(0,0,0,0.34)">MANY FORECASTED FUTURES</text>');
+  parts.push('<text x="'+xIn+'" y="'+(midY-12)+'" font-family="Helvetica Now Display, sans-serif" font-size="8.5" letter-spacing="1.4" fill="rgba(0,0,0,0.5)">CURRENT STATE</text>');
+  parts.push('<text x="'+xOut+'" y="'+(midY-12)+'" text-anchor="end" font-family="Helvetica Now Display, sans-serif" font-size="8.5" letter-spacing="1.4" fill="'+ink+'">SELECTED POLICY</text>');
+  parts.push('<text x="'+xField+'" y="'+(H-1)+'" text-anchor="middle" font-family="Helvetica Now Display, sans-serif" font-size="8" letter-spacing="1.2" fill="rgba(0,0,0,0.36)">MANY FORECASTED FUTURES</text>');
   s.innerHTML=parts.join('');
 })();
 </script>

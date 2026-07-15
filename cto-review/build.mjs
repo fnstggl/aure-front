@@ -17,10 +17,13 @@ const face = (fam, wght, file) =>
 const fontsCss = [
   face("Helvetica Now Display", 400, "HelveticaNowDisplay-Regular.woff2"),
   face("Helvetica Now Display", 500, "HelveticaNowDisplay-Medium.woff2"),
-  face("IBM Plex Mono", 400, "ibm-plex-mono-400.woff2"),
-  face("IBM Plex Mono", 500, "ibm-plex-mono-500.woff2"),
-  face("IBM Plex Mono", 600, "ibm-plex-mono-600.woff2"),
 ].join("\n");
+
+// The Aurelius wordmark, inlined as a data URI (white on transparent; the memo
+// inverts it to black via CSS). Single typeface across both docs is Helvetica
+// Now Display; labels reuse it uppercase, so no mono face is embedded.
+const logoSrc = "data:image/png;base64," +
+  readFileSync("../public/aure_logo.png").toString("base64");
 
 // Pre-render FIG.01 convergence field so the report PDF never depends on JS timing.
 function grid() {
@@ -45,7 +48,7 @@ function grid() {
 }
 
 function assemble(src, out, injectGrid) {
-  let html = readFileSync(src, "utf8").replace("/*FONTS*/", fontsCss);
+  let html = readFileSync(src, "utf8").replace("/*FONTS*/", fontsCss).split("LOGO_SRC").join(logoSrc);
   if (injectGrid) html = html.replace(/(<svg id="grid"[^>]*>)(<\/svg>)/, (m, a, b) => a + grid() + b)
                              .replace(/<script>[\s\S]*?<\/script>\s*<\/body>/, "</body>");
   writeFileSync(out, html);

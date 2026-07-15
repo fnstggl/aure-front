@@ -98,30 +98,39 @@ digs.
 
 ## 3. What is genuinely strong (and should be the spine)
 
-**The ablation is the best thing you have, and it is bulletproof.** From
-`research/PHYSICS_GUIDED_PLANNER_RESULTS.md`:
+**The search ablation is the best thing you have, and it is what makes the
+724% believable.** The strongest version is the *uncapped* ablation from
+`research/UNCAPPED_SEARCH_ABLATION_RESULTS.md` (PR #128), because it runs the
+exact same uncapped harness that produces the headline and varies only the
+search. Everything else (forecasts, simulator, objective, cost model, gates,
+baseline) is identical across arms, so the headline gap is *attributable*:
 
-- Reward, cost model, and Pareto gate are **byte-identical** across arms. The
-  only thing changed is which candidates the planner evaluates.
-- Single-lever (clock only) search: **-4.47%**, SLA worse, fails the gate.
-- Restore the coupled candidate set: **+100.48%**, SLA better.
-- Add coupled search: **+161.31%**, SLA -87%, GPU-hours -25%, cost -24%.
-- Against the exhaustive ground truth, the bounded search matches the safe
-  optimum **exactly, at zero measured regret**, at ~40 evaluations vs 55.
-- Robust across all three markets (+148% to +191%, zero regret in each).
+| Search strategy | gp/$ vs baseline |
+|---|---|
+| Reactive baseline (production scheduler) | 1.00x (anchor, reproduced byte-identically) |
+| Single lever (clock only) | does not complete under load |
+| Fixed joint-policy grid (24 policies) | 3.62x |
+| Search the fixed grid (bounded beam ≈ exhaustive of grid) | 4.85x |
+| Coupled search beyond any grid (hierarchical) | **8.29x = the +724% headline** |
 
-This is a real scientific result because everything downstream of the candidate
-set is held constant, so the gain is *attributable*, and the zero-regret check
-against ground truth is a *proof*, not a claim. It is also the perfect thing to
-show a rival like David without handing him the recipe: it demonstrates that the
-result is real and fundamental (the unit of optimization is the coupled future,
-and the binding constraint is which futures you evaluate) without revealing the
-generator internals, the search parameters, or the roofline bands.
+The ladder says the value is the search, and specifically the *representation*
+of coupled policies no fixed grid contains (the 4.85x → 8.29x jump). It is not
+the baseline being weak (every joint arm beats it) and not the model being
+generous (identical model across arms). On a smaller window where the whole
+space can be enumerated (`research/PHYSICS_GUIDED_PLANNER_RESULTS.md`), the same
+bounded search shows **zero measured regret** against the true optimum, which
+proves it captures that value rather than stumbling onto it.
 
-**This is what makes the 724% believable.** A several-fold number, on its own,
-is hype. A several-fold number sitting on top of a zero-regret ablation is a
-demonstration that the optimizer is not cheating. That is why the rewrite puts
-the ablation (§05) *before* the headline result (§06): the proof arms the number.
+This is also the perfect thing to show a rival like David without handing him
+the recipe: it demonstrates the result is real and fundamental (what you
+optimize is the coupled future, and the binding constraint is which futures the
+search can represent) without revealing the generator internals, the search
+parameters, or the roofline bands.
+
+**A several-fold number on its own is hype. A several-fold number sitting on
+top of this ladder is a demonstration that the optimizer is not cheating.** That
+is why the rewrite puts the ablation (§05) *before* the headline result (§06):
+the proof arms the number.
 
 ---
 
@@ -132,8 +141,10 @@ the ablation (§05) *before* the headline result (§06): the proof arms the numb
 2. **724% stays the headline** (per your direction), but it is now immediately
    followed by "a number that size demands an explanation, and the report gives
    two: the regime and the mechanism."
-3. **§05 "Why the number is real: only the search changed"** is the ablation,
-   positioned as the credibility engine before the big number.
+3. **§05 "Where the value comes from: only the search changed"** is now the
+   *quantitative* uncapped ablation (PR #128): the 1.00x → 3.62x → 4.85x → 8.29x
+   ladder, with the 8.29x arm being the headline. This replaces the earlier
+   qualitative claim with real numbers in the same regime as the headline.
 4. **§06** presents the uncapped 724% result with both tables and the honest
    baseline description.
 5. **§07 "How to read a several-fold number"** is the pre-emptive strike: why it
@@ -146,9 +157,10 @@ the ablation (§05) *before* the headline result (§06): the proof arms the numb
    unified planes all exist) and stakes the narrow, durable claim.
 7. **Dropped the deprecated numbers** (the older Azure / energy-arbitrage
    figures) so the whole document is the current architecture, end to end.
-8. **No em dashes**, per your instruction. Design is byte-faithful to the site
-   (same off-black surface, hairline grid, IBM Plex Mono labels, Helvetica Now
-   Display headings, the FIG.01 convergence field).
+8. **No em dashes**, per your instruction. Design is faithful to the site (same
+   off-black surface, hairline grid, the FIG.01 convergence field), now with the
+   real Aurelius wordmark, a single typeface (Helvetica Now Display everywhere,
+   labels kept uppercase), and strictly black and white (no accent color).
 
 ---
 
