@@ -1,0 +1,513 @@
+===== PAGE 1 =====
+AURELIUS
+TECHNICAL MEMO · JULY 2026
+A Predictive Supervisory Layer for GPU Fleet
+Control
+A R C H I T E C T U R E , P U B L I C - R E P L A Y E V I D E N C E , A N D A H I S T O R I C A L V A L I D A T I O N P R O P O S A L
+Aurelius does not replace Kubernetes, Slurm, serving schedulers, fleet-management systems, or
+existing control planes. It sits above them as a predictive supervisory layer.
+Existing systems make sophisticated decisions at each layer. Aurelius tests whether those decisions can be
+improved by coordinating them against a shared prediction of future fleet state, simulating coupled alternatives
+before execution, and returning the best safe action through the existing control plane.
+T H E P R O B L E M
+At fleet scale, individually reasonable decisions about placement, capacity, routing, batching, prewarming, admission,
+migration, and serving policy interact. Their downstream effects arrive on different time horizons and cannot be evaluated
+reliably as isolated knobs. Some of the constraints that decide a decision's economics emerge only after it has executed.
+T H E A R C H I T E C T U R E
+OBSERVE
+FORECAST
+FUTURE FLEET
+STATE
+GENERATE
+COUPLED
+CANDIDATE
+ACTIONS
+SIMULATE THEIR
+CONSEQUENCES
+ENFORCE HARD
+CONSTRAINTS
+RECOMMEND
+THROUGH
+EXISTING
+SYSTEMS
+Each control period, Aurelius advances a persistent forward model of the fleet, generates a bounded set of high-value
+coupled candidate actions, evaluates each candidate on a read-only simulated future, rejects anything that fails a hard SLA,
+capacity, power, policy, or safety gate, and returns the best feasible action through the systems that remain authoritative.
+FIG.01
+D E C I S I O N P A T H · O N E C O N T R O L P E R I O D
+C U R R E N T S T A T E
+telemetry · queue
+capacity · topology
+warm/cold · constraints
+day-ahead prices
+P R E D I C T E D F U T U R E S T A T E S · R E A D - O N L Y S I M U L A T I O N
+bundle A · rejected by hard gate
+bundle B · feasible
+bundle C · feasible · best score
+S A F E R E C O M M E N D A T I O N
+best feasible action,
+executed by the existing
+control plane
+FIG.01 · CANDIDATE SCORING NEVER MUTATES THE LIVE SYSTEM
+METADATA ONLY
+T H E E V I D E N C E A N D T H E N E X T S T E P
+Public replay produced +723.7 percent, reported as +724 percent, average SLA-safe goodput per dollar under the specifically
+disclosed uncapped high-load benchmark, with 84.5 percent fewer GPU-hours and better SLA outcomes in all three market
+windows. Page 5 reports the full table, the baseline definition, and the scope.
++724%
+AVG SLA-SAFE GOODPUT PER
+DOLLAR · UNCAPPED PUBLIC
+REPLAY
+84.5%
+FEWER GPU-HOURS AT
+IDENTICAL REPLAYED LOAD
+~1.5M
+REPLAYED REQUESTS · THREE
+SELECTED MARKET WINDOWS
+0
+MEASURED SEARCH REGRET
+WHERE ENUMERATION WAS
+TRACTABLE
+S C O P E
+This is a simulated, load-dependent result from selected public-trace windows. It does not establish expected savings
+for a particular fleet. The proposed next step is a bounded, read-only historical replay using anonymized scheduler
+metadata (page 6).
+AURELIUS · PREDICTIVE SUPERVISORY LAYER FOR GPU FLEET CONTROL
+PAGE 1 OF 6
+
+
+===== PAGE 2 =====
+AURELIUS
+02 · WHERE AURELIUS SITS
+T H E B O U N D A R Y
+A supervisory layer, not a replacement control plane
+The architecture is easiest to state as a boundary. Aurelius consumes the state that fleet systems already expose,
+plans against a prediction of where that state is going, and returns recommendations to the systems that already
+own execution.
+L E V E L 1 · O B S E R V A B L E F L E E T S T A T E
+INPUTS, READ-ONLY
+TELEMETRY
+WORKLOAD QUEUE
+CAPACITY AND TOPOLOGY
+PLACEMENT AND LOCALITY
+WARM / COLD STATE
+SLA AND POLICY CONSTRAINTS
+COST AND POWER SIGNALS
+REPRESENTED, NOT YET FORECAST
+CACHE REUSE · EMERGENT QUEUE / SLA PRESSURE · CARBON INTENSITY · NETWORK CONGESTION
+READS SCHEDULER METADATA ONLY · NEVER PAYLOADS, OUTPUTS, OR WEIGHTS
+L E V E L 2 · A U R E L I U S P R E D I C T I V E S U P E R V I S O R Y L A Y E R
+PLANS · DOES NOT EXECUTE
+PERSISTENT FORWARD
+MODEL
+fleet state advanced period by
+period
+CAUSAL FORECASTS
+history-only, no future truth
+COUPLED CANDIDATE
+GENERATION
+bounded, physics-guided bundles
+READ-ONLY SIMULATION
+counterfactuals, never the live
+system
+ECONOMIC OBJECTIVE
+SLA-safe goodput per operator
+dollar
+HARD SAFETY AND POLICY
+GATES
+reject before ranking
+CONFIDENCE-AWARE
+FALLBACK
+deterministic default when unsure
+RECOMMENDATIONS · NOT ACTUATION
+L E V E L 3 · E X I S T I N G S Y S T E M S R E M A I N A U T H O R I T A T I V E
+AUTHORITATIVE · UNCHANGED
+CLUSTER SCHEDULERS
+Kubernetes · Slurm
+SERVING SCHEDULERS
+request-level serving control
+ROUTING AND BATCHING SYSTEMS
+cache-aware, iteration-level
+AUTOSCALING AND CAPACITY
+CONTROLLERS
+reactive capacity control
+FLEET-MANAGEMENT SYSTEMS
+inventory, health, lifecycle
+EXECUTION SYSTEMS
+the only writers of fleet state
+Aurelius coordinates existing systems against a common anticipated future. It does not require
+replacing the systems that already perform scheduling, placement, scaling, routing, or execution.
+AURELIUS RECOMMENDS.
+EXISTING SYSTEMS EXECUTE.
+CONFIGURED CONSTRAINTS REMAIN
+AUTHORITATIVE.
+Consumed today. The solid-marked inputs feed the current forecast and simulation loop, including public day-ahead hourly wholesale
+electricity prices in the replay harness.
+Represented, not yet forecast. Carried in the world model but not yet consumed as planner-input forecasts; stated as out of scope today rather
+than implied.
+Integration surfaces. Operator-specific signals, such as an internal cost or power proxy, would be scoped only as part of the bounded
+evaluation on page 6.
+AURELIUS · TECHNICAL MEMO
+PAGE 2 OF 6
+
+
+===== PAGE 3 =====
+AURELIUS
+03 · WHY THIS IS HARD AT SCALE
+T H E C O U P L I N G P R O B L E M
+A fleet does not face one scheduling problem
+A large fleet faces thousands of interacting decisions made at different layers and over different horizons. A
+locally correct action can change the value or feasibility of a later action elsewhere in the system. The effects also
+land on different clocks: batching within the current window, capacity and prewarming over subsequent periods,
+placement and migration well beyond them.
+D E C I S I O N S U R F A C E
+F I R S T - O R D E R E F F E C T · W I T H I N T H E P E R I O D
+C O U P L E D E F F E C T · L A T E R , E L S E W H E R E
+C O U P L I N G
+BATCHING
+raises throughput for the
+current window
+changes queue delay and
+tail-latency risk
+PREWARMING
+reduces cold-start risk for
+forecast arrivals
+consumes capacity that
+other work needs
+PLACEMENT
+improves locality for the
+placed workload
+reduces flexibility for
+later workloads
+CAPACITY
+valuable when added ahead
+of a predicted surge
+wasteful when held
+continuously
+MIGRATION
+escapes predicted
+congestion
+consumes bandwidth and
+capacity while in flight
+ADMISSION
+relieves immediate queue
+pressure
+alters SLA risk in
+later periods
+ROUTING
+improves cache reuse and
+locality
+concentrates load on
+specific replicas
+PRECISION · CLOCK
+changes per-request
+execution time
+changes GPU consumption
+and power headroom
+FIG.02 · GOLD LINKS MARK DEFERRED EFFECTS THAT LAND ON ANOTHER SURFACE'S DECISION PROBLEM
+T H E V A L U E H Y P O T H E S I S
+The hypothesis is not that existing controllers are unsophisticated. It is that the best action at one layer may
+depend on future conditions and decisions at several other layers.
+W H E R E C U R R E N T - S T A T E O P T I M I Z A T I O N S T A R T S T O O L A T E
+Some important costs and constraints emerge only after a placement or capacity decision has already been made:
+capacity and power headroom, congestion and topology pressure, demand, and the wholesale price of electricity,
+which on public day-ahead markets can swing several-fold within a day. Once the decision lands, those costs are
+largely locked in. A forward model of future fleet state allows those conditions to influence the decision before
+execution rather than explain it afterward. No single lever is appropriate for every workload: candidates are
+generated per operating regime and workload class, and hard policy gates reject any bundle that is out of bounds
+for the work it would touch, before ranking.
+AURELIUS · TECHNICAL MEMO
+PAGE 3 OF 6
+
+
+===== PAGE 4 =====
+AURELIUS
+04 · HOW AURELIUS WORKS
+T H E C O N T R O L L O O P
+Forecast, simulate, constrain, decide
+One loop, six stages, each control period. The loop is deliberately conservative: prediction and search are allowed
+to be ambitious because nothing they produce reaches execution without passing the gates.
+01 PERSISTENT FORWARD MODEL
+A stateful model advances the fleet through time rather than treating
+the system as a snapshot of free GPUs. It carries server and rack
+capacity, placement and locality, queue dynamics, replica warm and
+cold state, migrations in flight, and the operator cost basis, including
+warm-hold and migration penalties. Inputs are tagged by
+provenance, so a modeled value is never treated as a measured one.
+02 CAUSAL FORECASTS
+Forecasts of arrival rate, request characteristics, queue dynamics,
+and infrastructure and pricing conditions, including wholesale
+electricity price, use only information available at the current decision
+point. No future arrivals and no future prices leak into any decision, in
+planning or in evaluation.
+03 PHYSICS-GUIDED CANDIDATE GENERATION
+A bounded set of plausible, high-value coupled bundles is generated
+from the operating regime: timing, placement, routing, capacity,
+batching, prewarming, admission, migration, precision, and clock
+policy are proposed together rather than tuned as independent
+knobs. Known-strong candidates are always retained, so a valuable
+option is not silently excluded.
+04 READ-ONLY COUNTERFACTUAL SIMULATION
+Each candidate is evaluated on an isolated simulated future
+advanced by the forward model. Candidate evaluation never mutates
+the live system, and scoring is repeatable and auditable after the fact.
+05 OBJECTIVE AND HARD GATES
+The objective is SLA-safe goodput per operator dollar: SLA-meeting
+requests over infrastructure cost, with energy at the prevailing market
+price plus warm-hold and migration cost, and a forecast-uncertainty
+penalty in the same economic terms. Hard capacity, SLA, power,
+policy, residency, and safety constraints reject infeasible candidates
+before ranking; a Pareto gate accepts a recommendation only if it
+beats the baseline without regressing SLA.
+06 RECOMMENDATION AND FALLBACK
+The best feasible candidate is returned as a recommendation
+through the existing control plane. When forecast confidence is
+insufficient, Aurelius falls back deterministically to the configured
+safe default rather than acting on a low-confidence forecast.
+The optimizer cannot select a decision it never evaluates.
+Which candidates enter the search is a first-class
+engineering problem, measured under a regret audit, not
+an afterthought.
+W H Y C A N D I D A T E G E N E R A T I O N I S A F I R S T - C L A S S P R O B L E M
+The sharpest finding in the current benchmark cycle was not about forecasting. With the forward model, simulator, objective, and safety
+gates all unchanged, enabling more decision surfaces initially made results worse. The cause was containment: the candidate set had
+collapsed around a single surface, so the bundle that actually wins an expensive electricity window (lower precision, aggressive batching,
+and a higher clock) was never in the set being evaluated. Restoring the physics-guided candidate set recovered most of the opportunity;
+letting the coupled search reach combinations a fixed grid does not contain recovered the rest. Where exhaustive enumeration was
+tractable, the bounded search matched it exactly, at roughly 40 evaluations per decision. The residual gap to a forecast oracle, about 4.5
+percent, is forecast quality, not search.
+CANDIDATE SET
+Δ GOODPUT/$ VS BASELINE
+SLA GATE
+SEARCH REGRET VS EXHAUSTIVE
+Single surface (prior)
+-4.47%
+fails
+173.5% forfeited
+Physics-guided candidate set
++100.48%
+holds
+30.3%
+Physics-guided set + coupled search
++161.31%
+holds
+0%
+Benchmark V1, primary market window. Same simulator, objective, cost model, and Pareto gate in every row, so the difference is attributable to search and
+candidate generation. This is a mechanism finding under the frozen continuity harness, not the headline benchmark.
+AURELIUS · TECHNICAL MEMO
+PAGE 4 OF 6
+
+
+===== PAGE 5 =====
+AURELIUS
+05 · PUBLIC-REPLAY EVIDENCE
+T H E R E S U L T
+A large signal, with its scope attached
+Replaying the full selected public-trace windows with the per-period request cap removed produces the largest
+verified result in the program. It is reported the way it should be read: baseline defined, load disclosed, scope
+attached.
+The comparison policy is a constructed production-class composite: one deterministic, causal policy assembled from
+established production serving techniques. Continuous, iteration-level batching [1,2]; SLA-aware ordering with deadline
+protection and class-based admission under pressure [3]; KV and prefix-cache-aware routing [4];
+topology-aware placement [5]; and backlog-driven autoscaling with warm-pool headroom [6,7]. It sees no future arrivals and no
+future prices. It is a public-replay composite, not any specific operator's internal scheduler.
+MARKET WINDOW
+AURELIUS
+GP/$
+COMPOSITE
+GP/$
+Δ GP/$
+SLA
+VIOL.
+AURELIUS
+SLA VIOL.
+COMPOSITE
+GPU-H
+AURELIUS
+GPU-H
+COMPOSITE
+PJM · expensive window
+1,041,842
+130,539
++698.1%
+0.0023
+0.0382
+62.2
+399.9
+ERCOT · expensive window
+1,064,602
+130,178
++717.8%
+0.0013
+0.0447
+51.0
+323.7
+CAISO · expensive window
+1,111,915
+130,000
++755.3%
+0.0018
+0.0458
+60.0
+391.5
+Mean of per-market deltas / totals
++723.7%
+173.1
+1,115.1
+gp/$ is SLA-safe goodput per operator dollar: SLA-meeting requests divided by infrastructure cost (energy at the prevailing day-ahead market price, warm-
+hold, and migration cost), read directly from run output. Replayed requests: PJM 576,912; ERCOT 442,716; CAISO 529,621; total 1,549,249. The +723.7%
+headline, publicly rounded to +724%, is the unweighted mean of the three per-market deltas; total GPU-hours are 84.5% lower at the same served load.
+Workload: public LLM inference traces [8,9]; prices: public day-ahead hourly wholesale series [10].
+SCOPE AND INTERPRETATION
+READ BEFORE QUOTING THE NUMBER
+F R O Z E N C A P - C O N T R O L L E D C O N T I N U I T Y B E N C H M A R K
+Benchmark V1 is the prior frozen harness: a small fixed per-period request cap,
+scored against the strongest SLA-aware baseline. Under that harness, Aurelius
+delivered +147.85% to +191.41% versus the strongest SLA-aware baseline across
+the three reported market windows, with zero measured search regret where
+exhaustive evaluation was tractable.
+V1 WINDOW
+Δ GOODPUT/$
+SEARCH REGRET
+PJM
++161.31%
+0
+ERCOT
++191.41%
+0
+CAISO
++147.85%
+0
+Different baseline and different load from the uncapped
+benchmark above. The two results are reported
+separately and never mixed or averaged.
+AURELIUS · TECHNICAL MEMO
+PAGE 5 OF 6
+Approximately 1.5 million replayed requests across three
+selected high-load windows; not the full lifetime of the traces.
+Identical selected windows and identical load for Aurelius and
+the constructed composite.
+No policy sees future arrivals or future electricity prices.
+Measured per-request execution time is used rather than
+predicted, so there is no oracle.
+Simulated replay, not a production deployment.
+The baseline is a constructed public-replay composite built
+from established production serving techniques. It is not a
+specific operator's internal scheduler.
+The percentage is load-dependent. Part of the gap is a fixed-
+policy composite degrading under heavy uncapped load while
+Aurelius adapts its economic posture to it.
+Modeled precision and batching behavior affect the
+magnitude.
+The correct interpretation is evidence that the architecture
+warrants validation, not a prediction of savings for a particular
+fleet.
+
+
+===== PAGE 6 =====
+AURELIUS
+06 · PROPOSED NEXT STEP
+T H E P R O P O S A L
+A bounded, read-only historical evaluation
+The next question is not whether the public benchmark reproduces exactly on another fleet. It is whether
+predictive cross-layer planning identifies meaningful, causally defensible counterfactual improvements on real
+historical fleet behavior.
+One representative workload,
+cluster, or bounded historical
+window
+One technically appropriate
+operator or internal owner
+One predetermined evaluation
+protocol, fixed before data
+moves
+P O T E N T I A L I N P U T S · A N O N Y M I Z E D S C H E D U L E R M E T A D A T A
+The precise schema would be minimized to the selected evaluation. Nothing outside it is requested.
+N O T R E Q U I R E D
+Historical replay precedes any shadow-mode
+recommendation, and shadow mode precedes
+any optional production integration. Every stage
+remains under operator control.
+E V A L U A T I O N O U T P U T S
+T H E A S K
+Identify one technically appropriate owner and one bounded historical dataset on which the predictive-
+planning hypothesis can be evaluated.
+Public replay establishes a testable signal. Historical operator telemetry is the next step required to determine
+whether the architecture generalizes.
+Beckett Zahedi
+FOUNDER · AURELIUS
+beckett@runaurelius.com
+runaurelius.com
+The complete benchmark methodology, citations,
+limitations, and version history are available in the
+supporting full technical report.
+S E L E C T E D S O U R C E S A N D M E T H O D O L O G Y
+AURELIUS · TECHNICAL MEMO · JULY 2026
+PAGE 6 OF 6
+Job or request arrival time
+Workload class
+Requested and allocated GPU resources
+Queue, start, completion, and deadline
+information
+GPU type and capacity state
+Placement and topology information,
+where relevant
+The historical scheduler action
+Configured hard constraints
+Warm and cold replica state, where
+available
+SLA outcome
+Optional internal cost or power proxy
+Customer identity
+Request payloads
+Model outputs
+Proprietary weights
+Unrestricted infrastructure access
+Production actuation
+Immediate integration into live systems
+Faithful replay of the historical baseline
+Aurelius counterfactual recommendations on the same windows
+Matched SLA, GPU-hour, utilization, and economic comparisons,
+where valid
+Attribution by decision surface
+Simulator-fidelity checks against held-out telemetry
+Sensitivity analysis
+Failure cases and negative findings, reported as such
+A clear recommendation on whether shadow-mode evaluation is
+warranted
+Yu et al. Orca: A Distributed Serving System for
+Transformer-Based Generative Models. OSDI 2022.
+usenix.org
+[1]
+Kwon et al. Efficient Memory Management for Large
+Language Model Serving with PagedAttention
+(vLLM). SOSP 2023. dl.acm.org
+[2]
+Gujarati et al. Serving DNNs like Clockwork:
+Performance Predictability from the Bottom Up.
+OSDI 2020. usenix.org
+[3]
+Zheng et al. SGLang: Efficient Execution of
+Structured Language Model Programs
+(RadixAttention). 2024. arxiv.org
+[4]
+SchedMD. Slurm Workload Manager: Topology
+Guide. slurm.schedmd.com
+[5]
+Kubernetes documentation. Horizontal Pod
+Autoscaling. kubernetes.io
+[6]
+Rzadca et al. Autopilot: Workload Autoscaling at
+Google. EuroSys 2020. dl.acm.org
+[7]
+Microsoft Azure Public Dataset: Azure LLM inference
+traces, 2023 and 2024 releases. Replayed workload.
+github.com/Azure/AzurePublicDataset
+[8]
+Mooncake conversation-trace release (FAST 2025),
+kvcache-ai. Prefix-reuse structure.
+github.com/kvcache-ai/Mooncake
+[9]
+Day-ahead hourly wholesale electricity prices, from
+each ISO's public data service. pjm.com ·
+ercot.com · oasis.caiso.com
+[10]

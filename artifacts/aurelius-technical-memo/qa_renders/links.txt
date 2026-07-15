@@ -1,0 +1,14 @@
+page 6: mailto:beckett@runaurelius.com
+page 6: https://runaurelius.com/
+page 6: https://www.usenix.org/conference/osdi22/presentation/yu
+page 6: https://dl.acm.org/doi/10.1145/3600006.3613165
+page 6: https://www.usenix.org/conference/osdi20/presentation/gujarati
+page 6: https://arxiv.org/abs/2312.07104
+page 6: https://slurm.schedmd.com/topology.html
+page 6: https://kubernetes.io/docs/tasks/run-application/horizontal-pod-autoscale/
+page 6: https://dl.acm.org/doi/10.1145/3342195.3387524
+page 6: https://github.com/Azure/AzurePublicDataset
+page 6: https://github.com/kvcache-ai/Mooncake
+page 6: https://www.pjm.com/markets-and-operations
+page 6: https://www.ercot.com/mktinfo
+page 6: https://oasis.caiso.com/
