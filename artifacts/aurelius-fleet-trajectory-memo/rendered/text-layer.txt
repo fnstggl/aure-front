@@ -95,10 +95,12 @@ SLA violation rates fall down the ladder: 0.038 to 0.046 at the baseline; 0.0073
 hierarchical search, the lowest of any arm.
 I DENTI CAL I NPUTS, WI NDOWS, AND LOAD I N EVERY ARM · 1,549,249 REQUESTS
 RERUN · 07.2026
-A clock-only, single-surface search cannot even be scored at
-this load: the policy it selects degrades the simulated fleet until
-the replay itself exceeds the harness budget, in all three
-markets.
+A clock-only, single-surface search cannot be scored within
+the harness budget: the policy it selects degrades the
+simulated fleet until the replay exceeds it, in all three markets.
+Given far more compute it does complete, and still lands
+below the baseline (about 0.7×) with roughly ten times its SLA
+violation rate.
 Setting the posture jointly is worth roughly 3.6× on its own: a
 fixed 24-policy grid and the regime-specific candidate set,
 scored without coupled search, select the same policy at this
