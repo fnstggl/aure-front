@@ -193,44 +193,47 @@
       <span><b>FIG 01</b> &nbsp;Search compression</span>
       <span>One decision &middot; read-only</span>
     </div>
-    <svg viewBox="0 0 520 186" role="img"
-         aria-label="Search compression funnel. About 4.7 million possible coupled-policy configurations per decision are narrowed by constraint-aware generation and hierarchical search to 72 to 75 candidate trajectories scored per decision, and one highest-scoring feasible policy is returned.">
+    <svg viewBox="0 0 520 104" role="img"
+         aria-label="Search compression, left to right: about 4.7 million possible coupled-policy configurations per decision, reduced by constraint-aware generation and hierarchical search to 72 to 75 candidate trajectories scored per decision, then one highest-scoring feasible policy returned.">
       <g font-family="Helvetica Now Display, Helvetica, Arial, sans-serif"
          shape-rendering="geometricPrecision" text-rendering="geometricPrecision"
          stroke-linecap="butt" stroke-linejoin="miter">
-        <!-- level guides -->
-        <line x1="62" y1="44" x2="458" y2="44" stroke="#D2D2D2" stroke-width="0.5"/>
-        <line x1="206" y1="118" x2="310" y2="118" stroke="#D2D2D2" stroke-width="0.5"/>
-        <!-- compression envelope -->
-        <g fill="none" stroke="#BDBDBD" stroke-width="0.75">
-          <polyline points="62,44 206,118 258,172"/>
-          <polyline points="458,44 310,118 258,172"/>
+        <!-- connectors -->
+        <g stroke="#111110">
+          <line x1="140" y1="47" x2="248" y2="47" stroke-width="0.75"/>
+          <line x1="346" y1="47" x2="432" y2="47" stroke-width="0.75"/>
         </g>
-        <!-- flow chevrons -->
-        <g fill="none" stroke="#8C8C8C" stroke-width="0.75">
-          <path d="M255 56 l5 5 l5 -5"/>
-          <path d="M255 150 l5 5 l5 -5"/>
+        <g fill="#111110" stroke="none">
+          <path d="M248 44 L256 47 L248 50 Z"/>
+          <path d="M432 44 L440 47 L432 50 Z"/>
         </g>
-        <g text-anchor="middle" stroke="none">
-          <!-- stage 1: full space -->
-          <text x="260" y="32" font-size="21" font-weight="500" letter-spacing="-0.3" fill="#111110">~4.7M</text>
-          <text x="260" y="41" font-size="6.3" font-weight="500" letter-spacing="0.55" fill="#6E6A62">POSSIBLE COUPLED-POLICY CONFIGURATIONS PER DECISION</text>
-          <!-- process -->
-          <text x="260" y="74" font-size="7" font-weight="500" letter-spacing="0.6" fill="#3A3833">CONSTRAINT-AWARE GENERATION</text>
-          <text x="260" y="96" font-size="7" font-weight="500" letter-spacing="0.6" fill="#3A3833">HIERARCHICAL SEARCH</text>
-          <!-- stage 2: scored -->
-          <text x="260" y="114" font-size="15" font-weight="500" letter-spacing="-0.1" fill="#111110">72-75</text>
-          <text x="260" y="132" font-size="6.3" font-weight="500" letter-spacing="0.55" fill="#6E6A62">CANDIDATE TRAJECTORIES SCORED PER DECISION</text>
-          <!-- stage 3: returned -->
-          <text x="260" y="164" font-size="15" font-weight="500" fill="#111110">1</text>
-          <text x="260" y="182" font-size="6.3" font-weight="500" letter-spacing="0.55" fill="#6E6A62">HIGHEST-SCORING FEASIBLE POLICY RETURNED</text>
+        <!-- process labels above the connectors -->
+        <g text-anchor="middle" stroke="none" fill="#6E6A62" font-size="6.2" font-weight="500" letter-spacing="0.5">
+          <text x="194" y="32">CONSTRAINT-AWARE GENERATION</text>
+          <text x="194" y="41">HIERARCHICAL SEARCH</text>
+          <text x="389" y="37">SELECT &middot; RETURN</text>
+        </g>
+        <!-- numbers on one baseline, decreasing -->
+        <g text-anchor="middle" stroke="none" fill="#111110" font-weight="500">
+          <text x="74" y="56" font-size="24" letter-spacing="-0.4">~4.7M</text>
+          <text x="298" y="56" font-size="18" letter-spacing="-0.1">72-75</text>
+          <text x="468" y="56" font-size="18">1</text>
+        </g>
+        <!-- captions in their own zone -->
+        <g text-anchor="middle" stroke="none" fill="#6E6A62" font-size="6.2" font-weight="500" letter-spacing="0.5">
+          <text x="74" y="72">POSSIBLE COUPLED-POLICY</text>
+          <text x="74" y="81">CONFIGURATIONS PER DECISION</text>
+          <text x="298" y="72">CANDIDATE TRAJECTORIES</text>
+          <text x="298" y="81">SCORED PER DECISION</text>
+          <text x="468" y="72">HIGHEST-SCORING FEASIBLE</text>
+          <text x="468" y="81">POLICY RETURNED</text>
         </g>
       </g>
     </svg>
     <div class="mx-note">PJM 75 &middot; ERCOT 72 &middot; CAISO 72 candidate trajectories scored per decision.
     Where exhaustive enumeration was tractable, bounded search selected the same optimum.</div>
     <div class="plate-cap">
-      <span>Constraint-aware generation, then hierarchical search</span>
+      <span>Bounded search over the connected control surfaces</span>
       <span>Metadata only</span>
     </div>
   </div>
