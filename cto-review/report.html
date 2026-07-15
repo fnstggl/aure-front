@@ -132,7 +132,7 @@ td.mn{font-family:var(--mono)}
   <!-- ============ MASTHEAD ============ -->
   <div class="mast">
     <div class="brand"><img class="logo" src="LOGO_SRC" alt="Aurelius"><span class="brandlab">Technical Report</span></div>
-    <h1>Optimizing the fleet's entire trajectory, not just its next decision.</h1>
+    <h1>Choose the best sequence of fleet decisions, not just the next decision.</h1>
     <p class="sub">A supervisory layer that forecasts the fleet forward, simulates many coupled futures under constraints, and returns one policy for the existing stack to execute.</p>
     <p class="lead">Aurelius sits above the scheduler. It does not replace Kubernetes, Slurm, or a serving router, and it never touches payloads. Each control period it forks the current fleet state into many counterfactual trajectories, one per candidate coupled policy, advances each under SLA, capacity, power, and policy constraints, discards the ones that violate, and hands the highest&#8209;scoring feasible policy back to the stack to run.</p>
 
