@@ -202,32 +202,20 @@
           <text x="424" y="13">T+3</text>
         </g>
 
-        <!-- rejected trajectories (light, terminated by black x) -->
+        <!-- rejected trajectories (light, terminated by black x); flush fork at x=88 -->
         <g fill="none" stroke="#BDBDBD" stroke-width="0.75">
-          <polyline points="48,88 72,88 72,32 288,32"/>
-          <polyline points="48,88 72,88 72,144 168,144"/>
+          <polyline points="48,88 88,88 88,32 288,32"/>
+          <polyline points="48,88 88,88 88,144 168,144"/>
         </g>
-        <!-- feasible, lower-ranked (mid gray) -->
+        <!-- feasible, lower-ranked (mid gray); flush fork at x=88 -->
         <g fill="none" stroke="#8C8C8C" stroke-width="0.75">
           <polyline points="48,88 88,88 88,60 424,60"/>
           <polyline points="48,88 88,88 88,116 424,116"/>
         </g>
-        <!-- feasible open nodes -->
-        <g fill="#FBFAF8" stroke="#8C8C8C" stroke-width="0.75">
-          <rect x="165" y="57" width="6" height="6"/><rect x="421" y="57" width="6" height="6"/>
-          <rect x="165" y="113" width="6" height="6"/><rect x="421" y="113" width="6" height="6"/>
-        </g>
 
         <!-- selected trajectory (heavy black, straight spine across boundary) -->
         <polyline points="48,88 500,88" fill="none" stroke="#111110" stroke-width="1.5"/>
-        <g fill="#111110" stroke="none">
-          <rect x="164.5" y="84.5" width="7" height="7"/>
-          <rect x="284.5" y="84.5" width="7" height="7"/>
-          <rect x="420.5" y="84.5" width="7" height="7"/>
-        </g>
         <path d="M490 83 L500 88 L490 93 Z" fill="#111110" stroke="none"/>
-        <!-- root / live fleet state -->
-        <rect x="42.5" y="82.5" width="11" height="11" fill="#111110" stroke="none"/>
 
         <!-- rejection x marks -->
         <g stroke="#111110" stroke-width="1.5" fill="none">
@@ -461,27 +449,16 @@
           <text x="432" y="16">STATE(T+3)</text>
         </g>
 
-        <!-- trajectory A: rejected at t+2 (light + x) -->
-        <polyline points="56,112 76,112 76,48 312,48" fill="none" stroke="#BDBDBD" stroke-width="0.75"/>
-        <rect x="181" y="45" width="6" height="6" fill="#FBFAF8" stroke="#BDBDBD" stroke-width="0.75"/>
+        <!-- trajectory A: rejected at t+2 (light + x); flush fork at x=92 -->
+        <polyline points="56,112 92,112 92,48 312,48" fill="none" stroke="#BDBDBD" stroke-width="0.75"/>
         <path d="M306.5 42.5 l11 11 M317.5 42.5 l-11 11" stroke="#111110" stroke-width="1.5" fill="none"/>
 
-        <!-- trajectory B: feasible, lower-ranked (gray) -->
+        <!-- trajectory B: feasible, lower-ranked (gray); flush fork at x=92 -->
         <polyline points="56,112 92,112 92,176 432,176" fill="none" stroke="#8C8C8C" stroke-width="0.75"/>
-        <g fill="#FBFAF8" stroke="#8C8C8C" stroke-width="0.75">
-          <rect x="181" y="173" width="6" height="6"/><rect x="429" y="173" width="6" height="6"/>
-        </g>
 
         <!-- trajectory C: selected (heavy black spine across boundary) -->
         <polyline points="56,112 504,112" fill="none" stroke="#111110" stroke-width="1.5"/>
-        <g fill="#111110" stroke="none">
-          <rect x="180.5" y="108.5" width="7" height="7"/>
-          <rect x="308.5" y="108.5" width="7" height="7"/>
-          <rect x="428.5" y="108.5" width="7" height="7"/>
-        </g>
         <path d="M494 107 L504 112 L494 117 Z" fill="#111110" stroke="none"/>
-        <!-- root / live fleet state -->
-        <rect x="50" y="106" width="12" height="12" fill="#111110" stroke="none"/>
 
         <!-- actuation boundary -->
         <line x1="464" y1="36" x2="464" y2="188" stroke="#111110" stroke-width="0.75" stroke-dasharray="2 3"/>
@@ -645,22 +622,21 @@
     <h2>Test one bounded historical window.</h2>
 
     <svg viewBox="0 0 520 56" style="margin-top: 7pt;" role="img"
-         aria-label="Evaluation sequence along one spine: recorded baseline, reconstruct, an outlined fidelity gate, freeze, held-out counterfactual, shadow-mode decision. Counterfactuals are scored only if the fidelity gate passes.">
+         aria-label="Evaluation sequence along one spine with a tick at each stage: recorded baseline, reconstruct, fidelity gate, freeze, held-out counterfactual, shadow-mode decision. Counterfactuals are scored only if the fidelity gate passes.">
       <g font-family="Helvetica Now Display, Helvetica, Arial, sans-serif"
          shape-rendering="geometricPrecision" text-rendering="geometricPrecision"
          stroke-linecap="butt" stroke-linejoin="miter">
         <!-- spine -->
         <line x1="16" y1="20" x2="504" y2="20" stroke="#111110" stroke-width="1.5"/>
         <path d="M494 15 L504 20 L494 25 Z" fill="#111110" stroke="none"/>
-        <!-- stage nodes -->
-        <g fill="#111110" stroke="none">
-          <rect x="20.5" y="16.5" width="7" height="7"/>
-          <rect x="136.5" y="16.5" width="7" height="7"/>
-          <rect x="352.5" y="16.5" width="7" height="7"/>
-          <rect x="420.5" y="16.5" width="7" height="7"/>
+        <!-- stage ticks -->
+        <g stroke="#111110" stroke-width="1" fill="none">
+          <line x1="24" y1="14" x2="24" y2="26"/>
+          <line x1="140" y1="14" x2="140" y2="26"/>
+          <line x1="256" y1="14" x2="256" y2="26"/>
+          <line x1="356" y1="14" x2="356" y2="26"/>
+          <line x1="424" y1="14" x2="424" y2="26"/>
         </g>
-        <!-- fidelity gate: outlined decision diamond -->
-        <path d="M256 12 L264 20 L256 28 L248 20 Z" fill="#FBFAF8" stroke="#111110" stroke-width="1.5"/>
         <!-- labels -->
         <g font-size="7" font-weight="500" letter-spacing="0.5" stroke="none">
           <text x="16" y="38" fill="#6E6A62">RECORDED</text>
