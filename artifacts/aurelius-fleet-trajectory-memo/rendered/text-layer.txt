@@ -1,21 +1,12 @@
 ===== PAGE 1 =====
 AURELIUS
-A predictive supervisory layer for GPU fleets
-Technical memo · July 2026
+A PREDICTIVE SUPERVISORY LAYER FOR GPU FLEETS
+TECHNICAL MEMO · 07.2026
+PAGE 01 / 04
 Choose the best fleet trajectory, not just
 the best next action.
-One live fleet state. Many counterfactual futures. One safe trajectory selected before execution.
-now
-t+1
-t+2
-t+3
-rejected · constraint gate
-rejected · constraint gate
-selected · feasible · highest score
-one live fleet state
-many counterfactual trajectories
-one feasible policy
-returned before execution
+O N E L I V E F L E E T S T A T E · M A N Y C O U N T E R F A C T U A L F U T U R E S · O N E S A F E T R A J E C T O R Y S E L E C T E D
+B E F O R E E X E C U T I O N
 Kubernetes, Slurm, serving schedulers, autoscalers, and
 fleet-management systems already own specialized control
 and execution decisions. Aurelius adds a pre-execution
@@ -30,8 +21,7 @@ policy.
 The fleet state is then advanced through the planning
 horizon. Each trajectory changes queue progression,
 capacity use, placement and topology pressure, replica
-warm state, SLA outcomes, and modeled infrastructure
-cost.
+warm state, SLA outcomes, and modeled infrastructure cost.
 Trajectories that violate configured SLA, capacity, power,
 residency, placement, or policy constraints are rejected
 before ranking. The highest-scoring feasible policy is
@@ -42,70 +32,128 @@ mean SLA-safe goodput per modeled
 infrastructure dollar versus a constructed
 production-informed replay baseline
 84.5%
-fewer GPU-hours under identical input
-request sets
+fewer GPU-hours under identical input request
+sets
 1,549,249
-requests across three selected uncapped
-high-load windows
+requests across three selected uncapped high-
+load windows
 3 of 3
 windows with lower SLA violation rates
-Simulated, load-dependent evidence from selected public-trace windows. Not a production result and not an estimate of
-performance against a particular fleet or internal scheduler.
-Aurelius · technical memo
-Page 1 of 4
+Simulated, load-dependent evidence from selected public-trace windows. Not a production result and not an estimate of performance
+against a particular fleet or internal scheduler.
+AURELIUS · TECHNICAL MEMO
+PAGE 01 / 04
+FIG.01
+C O U N T E R F A C T U A L T R A J E C T O R Y S E A R C H
+S I M U L A T E D · R E A D - O N L Y
+now
+t+1
+t+2
+t+3
+rejected · constraint gate
+rejected · constraint gate
+selected · feasible · highest score
+one live fleet state
+many counterfactual trajectories
+one feasible policy
+returned before execution
+C A N D I D A T E E V A L U A T I O N N E V E R W R I T E S T O T H E L I V E F L E E T
+M E T A D A T A O N L Y
 
 
 ===== PAGE 2 =====
 AURELIUS
-Technical memo · 02
+TECHNICAL MEMO · 07.2026
+PAGE 02 / 04
 The optimizer cannot choose a future it never
 represents.
-The frozen V1 ablation held the forecast, simulator, objective, cost model, and constraint gates
-constant. Only the set of policies available to the planner changed.
-1 · search space
+The frozen V1 ablation held the forecast, simulator, objective, cost model, and constraint gates constant.
+Only the set of policies available to the planner changed.
+Within the frozen V1 primary window, the winning permitted
+policy combined lower precision, more aggressive batching,
+and a higher GPU clock.
+A clock-only search never represented that policy. Tuned one
+control at a time, the required joint policy never entered the
+candidate set.
+Adding the regime-specific candidate set turned a
+regression into a large positive result. Allowing coupled
+search across the implemented policy dimensions increased
+the result again and matched exhaustive enumeration.
+The forecast, simulator, objective, cost model, and constraint
+gates were unchanged.
+The value was not hidden in a better score. It was hidden in a future the
+previous search never considered.
+Frozen Benchmark V1, primary market window. Different load and comparison policy from the uncapped replay. Where enumeration was
+tractable, the coupled search matched the exhaustive feasible optimum at approximately 40 candidate evaluations per decision. This
+validates search inside those enumerated spaces; it does not validate the simulator or establish production savings.
+AURELIUS · TECHNICAL MEMO
+PAGE 02 / 04
+FIG.02
+S E A R C H - S P A C E A B L A T I O N · F R O Z E N V 1 H A R N E S S
+S I N G L E V A R I A B L E : T H E S E A R C H
+1 · SEARCH SPACE
 GPU clock only
 -4.47%
 gp/$ versus the benchmark baseline
 SLA gate: failed
 Exhaustive optimum: not matched
-2 · search space
+2 · SEARCH SPACE
 Regime-specific candidate set
 +100.48%
 gp/$ versus the benchmark baseline
 SLA gate: passed
 Exhaustive optimum: not matched
-3 · search space
+3 · SEARCH SPACE
 Coupled-policy search
 +161.31%
 gp/$ versus the benchmark baseline
 SLA gate: passed
 Exhaustive optimum: matched
-Within the frozen V1 primary window, the winning permitted
-policy combined lower precision, more aggressive
-batching, and a higher GPU clock.
-A clock-only search never represented that policy. Tuned
-one control at a time, the required joint policy never entered
-the candidate set.
-Adding the regime-specific candidate set turned a
-regression into a large positive result. Allowing coupled
-search across the implemented policy dimensions
-increased the result again and matched exhaustive
-enumeration.
-The forecast, simulator, objective, cost model, and
-constraint gates were unchanged.
-The value was not hidden in a better score. It was hidden in a
-future the previous search never considered.
-Frozen Benchmark V1, primary market window. Different load and comparison policy from the uncapped replay. Where enumeration
-was tractable, the coupled search matched the exhaustive feasible optimum at approximately 40 candidate evaluations per decision.
-This validates search inside those enumerated spaces; it does not validate the simulator or establish production savings.
-Aurelius · technical memo
-Page 2 of 4
+F O R E C A S T , S I M U L A T O R , O B J E C T I V E , C O S T M O D E L , A N D G A T E S I D E N T I C A L I N E V E R Y A R M
+B E N C H M A R K V 1
 
 
 ===== PAGE 3 =====
 AURELIUS
-Technical memo · 03
+TECHNICAL MEMO · 07.2026
+PAGE 03 / 04
 One fleet. Many futures. Simulated before execution.
+Live fleet state: queue · capacity · placement · topology · replica state · configured constraints.
+01
+Mirror the fleet.
+A persistent state-transition model carries queue state,
+capacity, placement and locality, replica warm and cold
+state, migrations in flight, configured constraints, and the
+modeled cost basis across control periods.
+02
+Generate coupled policies.
+A regime-specific generator proposes a bounded set of
+policies based on the workload, operating conditions,
+implemented controls, and configured constraints.
+Previously validated candidates are retained as controls.
+03
+Advance each trajectory.
+Every candidate is simulated independently over the
+planning horizon. Forecasts use only information available
+at the decision timestamp. Future arrivals, future prices,
+and future outcomes are not supplied to the planner.
+04
+Reject infeasible trajectories and return the winner.
+Hard constraints reject infeasible trajectories before
+economic ranking. The highest-scoring feasible policy is
+returned as a recommendation. When forecast
+confidence falls below the configured threshold, Aurelius
+returns the configured deterministic fallback policy.
+Aurelius sits above Kubernetes, Slurm, serving schedulers, routing systems, autoscalers, and fleet-management systems. It evaluates
+how their decisions interact across a shared planning horizon. It does not replace them, write cluster state, or bypass operator-
+configured constraints.
+The proposed historical replay requires scheduler and fleet metadata. It does not require customer identity, request payloads, model
+outputs, or proprietary weights.
+AURELIUS · TECHNICAL MEMO
+PAGE 03 / 04
+FIG.03
+S T A T E - T R A N S I T I O N S C H E M A T I C · O N E C O N T R O L P E R I O D
+G A T E → R A N K → R E T U R N
 state(t)
 state(t+1)
 state(t+2)
@@ -115,14 +163,16 @@ live fleet state
 2
 3
 4
-trajectory A · rejected
+REJECTED
+trajectory A
 queue growth exceeds the
 configured SLA tolerance
 at t+2
 trajectory B · feasible, lower-ranked
 SLA preserved; modeled warm-state
 and capacity cost remain higher
-trajectory C · selected
+SELECTED
+trajectory C
 configured constraints satisfied
 highest modeled gp/$
 actuation boundary
@@ -130,67 +180,37 @@ existing control
 systems execute
 through their normal
 interfaces
-Live fleet state: queue · capacity · placement · topology · replica state · configured constraints. Each candidate runs against
-isolated simulated state. Candidate evaluation never writes to the live fleet.
-1
-Mirror the fleet.
-A persistent state-transition model carries queue state,
-capacity, placement and locality, replica warm and cold
-state, migrations in flight, configured constraints, and the
-modeled cost basis across control periods.
-2
-Generate coupled policies.
-A regime-specific generator proposes a bounded set of
-policies based on the workload, operating conditions,
-implemented controls, and configured constraints.
-Previously validated candidates are retained as controls.
-3
-Advance each trajectory.
-Every candidate is simulated independently over the
-planning horizon. Forecasts use only information
-available at the decision timestamp. Future arrivals,
-future prices, and future outcomes are not supplied to
-the planner.
-4
-Reject infeasible trajectories and return the
-winner.
-Hard constraints reject infeasible trajectories before
-economic ranking. The highest-scoring feasible policy is
-returned as a recommendation. When forecast
-confidence falls below the configured threshold, Aurelius
-returns the configured deterministic fallback policy.
-Aurelius sits above Kubernetes, Slurm, serving schedulers, routing systems, autoscalers, and fleet-management systems. It
-evaluates how their decisions interact across a shared planning horizon. It does not replace them, write cluster state, or bypass
-operator-configured constraints.
-The proposed historical replay requires scheduler and fleet metadata. It does not require customer identity, request payloads,
-model outputs, or proprietary weights.
-Aurelius · technical memo
-Page 3 of 4
+E A C H C A N D I D A T E R U N S A G A I N S T I S O L A T E D S I M U L A T E D S T A T E
+N E V E R W R I T E S T O T H E L I V E F L E E T
 
 
 ===== PAGE 4 =====
 AURELIUS
-Technical memo · 04
+TECHNICAL MEMO · 07.2026
+PAGE 04 / 04
 A signal too large to ignore and too simulated to trust without
 operator data.
+FIG.04
+U N C A P P E D R E P L A Y · R A T I O T O T H E C O N S T R U C T E D B A S E L I N E
+T H R E E M A R K E T W I N D O W S
 1.00×
 constructed production-informed replay baseline
 CAISO · 8.55× · +755.3%
 ERCOT · 8.18× · +717.8%
 PJM · 7.98× · +698.1%
 unweighted mean · 8.24× · +723.7%
-1,549,249 total input requests · 84.5% fewer total GPU-hours · lower SLA violation rates in all three windows · both policies received
-the identical input request sets.
-The comparison policy is a deterministic public-replay baseline assembled from established serving and cluster-control
-mechanisms, including continuous batching, deadline-aware ordering and admission, prefix-cache-aware routing, topology-aware
-placement, and backlog-driven capacity control. It is stronger than the naive SLA-aware reference, but it is not an operator's
-internal scheduler and does not reproduce a particular fleet's adaptive logic, internal signals, or cost model.
-What this establishes
+1,549,249 total input requests · 84.5% fewer total GPU-hours · lower SLA violation rates in all three windows · both policies received the
+identical input request sets.
+The comparison policy is a deterministic public-replay baseline assembled from established serving and cluster-control mechanisms,
+including continuous batching, deadline-aware ordering and admission, prefix-cache-aware routing, topology-aware placement, and
+backlog-driven capacity control. It is stronger than the naive SLA-aware reference, but it is not an operator's internal scheduler and does
+not reproduce a particular fleet's adaptive logic, internal signals, or cost model.
+WHAT THIS ESTABLISHES
 Under the selected uncapped high-load replay conditions,
 coupled predictive planning found feasible trajectories with
 materially better modeled economics and lower SLA violation
 rates than the constructed baseline.
-What this does not establish
+WHAT THIS DOES NOT ESTABLISH
 Expected performance against a particular fleet, internal
 scheduler, workload distribution, or operator cost model. The
 result is simulated and load-dependent. Its magnitude is
@@ -206,28 +226,28 @@ held-out counterfactual
 evaluation
 shadow-mode
 decision
-Input
-Scheduler and fleet metadata from one representative workload, cluster, or bounded historical window. No
-customer identity, request payloads, model outputs, proprietary weights, production actuation, or unrestricted
-infrastructure access.
-Process
-First reconstruct the recorded control decisions and verify that the simulator reproduces recorded queue,
-execution, resource-use, and SLA outcomes within agreed tolerances. Counterfactual improvements are scored
-only if that baseline-reconstruction fidelity gate passes. Then freeze the calibrated simulator and evaluate Aurelius
-on a held-out historical window using only information available at each decision timestamp.
-Output
-Matched SLA, GPU-hour, utilization, completed-work, and agreed economic comparisons; simulator-fidelity
-results; sensitivity analysis; attribution by active policy dimension; failure cases and negative findings; and a
-recommendation on whether recommendation-only shadow mode is warranted.
-Requested next step
+INPUT
+Scheduler and fleet metadata from one representative workload, cluster, or bounded historical window. No customer
+identity, request payloads, model outputs, proprietary weights, production actuation, or unrestricted infrastructure
+access.
+PROCESS
+First reconstruct the recorded control decisions and verify that the simulator reproduces recorded queue, execution,
+resource-use, and SLA outcomes within agreed tolerances. Counterfactual improvements are scored only if that
+baseline-reconstruction fidelity gate passes. Then freeze the calibrated simulator and evaluate Aurelius on a held-out
+historical window using only information available at each decision timestamp.
+OUTPUT
+Matched SLA, GPU-hour, utilization, completed-work, and agreed economic comparisons; simulator-fidelity results;
+sensitivity analysis; attribution by active policy dimension; failure cases and negative findings; and a recommendation
+on whether recommendation-only shadow mode is warranted.
+REQUESTED NEXT STEP
 A short scoping session with one engineering owner to select a bounded historical window, validate the
 minimum metadata schema, and agree on replay acceptance criteria.
 If Aurelius cannot reproduce baseline behavior and improve the pre-registered primary metric on held-out telemetry, the
 evaluation stops. If it can, the next step is recommendation-only shadow mode.
 Beckett Zahedi
-Founder · Aurelius
+FOUNDER · AURELIUS
 beckett@runaurelius.com
 runaurelius.com
 Complete methodology, references, benchmark tables, limitations, and mechanism audits are in the supporting full technical report.
-Aurelius · technical memo · July 2026
-Page 4 of 4
+AURELIUS · TECHNICAL MEMO · 07.2026
+PAGE 04 / 04

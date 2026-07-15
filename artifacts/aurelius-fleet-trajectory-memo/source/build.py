@@ -140,7 +140,7 @@ def language_checks(doc: fitz.Document) -> list[str]:
             if phrase.lower() not in pages_text[pno - 1].lower().replace("\n", " "):
                 problems.append(f"required phrase missing on page {pno}: {phrase!r}")
     for i, t in enumerate(pages_text, start=1):
-        if f"Page {i} of {EXPECTED_PAGES}" not in t:
+        if t.upper().count(f"PAGE 0{i} / 04") < 2:
             problems.append(f"footer missing on page {i} (overflow?)")
     return problems
 
