@@ -87,9 +87,9 @@ const CELL_META = CELL_RAW.map((c) => {
   };
 });
 
-/* Simulated-future totals, rotated each cycle so the number varies pass to pass
-   while staying in the ~2–3M band. */
-const TARGETS = [2_641_882, 2_873_104, 2_487_339, 2_956_018, 2_312_540, 2_744_667];
+/* Possible-decision totals, rotated each cycle so the number varies pass to pass
+   while staying in the ~4.4–5.1M band. */
+const TARGETS = [4_723_920, 4_981_204, 4_512_663, 5_067_418, 4_388_540, 4_856_077];
 
 const ALIVE_MS = 4500;
 const CONVERGE_MS = 2600;
@@ -218,7 +218,7 @@ export function WorldModelArchitecture({ className }: { className?: string }) {
               {count.toLocaleString("en-US")}
             </span>
             <span className="font-mono text-[9.5px] uppercase tracking-[0.16em] text-white/55">
-              simulated futures
+              possible decisions
             </span>
           </div>
         </div>
