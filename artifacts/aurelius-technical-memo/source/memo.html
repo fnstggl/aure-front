@@ -1,0 +1,1022 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<title>Aurelius - A Predictive Supervisory Layer for GPU Fleet Control</title>
+<style>
+  /* ================= Fonts (existing repo assets, relative paths) ========= */
+  @font-face {
+    font-family: "Helvetica Now Display";
+    font-style: normal; font-weight: 400;
+    src: url("fonts/HelveticaNowDisplay-Regular.woff2") format("woff2");
+  }
+  @font-face {
+    font-family: "Helvetica Now Display";
+    font-style: normal; font-weight: 500;
+    src: url("fonts/HelveticaNowDisplay-Medium.woff2") format("woff2");
+  }
+  @font-face {
+    font-family: "IBM Plex Mono";
+    font-style: normal; font-weight: 400;
+    src: url("fonts/ibm-plex-mono-400.woff2") format("woff2");
+  }
+  @font-face {
+    font-family: "IBM Plex Mono";
+    font-style: normal; font-weight: 500;
+    src: url("fonts/ibm-plex-mono-500.woff2") format("woff2");
+  }
+  @font-face {
+    font-family: "IBM Plex Mono";
+    font-style: normal; font-weight: 600;
+    src: url("fonts/ibm-plex-mono-600.woff2") format("woff2");
+  }
+
+  /* ================= Tokens ============================================== */
+  :root {
+    --paper: #FBFAF7;
+    --ink: #161513;
+    --ink-2: #3B3934;
+    --ink-3: #6E6A60;
+    --hair: rgba(22, 21, 19, 0.24);
+    --hair-soft: rgba(22, 21, 19, 0.13);
+    --dark: #060605;
+    --w-92: rgba(244, 243, 240, 0.94);
+    --w-72: rgba(244, 243, 240, 0.74);
+    --w-55: rgba(244, 243, 240, 0.56);
+    --w-38: rgba(244, 243, 240, 0.38);
+    --w-hair: rgba(244, 243, 240, 0.22);
+    --gold: #B8A06F;
+    --gold-deep: #8A7147;
+    --gold-hair: rgba(184, 160, 111, 0.45);
+    --sans: "Helvetica Now Display", "Helvetica Neue", Helvetica, Arial, sans-serif;
+    --mono: "IBM Plex Mono", "SF Mono", ui-monospace, monospace;
+  }
+
+  /* ================= Print frame ========================================= */
+  @page { size: Letter; margin: 0; }
+  * { box-sizing: border-box; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  html, body { margin: 0; padding: 0; }
+  body {
+    font-family: var(--sans);
+    color: var(--ink);
+    font-size: 10.5pt;
+    line-height: 1.5;
+    background: #E9E7E1;
+  }
+  .page {
+    position: relative;
+    width: 8.5in;
+    height: 11in;
+    overflow: hidden;
+    background: var(--paper);
+    padding: 0.46in 0.55in 0.42in;
+    display: flex;
+    flex-direction: column;
+    page-break-after: always;
+    break-after: page;
+  }
+  .page:last-child { page-break-after: auto; break-after: auto; }
+  @media screen {
+    body { display: flex; flex-direction: column; align-items: center; gap: 18px; padding: 24px 0; }
+    .page { outline: 1px solid rgba(0,0,0,0.18); }
+  }
+
+  a { color: inherit; text-decoration: none; }
+
+  /* ================= Shared type ========================================= */
+  .k {
+    font-family: var(--mono);
+    font-size: 7.5pt;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.16em;
+    color: var(--gold-deep);
+  }
+  .k--ink { color: var(--ink-3); }
+  h1, h2, h3 { margin: 0; font-weight: 500; }
+  p { margin: 0; }
+  .body { font-size: 10.5pt; line-height: 1.5; color: var(--ink-2); }
+  .body-sm { font-size: 9.5pt; line-height: 1.5; color: var(--ink-3); }
+  .fig-note {
+    font-family: var(--mono);
+    font-size: 7pt;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--ink-3);
+  }
+  sup.ref { font-family: var(--mono); font-size: 6.5pt; color: var(--gold-deep); letter-spacing: 0; }
+
+  /* ================= Header / footer ==================================== */
+  .hd {
+    display: flex; align-items: baseline; justify-content: space-between;
+    padding-bottom: 8pt; border-bottom: 1.1pt solid var(--ink);
+    flex: 0 0 auto;
+  }
+  .hd .wordmark { font-size: 12.5pt; font-weight: 500; letter-spacing: 0.01em; color: var(--ink); }
+  .hd .meta { font-family: var(--mono); font-size: 7pt; letter-spacing: 0.14em; text-transform: uppercase; color: var(--ink-3); }
+  .hd .meta b { font-weight: 600; color: var(--ink); }
+  .hd-goldseam { height: 2pt; width: 0.62in; background: var(--gold); margin-top: -1.5pt; }
+
+  .ft {
+    margin-top: auto; flex: 0 0 auto;
+    display: flex; justify-content: space-between; align-items: baseline;
+    border-top: 0.6pt solid var(--hair);
+    padding-top: 6pt;
+    font-family: var(--mono); font-size: 6.5pt; letter-spacing: 0.13em;
+    text-transform: uppercase; color: var(--ink-3);
+  }
+  .ft--dark { border-top-color: var(--w-hair); color: var(--w-38); }
+
+  .titleblock { margin-top: 11pt; }
+  .titleblock h2 { font-size: 17pt; letter-spacing: -0.015em; line-height: 1.14; color: var(--ink); margin-top: 5pt; }
+
+  /* ================= Page 1 (dark) ====================================== */
+  .page--dark { background: var(--dark); color: var(--w-92); }
+  .page--dark .hd { border-bottom-color: rgba(244,243,240,0.9); }
+  .page--dark .hd .wordmark { color: #F4F3F0; }
+  .page--dark .hd .meta { color: var(--w-55); }
+  .p1-title { margin-top: 12pt; font-size: 24pt; line-height: 1.08; letter-spacing: -0.018em; color: #F4F3F0; max-width: 6.6in; }
+  .p1-sub { margin-top: 7pt; font-family: var(--mono); font-size: 8pt; font-weight: 500; letter-spacing: 0.2em; text-transform: uppercase; color: var(--gold); }
+  .p1-open { margin-top: 11pt; border-left: 2pt solid var(--gold); padding-left: 12pt; max-width: 6.9in; }
+  .p1-open .lead { font-size: 11pt; line-height: 1.45; color: var(--w-92); }
+  .p1-open .follow { margin-top: 5.5pt; font-size: 10pt; line-height: 1.48; color: var(--w-72); }
+  .p1-sec { margin-top: 9pt; }
+  .p1-sec .k { color: var(--gold); }
+  .p1-sec .txt { margin-top: 3pt; font-size: 9.6pt; line-height: 1.42; color: var(--w-72); max-width: 7.1in; }
+  .chain { display: flex; align-items: stretch; margin-top: 5pt; }
+  .chain .cell {
+    flex: 1 1 0; border: 0.8pt solid var(--w-38);
+    padding: 4pt 5pt; display: flex; align-items: center; justify-content: center; text-align: center;
+    font-family: var(--mono); font-size: 6.6pt; font-weight: 500; letter-spacing: 0.09em;
+    text-transform: uppercase; color: var(--w-92); line-height: 1.45;
+  }
+  .chain .cell--last { border-color: var(--gold); color: var(--gold); }
+  .chain .arr { flex: 0 0 auto; width: 13pt; position: relative; }
+  .chain .arr::before { content: ""; position: absolute; left: 0; right: 3.5pt; top: 50%; height: 0.8pt; background: var(--w-55); }
+  .chain .arr::after {
+    content: ""; position: absolute; right: 1pt; top: 50%; margin-top: -2.6pt;
+    border-left: 3.4pt solid var(--w-55); border-top: 2.6pt solid transparent; border-bottom: 2.6pt solid transparent;
+  }
+  .stats { display: flex; margin-top: 6pt; border: 0.8pt solid var(--w-38); }
+  .stats .s { flex: 1 1 0; padding: 5.5pt 8pt 5pt; }
+  .stats .s + .s { border-left: 0.8pt solid var(--w-38); }
+  .stats .v { font-size: 15pt; font-weight: 500; letter-spacing: -0.01em; color: #F4F3F0; }
+  .stats .v--gold { color: var(--gold); }
+  .stats .l { margin-top: 2pt; font-family: var(--mono); font-size: 6.3pt; letter-spacing: 0.09em; text-transform: uppercase; color: var(--w-55); line-height: 1.5; }
+  .scopebox { margin-top: 6pt; border: 0.8pt solid var(--gold-hair); padding: 6pt 9pt; display: flex; gap: 10pt; align-items: baseline; }
+  .scopebox .k { color: var(--gold); flex: 0 0 auto; }
+  .scopebox .txt { font-size: 9.3pt; line-height: 1.45; color: var(--w-72); }
+  .scopebox .txt b { font-weight: 500; color: var(--w-92); }
+
+  .plate { border: 0.9pt solid var(--w-55); margin-top: 6pt; }
+  .plate-hd { display: flex; align-items: center; gap: 8pt; border-bottom: 0.6pt solid var(--w-38); padding: 4pt 8pt; }
+  .plate-hd .chip { border: 0.7pt solid var(--w-72); padding: 1.5pt 4pt; font-family: var(--mono); font-size: 6.3pt; letter-spacing: 0.14em; color: var(--w-92); }
+  .plate-hd .t { font-family: var(--mono); font-size: 6.8pt; letter-spacing: 0.2em; text-transform: uppercase; color: var(--w-92); }
+  .plate-cap { border-top: 0.6pt solid var(--w-38); padding: 3.5pt 8pt; font-family: var(--mono); font-size: 6.3pt; letter-spacing: 0.14em; text-transform: uppercase; color: var(--w-55); display: flex; justify-content: space-between; }
+
+  /* ================= Light-page structure =============================== */
+  .intro { margin-top: 9pt; max-width: 7in; }
+  .rulebox { border: 0.8pt solid var(--ink); }
+  .rulebox--gold { border-color: var(--gold); }
+
+  /* Page 2 diagram */
+  .lvl { border: 0.9pt solid var(--ink); background: #FFFFFF; }
+  .lvl--aur { border-width: 1.3pt; }
+  .lvl-hd { display: flex; justify-content: space-between; align-items: center; padding: 4pt 9pt; border-bottom: 0.6pt solid var(--hair); }
+  .lvl-hd .t { font-family: var(--mono); font-size: 7.5pt; font-weight: 600; letter-spacing: 0.16em; text-transform: uppercase; color: var(--ink); }
+  .lvl-hd .s { font-family: var(--mono); font-size: 6.5pt; letter-spacing: 0.12em; text-transform: uppercase; color: var(--ink-3); }
+  .lvl-hd .s--auth { color: var(--gold-deep); font-weight: 600; }
+  .lvl--aur .lvl-hd { border-bottom-color: var(--gold-hair); }
+  .lvl--aur .lvl-hd .t::before { content: ""; display: inline-block; width: 7pt; height: 7pt; background: var(--gold); margin-right: 6pt; vertical-align: -0.5pt; }
+  .cells { display: grid; gap: 4pt; padding: 6pt 9pt 7pt; }
+  .cells-7a { grid-template-columns: repeat(4, 1fr); }
+  .cells-6 { grid-template-columns: repeat(3, 1fr); }
+  .cellbox { border: 0.6pt solid var(--hair); padding: 4pt 6pt; }
+  .cellbox .n { font-family: var(--mono); font-size: 7.3pt; font-weight: 500; letter-spacing: 0.05em; text-transform: uppercase; color: var(--ink); line-height: 1.4; }
+  .cellbox .d { margin-top: 1pt; font-size: 7.6pt; line-height: 1.35; color: var(--ink-3); }
+  .inrow { display: flex; flex-wrap: wrap; gap: 3.5pt; padding: 6pt 9pt; }
+  .inchip { border: 0.6pt solid var(--hair); padding: 2.5pt 6pt; font-family: var(--mono); font-size: 7.2pt; letter-spacing: 0.04em; text-transform: uppercase; color: var(--ink-2); display: flex; align-items: center; gap: 5pt; }
+  .sq { display: inline-block; width: 5.5pt; height: 5.5pt; border: 0.8pt solid var(--ink); flex: 0 0 auto; }
+  .sq--full { background: var(--ink); }
+  .sq--half { background: linear-gradient(90deg, var(--ink) 0 50%, transparent 50% 100%); }
+  .repr { border-top: 0.6pt solid var(--hair-soft); padding: 5pt 9pt 6pt; display: flex; align-items: baseline; gap: 7pt; }
+  .repr .lbl { font-family: var(--mono); font-size: 6.5pt; letter-spacing: 0.1em; text-transform: uppercase; color: var(--ink-3); white-space: nowrap; }
+  .repr .items { font-family: var(--mono); font-size: 6.8pt; letter-spacing: 0.01em; text-transform: uppercase; color: var(--ink-3); }
+  .flowarr { display: flex; align-items: center; gap: 8pt; padding: 4.5pt 0 4.5pt 22pt; }
+  .flowarr .stem { position: relative; width: 1pt; height: 15pt; background: var(--ink); }
+  .flowarr .stem::after { content: ""; position: absolute; bottom: -1pt; left: 50%; margin-left: -3pt; border-top: 4pt solid var(--ink); border-left: 3pt solid transparent; border-right: 3pt solid transparent; }
+  .flowarr .lbl { font-family: var(--mono); font-size: 6.8pt; font-weight: 500; letter-spacing: 0.13em; text-transform: uppercase; color: var(--gold-deep); }
+  .pull { margin-top: 9pt; border-left: 2pt solid var(--gold); padding: 2pt 0 2pt 11pt; font-size: 11.5pt; line-height: 1.42; letter-spacing: -0.005em; color: var(--ink); max-width: 6.8in; }
+  .boundary { display: flex; margin-top: 9pt; border: 0.8pt solid var(--ink); }
+  .boundary .b { flex: 1 1 0; padding: 6pt 9pt; font-family: var(--mono); font-size: 7.8pt; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; color: var(--ink); text-align: center; }
+  .boundary .b + .b { border-left: 0.8pt solid var(--hair); }
+  .legend { margin-top: 8pt; display: grid; gap: 3pt; }
+  .legend .row { display: flex; gap: 7pt; align-items: baseline; font-size: 8.6pt; line-height: 1.4; color: var(--ink-2); }
+  .legend .row .sq { margin-top: 1pt; }
+
+  /* Page 3 */
+  .hypo { margin-top: 10pt; border: 0.8pt solid var(--gold); padding: 9pt 12pt; }
+  .hypo .k { display: block; }
+  .hypo .txt { margin-top: 3.5pt; font-size: 11pt; line-height: 1.45; color: var(--ink); }
+  .subsec { margin-top: 9pt; }
+  .subsec .k { display: block; }
+  .subsec p { margin-top: 3.5pt; }
+
+  /* Page 4 stages */
+  .stages { margin-top: 7pt; display: grid; grid-template-columns: 1fr 1fr; gap: 5pt; }
+  .stage { border: 0.7pt solid var(--hair); background: #FFFFFF; padding: 5pt 8pt 6pt; }
+  .stage .num { font-family: var(--mono); font-size: 7pt; font-weight: 600; letter-spacing: 0.12em; color: var(--gold-deep); }
+  .stage .nm { display: inline; font-family: var(--mono); font-size: 7.8pt; font-weight: 600; letter-spacing: 0.09em; text-transform: uppercase; color: var(--ink); margin-left: 4pt; }
+  .stage p { margin-top: 2pt; font-size: 8.4pt; line-height: 1.36; color: var(--ink-2); }
+  .quote-strip { margin-top: 7pt; border-top: 1pt solid var(--ink); border-bottom: 1pt solid var(--ink); padding: 5pt 2pt; display: flex; align-items: baseline; gap: 12pt; }
+  .quote-strip .q { font-size: 12.5pt; letter-spacing: -0.01em; font-weight: 500; color: var(--ink); }
+  .quote-strip .why { font-size: 8.4pt; color: var(--ink-3); line-height: 1.38; max-width: 2.9in; margin-left: auto; }
+
+  /* Tables */
+  table { border-collapse: collapse; width: 100%; }
+  .tbl th {
+    font-family: var(--mono); font-size: 6.8pt; font-weight: 600; letter-spacing: 0.07em;
+    text-transform: uppercase; color: var(--ink-3); text-align: right;
+    border-bottom: 1pt solid var(--ink); padding: 3pt 5pt 4pt;
+  }
+  .tbl th:first-child { text-align: left; padding-left: 2pt; }
+  .tbl td {
+    font-family: var(--mono); font-size: 8.8pt; color: var(--ink);
+    text-align: right; padding: 4.5pt 5pt; border-bottom: 0.6pt solid var(--hair-soft);
+    font-variant-numeric: tabular-nums; white-space: nowrap;
+  }
+  .tbl td:first-child { text-align: left; font-size: 8.2pt; color: var(--ink-2); padding-left: 2pt; }
+  .tbl td.gd { color: var(--gold-deep); font-weight: 600; }
+  .tbl tr.total td { border-top: 1pt solid var(--ink); border-bottom: none; font-weight: 500; }
+  .tbl-cap { margin-top: 4pt; font-size: 7.8pt; line-height: 1.45; color: var(--ink-3); }
+  .subsec .tbl td { padding: 3.5pt 5pt; }
+  .nowrap { white-space: nowrap; }
+
+  /* Page 5 scope box */
+  .scope5 { margin-top: 9pt; border: 1pt solid var(--ink); }
+  .scope5 .hdd { display: flex; justify-content: space-between; padding: 4.5pt 10pt; border-bottom: 0.6pt solid var(--hair); }
+  .scope5 .hdd .t { font-family: var(--mono); font-size: 7.8pt; font-weight: 600; letter-spacing: 0.15em; text-transform: uppercase; color: var(--ink); }
+  .scope5 .hdd .t::before { content: ""; display: inline-block; width: 6.5pt; height: 6.5pt; background: var(--gold); margin-right: 6pt; }
+  .scope5 ul { margin: 0; padding: 6pt 10pt 7pt; columns: 2; column-gap: 18pt; list-style: none; }
+  .scope5 li { font-size: 8.6pt; line-height: 1.42; color: var(--ink-2); padding-left: 9pt; position: relative; margin-bottom: 3.5pt; break-inside: avoid; }
+  .scope5 li::before { content: ""; position: absolute; left: 0; top: 5pt; width: 5pt; height: 0.9pt; background: var(--gold-deep); }
+  .scope5 li b { font-weight: 500; color: var(--ink); }
+
+  .v1sec { margin-top: 9pt; border-top: 0.8pt solid var(--ink); padding-top: 7pt; display: flex; gap: 14pt; }
+  .v1sec .left { flex: 1 1 58%; }
+  .v1sec .right { flex: 1 1 42%; }
+  .v1sec p { margin-top: 3.5pt; font-size: 8.8pt; line-height: 1.45; color: var(--ink-2); }
+
+  /* Page 6 */
+  .p6grid { display: flex; gap: 16pt; margin-top: 7pt; }
+  .p6col { flex: 1 1 0; }
+  .p6col--wide { flex: 2 1 0; }
+  .plist { margin: 3pt 0 0; padding: 0; list-style: none; }
+  .plist--cols { columns: 2; column-gap: 16pt; }
+  .plist li { font-size: 8.3pt; line-height: 1.35; color: var(--ink-2); padding: 1.8pt 0 1.8pt 10pt; position: relative; border-bottom: 0.5pt solid var(--hair-soft); break-inside: avoid; }
+  .plist li::before { content: ""; position: absolute; left: 0; top: 6.6pt; width: 5pt; height: 0.9pt; background: var(--ink-3); }
+  .plist--not li { color: var(--ink-3); }
+  .plist--not li::before { width: 5pt; height: 5pt; top: 4.6pt; background: transparent; border: 0.8pt solid var(--ink-3); box-sizing: border-box; }
+  .ask { margin-top: 7pt; border: 1.1pt solid var(--gold); padding: 5.5pt 11pt 6pt; }
+  .ask .txt { margin-top: 2.5pt; font-size: 11pt; line-height: 1.4; color: var(--ink); letter-spacing: -0.005em; }
+  .contact { display: flex; gap: 18pt; align-items: baseline; margin-top: 6pt; border-top: 1pt solid var(--ink); padding-top: 5pt; }
+  .contact .who { white-space: nowrap; }
+  .contact .who .nm { font-size: 11pt; font-weight: 500; color: var(--ink); }
+  .contact .who .rl { font-family: var(--mono); font-size: 6.8pt; letter-spacing: 0.13em; text-transform: uppercase; color: var(--ink-3); margin-top: 1.5pt; }
+  .contact .ch { font-family: var(--mono); font-size: 8.6pt; color: var(--ink); white-space: nowrap; }
+  .contact .ch a { border-bottom: 0.6pt solid var(--gold); padding-bottom: 0.5pt; }
+  .contact .note { font-size: 7.8pt; line-height: 1.38; color: var(--ink-3); max-width: 2.6in; margin-left: auto; }
+  .refs { margin-top: 5pt; }
+  .refs ol { margin: 3pt 0 0; padding: 0; list-style: none; columns: 3; column-gap: 12pt; }
+  .refs li { font-size: 6.9pt; line-height: 1.32; color: var(--ink-3); margin-bottom: 2.2pt; padding-left: 15pt; position: relative; break-inside: avoid; }
+  .refs li .n { position: absolute; left: 0; font-family: var(--mono); font-size: 6.5pt; color: var(--gold-deep); }
+  .refs li a { font-family: var(--mono); font-size: 6.4pt; color: var(--ink-3); }
+</style>
+</head>
+<body>
+
+<!-- ==================================================================== -->
+<!-- PAGE 1 · THE ENTIRE CASE                                             -->
+<!-- ==================================================================== -->
+<section class="page page--dark">
+  <div class="hd">
+    <span class="wordmark">AURELIUS</span>
+    <span class="meta">TECHNICAL MEMO &middot; JULY 2026</span>
+  </div>
+  <div class="hd-goldseam"></div>
+
+  <h1 class="p1-title">A Predictive Supervisory Layer for GPU Fleet Control</h1>
+  <div class="p1-sub">Architecture, Public-Replay Evidence, and a Historical Validation Proposal</div>
+
+  <div class="p1-open">
+    <p class="lead">Aurelius does not replace Kubernetes, Slurm, serving schedulers, fleet-management
+    systems, or existing control planes. It sits above them as a predictive supervisory layer.</p>
+    <p class="follow">Existing systems make sophisticated decisions at each layer. Aurelius tests whether
+    those decisions can be improved by coordinating them against a shared prediction of future fleet
+    state, simulating coupled alternatives before execution, and returning the best safe action through
+    the existing control plane.</p>
+  </div>
+
+  <div class="p1-sec">
+    <span class="k">The problem</span>
+    <p class="txt">At fleet scale, individually reasonable decisions about placement, capacity, routing,
+    batching, prewarming, admission, migration, and serving policy interact. Their downstream effects
+    arrive on different time horizons and cannot be evaluated reliably as isolated knobs. Some of the
+    constraints that decide a decision's economics emerge only after it has executed.</p>
+  </div>
+
+  <div class="p1-sec">
+    <span class="k">The architecture</span>
+    <div class="chain">
+      <div class="cell">Observe</div><div class="arr"></div>
+      <div class="cell">Forecast future fleet state</div><div class="arr"></div>
+      <div class="cell">Generate coupled candidate actions</div><div class="arr"></div>
+      <div class="cell">Simulate their consequences</div><div class="arr"></div>
+      <div class="cell">Enforce hard constraints</div><div class="arr"></div>
+      <div class="cell cell--last">Recommend through existing systems</div>
+    </div>
+    <p class="txt" style="margin-top: 5pt;">Each control period, Aurelius advances a persistent forward model of the
+    fleet, generates a bounded set of high-value coupled candidate actions, evaluates each candidate on a
+    read-only simulated future, rejects anything that fails a hard SLA, capacity, power, policy, or safety
+    gate, and returns the best feasible action through the systems that remain authoritative.</p>
+  </div>
+
+  <div class="plate">
+    <div class="plate-hd">
+      <span class="chip">FIG.01</span>
+      <span class="t">Decision path &middot; one control period</span>
+    </div>
+    <svg viewBox="0 0 744 114" style="display:block; width:100%;" role="img"
+         aria-label="Current state feeds read-only simulation of three candidate bundles; one is rejected by a hard gate, the best feasible bundle becomes the safe recommendation executed by the existing control plane.">
+      <g font-family="IBM Plex Mono, monospace" fill="#F4F3F0">
+        <!-- current state -->
+        <text x="10" y="20" font-size="8" letter-spacing="1.6" fill="rgba(244,243,240,0.55)">CURRENT STATE</text>
+        <rect x="10" y="30" width="168" height="76" fill="none" stroke="rgba(244,243,240,0.9)" stroke-width="1.1"/>
+        <text x="22" y="49" font-size="9.5" fill="rgba(244,243,240,0.92)">telemetry &middot; queue</text>
+        <text x="22" y="64" font-size="9.5" fill="rgba(244,243,240,0.92)">capacity &middot; topology</text>
+        <text x="22" y="79" font-size="9.5" fill="rgba(244,243,240,0.92)">warm/cold &middot; constraints</text>
+        <text x="22" y="94" font-size="9.5" fill="rgba(244,243,240,0.92)">day-ahead prices</text>
+
+        <!-- fan-out connectors -->
+        <path d="M178 68 H206 V42 H236" fill="none" stroke="rgba(244,243,240,0.5)" stroke-width="1"/>
+        <path d="M178 68 H236" fill="none" stroke="rgba(244,243,240,0.5)" stroke-width="1"/>
+        <path d="M178 68 H206 V94 H236" fill="none" stroke="rgba(244,243,240,0.5)" stroke-width="1"/>
+
+        <!-- predicted futures -->
+        <text x="240" y="20" font-size="8" letter-spacing="1.6" fill="rgba(244,243,240,0.55)">PREDICTED FUTURE STATES &middot; READ-ONLY SIMULATION</text>
+        <rect x="240" y="31" width="238" height="22" fill="none" stroke="rgba(244,243,240,0.38)" stroke-width="1"/>
+        <text x="250" y="45.5" font-size="8.6" fill="rgba(244,243,240,0.56)">bundle A &middot; rejected by hard gate</text>
+        <path d="M462 37 l8 10 M470 37 l-8 10" stroke="rgba(244,243,240,0.7)" stroke-width="1.3" fill="none"/>
+        <rect x="240" y="57" width="238" height="22" fill="none" stroke="rgba(244,243,240,0.62)" stroke-width="1"/>
+        <text x="250" y="71.5" font-size="8.6" fill="rgba(244,243,240,0.78)">bundle B &middot; feasible</text>
+        <rect x="240" y="83" width="238" height="22" fill="none" stroke="#B8A06F" stroke-width="1.4"/>
+        <text x="250" y="97.5" font-size="8.6" fill="#B8A06F">bundle C &middot; feasible &middot; best score</text>
+
+        <!-- selected path -->
+        <path d="M478 94 H520 V67 H548" fill="none" stroke="#B8A06F" stroke-width="1.3"/>
+        <path d="M548 62.6 L556 67 L548 71.4 Z" fill="#B8A06F"/>
+
+        <!-- recommendation -->
+        <text x="560" y="20" font-size="8" letter-spacing="1.6" fill="rgba(244,243,240,0.55)">SAFE RECOMMENDATION</text>
+        <rect x="560" y="38" width="174" height="58" fill="none" stroke="#B8A06F" stroke-width="1.4"/>
+        <text x="572" y="56" font-size="9.5" fill="rgba(244,243,240,0.92)">best feasible action,</text>
+        <text x="572" y="70" font-size="9.5" fill="rgba(244,243,240,0.92)">executed by the existing</text>
+        <text x="572" y="84" font-size="9.5" fill="rgba(244,243,240,0.92)">control plane</text>
+      </g>
+    </svg>
+    <div class="plate-cap">
+      <span>fig.01 &middot; candidate scoring never mutates the live system</span>
+      <span>metadata only</span>
+    </div>
+  </div>
+
+  <div class="p1-sec" style="margin-top: 8pt;">
+    <span class="k">The evidence and the next step</span>
+    <p class="txt">Public replay produced +723.7 percent, reported as +724 percent, average SLA-safe
+    goodput per dollar under the specifically disclosed uncapped high-load benchmark, with 84.5 percent
+    fewer GPU-hours and better SLA outcomes in all three market windows. Page 5 reports the full table,
+    the baseline definition, and the scope.</p>
+  </div>
+
+  <div class="stats">
+    <div class="s">
+      <div class="v v--gold">+724%</div>
+      <div class="l">avg SLA-safe goodput per dollar &middot; uncapped public replay</div>
+    </div>
+    <div class="s">
+      <div class="v">84.5%</div>
+      <div class="l">fewer GPU-hours at identical replayed load</div>
+    </div>
+    <div class="s">
+      <div class="v">~1.5M</div>
+      <div class="l">replayed requests &middot; three selected market windows</div>
+    </div>
+    <div class="s">
+      <div class="v">0</div>
+      <div class="l">measured search regret where enumeration was tractable</div>
+    </div>
+  </div>
+
+  <div class="scopebox">
+    <span class="k">Scope</span>
+    <p class="txt">This is a <b>simulated, load-dependent result from selected public-trace windows</b>. It
+    does not establish expected savings for a particular fleet. The proposed next step is a <b>bounded,
+    read-only historical replay using anonymized scheduler metadata</b> (page 6).</p>
+  </div>
+
+  <div class="ft ft--dark">
+    <span>Aurelius &middot; predictive supervisory layer for GPU fleet control</span>
+    <span>page 1 of 6</span>
+  </div>
+</section>
+
+<!-- ==================================================================== -->
+<!-- PAGE 2 · WHERE AURELIUS SITS                                         -->
+<!-- ==================================================================== -->
+<section class="page">
+  <div class="hd">
+    <span class="wordmark">AURELIUS</span>
+    <span class="meta"><b>02</b> &middot; WHERE AURELIUS SITS</span>
+  </div>
+
+  <div class="titleblock">
+    <span class="k">The boundary</span>
+    <h2>A supervisory layer, not a replacement control plane</h2>
+  </div>
+
+  <p class="body intro">The architecture is easiest to state as a boundary. Aurelius consumes the state
+  that fleet systems already expose, plans against a prediction of where that state is going, and returns
+  recommendations to the systems that already own execution.</p>
+
+  <div style="margin-top: 9pt;">
+    <div class="lvl">
+      <div class="lvl-hd">
+        <span class="t">Level 1 &middot; Observable fleet state</span>
+        <span class="s">inputs, read-only</span>
+      </div>
+      <div class="inrow">
+        <span class="inchip"><span class="sq sq--full"></span>Telemetry</span>
+        <span class="inchip"><span class="sq sq--full"></span>Workload queue</span>
+        <span class="inchip"><span class="sq sq--full"></span>Capacity and topology</span>
+        <span class="inchip"><span class="sq sq--full"></span>Placement and locality</span>
+        <span class="inchip"><span class="sq sq--full"></span>Warm / cold state</span>
+        <span class="inchip"><span class="sq sq--full"></span>SLA and policy constraints</span>
+        <span class="inchip"><span class="sq sq--full"></span>Cost and power signals</span>
+      </div>
+      <div class="repr">
+        <span class="lbl"><span class="sq sq--half" style="vertical-align:-0.5pt; margin-right:4pt;"></span>represented, not yet forecast</span>
+        <span class="items">cache reuse &middot; emergent queue / SLA pressure &middot; carbon intensity &middot; network congestion</span>
+      </div>
+    </div>
+
+    <div class="flowarr">
+      <span class="stem"></span>
+      <span class="lbl">reads scheduler metadata only &middot; never payloads, outputs, or weights</span>
+    </div>
+
+    <div class="lvl lvl--aur">
+      <div class="lvl-hd">
+        <span class="t">Level 2 &middot; Aurelius predictive supervisory layer</span>
+        <span class="s">plans &middot; does not execute</span>
+      </div>
+      <div class="cells cells-7a">
+        <div class="cellbox"><div class="n">Persistent forward model</div><div class="d">fleet state advanced period by period</div></div>
+        <div class="cellbox"><div class="n">Causal forecasts</div><div class="d">history-only, no future truth</div></div>
+        <div class="cellbox"><div class="n">Coupled candidate generation</div><div class="d">bounded, physics-guided bundles</div></div>
+        <div class="cellbox"><div class="n">Read-only simulation</div><div class="d">counterfactuals, never the live system</div></div>
+        <div class="cellbox"><div class="n">Economic objective</div><div class="d">SLA-safe goodput per operator dollar</div></div>
+        <div class="cellbox"><div class="n">Hard safety and policy gates</div><div class="d">reject before ranking</div></div>
+        <div class="cellbox"><div class="n">Confidence-aware fallback</div><div class="d">deterministic default when unsure</div></div>
+      </div>
+    </div>
+
+    <div class="flowarr">
+      <span class="stem"></span>
+      <span class="lbl">recommendations &middot; not actuation</span>
+    </div>
+
+    <div class="lvl">
+      <div class="lvl-hd">
+        <span class="t">Level 3 &middot; Existing systems remain authoritative</span>
+        <span class="s s--auth">authoritative &middot; unchanged</span>
+      </div>
+      <div class="cells cells-6">
+        <div class="cellbox"><div class="n">Cluster schedulers</div><div class="d">Kubernetes &middot; Slurm</div></div>
+        <div class="cellbox"><div class="n">Serving schedulers</div><div class="d">request-level serving control</div></div>
+        <div class="cellbox"><div class="n">Routing and batching systems</div><div class="d">cache-aware, iteration-level</div></div>
+        <div class="cellbox"><div class="n">Autoscaling and capacity controllers</div><div class="d">reactive capacity control</div></div>
+        <div class="cellbox"><div class="n">Fleet-management systems</div><div class="d">inventory, health, lifecycle</div></div>
+        <div class="cellbox"><div class="n">Execution systems</div><div class="d">the only writers of fleet state</div></div>
+      </div>
+    </div>
+  </div>
+
+  <p class="pull">Aurelius coordinates existing systems against a common anticipated future. It does not
+  require replacing the systems that already perform scheduling, placement, scaling, routing, or
+  execution.</p>
+
+  <div class="boundary">
+    <div class="b">Aurelius recommends.</div>
+    <div class="b">Existing systems execute.</div>
+    <div class="b">Configured constraints remain authoritative.</div>
+  </div>
+
+  <div class="legend">
+    <div class="row"><span class="sq sq--full"></span><span><b>Consumed today.</b> The solid-marked inputs feed the current forecast
+    and simulation loop, including public day-ahead hourly wholesale electricity prices in the replay harness.</span></div>
+    <div class="row"><span class="sq sq--half"></span><span><b>Represented, not yet forecast.</b> Carried in the world model but not
+    yet consumed as planner-input forecasts; stated as out of scope today rather than implied.</span></div>
+    <div class="row"><span class="sq"></span><span><b>Integration surfaces.</b> Operator-specific signals, such as an internal cost
+    or power proxy, would be scoped only as part of the bounded evaluation on page 6.</span></div>
+  </div>
+
+  <div class="ft">
+    <span>Aurelius &middot; technical memo</span>
+    <span>page 2 of 6</span>
+  </div>
+</section>
+
+<!-- ==================================================================== -->
+<!-- PAGE 3 · WHY THE PROBLEM BECOMES DIFFICULT AT SCALE                  -->
+<!-- ==================================================================== -->
+<section class="page">
+  <div class="hd">
+    <span class="wordmark">AURELIUS</span>
+    <span class="meta"><b>03</b> &middot; WHY THIS IS HARD AT SCALE</span>
+  </div>
+
+  <div class="titleblock">
+    <span class="k">The coupling problem</span>
+    <h2>A fleet does not face one scheduling problem</h2>
+  </div>
+
+  <p class="body intro">A large fleet faces thousands of interacting decisions made at different layers
+  and over different horizons. A locally correct action can change the value or feasibility of a later
+  action elsewhere in the system. The effects also land on different clocks: batching within the current
+  window, capacity and prewarming over subsequent periods, placement and migration well beyond them.</p>
+
+  <div class="rulebox" style="margin-top: 10pt; background: #FFFFFF;">
+    <svg viewBox="0 0 744 444" style="display:block; width:100%;" role="img"
+         aria-label="Interaction map: eight decision surfaces, each with a first-order effect inside the control period and a coupled effect that lands later on another surface's decision problem.">
+      <g font-family="IBM Plex Mono, monospace">
+        <!-- column headers -->
+        <text x="14" y="24" font-size="8" letter-spacing="1.4" fill="#6E6A60">DECISION SURFACE</text>
+        <text x="170" y="24" font-size="8" letter-spacing="1.4" fill="#6E6A60">FIRST-ORDER EFFECT &middot; WITHIN THE PERIOD</text>
+        <text x="422" y="24" font-size="8" letter-spacing="1.4" fill="#6E6A60">COUPLED EFFECT &middot; LATER, ELSEWHERE</text>
+        <text x="652" y="24" font-size="8" letter-spacing="1.4" fill="#8A7147">COUPLING</text>
+        <line x1="14" y1="34" x2="730" y2="34" stroke="#161513" stroke-width="1"/>
+
+        <!-- 0 BATCHING -->
+        <text x="14" y="70" font-size="10" font-weight="600" letter-spacing="0.8" fill="#161513">BATCHING</text>
+        <text x="170" y="66" font-size="9.5" fill="#3B3934">raises throughput for the</text>
+        <text x="170" y="79" font-size="9.5" fill="#3B3934">current window</text>
+        <text x="422" y="66" font-size="9.5" fill="#3B3934">changes queue delay and</text>
+        <text x="422" y="79" font-size="9.5" fill="#3B3934">tail-latency risk</text>
+        <line x1="14" y1="92" x2="730" y2="92" stroke="rgba(22,21,19,0.13)" stroke-width="0.7"/>
+        <!-- 1 PREWARMING -->
+        <text x="14" y="120" font-size="10" font-weight="600" letter-spacing="0.8" fill="#161513">PREWARMING</text>
+        <text x="170" y="116" font-size="9.5" fill="#3B3934">reduces cold-start risk for</text>
+        <text x="170" y="129" font-size="9.5" fill="#3B3934">forecast arrivals</text>
+        <text x="422" y="116" font-size="9.5" fill="#3B3934">consumes capacity that</text>
+        <text x="422" y="129" font-size="9.5" fill="#3B3934">other work needs</text>
+        <line x1="14" y1="142" x2="730" y2="142" stroke="rgba(22,21,19,0.13)" stroke-width="0.7"/>
+        <!-- 2 PLACEMENT -->
+        <text x="14" y="170" font-size="10" font-weight="600" letter-spacing="0.8" fill="#161513">PLACEMENT</text>
+        <text x="170" y="166" font-size="9.5" fill="#3B3934">improves locality for the</text>
+        <text x="170" y="179" font-size="9.5" fill="#3B3934">placed workload</text>
+        <text x="422" y="166" font-size="9.5" fill="#3B3934">reduces flexibility for</text>
+        <text x="422" y="179" font-size="9.5" fill="#3B3934">later workloads</text>
+        <line x1="14" y1="192" x2="730" y2="192" stroke="rgba(22,21,19,0.13)" stroke-width="0.7"/>
+        <!-- 3 CAPACITY -->
+        <text x="14" y="220" font-size="10" font-weight="600" letter-spacing="0.8" fill="#161513">CAPACITY</text>
+        <text x="170" y="216" font-size="9.5" fill="#3B3934">valuable when added ahead</text>
+        <text x="170" y="229" font-size="9.5" fill="#3B3934">of a predicted surge</text>
+        <text x="422" y="216" font-size="9.5" fill="#3B3934">wasteful when held</text>
+        <text x="422" y="229" font-size="9.5" fill="#3B3934">continuously</text>
+        <line x1="14" y1="242" x2="730" y2="242" stroke="rgba(22,21,19,0.13)" stroke-width="0.7"/>
+        <!-- 4 MIGRATION -->
+        <text x="14" y="270" font-size="10" font-weight="600" letter-spacing="0.8" fill="#161513">MIGRATION</text>
+        <text x="170" y="266" font-size="9.5" fill="#3B3934">escapes predicted</text>
+        <text x="170" y="279" font-size="9.5" fill="#3B3934">congestion</text>
+        <text x="422" y="266" font-size="9.5" fill="#3B3934">consumes bandwidth and</text>
+        <text x="422" y="279" font-size="9.5" fill="#3B3934">capacity while in flight</text>
+        <line x1="14" y1="292" x2="730" y2="292" stroke="rgba(22,21,19,0.13)" stroke-width="0.7"/>
+        <!-- 5 ADMISSION -->
+        <text x="14" y="320" font-size="10" font-weight="600" letter-spacing="0.8" fill="#161513">ADMISSION</text>
+        <text x="170" y="316" font-size="9.5" fill="#3B3934">relieves immediate queue</text>
+        <text x="170" y="329" font-size="9.5" fill="#3B3934">pressure</text>
+        <text x="422" y="316" font-size="9.5" fill="#3B3934">alters SLA risk in</text>
+        <text x="422" y="329" font-size="9.5" fill="#3B3934">later periods</text>
+        <line x1="14" y1="342" x2="730" y2="342" stroke="rgba(22,21,19,0.13)" stroke-width="0.7"/>
+        <!-- 6 ROUTING -->
+        <text x="14" y="370" font-size="10" font-weight="600" letter-spacing="0.8" fill="#161513">ROUTING</text>
+        <text x="170" y="366" font-size="9.5" fill="#3B3934">improves cache reuse and</text>
+        <text x="170" y="379" font-size="9.5" fill="#3B3934">locality</text>
+        <text x="422" y="366" font-size="9.5" fill="#3B3934">concentrates load on</text>
+        <text x="422" y="379" font-size="9.5" fill="#3B3934">specific replicas</text>
+        <line x1="14" y1="392" x2="730" y2="392" stroke="rgba(22,21,19,0.13)" stroke-width="0.7"/>
+        <!-- 7 PRECISION / CLOCK -->
+        <text x="14" y="420" font-size="10" font-weight="600" letter-spacing="0.8" fill="#161513">PRECISION &middot; CLOCK</text>
+        <text x="170" y="416" font-size="9.5" fill="#3B3934">changes per-request</text>
+        <text x="170" y="429" font-size="9.5" fill="#3B3934">execution time</text>
+        <text x="422" y="416" font-size="9.5" fill="#3B3934">changes GPU consumption</text>
+        <text x="422" y="429" font-size="9.5" fill="#3B3934">and power headroom</text>
+
+        <!-- coupling loom (gold): the deferred effect of row i lands on row j -->
+        <!-- row centers: 0:68 1:118 2:168 3:218 4:268 5:318 6:368 7:418 -->
+        <g stroke="#B8A06F" stroke-width="1.1" fill="none">
+          <!-- batching -> admission -->
+          <path d="M636 68 H656 V318 H648"/>
+          <!-- prewarming -> capacity -->
+          <path d="M636 118 H672 V213 H648"/>
+          <!-- placement -> migration -->
+          <path d="M636 168 H688 V268 H648"/>
+          <!-- routing -> batching -->
+          <path d="M636 368 H704 V73 H648"/>
+          <!-- precision/clock -> capacity -->
+          <path d="M636 418 H720 V223 H648"/>
+        </g>
+        <g fill="#B8A06F">
+          <path d="M648 314.4 L641 318 L648 321.6 Z"/>
+          <path d="M648 209.4 L641 213 L648 216.6 Z"/>
+          <path d="M648 264.4 L641 268 L648 271.6 Z"/>
+          <path d="M648 69.4 L641 73 L648 76.6 Z"/>
+          <path d="M648 219.4 L641 223 L648 226.6 Z"/>
+        </g>
+      </g>
+    </svg>
+    <div style="border-top: 0.6pt solid var(--hair); padding: 3.5pt 10pt;" class="fig-note">
+      fig.02 &middot; gold links mark deferred effects that land on another surface's decision problem
+    </div>
+  </div>
+
+  <div class="hypo">
+    <span class="k">The value hypothesis</span>
+    <p class="txt">The hypothesis is not that existing controllers are unsophisticated. It is that the
+    best action at one layer may depend on future conditions and decisions at several other layers.</p>
+  </div>
+
+  <div class="subsec" style="margin-top: 10pt;">
+    <span class="k k--ink">Where current-state optimization starts too late</span>
+    <p class="body" style="max-width: 7.1in; margin-top: 4pt;">Some important costs and constraints emerge only after a
+    placement or capacity decision has already been made: capacity and power headroom, congestion and
+    topology pressure, demand, and the wholesale price of electricity, which on public day-ahead markets
+    can swing several-fold within a day. Once the decision lands, those costs are largely locked in. A
+    forward model of future fleet state allows those conditions to influence the decision before execution
+    rather than explain it afterward. No single lever is appropriate for every workload: candidates are
+    generated per operating regime and workload class, and hard policy gates reject any bundle that is out
+    of bounds for the work it would touch, before ranking.</p>
+  </div>
+
+  <div class="ft">
+    <span>Aurelius &middot; technical memo</span>
+    <span>page 3 of 6</span>
+  </div>
+</section>
+
+<!-- ==================================================================== -->
+<!-- PAGE 4 · HOW AURELIUS WORKS                                          -->
+<!-- ==================================================================== -->
+<section class="page">
+  <div class="hd">
+    <span class="wordmark">AURELIUS</span>
+    <span class="meta"><b>04</b> &middot; HOW AURELIUS WORKS</span>
+  </div>
+
+  <div class="titleblock">
+    <span class="k">The control loop</span>
+    <h2>Forecast, simulate, constrain, decide</h2>
+  </div>
+
+  <p class="body intro">One loop, six stages, each control period. The loop is deliberately conservative:
+  prediction and search are allowed to be ambitious because nothing they produce reaches execution without
+  passing the gates.</p>
+
+  <div class="stages">
+    <div class="stage">
+      <span class="num">01</span><span class="nm">Persistent forward model</span>
+      <p>A stateful model advances the fleet through time rather than treating the system as a snapshot of
+      free GPUs. It carries server and rack capacity, placement and locality, queue dynamics, replica warm
+      and cold state, migrations in flight, and the operator cost basis, including warm-hold and migration
+      penalties. Inputs are tagged by provenance, so a modeled value is never treated as a measured one.</p>
+    </div>
+    <div class="stage">
+      <span class="num">02</span><span class="nm">Causal forecasts</span>
+      <p>Forecasts of arrival rate, request characteristics, queue dynamics, and infrastructure and pricing
+      conditions, including wholesale electricity price, use only information available at the current
+      decision point. No future arrivals and no future prices leak into any decision, in planning or in
+      evaluation.</p>
+    </div>
+    <div class="stage">
+      <span class="num">03</span><span class="nm">Physics-guided candidate generation</span>
+      <p>A bounded set of plausible, high-value coupled bundles is generated from the operating regime:
+      timing, placement, routing, capacity, batching, prewarming, admission, migration, precision, and
+      clock policy are proposed together rather than tuned as independent knobs. Known-strong candidates
+      are always retained, so a valuable option is not silently excluded.</p>
+    </div>
+    <div class="stage">
+      <span class="num">04</span><span class="nm">Read-only counterfactual simulation</span>
+      <p>Each candidate is evaluated on an isolated simulated future advanced by the forward model.
+      Candidate evaluation never mutates the live system, and scoring is repeatable and auditable after the
+      fact.</p>
+    </div>
+    <div class="stage">
+      <span class="num">05</span><span class="nm">Objective and hard gates</span>
+      <p>The objective is SLA-safe goodput per operator dollar: SLA-meeting requests over infrastructure
+      cost, with energy at the prevailing market price plus warm-hold and migration cost, and a
+      forecast-uncertainty penalty in the same economic terms. Hard capacity, SLA, power, policy,
+      residency, and safety constraints reject infeasible candidates before ranking; a Pareto gate accepts
+      a recommendation only if it beats the baseline without regressing SLA.</p>
+    </div>
+    <div class="stage">
+      <span class="num">06</span><span class="nm">Recommendation and fallback</span>
+      <p>The best feasible candidate is returned as a recommendation through the existing control plane.
+      When forecast confidence is insufficient, Aurelius falls back deterministically to the configured
+      safe default rather than acting on a low-confidence forecast.</p>
+    </div>
+  </div>
+
+  <div class="quote-strip">
+    <span class="q">The optimizer cannot select a decision it never evaluates.</span>
+    <span class="why">Which candidates enter the search is a first-class engineering problem, measured
+    under a regret audit, not an afterthought.</span>
+  </div>
+
+  <div class="subsec">
+    <span class="k">Why candidate generation is a first-class problem</span>
+    <p style="margin-top: 3pt; max-width: 7.15in; font-size: 8.8pt; line-height: 1.4; color: var(--ink-2);">The sharpest finding in the current benchmark cycle was
+    not about forecasting. With the forward model, simulator, objective, and safety gates all unchanged,
+    enabling more decision surfaces initially made results worse. The cause was containment: the candidate
+    set had collapsed around a single surface, so the bundle that actually wins an expensive electricity
+    window (lower precision, aggressive batching, and a higher clock) was never in the set being evaluated.
+    Restoring the physics-guided candidate set recovered most of the opportunity; letting the coupled
+    search reach combinations a fixed grid does not contain recovered the rest. Where exhaustive
+    enumeration was tractable, the bounded search matched it exactly, at roughly 40 evaluations per
+    decision. The residual gap to a forecast oracle, about 4.5 percent, is forecast quality, not search.</p>
+
+    <table class="tbl" style="margin-top: 6pt;">
+      <thead>
+        <tr><th>Candidate set</th><th>&Delta; goodput/$ vs baseline</th><th>SLA gate</th><th>Search regret vs exhaustive</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>Single surface (prior)</td><td>-4.47%</td><td>fails</td><td>173.5% forfeited</td></tr>
+        <tr><td>Physics-guided candidate set</td><td>+100.48%</td><td>holds</td><td>30.3%</td></tr>
+        <tr><td>Physics-guided set + coupled search</td><td class="gd">+161.31%</td><td>holds</td><td class="gd">0%</td></tr>
+      </tbody>
+    </table>
+    <p class="tbl-cap">Benchmark V1, primary market window. Same simulator, objective, cost model, and
+    Pareto gate in every row, so the difference is attributable to search and candidate generation. This
+    is a mechanism finding under the frozen continuity harness, not the headline benchmark.</p>
+  </div>
+
+  <div class="ft">
+    <span>Aurelius &middot; technical memo</span>
+    <span>page 4 of 6</span>
+  </div>
+</section>
+
+<!-- ==================================================================== -->
+<!-- PAGE 5 · PUBLIC-REPLAY EVIDENCE                                      -->
+<!-- ==================================================================== -->
+<section class="page">
+  <div class="hd">
+    <span class="wordmark">AURELIUS</span>
+    <span class="meta"><b>05</b> &middot; PUBLIC-REPLAY EVIDENCE</span>
+  </div>
+
+  <div class="titleblock">
+    <span class="k">The result</span>
+    <h2>A large signal, with its scope attached</h2>
+  </div>
+
+  <p class="body intro">Replaying the full selected public-trace windows with the per-period request cap
+  removed produces the largest verified result in the program. It is reported the way it should be read:
+  baseline defined, load disclosed, scope attached.</p>
+
+  <p class="body-sm" style="margin-top: 6pt; max-width: 7.15in;">The comparison policy is a constructed production-class
+  composite: one deterministic, causal policy assembled from established production serving techniques.
+  Continuous, iteration-level batching<sup class="ref">&#8202;[1,2]</sup>; SLA-aware ordering with deadline protection and
+  class-based admission under pressure<sup class="ref">&#8202;[3]</sup>; KV and prefix-cache-aware routing<sup class="ref">&#8202;[4]</sup>;
+  <span class="nowrap">topology-aware placement<sup class="ref">&#8202;[5]</sup></span>; and backlog-driven autoscaling with warm-pool
+  headroom<sup class="ref">&#8202;[6,7]</sup>. It sees no future arrivals and no future prices. It is a public-replay
+  composite, not any specific operator's internal scheduler.</p>
+
+  <table class="tbl" style="margin-top: 9pt;">
+    <thead>
+      <tr>
+        <th>Market window</th>
+        <th>Aurelius gp/$</th>
+        <th>Composite gp/$</th>
+        <th>&Delta; gp/$</th>
+        <th>SLA viol. Aurelius</th>
+        <th>SLA viol. composite</th>
+        <th>GPU-h Aurelius</th>
+        <th>GPU-h composite</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr><td>PJM &middot; expensive window</td><td>1,041,842</td><td>130,539</td><td class="gd">+698.1%</td><td>0.0023</td><td>0.0382</td><td>62.2</td><td>399.9</td></tr>
+      <tr><td>ERCOT &middot; expensive window</td><td>1,064,602</td><td>130,178</td><td class="gd">+717.8%</td><td>0.0013</td><td>0.0447</td><td>51.0</td><td>323.7</td></tr>
+      <tr><td>CAISO &middot; expensive window</td><td>1,111,915</td><td>130,000</td><td class="gd">+755.3%</td><td>0.0018</td><td>0.0458</td><td>60.0</td><td>391.5</td></tr>
+      <tr class="total"><td>Mean of per-market deltas / totals</td><td></td><td></td><td class="gd">+723.7%</td><td></td><td></td><td>173.1</td><td>1,115.1</td></tr>
+    </tbody>
+  </table>
+  <p class="tbl-cap" style="max-width: 7.15in;">gp/$ is SLA-safe goodput per operator dollar: SLA-meeting requests divided by
+  infrastructure cost (energy at the prevailing day-ahead market price, warm-hold, and migration cost),
+  read directly from run output. Replayed requests: PJM 576,912; ERCOT 442,716; CAISO 529,621; total
+  1,549,249. The +723.7% headline, publicly rounded to +724%, is the unweighted mean of the three
+  per-market deltas; total GPU-hours are 84.5% lower at the same served load. Workload: public LLM
+  inference traces<sup class="ref">&#8202;[8,9]</sup>; prices: public day-ahead hourly wholesale
+  series<sup class="ref">&#8202;[10]</sup>.</p>
+
+  <div class="scope5">
+    <div class="hdd">
+      <span class="t">Scope and interpretation</span>
+      <span class="fig-note">read before quoting the number</span>
+    </div>
+    <ul>
+      <li><b>Approximately 1.5 million replayed requests</b> across three selected high-load windows; not the
+      full lifetime of the traces.</li>
+      <li><b>Identical selected windows and identical load</b> for Aurelius and the constructed composite.</li>
+      <li><b>No policy sees future arrivals or future electricity prices.</b> Measured per-request execution
+      time is used rather than predicted, so there is no oracle.</li>
+      <li><b>Simulated replay, not a production deployment.</b></li>
+      <li><b>The baseline is a constructed public-replay composite</b> built from established production
+      serving techniques. It is not a specific operator's internal scheduler.</li>
+      <li><b>The percentage is load-dependent.</b> Part of the gap is a fixed-policy composite degrading under
+      heavy uncapped load while Aurelius adapts its economic posture to it.</li>
+      <li><b>Modeled precision and batching behavior affect the magnitude.</b></li>
+      <li><b>The correct interpretation</b> is evidence that the architecture warrants validation, not a
+      prediction of savings for a particular fleet.</li>
+    </ul>
+  </div>
+
+  <div class="v1sec">
+    <div class="left">
+      <span class="k k--ink">Frozen cap-controlled continuity benchmark</span>
+      <p>Benchmark V1 is the prior frozen harness: a small fixed per-period request cap, scored against the
+      strongest SLA-aware baseline. Under that harness, Aurelius delivered <b>+147.85% to +191.41%</b>
+      versus the strongest SLA-aware baseline across the three reported market windows, with <b>zero
+      measured search regret</b> where exhaustive evaluation was tractable.</p>
+    </div>
+    <div class="right">
+      <table class="tbl">
+        <thead><tr><th>V1 window</th><th>&Delta; goodput/$</th><th>Search regret</th></tr></thead>
+        <tbody>
+          <tr><td>PJM</td><td>+161.31%</td><td>0</td></tr>
+          <tr><td>ERCOT</td><td>+191.41%</td><td>0</td></tr>
+          <tr><td>CAISO</td><td>+147.85%</td><td>0</td></tr>
+        </tbody>
+      </table>
+      <p class="tbl-cap">Different baseline and different load from the uncapped benchmark above. The two
+      results are reported separately and never mixed or averaged.</p>
+    </div>
+  </div>
+
+  <div class="ft">
+    <span>Aurelius &middot; technical memo</span>
+    <span>page 5 of 6</span>
+  </div>
+</section>
+
+<!-- ==================================================================== -->
+<!-- PAGE 6 · A BOUNDED, READ-ONLY HISTORICAL EVALUATION                  -->
+<!-- ==================================================================== -->
+<section class="page">
+  <div class="hd">
+    <span class="wordmark">AURELIUS</span>
+    <span class="meta"><b>06</b> &middot; PROPOSED NEXT STEP</span>
+  </div>
+
+  <div class="titleblock">
+    <span class="k">The proposal</span>
+    <h2>A bounded, read-only historical evaluation</h2>
+  </div>
+
+  <p class="body intro">The next question is not whether the public benchmark reproduces exactly on
+  another fleet. It is whether predictive cross-layer planning identifies meaningful, causally defensible
+  counterfactual improvements on real historical fleet behavior.</p>
+
+  <div class="boundary" style="margin-top: 8pt;">
+    <div class="b" style="font-weight: 500; text-transform: none; letter-spacing: 0.02em; font-size: 8pt; padding: 4.5pt 7pt;">One representative workload, cluster, or bounded historical window</div>
+    <div class="b" style="font-weight: 500; text-transform: none; letter-spacing: 0.02em; font-size: 8pt; padding: 4.5pt 7pt;">One technically appropriate operator or internal owner</div>
+    <div class="b" style="font-weight: 500; text-transform: none; letter-spacing: 0.02em; font-size: 8pt; padding: 4.5pt 7pt;">One predetermined evaluation protocol, fixed before data moves</div>
+  </div>
+
+  <div class="p6grid">
+    <div class="p6col p6col--wide">
+      <span class="k k--ink">Potential inputs &middot; anonymized scheduler metadata</span>
+      <ul class="plist plist--cols">
+        <li>Job or request arrival time</li>
+        <li>Workload class</li>
+        <li>Requested and allocated GPU resources</li>
+        <li>Queue, start, completion, and deadline information</li>
+        <li>GPU type and capacity state</li>
+        <li>Placement and topology information, where relevant</li>
+        <li>The historical scheduler action</li>
+        <li>Configured hard constraints</li>
+        <li>Warm and cold replica state, where available</li>
+        <li>SLA outcome</li>
+        <li>Optional internal cost or power proxy</li>
+      </ul>
+      <p class="body-sm" style="margin-top: 4pt; font-size: 8pt;">The precise schema would be minimized to the selected
+      evaluation. Nothing outside it is requested.</p>
+    </div>
+    <div class="p6col">
+      <span class="k k--ink">Not required</span>
+      <ul class="plist plist--not">
+        <li>Customer identity</li>
+        <li>Request payloads</li>
+        <li>Model outputs</li>
+        <li>Proprietary weights</li>
+        <li>Unrestricted infrastructure access</li>
+        <li>Production actuation</li>
+        <li>Immediate integration into live systems</li>
+      </ul>
+      <p class="body-sm" style="margin-top: 4pt; font-size: 8pt;">Historical replay precedes any shadow-mode
+      recommendation, and shadow mode precedes any optional production integration. Every stage remains
+      under operator control.</p>
+    </div>
+  </div>
+
+  <div class="subsec" style="margin-top: 6pt;">
+    <span class="k k--ink">Evaluation outputs</span>
+    <div style="display: flex; gap: 16pt; margin-top: 1pt;">
+      <ul class="plist" style="flex: 1;">
+        <li>Faithful replay of the historical baseline</li>
+        <li>Aurelius counterfactual recommendations on the same windows</li>
+        <li>Matched SLA, GPU-hour, utilization, and economic comparisons, where valid</li>
+        <li>Attribution by decision surface</li>
+      </ul>
+      <ul class="plist" style="flex: 1;">
+        <li>Simulator-fidelity checks against held-out telemetry</li>
+        <li>Sensitivity analysis</li>
+        <li>Failure cases and negative findings, reported as such</li>
+        <li>A clear recommendation on whether shadow-mode evaluation is warranted</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="ask">
+    <span class="k">The ask</span>
+    <p class="txt">Identify one technically appropriate owner and one bounded historical dataset on which
+    the predictive-planning hypothesis can be evaluated.</p>
+  </div>
+
+  <p class="body" style="margin-top: 6pt; max-width: 6.9in;">Public replay establishes a testable signal. Historical operator
+  telemetry is the next step required to determine whether the architecture generalizes.</p>
+
+  <div class="contact">
+    <div class="who">
+      <div class="nm">Beckett Zahedi</div>
+      <div class="rl">Founder &middot; Aurelius</div>
+    </div>
+    <span class="ch"><a href="mailto:beckett@runaurelius.com">beckett@runaurelius.com</a></span>
+    <span class="ch"><a href="https://runaurelius.com">runaurelius.com</a></span>
+    <p class="note">The complete benchmark methodology, citations, limitations, and version history are
+    available in the supporting full technical report.</p>
+  </div>
+
+  <div class="refs">
+    <span class="k k--ink">Selected sources and methodology</span>
+    <ol>
+      <li><span class="n">[1]</span>Yu et al. Orca: A Distributed Serving System for Transformer-Based
+      Generative Models. OSDI 2022.
+      <a href="https://www.usenix.org/conference/osdi22/presentation/yu">usenix.org</a></li>
+      <li><span class="n">[2]</span>Kwon et al. Efficient Memory Management for Large Language Model
+      Serving with PagedAttention (vLLM). SOSP 2023.
+      <a href="https://dl.acm.org/doi/10.1145/3600006.3613165">dl.acm.org</a></li>
+      <li><span class="n">[3]</span>Gujarati et al. Serving DNNs like Clockwork: Performance
+      Predictability from the Bottom Up. OSDI 2020.
+      <a href="https://www.usenix.org/conference/osdi20/presentation/gujarati">usenix.org</a></li>
+      <li><span class="n">[4]</span>Zheng et al. SGLang: Efficient Execution of Structured Language Model
+      Programs (RadixAttention). 2024.
+      <a href="https://arxiv.org/abs/2312.07104">arxiv.org</a></li>
+      <li><span class="n">[5]</span>SchedMD. Slurm Workload Manager: Topology Guide.
+      <a href="https://slurm.schedmd.com/topology.html">slurm.schedmd.com</a></li>
+      <li><span class="n">[6]</span>Kubernetes documentation. Horizontal Pod Autoscaling.
+      <a href="https://kubernetes.io/docs/tasks/run-application/horizontal-pod-autoscale/">kubernetes.io</a></li>
+      <li><span class="n">[7]</span>Rzadca et al. Autopilot: Workload Autoscaling at Google. EuroSys 2020.
+      <a href="https://dl.acm.org/doi/10.1145/3342195.3387524">dl.acm.org</a></li>
+      <li><span class="n">[8]</span>Microsoft Azure Public Dataset: Azure LLM inference traces, 2023 and
+      2024 releases. Replayed workload.
+      <a href="https://github.com/Azure/AzurePublicDataset">github.com/Azure/AzurePublicDataset</a></li>
+      <li><span class="n">[9]</span>Mooncake conversation-trace release (FAST 2025), kvcache-ai.
+      Prefix-reuse structure.
+      <a href="https://github.com/kvcache-ai/Mooncake">github.com/kvcache-ai/Mooncake</a></li>
+      <li><span class="n">[10]</span>Day-ahead hourly wholesale electricity prices, from each ISO's
+      public data service.
+      <a href="https://www.pjm.com/markets-and-operations">pjm.com</a> &middot;
+      <a href="https://www.ercot.com/mktinfo">ercot.com</a> &middot;
+      <a href="https://oasis.caiso.com">oasis.caiso.com</a></li>
+    </ol>
+  </div>
+
+  <div class="ft">
+    <span>Aurelius &middot; technical memo &middot; July 2026</span>
+    <span>page 6 of 6</span>
+  </div>
+</section>
+
+</body>
+</html>

@@ -1,0 +1,205 @@
+===== PAGE 1 =====
+AURELIUS
+A PREDICTIVE SUPERVISORY LAYER FOR GPU FLEETS
+TECHNICAL MEMO
+PAGE 01 / 03
+Choose the best fleet trajectory, not just
+the best next action.
+ONE LIVE FLEET STATE · MANY COUNTERFACTUAL FUTURES · ONE SAFE TRAJECTORY SELECTED BEFORE
+EXECUTION
+F I G 0 1   SEARCH COMPRES SI ON
+ONE DECI SI ON · READ - ONLY
+CONSTRAINT-AWARE GENERATION
+HIERARCHICAL SEARCH
+SELECT · RETURN
+~4.7M
+72-75
+1
+POSSIBLE COUPLED-POLICY
+CONFIGURATIONS PER DECISION
+CANDIDATE TRAJECTORIES
+SCORED PER DECISION
+HIGHEST-SCORING FEASIBLE
+POLICY RETURNED
+PJM 75 · ERCOT 72 · CAISO 72 CANDIDATE TRAJECTORIES SCORED PER DECISION. WHERE EXHAUSTIVE ENUMERATION WAS TRACTABLE,
+BOUNDED SEARCH SELECTED THE SAME OPTIMUM.
+BOUNDED SEARCH OVER THE CONNECTED CONTROL SURFACES
+METADATA ONLY
+Aurelius adds a pre-execution planning layer above Kubernetes, Slurm, serving schedulers, autoscalers, and fleet-management
+systems. Before a decision is committed, it generates constraint-aware coupled-policy candidates, advances each against
+isolated simulated state under the configured constraints, rejects infeasible paths, and returns the highest-scoring feasible policy
+to the existing control plane. It reads scheduler and fleet metadata only, and never writes directly to the live fleet. In separately
+tractable spaces, the same bounded-search method matched exhaustive enumeration.
+8.24×
+mean SLA-safe goodput per modeled
+infrastructure dollar versus a constructed
+production-informed replay baseline
+84.5%
+fewer GPU-hours under identical input request
+sets
+1,549,249
+requests across three selected uncapped high-
+load windows
+3 of 3
+windows with lower SLA violation rates
+Simulated, load-dependent evidence from selected public-trace windows. Not a production result and not an estimate of performance
+against a particular fleet or internal scheduler.
+AURELIUS · TECHNICAL MEMO
+PAGE 01 / 03
+
+
+===== PAGE 2 =====
+AURELIUS
+TECHNICAL MEMO
+PAGE 02 / 03
+The optimizer cannot choose a future it never
+represents.
+The uncapped ablation reran the exact harness, windows, and load behind the 8.24× headline and varied one
+thing: the search strategy available to the planner. The production anchors reproduced the published values
+exactly, in all three markets.
+F I G 0 2   SEARCH- STRATEGY ABLATI ON · UNCAPPED REPLAY
+SI NGLE VARIABLE · THE SEARCH
+SEARCH SPACE
+COMPLETION
+RELATIVE GP/$
+DELTA
+MECHANISM
+CONSTRUCTED BASELINE
+COMPLETES
+1.00×
+REACTIVE REFERENCE
+GPU CLOCK ONLY
+TIMES OUT*
+0.69×*
+-31.3%*
+SINGLE SURFACE
+FIXED 24-POLICY GRID
+COMPLETES
+3.62×
++261.9%
+JOINT POSTURE
+REGIME-SPECIFIC CANDIDATE SET
+COMPLETES
+3.62×
++261.9%
+GENERATED, NO SEARCH
+EXHAUSTIVE SEARCH OF FIXED GRID
+COMPLETES
+4.84×
++383.6%
+FULL GRID
+ENUMERATION
+BOUNDED COUPLED SEARCH
+COMPLETES
+4.85×
++385.4%
+BOUNDED BEAM
+HIERARCHICAL COUPLED-POLICY
+SEARCH
+COMPLETES
+8.29×
++728.6%
+OFF-GRID COUPLING
+SLA VIOLATION RATE 0.038 TO 0.046 AT THE BASELINE, 0.0073 TO 0.011 FOR THE GRID ARMS, 0.0022 TO 0.0026 FOR THE HIERARCHICAL
+SEARCH · LOWEST OF ANY ARM.   * TIMES OUT AT THE STANDARD HARNESS BUDGET; AT AN EXTENDED BUDGET IT COMPLETES BELOW THE
+BASELINE.
+I DENTI CAL I NPUTS, WI NDOWS, AND LOAD I N EVERY ARM · 1,549,249 REQUESTS
+RERUN · 07.2026
+A clock-only, single-surface search cannot be scored within
+the harness budget: the policy it selects degrades the
+simulated fleet until the replay exceeds it, in all three markets.
+Given far more compute it does complete, and still lands
+below the baseline (about 0.7×) with roughly ten times its SLA
+violation rate.
+Setting the posture jointly is worth roughly 3.6× on its own: a
+fixed 24-policy grid and the regime-specific candidate set,
+scored without coupled search, select the same policy at this
+load.
+Searching the grid harder is saturated: exhaustive
+enumeration of the fixed grid reaches 4.84×, and the bounded
+coupled search matches it at 4.85× while evaluating far fewer
+candidates.
+The hierarchical coupled-policy search reaches 8.29× with
+the lowest SLA violation rates of any arm. The near-doubling
+beyond every grid-based strategy is value in coupled futures
+no fixed grid represented. The forecast, simulator, objective,
+cost model, and constraint gates were unchanged in every
+arm.
+The value was not hidden in a better score. It was hidden in a future the
+previous search never considered.
+Uncapped search-strategy ablation, 07.2026: an independent rerun of the exact harness, windows, and load behind the headline benchmark.
+Production anchors reproduced published values exactly; the hierarchical arm reproduced the published headline within 1.2 percent per market
+(8.29× here against the published 8.24× mean). Ratios are unweighted means across the three markets. The frozen V1 audit separately measured zero
+search regret where exhaustive enumeration was tractable, at approximately 40 candidate evaluations per decision. Neither validates the simulator or
+establishes production savings.
+AURELIUS · TECHNICAL MEMO
+PAGE 02 / 03
+
+
+===== PAGE 3 =====
+AURELIUS
+TECHNICAL MEMO
+PAGE 03 / 03
+A signal too large to ignore and too simulated to trust without
+operator data.
+F I G 0 3   UNCAPPED REPLAY · SLA- SAFE GOODPUT PER DOLLAR VS THE CONSTRUCTED BASELI NE
+THREE MARKET WI NDOWS
+PJM
+ERCOT
+CAISO
+7.98× · +698.1%
+8.18× · +717.8%
+8.55× · +755.3%
+1.00× BASELINE
+MEAN 8.24×
+1,549,249 total input requests · 84.5% fewer total GPU-hours · lower SLA violation rates in all three windows · both policies received the
+identical input request sets.
+The comparison policy is a constructed production-informed replay baseline: a deterministic public-replay policy assembled from
+established serving and cluster-control mechanisms, including continuous batching, deadline-aware ordering and admission, prefix-cache-
+aware routing, topology-aware placement, and backlog-driven capacity control. It is stronger than the naive SLA-aware reference, but it is
+not an operator's internal scheduler and does not reproduce a particular fleet's adaptive logic, internal signals, or cost model.
+WHAT THIS ESTABLISHES
+Under the selected uncapped high-load replay conditions,
+coupled predictive planning found feasible trajectories with
+materially better modeled economics and lower SLA violation
+rates than the constructed baseline.
+WHAT THIS DOES NOT ESTABLISH
+Expected performance against a particular fleet, internal
+scheduler, workload distribution, or operator cost model. The
+result is simulated and load-dependent. Its magnitude is materially
+affected by the benchmark's batching, precision, service-time,
+and modeled cost assumptions.
+Test one bounded historical window.
+RECORDED
+BASELINE
+RECONSTRUCT
+FIDELITY GATE
+FREEZE
+HELD-OUT
+COUNTERFACTUAL
+SHADOW-MODE
+DECISION
+INPUT
+Scheduler and fleet metadata from one representative workload, cluster, or bounded historical window. No customer
+identity, request payloads, model outputs, proprietary weights, production actuation, or unrestricted infrastructure
+access.
+PROCESS
+First reconstruct the recorded control decisions and verify that the simulator reproduces recorded queue, execution,
+resource-use, and SLA outcomes within agreed tolerances. Counterfactual improvements are scored only if that
+baseline-reconstruction fidelity gate passes. Then freeze the calibrated simulator and evaluate Aurelius on a held-out
+historical window using only information available at each decision timestamp.
+OUTPUT
+Matched SLA, GPU-hour, utilization, completed-work, and agreed economic comparisons; simulator-fidelity results;
+sensitivity analysis; attribution by active policy dimension; failure cases and negative findings; and a recommendation
+on whether recommendation-only shadow mode is warranted.
+PROPOSED VALIDATION
+Use one bounded historical window to estimate how much farther-ahead planning could have improved
+goodput per dollar under the fleet's actual workload and constraints.
+Read-only metadata only. No payloads, production writes, or unrestricted infrastructure access.
+Beckett Zahedi
+FOUNDER · AURELIUS
+beckett@runaurelius.com
+runaurelius.com
+Complete methodology, references, benchmark tables, limitations, and mechanism audits are in the supporting full technical report.
+AURELIUS · TECHNICAL MEMO · RUNAURELIUS.COM
+PAGE 03 / 03
