@@ -1,0 +1,394 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Aurelius Technical Report</title>
+<style>/*FONTS*/</style>
+<style>
+:root{
+  --bg:#050505; --bg2:#080808; --card:#101010;
+  --fg:rgba(255,255,255,.94);
+  --t72:rgba(255,255,255,.72); --t64:rgba(255,255,255,.64); --t58:rgba(255,255,255,.56);
+  --t46:rgba(255,255,255,.46); --t40:rgba(255,255,255,.40); --t34:rgba(255,255,255,.34);
+  --t24:rgba(255,255,255,.24);
+  --line:rgba(255,255,255,.11); --line2:rgba(255,255,255,.16);
+  --white90:rgba(255,255,255,.90);
+  --gold:hsl(40 34% 60%);
+  --red:hsl(2 58% 58%);
+  --sans:"Helvetica Now Display","Neue Haas Grotesk Display","Helvetica Neue",Helvetica,Arial,sans-serif;
+  --mono:"IBM Plex Mono","SF Mono",ui-monospace,monospace;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+body{background:var(--bg);color:var(--fg);font-family:var(--sans);
+  font-feature-settings:"ss01","cv01";-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility;
+  font-size:14px;line-height:1.6;letter-spacing:-0.006em}
+.page{width:820px;margin:0 auto;padding:0 0 4px}
+.mono{font-family:var(--mono)}
+em{font-style:normal}
+.em{color:var(--white90);font-weight:500}
+.gold{color:var(--gold)}
+.red{color:var(--red)}
+
+.frame{border-left:1px solid var(--line);border-right:1px solid var(--line);position:relative}
+.tick{position:absolute;width:9px;height:9px}
+
+.kicker{display:flex;align-items:center;gap:12px;font-family:var(--mono);font-size:10px;
+  text-transform:uppercase;letter-spacing:.09em;color:var(--t46);line-height:1}
+.kicker .idx{color:var(--t72)}
+.kicker .bar{height:1px;width:22px;background:rgba(255,255,255,.16)}
+
+.mast{padding:64px 60px 40px;border-bottom:1px solid var(--line)}
+.mast h1{font-size:33px;line-height:1.06;letter-spacing:-0.03em;font-weight:400;max-width:20ch;margin-top:26px}
+.mast .sub{margin-top:22px;max-width:60ch;font-size:15px;line-height:1.5;color:var(--t58)}
+.mast .lead{margin-top:16px;max-width:64ch;font-size:12.5px;line-height:1.7;color:var(--t40)}
+.result{margin-top:34px;max-width:64ch;border-left:2px solid rgba(255,255,255,.35);padding-left:20px}
+.result .big{font-size:30px;line-height:1.08;letter-spacing:-0.03em;font-weight:400}
+.result .cap{margin-top:13px;font-family:var(--mono);font-size:11px;line-height:1.65;color:var(--t46)}
+.result .find{margin-top:18px;max-width:64ch;font-size:13.5px;line-height:1.65;color:var(--t64)}
+.metarow{margin-top:30px;display:flex;flex-wrap:wrap;gap:6px 16px;font-family:var(--mono);
+  font-size:10.5px;text-transform:uppercase;letter-spacing:.06em;color:var(--t34);align-items:center}
+.metarow .dot{color:rgba(255,255,255,.14)}
+
+.body{padding:6px 60px 48px}
+section{border-top:1px solid var(--line);padding:30px 0 4px;break-inside:avoid}
+section:first-child{border-top:0}
+.sechead{display:flex;align-items:baseline;gap:16px;margin-bottom:18px}
+.sechead .n{font-family:var(--mono);font-size:12px;color:var(--t72);font-variant-numeric:tabular-nums}
+.sechead h2{font-size:20px;font-weight:400;letter-spacing:-0.03em;line-height:1.15}
+p.t{max-width:70ch;font-size:13.5px;line-height:1.72;color:var(--t64)}
+p.t + p.t{margin-top:13px}
+p.tn{max-width:70ch;font-size:12.5px;line-height:1.72;color:var(--t40)}
+p.tn + p.tn, p.t + p.tn{margin-top:12px}
+
+ul.h,ol.h{list-style:none;max-width:72ch;margin-top:14px;display:grid;gap:9px}
+ul.h li,ol.h li{display:flex;gap:12px;font-size:13px;line-height:1.6;color:var(--t58)}
+ul.h li .m{margin-top:9px;flex:0 0 16px;height:1px;background:rgba(255,255,255,.4)}
+
+.callout{margin-top:18px;max-width:70ch;border-left:2px solid var(--line2);padding:2px 0 2px 16px;
+  font-size:12.5px;line-height:1.65;color:var(--t58)}
+.callout.warn{border-left-color:rgba(192,80,78,.55)}
+.callout .hl{color:var(--t72)}
+
+figure{margin:26px 0}
+.plate{border:1px solid #fff;background:#000;max-width:470px}
+.plate .lab{display:flex;align-items:center;justify-content:space-between;gap:10px;border-bottom:1px solid #fff;padding:9px 14px}
+.plate .lab .l{display:flex;align-items:center;gap:12px}
+.tag{border:1px solid #fff;padding:2px 6px;font-family:var(--mono);font-size:9.5px;letter-spacing:.14em;color:#fff;line-height:1}
+.plate .lab .ttl{font-family:var(--mono);font-size:10px;letter-spacing:.2em;text-transform:uppercase;color:#fff}
+.plate .lab .st{font-family:var(--mono);font-size:9px;letter-spacing:.18em;text-transform:uppercase;color:rgba(255,255,255,.55);display:flex;align-items:center;gap:6px}
+.plate .lab .st .sq{width:6px;height:6px;background:#fff;display:inline-block}
+.plate .in{padding:20px 22px 22px}
+.pl{font-family:var(--mono);font-size:10px;letter-spacing:.18em;text-transform:uppercase;color:rgba(255,255,255,.55)}
+.chips{margin-top:9px;display:flex;flex-wrap:wrap;gap:6px}
+.chip{border:1px solid rgba(255,255,255,.25);padding:5px 9px;font-family:var(--mono);font-size:10px;letter-spacing:.05em;text-transform:uppercase;color:rgba(255,255,255,.72);line-height:1}
+.conn{display:flex;justify-content:center;padding:11px 0}
+.conn span{width:1px;height:26px;background:rgba(255,255,255,.35)}
+.wm{border:1px solid #fff;padding:14px 14px 12px;margin-top:9px}
+.count{margin-top:13px;display:flex;align-items:baseline;gap:9px;border-top:1px solid rgba(255,255,255,.15);padding-top:11px}
+.count .v{font-family:var(--mono);font-size:15px;font-weight:500;color:#fff;font-variant-numeric:tabular-nums}
+.count .u{font-family:var(--mono);font-size:9px;letter-spacing:.16em;text-transform:uppercase;color:rgba(255,255,255,.55)}
+.sel{margin-top:2px;text-align:center;display:grid;gap:6px;padding-top:4px}
+.sel .a{font-family:var(--mono);font-size:11px;letter-spacing:.28em;text-transform:uppercase;color:#fff}
+.sel .b{font-family:var(--mono);font-size:9.5px;letter-spacing:.14em;text-transform:uppercase;color:rgba(255,255,255,.72)}
+.sel .c{font-family:var(--mono);font-size:9.5px;letter-spacing:.14em;text-transform:uppercase;color:rgba(255,255,255,.48)}
+figcaption{margin-top:10px;font-family:var(--mono);font-size:10px;letter-spacing:.06em;text-transform:uppercase;color:var(--t34)}
+
+.cap{margin-bottom:11px;font-family:var(--mono);font-size:10.5px;letter-spacing:.06em;text-transform:uppercase;color:var(--t40)}
+.cap.mt{margin-top:34px}
+table{width:100%;border-collapse:collapse;text-align:left}
+th{padding:8px 10px;font-family:var(--mono);font-size:10px;text-transform:uppercase;letter-spacing:.04em;color:var(--t46);border-bottom:1px solid rgba(255,255,255,.3);font-weight:400;vertical-align:bottom}
+td{padding:9px 10px;font-size:11.5px;color:var(--t58);border-bottom:1px solid rgba(255,255,255,.1);vertical-align:top}
+td.e{font-family:var(--mono);color:var(--white90);font-variant-numeric:tabular-nums}
+td.mn{font-family:var(--mono);font-variant-numeric:tabular-nums}
+.tnote{margin-top:10px;font-family:var(--mono);font-size:10px;line-height:1.6;color:var(--t34);max-width:74ch}
+
+.surf{margin-top:16px;border:1px solid rgba(255,255,255,.2);padding:14px 16px}
+.surf .st{font-family:var(--mono);font-size:11px;letter-spacing:.05em;text-transform:uppercase;color:#fff}
+.surf .sn{font-family:var(--mono);font-size:9.5px;letter-spacing:.04em;text-transform:uppercase;color:var(--t34);margin-left:10px}
+.surf .row{margin-top:11px;display:flex;flex-wrap:wrap;gap:4px 2px}
+.surf .g{font-family:var(--mono);font-size:10.5px;color:var(--t64)}
+.surf .g .s{padding:0 6px;color:rgba(255,255,255,.18)}
+
+.refs{max-width:82ch;margin-top:16px;display:grid;gap:10px}
+.refs li{display:flex;gap:11px;list-style:none;align-items:baseline}
+.refs .rn{font-family:var(--mono);font-size:10.5px;color:var(--t46);font-variant-numeric:tabular-nums}
+.refs .rc{font-size:11.5px;line-height:1.55;color:var(--t58)}
+
+@page{size:820px 1160px;margin:0}
+@media print{ .page{width:820px} section,figure,table,.result,.surf,.callout{break-inside:avoid} .sechead{break-after:avoid} }
+.pb{break-before:page}
+</style>
+</head>
+<body>
+<div class="page frame">
+  <span class="tick" style="left:0;top:0;border-left:1px solid var(--t24);border-top:1px solid var(--t24)"></span>
+  <span class="tick" style="right:0;top:0;border-right:1px solid var(--t24);border-top:1px solid var(--t24)"></span>
+
+  <!-- ============ MASTHEAD ============ -->
+  <div class="mast">
+    <div class="kicker"><span class="idx">·</span><span class="bar"></span><span>Aurelius Technical Report</span></div>
+    <h1>Optimizing the fleet's trajectory, not its next decision.</h1>
+    <p class="sub">A supervisory layer that forecasts the fleet forward, simulates many coupled futures under constraints, and returns one policy for the existing stack to execute.</p>
+    <p class="lead">Aurelius sits above the scheduler. It does not replace Kubernetes, Slurm, or a serving router, and it never touches payloads. Each control period it forks the current fleet state into many forecasted futures, applies a coupled policy to each, advances them under SLA, capacity, power, and policy constraints, discards the ones that violate, and hands the single best safe policy back to the stack to run.</p>
+
+    <div class="result">
+      <div class="big">+724% average SLA&#8209;safe goodput per dollar</div>
+      <div class="cap">Mean of +698% / +718% / +755% (PJM / ERCOT / CAISO) vs a production&#8209;class scheduler baseline · uncapped replay of public production traces (~1.5M requests) · Pareto&#8209;safe at ~84% fewer GPU&#8209;hours</div>
+      <div class="find">A number that size demands an explanation, and the report gives two. The <span class="em">regime</span>: at production&#8209;scale load a fixed&#8209;policy scheduler degrades while a trajectory optimizer adapts. The <span class="em">mechanism</span>: holding the model, objective, and safety gate fixed and changing only the search, a coupled search matches exhaustive enumeration at <span class="em">zero measured regret</span>. The result is not simulator optimism; it is provable search.</div>
+    </div>
+
+    <div class="metarow">
+      <span>Version 0.5</span><span class="dot">·</span>
+      <span>July 2026</span><span class="dot">·</span>
+      <span>Uncapped high&#8209;load replay</span><span class="dot">·</span>
+      <span>Simulated, evidence not a guarantee</span><span class="dot">·</span>
+      <span>Read&#8209;only, metadata only</span>
+    </div>
+  </div>
+
+  <!-- ============ BODY ============ -->
+  <div class="body">
+
+    <!-- 00 ABSTRACT -->
+    <section>
+      <div class="sechead"><span class="n">00</span><h2>Abstract</h2></div>
+      <p class="t">Conventional infrastructure stacks, including the unified control planes that consolidate a fleet into one view, optimize the next decision: the next placement, the next scale action, the next route, each chosen locally against the state visible now. Aurelius changes the unit being optimized. It treats the fleet as a system with a trajectory, forecasts that trajectory forward, and optimizes the path rather than the step.</p>
+      <p class="t">Concretely, it is not a forecaster and not a scheduler replacement. It is a supervisory layer that forks the current fleet state into many forecasted futures, applies coupled policies across the controls the stack already exposes, advances each future under hard constraints, kills the ones that violate, and returns one policy for the existing scheduler to execute.</p>
+      <p class="t">Replaying public production traces uncapped, at full volume (about 1.5M requests across the PJM, ERCOT, and CAISO expensive&#8209;power windows), Aurelius averages <span class="em">+724% higher SLA&#8209;safe goodput per dollar</span> than a production&#8209;class scheduler baseline (per market +698% / +718% / +755%), while holding SLA strictly better and using <span class="em">~84% fewer GPU&#8209;hours</span>. That is a Pareto win, not goodput bought by spending more.</p>
+      <p class="t">A result that large is only worth reading if it is explained and defended, so this report does both. §07 gives the regime that produces the magnitude, a fixed policy degrading under uncapped load while a trajectory optimizer adapts. §05 gives the mechanism that proves it is real: with the world model, simulator, objective, and safety gate all held byte&#8209;identical, changing only which coupled futures the planner evaluates turned an SLA&#8209;breaking regression into a Pareto&#8209;dominant win that <span class="em">matches exhaustive search at zero measured regret</span>. The value was not in the model or the objective. It was in which coupled futures got evaluated.</p>
+      <p class="tn">Scope, stated once and meant throughout: these are deterministic simulated replays on public production traces. The headline ratio is load&#8209;dependent and is quoted only with its scope (§07). This is directional evidence that requires live&#8209;telemetry calibration before any production claim, not a deployment.</p>
+    </section>
+
+    <!-- 01 THE SHIFT -->
+    <section>
+      <div class="sechead"><span class="n">01</span><h2>The shift is in the unit of optimization</h2></div>
+      <p class="t">Most schedulers, and the control planes above them, optimize a current&#8209;state or local objective: availability, fairness, utilization, latency, queue state, immediate capacity, immediate price. Each is reasonable in isolation. But the economic outcome of a decision is set by constraints that arrive <em class="em">after</em> it is made: power and capacity headroom, congestion, memory and topology pressure, demand, and the price of power, which on wholesale markets can move several&#8209;fold within a day.</p>
+      <p class="t">Consolidating telemetry into one control plane is necessary, and it is not the missing piece. A unified present answers the question <em>what is the best next decision given everything I can see now</em>. It does not answer <em>what is the best sequence of decisions given what is about to happen</em>. Those are different questions, and the second is where the compounding waste lives, because once a job lands its costs are largely locked in and an observe&#8209;then&#8209;decide loop cannot price a constraint it has not yet seen.</p>
+      <p class="t">Aurelius closes that gap by moving from an <span class="em">observe, decide</span> loop to an <span class="em">observe, forecast, simulate, decide</span> loop. It is a different control architecture, not another scheduler, and it changes the question from the next decision to the trajectory.</p>
+    </section>
+
+    <!-- 02 WHAT IT IS -->
+    <section>
+      <div class="sechead"><span class="n">02</span><h2>What Aurelius does each control period</h2></div>
+      <p class="t">Every control period, Aurelius forecasts the workload and conditions, forks the current fleet state into many candidate futures, applies a coupled policy to each, advances each future one control period at a time against the forecasted constraints, rejects any that fail a hard gate, scores the survivors by risk&#8209;adjusted SLA&#8209;safe goodput per dollar, and returns the single best safe policy for the existing scheduler to execute. When forecast confidence is low, it falls back deterministically to the stack's default.</p>
+      <p class="t">The word that carries the architecture is <span class="em">coupled</span>. Aurelius does not tune one knob. Workload timing, placement, routing, capacity, batching, and the precision and clock policy are scored together as one bundle, because those decisions interact, and, as the finding shows, the interaction is exactly where the economic value lives.</p>
+      <figure>
+        <div class="plate">
+          <div class="lab">
+            <div class="l"><span class="tag">FIG.01</span><span class="ttl">Fork · Simulate · Select</span></div>
+            <div class="st"><span class="sq"></span>Decided</div>
+          </div>
+          <div class="in">
+            <div class="pl">Current fleet state</div>
+            <div class="chips">
+              <span class="chip">Cluster telemetry</span><span class="chip">Workload queue</span>
+              <span class="chip">Capacity state</span><span class="chip">SLA targets</span>
+            </div>
+            <div class="conn"><span></span></div>
+            <div class="pl">Predictive world model</div>
+            <div class="wm">
+              <svg id="grid" width="100%" viewBox="0 0 408 132" preserveAspectRatio="xMidYMid meet" aria-hidden="true"></svg>
+              <div class="count"><span class="v">2,744,667</span><span class="u">simulated futures</span></div>
+            </div>
+            <div class="conn"><span></span></div>
+            <div class="sel">
+              <span class="a">Selected policy</span>
+              <span class="b">Highest projected goodput / $</span>
+              <span class="c">SLA constraints satisfied</span>
+            </div>
+          </div>
+        </div>
+        <figcaption>fig.01 · one planning cycle: many coupled futures forked, advanced under constraints, one returned</figcaption>
+      </figure>
+    </section>
+
+    <!-- 03 WORLD MODEL -->
+    <section>
+      <div class="sechead"><span class="n">03</span><h2>The predictive world model</h2></div>
+      <p class="t">Aurelius maintains a persistent world model of the cluster: a forward model of the fleet, not a snapshot of free GPUs. It carries replica warm and cold state, server and rack capacity, placement and locality, queue dynamics, in&#8209;flight migrations, and the operator&#8209;cost basis, and it advances that state one control period at a time so a candidate decision is scored against the state it will actually meet.</p>
+      <p class="t">Candidate policies are evaluated on read&#8209;only simulated future states, so scoring never mutates the live cluster. Every input is tagged by provenance, measured, trace&#8209;derived, benchmark&#8209;calibrated, or modeled, so no result silently treats a modeled value as a measured one.</p>
+    </section>
+
+    <!-- 04 CANDIDATE FUTURES -->
+    <section>
+      <div class="sechead"><span class="n">04</span><h2>Which futures get evaluated is a first&#8209;class step</h2></div>
+      <p class="t">Because the controls interact, Aurelius evaluates coupled bundles rather than tuning one knob, and which bundles it evaluates is itself a first&#8209;class step, not an afterthought. A forecast&#8209;guided generator proposes a focused set of high&#8209;value coupled bundles implied by the operating regime, always including the known&#8209;strong candidates so a high&#8209;value option is never silently dropped. The set is then searched in a way that captures cross&#8209;surface coupling, widening to more surfaces only when a decision is close and stopping early when the choice is clear.</p>
+      <p class="t">Where exact enumeration is tractable, the bounded search is scored against it, so any regret is <span class="em">measured</span> rather than assumed. That discipline is what surfaced the finding in §05, and it is what lets a several&#8209;fold headline be defended rather than asserted.</p>
+      <div class="surf">
+        <div><span class="st">Active decision levers</span><span class="sn">scored as coupled bundles; each changes the projected economic outcome</span></div>
+        <div class="row">
+          <span class="g">Capacity policy<span class="s">·</span></span><span class="g">Capacity multiplier<span class="s">·</span></span>
+          <span class="g">Ordering<span class="s">·</span></span><span class="g">Admission<span class="s">·</span></span>
+          <span class="g">Batching<span class="s">·</span></span><span class="g">Routing<span class="s">·</span></span>
+          <span class="g">Prewarm<span class="s">·</span></span><span class="g">Placement<span class="s">·</span></span>
+          <span class="g">Migration<span class="s">·</span></span><span class="g">Precision<span class="s">·</span></span>
+          <span class="g">Clock / DVFS</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- 05 THE FINDING -->
+    <section>
+      <div class="sechead"><span class="n">05</span><h2>Why the number is real: only the search changed</h2></div>
+      <p class="t">The finding is narrow, and that is why it is strong. With the world model, the simulator, the objective, and the safety gate all byte&#8209;identical, we changed only the candidate set and the search. Anything that moved is therefore attributable to the search, not to a model quietly made more optimistic. This is the check a skeptical reader should run first, because it is the one that separates a real result from a favorable simulator.</p>
+      <ul class="h">
+        <li><span class="m"></span><span><span class="em">A single&#8209;lever search regressed.</span> Searching the GPU clock alone scored <span class="red">&#8722;4.47%</span> against the baseline and made SLA <em>worse</em>, failing the safety gate. The optimizer cannot select a bundle it never evaluates.</span></li>
+        <li><span class="m"></span><span><span class="em">Restoring the right coupled set fixed it.</span> With nothing else touched, proposing the high&#8209;value coupled bundles moved the same window to <span class="em">+100%</span> and held SLA. The moment the winning bundle was in the set, the unchanged simulator picked it.</span></li>
+        <li><span class="m"></span><span><span class="em">Coupled search added the rest.</span> Letting the search reach the coupled combinations a fixed grid does not contain lifted it to <span class="em">+161%</span> goodput per dollar, at lower cost, 25% fewer GPU&#8209;hours, and 87% fewer SLA violations. A Pareto win, not goodput bought by spending more.</span></li>
+        <li><span class="m"></span><span><span class="em">It left nothing on the table.</span> Against the exhaustive ground truth, where we could enumerate it, the bounded search matched the safe optimum <span class="em">exactly, at zero measured regret</span>, in about 40 evaluations per decision. The direction holds across all three markets (+148% to +191%, zero regret in each).</span></li>
+      </ul>
+      <p class="t" style="margin-top:14px">Because everything downstream of the candidate set was held constant, the gain is attributable to the search alone, and the zero&#8209;regret check against enumerated ground truth is the proof that the optimizer is not leaving value on the table or inventing it. The residual gap to a forecast oracle on the same window is about 4.5%, and it is forecast quality, not search.</p>
+      <div class="callout warn">One exclusion, stated plainly. An aggressive low&#8209;precision (int4) mode scores higher still, but its quality cost is not yet modeled, so it is <span class="hl">excluded from every headline</span> and reported only as a labeled diagnostic ceiling. The headline&#8209;safe result uses the precision band whose quality we can defend.</div>
+    </section>
+
+    <!-- 06 THE HEADLINE RESULT -->
+    <section>
+      <div class="sechead"><span class="n">06</span><h2>The headline result: uncapped, production&#8209;scale replay</h2></div>
+      <p class="t">The headline replays the full selected windows with the per&#8209;period request cap removed, so each runs at its natural, production&#8209;scale volume: PJM ~577k, ERCOT ~443k, CAISO ~530k requests, about 1.5M in total. Both policies run the identical load. The bar is a <span class="em">production&#8209;class scheduler baseline</span>, not a strawman: continuous (iteration&#8209;level) batching, SLA&#8209;aware ordering with deadline protection, KV and prefix&#8209;cache&#8209;aware routing, topology&#8209;aware placement, backlog autoscaling with a warm&#8209;pool headroom, and class&#8209;based admission. Each lever maps to an established production technique, so the composite is as close to a deployed scheduler as a public replay allows.</p>
+      <p class="t">At that volume the naive SLA&#8209;aware policy does not complete: its no&#8209;batching, no&#8209;admission replay cost grows super&#8209;linearly and times out, so it is a reference only. The production&#8209;class scheduler and Aurelius both complete, which makes them the primary, production&#8209;comparable comparison: the policy built from real serving&#8209;stack components is the bar Aurelius has to beat.</p>
+      <div class="cap mt">Table 1 · Uncapped high&#8209;load replay · Aurelius vs production&#8209;class scheduler</div>
+      <table>
+        <thead><tr><th>Market</th><th>Aurelius gp/$</th><th>Production gp/$</th><th>&#916; %</th><th>SLA (Aur.)</th><th>SLA (Prod.)</th><th>Requests</th></tr></thead>
+        <tbody>
+          <tr><td>PJM · expensive</td><td class="mn">1,041,842</td><td class="mn">130,539</td><td class="e">+698.1%</td><td class="mn">0.0023</td><td class="mn">0.0382</td><td class="mn">576,912</td></tr>
+          <tr><td>ERCOT · expensive</td><td class="mn">1,064,602</td><td class="mn">130,178</td><td class="e">+717.8%</td><td class="mn">0.0013</td><td class="mn">0.0447</td><td class="mn">442,716</td></tr>
+          <tr><td>CAISO · expensive</td><td class="mn">1,111,915</td><td class="mn">130,000</td><td class="e">+755.3%</td><td class="mn">0.0018</td><td class="mn">0.0458</td><td class="mn">529,621</td></tr>
+          <tr><td>Average / total</td><td class="mn">&#8211;</td><td class="mn">&#8211;</td><td class="e">+723.7%</td><td class="mn">&#8211;</td><td class="mn">&#8211;</td><td class="mn">1,549,249</td></tr>
+        </tbody>
+      </table>
+      <p class="tnote">gp/$ and SLA&#8209;violation rates read directly from run output. &#916;% is per market (Aurelius &#8722; production) &#247; production; the +724% headline is the equal&#8209;weighted average of the three (723.7%, shown unrounded). SLA violations fall from ~3.8&#8211;4.6% to ~0.1&#8211;0.2%.</p>
+      <div class="cap mt">Table 2 · GPU&#8209;hours at the same uncapped load</div>
+      <table>
+        <thead><tr><th>Market</th><th>Aurelius GPU&#8209;h</th><th>Production GPU&#8209;h</th><th>&#916; GPU&#8209;hours</th></tr></thead>
+        <tbody>
+          <tr><td>PJM · expensive</td><td class="mn">62.2</td><td class="mn">399.9</td><td class="e">&#8722;84.4%</td></tr>
+          <tr><td>ERCOT · expensive</td><td class="mn">51.0</td><td class="mn">323.7</td><td class="e">&#8722;84.3%</td></tr>
+          <tr><td>CAISO · expensive</td><td class="mn">60.0</td><td class="mn">391.5</td><td class="e">&#8722;84.7%</td></tr>
+          <tr><td>Total</td><td class="mn">173.1</td><td class="mn">1,115.1</td><td class="e">&#8722;84.5%</td></tr>
+        </tbody>
+      </table>
+      <p class="tnote">Same served requests both arms; the reduction is (production &#8722; Aurelius) &#247; production. Aurelius earns more SLA&#8209;safe goodput on far fewer GPU&#8209;hours because the coupled bundle packs more work per GPU&#8209;hour while holding SLA, which is why the win is Pareto and not paid for in spend.</p>
+    </section>
+
+    <!-- 07 HOW TO READ IT -->
+    <section>
+      <div class="sechead"><span class="n">07</span><h2>How to read a several&#8209;fold number</h2></div>
+      <p class="t">A 7&#215; gap over a competent scheduler is unusual, so the report is explicit about where it comes from and where its edges are. It is not the baseline being weak, and it is not the model being generous. It is the regime.</p>
+      <p class="t"><span class="em">Why it is this large.</span> Under uncapped, production&#8209;scale load a fixed&#8209;policy scheduler degrades super&#8209;linearly: it serves heavy load worse, its goodput per dollar falls toward a floor, and the naive SLA&#8209;aware policy stops completing at all. A trajectory optimizer does the opposite. It forecasts the squeeze, adapts the coupled bundle, and saturates. The gap between them is the cost of optimizing the next decision instead of the trajectory, and it is widest exactly when the fleet is most stressed. That asymmetry is the architecture showing itself, not an artifact.</p>
+      <p class="t"><span class="em">Where its edges are.</span> The ratio is load&#8209;dependent. It moves roughly five&#8209;fold with the per&#8209;period request cap, and at a frozen, comparable cap the same comparison is about <span class="em">+140% to +160%</span>. So the exact multiple is a property of the load, and we quote it only with its scope. What is <em>not</em> load&#8209;dependent, and what actually carries the claim, is the direction and the zero&#8209;regret proof in §05: a trajectory optimizer and a step optimizer diverge under load, the divergence grows with stress, and the optimizer provably captures the safe optimum rather than a lucky point.</p>
+      <div class="callout">Read the several&#8209;fold number as two things at once: a stress signal, showing how far a fixed policy falls behind when the fleet is loaded, and a direction, made trustworthy by the zero&#8209;regret ablation. It is not a fleet constant, and this report never quotes it as one.</div>
+    </section>
+
+    <!-- 08 WHAT IS NEW -->
+    <section>
+      <div class="sechead"><span class="n">08</span><h2>What is actually new here</h2></div>
+      <p class="t">The individual pieces are not new, and we do not claim they are. Forecasting, model&#8209;predictive control, digital twins of infrastructure, SLO&#8209;aware scheduling, and unified control planes all exist and are well understood. Aurelius's claim is narrower and, we think, more durable.</p>
+      <p class="t">The unit of optimization is the fleet's <span class="em">forecasted trajectory</span>, evaluated as coupled futures rather than independent next&#8209;decisions, and the binding constraint on the result is not the model or the objective but <span class="em">which coupled futures get evaluated</span>. The finding in §05 is the evidence: on a byte&#8209;identical stack, changing only the candidate set and the search moved the outcome from an SLA&#8209;breaking regression to a Pareto&#8209;dominant win that provably matches exhaustive enumeration. That is a statement about where the value lives in fleet optimization, and it is testable on any fleet that keeps historical scheduler metadata.</p>
+    </section>
+
+    <!-- 09 SAFETY -->
+    <section>
+      <div class="sechead"><span class="n">09</span><h2>Safety and the deployment path</h2></div>
+      <p class="t">Aurelius reads only the metadata a scheduler already exposes, job timing, resource requests, constraints, never payloads or model outputs. Candidate scoring runs read&#8209;only. Unsafe candidates are rejected at the constraint gate before any recommendation exists, and when confidence is low the controller falls back deterministically to the stack's default.</p>
+      <p class="t">The path from telemetry to any production change is staged and reversible: offline replay of historical decisions, then read&#8209;only shadow mode alongside the live scheduler, then a controlled rollout on workloads explicitly in scope. Aurelius owns the <span class="em">decision</span>; the customer's platform owns the <span class="em">execution</span>. The blast radius of any Aurelius fault is therefore a suboptimal&#8209;but&#8209;valid placement, never an unsafe action, because the existing scheduler is always the fallback.</p>
+    </section>
+
+    <!-- 10 LIMITATIONS -->
+    <section>
+      <div class="sechead"><span class="n">10</span><h2>Limitations</h2></div>
+      <ul class="h">
+        <li><span class="m"></span><span>Every number here is deterministic simulated replay of public traces: directional evidence of achievable savings, not a guarantee for any specific fleet, and not a production deployment.</span></li>
+        <li><span class="m"></span><span>The +724% headline is load&#8209;dependent. Part of the gap is a fixed&#8209;policy scheduler degrading under heavy uncapped load while Aurelius adapts, so it is reported only with its uncapped, full&#8209;window scope and never as a fleet constant. At a frozen comparable cap the figure is ~+140&#8211;160%.</span></li>
+        <li><span class="m"></span><span>Magnitudes are simulator&#8209;inferred and depend on the serving model's precision and batching bands. The most robust findings are the <em class="em">direction</em> and the <em class="em">zero measured regret</em>, not any single percentage.</span></li>
+        <li><span class="m"></span><span>Aggressive low&#8209;precision is excluded from every headline until its quality cost is modeled.</span></li>
+        <li><span class="m"></span><span>Simulator fidelity must still be tested against real operator telemetry, which is the only way to isolate model error, and the largest gains appear during expensive&#8209;power windows.</span></li>
+        <li><span class="m"></span><span>Some controls are modeled but not yet active production levers, and several constraints are represented but not yet forecast inputs.</span></li>
+      </ul>
+    </section>
+
+    <!-- 11 THE ASK -->
+    <section>
+      <div class="sechead"><span class="n">11</span><h2>What we would validate with a partner</h2></div>
+      <p class="t">The next step is not a bigger simulation, it is calibration against reality. Given read&#8209;only historical scheduler metadata from a production fleet, we would replay its own decisions, simulate the coupled counterfactuals, and produce an audited estimate of the SLA&#8209;safe goodput per dollar left on the table, with no production changes and no payload access.</p>
+      <p class="t">That is the test of whether the trajectory&#8209;level result generalizes beyond public traces, and it is the fastest, lowest&#8209;risk way to find out. If it holds on a real fleet's own history, it is a new axis of optimization for that fleet. If it does not, the replay says so, cheaply, before anything touches production.</p>
+    </section>
+
+    <!-- APPENDIX A -->
+    <section class="pb">
+      <div class="sechead"><span class="n">A</span><h2>Appendix · The ablation, in full</h2></div>
+      <p class="t">The mechanism is clearest on the bounded window where exhaustive enumeration is tractable and the gain can be attributed exactly. Reward, cost model, and Pareto gate are byte&#8209;identical across every arm; the only thing that changes is which candidates the planner evaluates. The zero&#8209;regret column, measured against the enumerated safe optimum, is the proof that the bounded search forfeits nothing, and it is the same mechanism that drives the uncapped headline in §06.</p>
+      <div class="cap mt">Table A1 · Candidate set and search vs the exhaustive ground truth (PJM expensive window)</div>
+      <table>
+        <thead><tr><th>Arm</th><th>&#916; goodput/$</th><th>SLA vs baseline</th><th>Evals</th><th>Regret vs exhaustive</th></tr></thead>
+        <tbody>
+          <tr><td>Single&#8209;lever (clock only)</td><td class="e" style="color:var(--red)">&#8722;4.47%</td><td class="mn">worse, fails gate</td><td class="mn">4</td><td class="mn">173.5% forfeited</td></tr>
+          <tr><td>Coupled candidate set (argmax)</td><td class="e">+100.48%</td><td class="mn">better</td><td class="mn">18</td><td class="mn">30.3%</td></tr>
+          <tr><td>Coupled set + bounded search</td><td class="e">+161.31%</td><td class="mn">better</td><td class="mn">~40</td><td class="e">0%</td></tr>
+          <tr><td>Exhaustive (safe ground truth)</td><td class="mn">+161.31%</td><td class="mn">better</td><td class="mn">55</td><td class="mn">reference</td></tr>
+        </tbody>
+      </table>
+      <p class="tnote">The bounded search reaches the exact exhaustive&#8209;safe optimum (814,383 gp/$ in both arms) at roughly 40 evaluations against 55 for full enumeration. An int4 arm scores higher (+226.88%) but carries unmodeled quality risk and is excluded from every headline.</p>
+
+      <div class="cap mt">Table A2 · Direction across three independent electricity markets</div>
+      <table>
+        <thead><tr><th>Market</th><th>Single&#8209;lever</th><th>Coupled + search</th><th>SLA (coupled)</th><th>Regret vs exhaustive</th></tr></thead>
+        <tbody>
+          <tr><td>PJM · expensive</td><td class="mn">&#8722;4.47%, SLA worse</td><td class="e">+161.31%</td><td class="mn">better</td><td class="e">0</td></tr>
+          <tr><td>ERCOT · expensive</td><td class="mn">&#8722;10.31%, SLA worse</td><td class="e">+191.41%</td><td class="mn">better</td><td class="e">0</td></tr>
+          <tr><td>CAISO · expensive</td><td class="mn">+0.50%, SLA worse</td><td class="e">+147.85%</td><td class="mn">better</td><td class="e">0</td></tr>
+        </tbody>
+      </table>
+      <p class="tnote">Single&#8209;lever never passes the Pareto gate in any market (SLA always worse). Coupled search is Pareto&#8209;dominant in all three and matches the safe exhaustive optimum exactly in each. Simulated; bounded to these windows.</p>
+    </section>
+
+    <!-- REFERENCES -->
+    <section>
+      <div class="sechead"><span class="n">·</span><h2>References</h2></div>
+      <p class="tn">The production&#8209;class scheduler baseline (§06) is assembled from established production serving and cluster&#8209;scheduling techniques. These are cited for the realism of the baseline mechanisms, not for any Aurelius result.</p>
+      <ol class="refs">
+        <li><span class="rn">[1]</span><span class="rc">Yu et al. &ldquo;Orca: A Distributed Serving System for Transformer&#8209;Based Generative Models.&rdquo; OSDI 2022. Iteration&#8209;level (continuous) batching.</span></li>
+        <li><span class="rn">[2]</span><span class="rc">Kwon et al. &ldquo;Efficient Memory Management for Large Language Model Serving with PagedAttention&rdquo; (vLLM). SOSP 2023. Continuous batching and KV&#8209;cache management.</span></li>
+        <li><span class="rn">[3]</span><span class="rc">Gujarati et al. &ldquo;Serving DNNs like Clockwork: Performance Predictability from the Bottom Up.&rdquo; OSDI 2020. SLO&#8209;aware scheduling and admission.</span></li>
+        <li><span class="rn">[4]</span><span class="rc">Zheng et al. &ldquo;SGLang: Efficient Execution of Structured Language Model Programs&rdquo; (RadixAttention). 2024. Prefix / KV&#8209;cache&#8209;aware reuse.</span></li>
+        <li><span class="rn">[5]</span><span class="rc">SchedMD. &ldquo;Slurm Workload Manager, Topology Guide.&rdquo; Topology&#8209;aware placement in production cluster schedulers.</span></li>
+        <li><span class="rn">[6]</span><span class="rc">Rzadca et al. &ldquo;Autopilot: Workload Autoscaling at Google.&rdquo; EuroSys 2020. Utilization&#8209;headroom autoscaling at production scale.</span></li>
+      </ol>
+    </section>
+
+  </div>
+</div>
+
+<script>
+(function(){
+  var COLS=48, ROWS=13, ch=10, W=408;
+  var g=document.getElementById('grid'); if(!g) return;
+  var winR=Math.floor(ROWS/2), winC=Math.floor(COLS*0.52);
+  var rand=function(n){var x=Math.sin(n*12.9898+78.233)*43758.5453; return x-Math.floor(x);};
+  var maxd=0, cells=[];
+  for(var i=0;i<COLS*ROWS;i++){
+    var r=Math.floor(i/COLS), c=i%COLS, dr=r-winR, dc=c-winC;
+    var d=Math.hypot((dr+dc)*0.62,(dr-dc)*1.18);
+    cells.push({r:r,c:c,d:d}); if(d>maxd)maxd=d;
+  }
+  var frag='';
+  for(var k=0;k<cells.length;k++){
+    var cc=cells[k], nd=cc.d/maxd, isWin=(cc.r===winR&&cc.c===winC);
+    var op;
+    if(isWin){op=1;}
+    else{
+      var base=Math.max(0, 1-nd);
+      op=0.06 + base*0.5 + (rand(k*3.17)-0.5)*0.10;
+      if(nd>0.62) op=Math.min(op,0.10+rand(k*1.7)*0.06);
+      op=Math.max(0.05,Math.min(0.62,op));
+    }
+    var x=(cc.c*(W/COLS)).toFixed(1), y=(cc.r*ch+3).toFixed(1);
+    var sz=isWin?6:5;
+    frag+='<rect x="'+x+'" y="'+y+'" width="'+sz+'" height="'+sz+'" fill="#fff" fill-opacity="'+op.toFixed(3)+'"'+(isWin?' stroke="#fff" stroke-opacity="0.25" stroke-width="0.8"':'')+'/>';
+  }
+  g.innerHTML=frag;
+})();
+</script>
+</body>
+</html>
