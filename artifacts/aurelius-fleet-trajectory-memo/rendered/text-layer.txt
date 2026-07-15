@@ -7,44 +7,25 @@ Choose the best fleet trajectory, not just
 the best next action.
 ONE LIVE FLEET STATE · MANY COUNTERFACTUAL FUTURES · ONE SAFE TRAJECTORY SELECTED BEFORE
 EXECUTION
-F I G 0 1   COUNTERFACTUAL TRAJECTORY SEARCH
-SI MULATED · READ - ONLY
-NOW
-T+1
-T+2
-T+3
-ACTUATION BOUNDARY
-CONTROL PLANE EXECUTES
-SELECTED · HIGHEST FEASIBLE SCORE
-FEASIBLE · LOWER RANKED
-REJECTED · CONSTRAINT GATE
-REJECTED · CONSTRAINT GATE
-CANDI DATE EVALUATI ON NEVER WRITES TO THE LIVE FLEET
+F I G 0 1   SEARCH COMPRES SI ON
+ONE DECI SI ON · READ - ONLY
+~4.7M
+POSSIBLE COUPLED-POLICY CONFIGURATIONS PER DECISION
+CONSTRAINT-AWARE GENERATION
+HIERARCHICAL SEARCH
+72-75
+CANDIDATE TRAJECTORIES SCORED PER DECISION
+1
+HIGHEST-SCORING FEASIBLE POLICY RETURNED
+PJM 75 · ERCOT 72 · CAISO 72 CANDIDATE TRAJECTORIES SCORED PER DECISION. WHERE EXHAUSTIVE ENUMERATION WAS TRACTABLE,
+BOUNDED SEARCH SELECTED THE SAME OPTIMUM.
+CONSTRAI NT-AWARE GENERATI ON, THEN HI ERARCHI CAL SEARCH
 METADATA ONLY
-MIRROR FLEET STATE
-→
-GENERATE COUPLED
-POLICIES
-→ADVANCE EACH TRAJECTORY →
-REJECT INFEASIBLE AND
-RETURN ONE
-Aurelius adds a pre-execution planning layer above
-Kubernetes, Slurm, serving schedulers, autoscalers, and fleet-
-management systems. Before a decision is committed, it forks
-the current fleet state into competing simulated trajectories,
-each applying a different coupled policy across the
-implemented controls: batching, routing, placement, capacity,
-prewarming, admission, migration, precision, speculative
-decoding, and GPU clock.
-Each trajectory runs against isolated simulated state. The
-model carries queue, capacity, placement and topology,
-replica warm state, and configured constraints, advanced
-across the planning horizon. Trajectories that violate
-configured constraints are rejected before ranking, and the
-highest-scoring feasible policy is returned to the existing
-control plane.
-Aurelius reads scheduler and fleet metadata, evaluates trajectories in isolated simulated state, and returns a constrained policy
-through the existing control plane. It never writes directly to the live fleet.
+Aurelius adds a pre-execution planning layer above Kubernetes, Slurm, serving schedulers, autoscalers, and fleet-management
+systems. Before a decision is committed, it generates constraint-aware coupled-policy candidates, advances each against
+isolated simulated state under the configured constraints, rejects infeasible paths, and returns the highest-scoring feasible policy
+to the existing control plane. It reads scheduler and fleet metadata only, and never writes directly to the live fleet. In separately
+tractable spaces, the same bounded-search method matched exhaustive enumeration.
 8.24×
 mean SLA-safe goodput per modeled
 infrastructure dollar versus a constructed

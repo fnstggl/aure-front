@@ -72,17 +72,20 @@ from this grammar; do not "just thicken lines."
   emphasis `#111110`. This includes the page-2 figure, now a comparison matrix.
 
 The memo is three pages (three ideas): architecture, controlled ablation,
-result + validation. Page 1 absorbs the former page-3 architecture detail as a
-thin four-step process strip (MIRROR FLEET STATE -> GENERATE COUPLED POLICIES ->
-ADVANCE EACH TRAJECTORY -> REJECT INFEASIBLE AND RETURN ONE) plus one boundary
-sentence below the diagram; the second branching diagram was removed as
-redundant with FIG 01.
+result + validation. Page 1 leads with the search-compression figure and a
+single lead paragraph; the earlier branching-trajectory diagrams (both the page-1
+lane tree and the redundant page-3 schematic) were dropped in favour of the
+compression story, which is the stronger and more honest engineering claim.
 
 ### Per figure
-- **FIG 01** (page 1): one live state forks (from a single flush vertical) into
-  an orthogonal lane tree over NOW..T+3 — two rejected lanes terminate at gate
-  columns with x, two feasible lanes run gray, the selected lane is a straight
-  heavy spine that crosses the actuation boundary into the control plane.
+- **FIG 01** (page 1): a **search-compression funnel**. ~4.7M possible
+  coupled-policy configurations per decision (connected-surface product,
+  `theoretical_combinations()` = 4,723,920) narrow through constraint-aware
+  generation and hierarchical search to **72-75** candidate trajectories scored
+  per decision (PJM 75 / ERCOT 72 / CAISO 72, `candidate_bundles_evaluated`) to
+  **1** returned. Light envelope, bold numbers; the numbers carry the story, not
+  a dense field implying millions. Note scopes the zero-regret claim to
+  separately tractable spaces.
 - **FIG 02** (page 2): the search-strategy ablation is an uppercase comparison
   matrix (SEARCH SPACE / COMPLETION / RELATIVE GP/$ / DELTA / MECHANISM). The
   baseline row is separated by a major rule; the hierarchical row is the

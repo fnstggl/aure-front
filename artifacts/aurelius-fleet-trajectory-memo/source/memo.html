@@ -95,6 +95,7 @@
   .p1-body p { font-size: 9.4pt; line-height: 1.48; color: var(--ink-2); }
   .p1-body p + p { margin-top: 6pt; }
   .p1-boundary { margin-top: 10pt; font-size: 9.3pt; line-height: 1.45; color: var(--ink); max-width: 7.2in; }
+  .p1-lead { margin-top: 12pt; font-size: 9.5pt; line-height: 1.5; color: var(--ink-2); max-width: 7.3in; }
   .p1-metrics { display: flex; align-items: stretch; gap: 22pt; margin-top: 13pt; border-top: 0.75pt solid var(--rule-major); padding-top: 12pt; }
   .p1-metrics .hero { flex: 0 0 2.7in; }
   .p1-metrics .hero .v { font-size: 43pt; font-weight: 500; letter-spacing: -0.025em; line-height: 1; color: var(--ink); }
@@ -189,90 +190,58 @@
 
   <div class="plate" style="margin-top: 13pt;">
     <div class="plate-hd">
-      <span><b>FIG 01</b> &nbsp;Counterfactual trajectory search</span>
-      <span>Simulated &middot; read-only</span>
+      <span><b>FIG 01</b> &nbsp;Search compression</span>
+      <span>One decision &middot; read-only</span>
     </div>
-    <svg viewBox="0 0 520 160" role="img"
-         aria-label="One live fleet state forks into candidate trajectories over t+1, t+2, t+3. Two candidates terminate at constraint gates and are marked rejected. Two feasible but lower-ranked trajectories continue in light gray. The selected feasible trajectory continues as a single heavy black line across the actuation boundary into the existing control plane.">
+    <svg viewBox="0 0 520 186" role="img"
+         aria-label="Search compression funnel. About 4.7 million possible coupled-policy configurations per decision are narrowed by constraint-aware generation and hierarchical search to 72 to 75 candidate trajectories scored per decision, and one highest-scoring feasible policy is returned.">
       <g font-family="Helvetica Now Display, Helvetica, Arial, sans-serif"
          shape-rendering="geometricPrecision" text-rendering="geometricPrecision"
          stroke-linecap="butt" stroke-linejoin="miter">
-        <!-- structural guide + column headers -->
-        <line x1="40" y1="20" x2="440" y2="20" stroke="#D2D2D2" stroke-width="0.5"/>
-        <g font-size="7.5" font-weight="500" letter-spacing="1.1" fill="#6E6A62" text-anchor="middle" stroke="none">
-          <text x="48" y="13">NOW</text>
-          <text x="168" y="13">T+1</text>
-          <text x="288" y="13">T+2</text>
-          <text x="424" y="13">T+3</text>
-        </g>
-
-        <!-- rejected trajectories (light, terminated by black x); flush fork at x=88 -->
+        <!-- level guides -->
+        <line x1="62" y1="44" x2="458" y2="44" stroke="#D2D2D2" stroke-width="0.5"/>
+        <line x1="206" y1="118" x2="310" y2="118" stroke="#D2D2D2" stroke-width="0.5"/>
+        <!-- compression envelope -->
         <g fill="none" stroke="#BDBDBD" stroke-width="0.75">
-          <polyline points="48,88 88,88 88,32 288,32"/>
-          <polyline points="48,88 88,88 88,144 168,144"/>
+          <polyline points="62,44 206,118 258,172"/>
+          <polyline points="458,44 310,118 258,172"/>
         </g>
-        <!-- feasible, lower-ranked (mid gray); flush fork at x=88 -->
+        <!-- flow chevrons -->
         <g fill="none" stroke="#8C8C8C" stroke-width="0.75">
-          <polyline points="48,88 88,88 88,60 424,60"/>
-          <polyline points="48,88 88,88 88,116 424,116"/>
+          <path d="M255 56 l5 5 l5 -5"/>
+          <path d="M255 150 l5 5 l5 -5"/>
         </g>
-
-        <!-- selected trajectory (heavy black, straight spine across boundary) -->
-        <polyline points="48,88 500,88" fill="none" stroke="#111110" stroke-width="1.5"/>
-        <path d="M490 83 L500 88 L490 93 Z" fill="#111110" stroke="none"/>
-
-        <!-- rejection x marks -->
-        <g stroke="#111110" stroke-width="1.5" fill="none">
-          <path d="M282.5 26.5 l11 11 M293.5 26.5 l-11 11"/>
-          <path d="M162.5 138.5 l11 11 M173.5 138.5 l-11 11"/>
-        </g>
-
-        <!-- actuation boundary -->
-        <line x1="456" y1="44" x2="456" y2="132" stroke="#111110" stroke-width="0.75" stroke-dasharray="2 3"/>
-        <g stroke="none">
-          <text x="456" y="40" font-size="7" font-weight="500" letter-spacing="0.7" fill="#6E6A62" text-anchor="middle">ACTUATION BOUNDARY</text>
-          <text x="514" y="104" font-size="7.5" font-weight="500" letter-spacing="0.5" fill="#111110" text-anchor="end">CONTROL PLANE EXECUTES</text>
-
-          <!-- annotations -->
-          <text x="176" y="80" font-size="7.5" font-weight="500" letter-spacing="0.5" fill="#111110">SELECTED &middot; HIGHEST FEASIBLE SCORE</text>
-          <text x="176" y="53" font-size="7" font-weight="500" letter-spacing="0.4" fill="#6E6A62">FEASIBLE &middot; LOWER RANKED</text>
-          <text x="302" y="27" font-size="7" font-weight="500" letter-spacing="0.4" fill="#6E6A62">REJECTED &middot; CONSTRAINT GATE</text>
-          <text x="182" y="146" font-size="7" font-weight="500" letter-spacing="0.4" fill="#6E6A62">REJECTED &middot; CONSTRAINT GATE</text>
+        <g text-anchor="middle" stroke="none">
+          <!-- stage 1: full space -->
+          <text x="260" y="32" font-size="21" font-weight="500" letter-spacing="-0.3" fill="#111110">~4.7M</text>
+          <text x="260" y="41" font-size="6.3" font-weight="500" letter-spacing="0.55" fill="#6E6A62">POSSIBLE COUPLED-POLICY CONFIGURATIONS PER DECISION</text>
+          <!-- process -->
+          <text x="260" y="74" font-size="7" font-weight="500" letter-spacing="0.6" fill="#3A3833">CONSTRAINT-AWARE GENERATION</text>
+          <text x="260" y="96" font-size="7" font-weight="500" letter-spacing="0.6" fill="#3A3833">HIERARCHICAL SEARCH</text>
+          <!-- stage 2: scored -->
+          <text x="260" y="114" font-size="15" font-weight="500" letter-spacing="-0.1" fill="#111110">72-75</text>
+          <text x="260" y="132" font-size="6.3" font-weight="500" letter-spacing="0.55" fill="#6E6A62">CANDIDATE TRAJECTORIES SCORED PER DECISION</text>
+          <!-- stage 3: returned -->
+          <text x="260" y="164" font-size="15" font-weight="500" fill="#111110">1</text>
+          <text x="260" y="182" font-size="6.3" font-weight="500" letter-spacing="0.55" fill="#6E6A62">HIGHEST-SCORING FEASIBLE POLICY RETURNED</text>
         </g>
       </g>
     </svg>
+    <div class="mx-note">PJM 75 &middot; ERCOT 72 &middot; CAISO 72 candidate trajectories scored per decision.
+    Where exhaustive enumeration was tractable, bounded search selected the same optimum.</div>
     <div class="plate-cap">
-      <span>Candidate evaluation never writes to the live fleet</span>
+      <span>Constraint-aware generation, then hierarchical search</span>
       <span>Metadata only</span>
     </div>
   </div>
 
-  <div class="p1-flow">
-    <span class="step">Mirror fleet state</span><span class="arw">&rarr;</span>
-    <span class="step">Generate coupled policies</span><span class="arw">&rarr;</span>
-    <span class="step">Advance each trajectory</span><span class="arw">&rarr;</span>
-    <span class="step">Reject infeasible and return one</span>
-  </div>
-
-  <div class="p1-body">
-    <div class="col">
-      <p>Aurelius adds a pre-execution planning layer above Kubernetes, Slurm, serving schedulers,
-      autoscalers, and fleet-management systems. Before a decision is committed, it forks the current
-      fleet state into competing simulated trajectories, each applying a different coupled policy across
-      the implemented controls: batching, routing, placement, capacity, prewarming, admission, migration,
-      precision, speculative decoding, and GPU clock.</p>
-    </div>
-    <div class="col">
-      <p>Each trajectory runs against isolated simulated state. The model carries queue, capacity,
-      placement and topology, replica warm state, and configured constraints, advanced across the
-      planning horizon. Trajectories that violate configured constraints are rejected before ranking, and
-      the highest-scoring feasible policy is returned to the existing control plane.</p>
-    </div>
-  </div>
-
-  <p class="p1-boundary">Aurelius reads scheduler and fleet metadata, evaluates trajectories in isolated
-  simulated state, and returns a constrained policy through the existing control plane. It never writes
-  directly to the live fleet.</p>
+  <p class="p1-lead">Aurelius adds a pre-execution planning layer above Kubernetes, Slurm, serving
+  schedulers, autoscalers, and fleet-management systems. Before a decision is committed, it generates
+  constraint-aware coupled-policy candidates, advances each against isolated simulated state under the
+  configured constraints, rejects infeasible paths, and returns the highest-scoring feasible policy to
+  the existing control plane. It reads scheduler and fleet metadata only, and never writes directly to
+  the live fleet. In separately tractable spaces, the same bounded-search method matched exhaustive
+  enumeration.</p>
 
   <div class="p1-metrics">
     <div class="hero">
