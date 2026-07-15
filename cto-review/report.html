@@ -87,8 +87,9 @@ figure{margin:26px 0}
 .conn{display:flex;justify-content:center;padding:11px 0}
 .conn span{width:1px;height:26px;background:rgba(255,255,255,.35)}
 .wm{border:1px solid #fff;padding:14px 14px 12px;margin-top:9px}
-.count{margin-top:13px;display:flex;align-items:baseline;gap:9px;border-top:1px solid rgba(255,255,255,.15);padding-top:11px}
-.count .v{font-family:var(--mono);font-size:15px;font-weight:500;color:#fff;font-variant-numeric:tabular-nums}
+.count{margin-top:13px;display:grid;gap:7px;border-top:1px solid rgba(255,255,255,.15);padding-top:11px}
+.statrow{display:flex;align-items:baseline;gap:10px}
+.count .v{font-family:var(--mono);font-size:15px;font-weight:500;color:#fff;min-width:52px}
 .count .u{font-family:var(--mono);font-size:9px;letter-spacing:.16em;text-transform:uppercase;color:rgba(255,255,255,.55)}
 .sel{margin-top:2px;text-align:center;display:grid;gap:6px;padding-top:4px}
 .sel .a{font-family:var(--mono);font-size:11px;letter-spacing:.28em;text-transform:uppercase;color:#fff}
@@ -131,14 +132,14 @@ td.mn{font-family:var(--mono)}
   <!-- ============ MASTHEAD ============ -->
   <div class="mast">
     <div class="brand"><img class="logo" src="LOGO_SRC" alt="Aurelius"><span class="brandlab">Technical Report</span></div>
-    <h1>Optimizing the fleet's trajectory, not its next decision.</h1>
+    <h1>Optimizing the fleet's entire trajectory, not just its next decision.</h1>
     <p class="sub">A supervisory layer that forecasts the fleet forward, simulates many coupled futures under constraints, and returns one policy for the existing stack to execute.</p>
     <p class="lead">Aurelius sits above the scheduler. It does not replace Kubernetes, Slurm, or a serving router, and it never touches payloads. Each control period it forks the current fleet state into many counterfactual trajectories, one per candidate coupled policy, advances each under SLA, capacity, power, and policy constraints, discards the ones that violate, and hands the highest&#8209;scoring feasible policy back to the stack to run.</p>
 
     <div class="result">
       <div class="big">+724% average SLA&#8209;safe goodput per dollar</div>
       <div class="cap">Mean of +698% / +718% / +755% (PJM / ERCOT / CAISO), an 8.24&#215; gp/$ ratio vs a reconstructed production&#8209;class baseline · uncapped replay of public production traces (1.55M requests) · Pareto&#8209;safe at ~84% fewer GPU&#8209;hours</div>
-      <div class="find">A number that size demands an explanation, and the report gives two. The <span class="em">regime</span>: under heavy load a fixed&#8209;policy scheduler loses efficiency while a trajectory optimizer keeps adapting. The <span class="em">mechanism</span>: on the same benchmark, with the simulator, objective, cost model, and gates held fixed across every arm, the result climbs from 3.62&#215; the baseline on a fixed, predefined set of policies to the full headline only once the planner can compose coupled policies beyond that set, using the same controls in combinations the set did not list. The increase came from what the architecture could represent, not from changing the simulator.</div>
+      <div class="find">A number that size demands an explanation, and the report gives two. The <span class="em">regime</span>: under heavy load a fixed&#8209;policy scheduler loses efficiency while a trajectory optimizer keeps adapting. The <span class="em">mechanism</span>: on the same benchmark, with the simulator, objective, cost model, and gates held fixed across every arm, the result climbs from 3.62&#215; the baseline on a fixed, predefined set of policies to the full headline only once the planner can form additional valid combinations of the same implemented controls, not only the predefined set. The increase came from what the architecture could represent, not from changing the simulator.</div>
     </div>
 
     <div class="metarow">
@@ -157,7 +158,7 @@ td.mn{font-family:var(--mono)}
       <p class="t">Conventional infrastructure stacks, including the unified control planes that consolidate a fleet into one view, optimize the next decision: the next placement, the next scale action, the next route, each chosen locally against the state visible now. Aurelius changes what gets optimized. It treats the fleet as a system with a trajectory, forecasts that trajectory forward, and optimizes the path rather than the step.</p>
       <p class="t">Concretely, it is not a forecaster and not a scheduler replacement. It is a supervisory layer that forks the current fleet state into many counterfactual trajectories, applies coupled policies across the controls the stack already exposes, advances each trajectory under hard constraints, kills the ones that violate, and returns one policy for the existing scheduler to execute.</p>
       <p class="t">In an uncapped replay of three selected public production&#8209;trace windows totaling <span class="em">1.55 million requests</span> (the PJM, ERCOT, and CAISO expensive&#8209;power windows), Aurelius reaches an <span class="em">8.24&#215; mean gp/$ ratio</span> against a reconstructed production&#8209;class baseline, where <span class="em">gp/$</span> is SLA&#8209;safe goodput, SLA&#8209;compliant served tokens, per infrastructure dollar. That is a <span class="em">+724% average</span> gain (per market +698% / +718% / +755%), while holding SLA strictly better and using <span class="em">~84% fewer GPU&#8209;hours</span>. It is a Pareto win, not goodput bought by spending more. The magnitude is load&#8209;dependent and requires operator&#8209;data validation.</p>
-      <p class="t">A result that large is only worth reading if it is explained and defended, so this report does both. §07 gives the regime that produces the magnitude, a fixed policy losing efficiency under heavy load while a trajectory optimizer keeps adapting. §05 gives the mechanism, measured directly: on the exact uncapped benchmark, with the model, objective, cost model, and gates held fixed across every arm and only the planner's representable policies and search varied, the result climbs from a single&#8209;lever policy that cannot even complete the replay, to <span class="em">3.62&#215;</span> the baseline on a fixed, predefined set of policies, to the full <span class="em">8.24&#215;</span> headline once the planner can compose coupled policies beyond that set. The value was not in the model or the objective. It was in what the architecture could represent and search.</p>
+      <p class="t">A result that large is only worth reading if it is explained and defended, so this report does both. §07 gives the regime that produces the magnitude, a fixed policy losing efficiency under heavy load while a trajectory optimizer keeps adapting. §05 gives the mechanism, measured directly: on the exact uncapped benchmark, with the model, objective, cost model, and gates held fixed across every arm and only the planner's representable policies and search varied, the result climbs from a single&#8209;lever policy that cannot even complete the replay, to <span class="em">3.62&#215;</span> the baseline on a fixed, predefined set of policies, to the full <span class="em">8.24&#215;</span> headline once the planner can form additional valid combinations of the same implemented controls. The value was not in the model or the objective. It was in what the architecture could represent and search.</p>
       <p class="tn">Scope, stated once and meant throughout: these are deterministic simulated replays on public production traces. The headline ratio is load&#8209;dependent and is quoted only with its scope (§07). This is directional evidence that requires live&#8209;telemetry calibration before any production claim, not a deployment. Throughout, Aurelius runs read&#8209;only and needs only scheduler metadata, never payloads or model weights.</p>
     </section>
 
@@ -178,7 +179,7 @@ td.mn{font-family:var(--mono)}
         <div class="plate">
           <div class="lab">
             <div class="l"><span class="tag">FIG.01</span><span class="ttl">Fork · Simulate · Select</span></div>
-            <div class="st"><span class="sq"></span>Schematic · not to scale</div>
+            <div class="st"><span class="sq"></span>Per planning cycle</div>
           </div>
           <div class="in">
             <div class="pl">Current fleet state</div>
@@ -190,7 +191,10 @@ td.mn{font-family:var(--mono)}
             <div class="pl">Predictive world model</div>
             <div class="wm">
               <svg id="grid" width="100%" viewBox="0 0 408 132" preserveAspectRatio="xMidYMid meet" aria-hidden="true"></svg>
-              <div class="count"><span class="v" style="font-size:12px;letter-spacing:.05em">COUNTERFACTUAL TRAJECTORIES</span><span class="u">many per cycle · illustrative</span></div>
+              <div class="count">
+                <div class="statrow"><span class="v">~4.7M</span><span class="u">possible coupled policies / decision</span></div>
+                <div class="statrow"><span class="v">~75</span><span class="u">evaluated by hierarchical search</span></div>
+              </div>
             </div>
             <div class="conn"><span></span></div>
             <div class="sel">
@@ -242,11 +246,11 @@ td.mn{font-family:var(--mono)}
           <tr><td>Single lever (clock only)</td><td class="mn">does not complete</td><td class="mn">&#8211;</td><td>replay cost blows up under load</td></tr>
           <tr><td>Fixed set of 24 predefined policies</td><td class="e">3.62&#215;</td><td class="mn">~4&#215; lower</td><td>coupling, no search</td></tr>
           <tr><td>Search that fixed set (bounded)</td><td class="e">4.85&#215;</td><td class="mn">~4&#215; lower</td><td>matches full enumeration of the set</td></tr>
-          <tr><td>Compose policies beyond the set</td><td class="e">8.24&#215;</td><td class="mn">lowest, ~18&#215; lower</td><td>the +724% headline arm</td></tr>
+          <tr><td>Expanded coupled&#8209;policy space, same controls</td><td class="e">8.24&#215;</td><td class="mn">lowest, ~18&#215; lower</td><td>the +724% headline arm</td></tr>
         </tbody>
       </table>
       <p class="tnote">Every arm is scored against the same byte&#8209;identical baseline (130,538.91 / 130,178.26 / 130,000.36 gp/$ across the three markets); the coupled&#8209;search arm is the §06 headline configuration, quoted at the headline value (8.24&#215;). Simulated; every completing arm also lowers the SLA&#8209;violation rate, the coupled arm the most (to ~0.002).</p>
-      <p class="t" style="margin-top:16px">A word on the two settings compared, because the distinction is the whole point. The <em class="em">fixed set of 24 predefined policies</em> is a discrete set enumerated in advance over four implemented controls: batching, capacity, precision, and clock. Constructing policies <em class="em">beyond that set</em> introduces no new or hypothetical control. It lets the planner form other valid combinations of the same implemented controls, the wired levers in §04, in configurations the 24 predefined policies did not include. Every policy, inside the set or outside it, runs through the identical simulator, cost model, and safety gate, so nothing outside the set is unpriced or unconstrained.</p>
+      <p class="t" style="margin-top:16px">A word on the two settings compared, because the distinction is the whole point. The <em class="em">fixed set of 24 predefined policies</em> is a discrete set enumerated in advance over four implemented controls: batching, capacity, precision, and clock. Constructing <em class="em">additional valid combinations of those same implemented controls</em>, the wired levers in §04, introduces no new or hypothetical control; these are configurations the 24 predefined policies did not include. Every policy, inside the set or outside it, runs through the identical simulator, cost model, and safety gate, so nothing outside the set is unpriced or unconstrained.</p>
       <p class="t">Read top to bottom, the ladder says three things:</p>
       <ul class="h">
         <li><span class="m"></span><span><span class="em">A coherent joint policy already produces a large gain.</span> The fixed set of 24 predefined policies evaluates batching, capacity, precision, and clock jointly rather than independently. That alone reaches 3.62&#215; the reconstructed baseline and reduces SLA violations by roughly fourfold.</span></li>
@@ -299,7 +303,7 @@ td.mn{font-family:var(--mono)}
     <section>
       <div class="sechead"><span class="n">08</span><h2>What is actually new here</h2></div>
       <p class="t">The individual pieces are not new, and this report does not claim they are. Forecasting, model&#8209;predictive control, digital twins of infrastructure, SLO&#8209;aware scheduling, and unified control planes all exist and are well understood. Aurelius's claim is narrower, and more durable for it.</p>
-      <p class="t">What Aurelius optimizes is the fleet's <span class="em">forecasted trajectory</span>, evaluated as coupled futures rather than independent next&#8209;decisions, and the binding constraint on the result is not the model or the objective but <span class="em">which coupled futures the planner can represent and evaluate</span>. The ablation in §05 is the evidence: on an identical stack, varying only which policies the planner could represent and how it searched them moved the result from a policy that cannot complete the replay, to 3.62&#215; the baseline on a fixed, predefined set of policies, to 8.24&#215; once the planner could compose coupled policies beyond that set. That is a claim about where the value lives in fleet optimization, and it is testable on any fleet that keeps historical scheduler metadata.</p>
+      <p class="t">What Aurelius optimizes is the fleet's <span class="em">forecasted trajectory</span>, evaluated as coupled futures rather than independent next&#8209;decisions, and the binding constraint on the result is not the model or the objective but <span class="em">which coupled futures the planner can represent and evaluate</span>. The ablation in §05 is the evidence: on an identical stack, varying only which policies the planner could represent and how it searched them moved the result from a policy that cannot complete the replay, to 3.62&#215; the baseline on a fixed, predefined set of policies, to 8.24&#215; once the planner could form additional valid combinations of the same implemented controls. That is a claim about where the value lives in fleet optimization, and it is testable on any fleet that keeps historical scheduler metadata.</p>
     </section>
 
     <!-- 09 SAFETY -->
@@ -336,7 +340,7 @@ td.mn{font-family:var(--mono)}
       <ul class="h">
         <li><span class="m"></span><span><span class="em">Primary metric.</span> SLA&#8209;safe goodput per infrastructure dollar. The numerator is SLA&#8209;compliant served tokens, tokens served within their latency or deadline target; work served outside that target is excluded, so goodput bought by breaking SLA does not count. The denominator, modeled infrastructure cost, is the sum of three terms: GPU cost (active GPU&#8209;hours, including warm&#8209;held replicas, at a fixed hardware cost basis), energy cost (GPU energy at the prevailing wholesale electricity price), and network cost (including migration). The GPU cost basis is hardware only, so energy is counted once, at the market price. This is a modeled benchmark cost, not full operator TCO.</span></li>
         <li><span class="m"></span><span><span class="em">Windows and load.</span> The expensive&#8209;power windows of PJM, ERCOT, and CAISO, replayed uncapped at full volume (~577k / ~443k / ~530k requests, ~1.55M total), three control&#8209;period decisions per window.</span></li>
-        <li><span class="m"></span><span><span class="em">Configuration.</span> Deterministic replay under a fixed seed; every policy is scored on the same windows under the same simulator, cost model, and constraint gates. Forecasts use only history up to each decision, and per&#8209;request execution time is replayed rather than predicted, so no policy sees the future. The baseline's goodput per dollar reproduces byte&#8209;identically across runs (130,538.91 / 130,178.26 / 130,000.36 gp/$).</span></li>
+        <li><span class="m"></span><span><span class="em">Configuration.</span> Deterministic replay under a fixed seed; every policy is scored on the same windows under the same simulator, cost model, and constraint gates. Forecasts use only history up to each decision, and per&#8209;request execution time is replayed rather than predicted, so no policy sees the future. The baseline's goodput per dollar reproduces byte&#8209;identically across runs (130,538.91 / 130,178.26 / 130,000.36 gp/$). At each decision the hierarchical search evaluates roughly 75 coupled policies out of a representable space of about 4.7M.</span></li>
       </ul>
       <p class="tn" style="margin-top:24px">The reconstructed production&#8209;class baseline (§06) is assembled from established production serving and cluster&#8209;scheduling techniques ([1]&#8211;[6]), cited for the realism of the baseline mechanisms, not for any Aurelius result. The public workload and electricity&#8209;price data are cited at [7] and [8].</p>
       <ol class="refs">
