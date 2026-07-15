@@ -93,7 +93,7 @@ COMPLETES
 +385.4%
 BOUNDED BEAM
 HIERARCHICAL COUPLED-POLICY
-SEARCH
+SEARCH (INDEPENDENT RERUN)
 COMPLETES
 8.29×
 +728.6%
@@ -103,33 +103,31 @@ SEARCH · LOWEST OF ANY ARM.   * TIMES OUT AT THE STANDARD HARNESS BUDGET; AT A
 BASELINE.
 I DENTI CAL I NPUTS, WI NDOWS, AND LOAD I N EVERY ARM · 1,549,249 REQUESTS
 RERUN · 07.2026
-A clock-only, single-surface search cannot be scored within
-the harness budget: the policy it selects degrades the
-simulated fleet until the replay exceeds it, in all three markets.
-Given far more compute it does complete, and still lands
-below the baseline (about 0.7×) with roughly ten times its SLA
-violation rate.
+The independent rerun reached 8.29× versus the canonical 8.24× benchmark, a 0.6% difference in the mean; individual market results were
+within 1.2%. The report retains 8.24× as the canonical headline.
+A clock-only, single-surface search cannot be scored within the
+harness budget: the policy it selects degrades the simulated
+fleet until the replay exceeds it, in all three markets. Given far
+more compute it does complete, and still lands below the
+baseline (about 0.7×) with roughly ten times its SLA violation rate.
 Setting the posture jointly is worth roughly 3.6× on its own: a
 fixed 24-policy grid and the regime-specific candidate set,
 scored without coupled search, select the same policy at this
 load.
-Searching the grid harder is saturated: exhaustive
-enumeration of the fixed grid reaches 4.84×, and the bounded
-coupled search matches it at 4.85× while evaluating far fewer
+Searching the grid harder is saturated: exhaustive enumeration
+of the fixed grid reaches 4.84×, and the bounded coupled
+search matches it at 4.85× while evaluating far fewer
 candidates.
-The hierarchical coupled-policy search reaches 8.29× with
-the lowest SLA violation rates of any arm. The near-doubling
-beyond every grid-based strategy is value in coupled futures
-no fixed grid represented. The forecast, simulator, objective,
-cost model, and constraint gates were unchanged in every
-arm.
+The hierarchical coupled-policy search reaches 8.29× with the
+lowest SLA violation rates of any arm. The gain beyond the grid-
+based strategies comes from additional valid coupled-policy
+combinations that the fixed grid did not contain.
 The largest gain came from expanding the policy combinations the planner
 could represent, not from searching the fixed grid more aggressively.
-Uncapped search-strategy ablation, 07.2026: an independent rerun of the exact harness, windows, and load behind the headline benchmark.
-Production anchors reproduced published values exactly; the hierarchical arm reproduced the published headline within 1.2 percent per market
-(8.29× here against the published 8.24× mean). Ratios are unweighted means across the three markets. The frozen V1 audit separately measured zero
-search regret where exhaustive enumeration was tractable, at approximately 40 candidate evaluations per decision. Neither validates the simulator or
-establishes production savings.
+Uncapped search-strategy ablation, 07.2026: an independent rerun of the exact harness, windows, and load behind the headline benchmark, with
+production anchors reproducing the published values exactly. Ratios are unweighted means across the three markets. The frozen V1 audit separately
+measured zero search regret where exhaustive enumeration was tractable, at approximately 40 candidate evaluations per decision. Neither validates
+the simulator or establishes production savings.
 AURELIUS · TECHNICAL MEMO
 PAGE 02 / 03
 

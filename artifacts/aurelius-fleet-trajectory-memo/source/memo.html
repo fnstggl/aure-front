@@ -127,13 +127,15 @@
   .mx tr.sel .c-space, .mx tr.sel .c-ratio, .mx tr.sel .c-delta { color: var(--ink); }
   .mx tr.sel .c-ratio { font-size: 12.5pt; }
   .mx-note { padding: 5pt 12pt; border-top: 0.5pt solid var(--rule-minor); font-size: 6.5pt; font-weight: 500; text-transform: uppercase; letter-spacing: 0.1em; color: var(--ink-3); line-height: 1.38; }
-  .p2-expl { margin-top: 9pt; display: flex; gap: 28pt; }
+  .p2-expl { margin-top: 7pt; display: flex; gap: 28pt; }
   .p2-expl .col { flex: 1 1 0; }
-  .p2-expl p { font-size: 9.4pt; line-height: 1.45; color: var(--ink-2); }
-  .p2-expl p + p { margin-top: 6pt; }
-  .punch { margin-top: 9pt; border-top: 0.75pt solid var(--rule-major); padding-top: 8pt; }
+  .p2-expl p { font-size: 9.1pt; line-height: 1.4; color: var(--ink-2); }
+  .p2-expl p + p { margin-top: 5pt; }
+  .punch { margin-top: 6pt; border-top: 0.75pt solid var(--rule-major); padding-top: 6pt; }
   .punch .txt { font-size: 15.5pt; line-height: 1.26; letter-spacing: -0.014em; font-weight: 500; max-width: 6.9in; }
-  .p2-foot { margin-top: 8pt; font-size: 8.2pt; line-height: 1.4; color: var(--ink-3); max-width: 7.2in; }
+  .p2-foot { margin-top: 6pt; font-size: 8.2pt; line-height: 1.38; color: var(--ink-3); max-width: 7.2in; }
+  .p2-repro { margin-top: 7pt; font-size: 8.6pt; line-height: 1.42; color: var(--ink-2); max-width: 7.2in; }
+  .p2-repro b { font-weight: 500; color: var(--ink); }
 
   /* ============ page 3 ============ */
   .p3-cap { margin-top: 9pt; font-size: 9.1pt; line-height: 1.48; color: var(--ink-3); max-width: 7.2in; }
@@ -279,14 +281,14 @@
     <div class="mt">Technical memo<br/>Page 02 / 03</div>
   </div>
 
-  <h1 class="headline" style="margin-top: 15pt;">The optimizer cannot choose a future it never
+  <h1 class="headline" style="margin-top: 11pt;">The optimizer cannot choose a future it never
   represents.</h1>
 
   <p class="p2-open">The uncapped ablation reran the exact harness, windows, and load behind the 8.24&times;
   headline. The simulator, objective, cost model, constraints, and inputs remained fixed; only the
   planner's representable policy space and search procedure varied.</p>
 
-  <div class="plate" style="margin-top: 12pt;">
+  <div class="plate" style="margin-top: 9pt;">
     <div class="plate-hd">
       <span><b>FIG 02</b> &nbsp;Search-strategy ablation &middot; uncapped replay</span>
       <span>Fixed harness &middot; policy space + search</span>
@@ -345,7 +347,7 @@
           <td class="c-mech">Bounded beam</td>
         </tr>
         <tr class="sel">
-          <td class="c-space">Hierarchical coupled-policy search</td>
+          <td class="c-space">Hierarchical coupled-policy search (independent rerun)</td>
           <td class="c-comp">Completes</td>
           <td class="c-ratio">8.29&times;</td>
           <td class="c-delta">+728.6%</td>
@@ -362,6 +364,10 @@
     </div>
   </div>
 
+  <p class="p2-repro">The independent rerun reached 8.29&times; versus the canonical 8.24&times; benchmark, a
+  0.6% difference in the mean; individual market results were within 1.2%. <b>The report retains 8.24&times;
+  as the canonical headline.</b></p>
+
   <div class="p2-expl">
     <div class="col">
       <p>A clock-only, single-surface search cannot be scored within the harness budget: the policy it
@@ -377,9 +383,8 @@
       4.84&times;, and the bounded coupled search matches it at 4.85&times; while evaluating far fewer
       candidates.</p>
       <p>The hierarchical coupled-policy search reaches 8.29&times; with the lowest SLA violation rates of
-      any arm. The near-doubling beyond every grid-based strategy is value in coupled futures no fixed
-      grid represented. The forecast, simulator, objective, cost model, and constraint gates were
-      unchanged in every arm.</p>
+      any arm. The gain beyond the grid-based strategies comes from additional valid coupled-policy
+      combinations that the fixed grid did not contain.</p>
     </div>
   </div>
 
@@ -389,12 +394,11 @@
   </div>
 
   <p class="p2-foot">Uncapped search-strategy ablation, 07.2026: an independent rerun of the exact
-  harness, windows, and load behind the headline benchmark. Production anchors reproduced published
-  values exactly; the hierarchical arm reproduced the published headline within 1.2 percent per market
-  (8.29&times; here against the published 8.24&times; mean). Ratios are unweighted means across the three
-  markets. The frozen V1 audit separately measured zero search regret where exhaustive enumeration was
-  tractable, at approximately 40 candidate evaluations per decision. Neither validates the simulator or
-  establishes production savings.</p>
+  harness, windows, and load behind the headline benchmark, with production anchors reproducing the
+  published values exactly. Ratios are unweighted means across the three markets. The frozen V1 audit
+  separately measured zero search regret where exhaustive enumeration was tractable, at approximately 40
+  candidate evaluations per decision. Neither validates the simulator or establishes production
+  savings.</p>
 
   <div class="ft">
     <span>Aurelius &middot; Technical memo</span>

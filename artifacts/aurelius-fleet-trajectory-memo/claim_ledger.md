@@ -82,3 +82,13 @@ the v2 memo uses, the required benchmark language, and every claim decision.
   heading was simplified to "Validating the benchmark result on operator
   data" and the redundant "supporting full technical report" line was
   dropped from the closing contact row.
+- Page-2 8.24x/8.29x handling: 8.24x stays the canonical headline
+  everywhere (cover, page-1 hero, page-3 chart, page-2 opening). 8.29x
+  appears only in the independent-rerun ablation, and its table row is now
+  explicitly labeled "(independent rerun)". A concise note directly under
+  the FIG 02 table states the rerun reached 8.29x vs the canonical 8.24x
+  (0.6% mean difference; per-market within 1.2%) and that 8.24x is retained
+  as canonical; the long footnote's duplicate reproducibility clause was
+  removed. The right-column control sentence ("forecast, simulator,
+  objective, cost model, and constraint gates were unchanged") was dropped
+  as redundant with the opening paragraph's held-fixed statement.
