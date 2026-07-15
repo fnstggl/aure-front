@@ -53,8 +53,9 @@ AURELIUS
 Technical memo · 02
 The optimizer cannot choose a future it never
 represents.
-In the ablation behind the architecture, the simulator, forecast, objective, cost model, and safety gates
-were held constant. Only the set of futures available to the planner changed.
+In the controlled experiment behind the architecture, the simulator, forecast, objective, cost model,
+and safety gates were held constant. Only the set of futures available to the planner changed.
+Mechanism experiment, frozen continuity harness. The headline benchmark is separate and larger: pages 1 and 4.
 Single-surface search
 -4.47%
 goodput/$ vs baseline
@@ -77,8 +78,11 @@ search represented that future: tuned one surface at a time, each move looked wo
 proposed. Once the coupled trajectory entered the candidate set, the unchanged simulator selected it.
 The value was not hidden in a better score. It was hidden in a
 future the previous search never considered.
-Benchmark V1, frozen cap-controlled continuity harness, primary market window. Regret is measured against exhaustive
-enumeration where enumeration is tractable, at roughly 40 trajectory evaluations per decision. Complete methodology in the full
+These three numbers are the controlled experiment: Benchmark V1, the frozen cap-controlled harness, primary market window,
+the only regime where exhaustive enumeration is tractable and search regret can be measured exactly, at roughly 40 trajectory
+evaluations per decision.
+The 8.24× headline on pages 1 and 4 is the same coupled search run separately at full uncapped load against the production-class
+composite. The two benchmarks use different baselines and loads and are never mixed. Complete methodology in the full
 technical report.
 Aurelius · technical memo
 Page 2 of 4
