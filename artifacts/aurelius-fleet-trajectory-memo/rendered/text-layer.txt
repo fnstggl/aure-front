@@ -4,8 +4,7 @@ TECHNICAL MEMO
 PAGE 01 / 03
 Choose the best fleet trajectory, not just
 the best next action.
-ONE LIVE FLEET STATE · MANY COUNTERFACTUAL FUTURES · ONE SAFE TRAJECTORY SELECTED BEFORE
-EXECUTION
+ONE LIVE FLEET STATE · MANY CANDIDATE SEQUENCES · ONE FEASIBLE NEXT ACTION RETURNED
 F I G 0 1   SEARCH COMPRES SI ON
 ONE DECI SI ON · READ - ONLY
 CONSTRAINT-AWARE GENERATION
@@ -31,8 +30,8 @@ to the existing control plane. It reads scheduler and fleet metadata only, and n
 tractable spaces, the same bounded-search method matched exhaustive enumeration.
 8.24×
 mean SLA-safe goodput per modeled
-infrastructure dollar versus a constructed
-production-informed replay baseline
+infrastructure dollar versus a reconstructed
+production-class baseline
 84.5%
 fewer GPU-hours under identical input request
 sets
@@ -52,17 +51,18 @@ TECHNICAL MEMO
 PAGE 02 / 03
 The optimizer cannot choose a future it never
 represents.
-The uncapped ablation reran the exact harness, windows, and load behind the 8.24× headline and varied one
-thing: the search strategy available to the planner. The production anchors reproduced the published values
-exactly, in all three markets.
+The uncapped ablation reran the exact harness, windows, and load behind the 8.24× headline. The simulator,
+objective, cost model, constraints, and inputs remained fixed; only the planner's representable policy space and
+search procedure varied.
 F I G 0 2   SEARCH- STRATEGY ABLATI ON · UNCAPPED REPLAY
-SI NGLE VARIABLE · THE SEARCH
+FIXED HARNES S · POLI CY SPACE + SEARCH
 SEARCH SPACE
 COMPLETION
 RELATIVE GP/$
 DELTA
 MECHANISM
-CONSTRUCTED BASELINE
+RECONSTRUCTED PRODUCTION-CLASS
+BASELINE
 COMPLETES
 1.00×
 REACTIVE REFERENCE
@@ -123,8 +123,8 @@ beyond every grid-based strategy is value in coupled futures
 no fixed grid represented. The forecast, simulator, objective,
 cost model, and constraint gates were unchanged in every
 arm.
-The value was not hidden in a better score. It was hidden in a future the
-previous search never considered.
+The largest gain came from expanding the policy combinations the planner
+could represent, not from searching the fixed grid more aggressively.
 Uncapped search-strategy ablation, 07.2026: an independent rerun of the exact harness, windows, and load behind the headline benchmark.
 Production anchors reproduced published values exactly; the hierarchical arm reproduced the published headline within 1.2 percent per market
 (8.29× here against the published 8.24× mean). Ratios are unweighted means across the three markets. The frozen V1 audit separately measured zero
@@ -137,10 +137,9 @@ PAGE 02 / 03
 ===== PAGE 3 =====
 TECHNICAL MEMO
 PAGE 03 / 03
-A signal too large to ignore and too simulated to trust without
-operator data.
-F I G 0 3   UNCAPPED REPLAY · SLA- SAFE GOODPUT PER DOLLAR VS THE CONSTRUCTED BASELI NE
-THREE MARKET WI NDOWS
+Validating the benchmark result on operator data.
+F I G 0 3   UNCAPPED REPLAY · SLA- SAFE GP/$ VS THE RECONSTRUCTED PRODUCTI ON- CLAS S BASELI NE
+THREE MARKETS
 PJM
 ERCOT
 CAISO
@@ -151,15 +150,15 @@ CAISO
 MEAN 8.24×
 1,549,249 total input requests · 84.5% fewer total GPU-hours · lower SLA violation rates in all three windows · both policies received the
 identical input request sets.
-The comparison policy is a constructed production-informed replay baseline: a deterministic public-replay policy assembled from
-established serving and cluster-control mechanisms, including continuous batching, deadline-aware ordering and admission, prefix-cache-
-aware routing, topology-aware placement, and backlog-driven capacity control. It is stronger than the naive SLA-aware reference, but it is
-not an operator's internal scheduler and does not reproduce a particular fleet's adaptive logic, internal signals, or cost model.
+The comparison policy is a reconstructed production-class baseline: a deterministic public-replay policy assembled from established
+serving and cluster-control mechanisms, including continuous batching, deadline-aware ordering and admission, prefix-cache-aware
+routing, topology-aware placement, and backlog-driven capacity control. It is stronger than the naive SLA-aware reference, but it is not an
+operator's internal scheduler and does not reproduce a particular fleet's adaptive logic, internal signals, or cost model.
 WHAT THIS ESTABLISHES
 Under the selected uncapped high-load replay conditions,
 coupled predictive planning found feasible trajectories with
 materially better modeled economics and lower SLA violation
-rates than the constructed baseline.
+rates than the reconstructed production-class baseline.
 WHAT THIS DOES NOT ESTABLISH
 Expected performance against a particular fleet, internal
 scheduler, workload distribution, or operator cost model. The
@@ -193,8 +192,6 @@ PROPOSED VALIDATION
 Use one bounded historical window to estimate how much farther-ahead planning could have improved
 goodput per dollar under the fleet's actual workload and constraints.
 Read-only metadata only. No payloads, production writes, or unrestricted infrastructure access.
-runaurelius.com
-TECHNICAL CONTACT · beckett@runaurelius.com
-Complete methodology, references, benchmark tables, limitations, and mechanism audits are in the supporting full technical report.
+· runaurelius.com · Technical contact: beckett@runaurelius.com
 AURELIUS · TECHNICAL MEMO
 PAGE 03 / 03

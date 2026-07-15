@@ -42,7 +42,7 @@ BANNED_PHRASES = [
     "—",  # em dash
     "–",  # en dash
 ]
-REQUIRED_ON_PAGES = {"constructed production-informed replay baseline": [1, 3]}
+REQUIRED_ON_PAGES = {"reconstructed production-class baseline": [1, 3]}
 
 DEFAULT_CHROMIUM_CANDIDATES = [
     "/opt/pw-browsers/chromium-1194/chrome-linux/chrome",

@@ -164,13 +164,11 @@
   .p4-ask { margin-top: 7pt; border-top: 0.75pt solid var(--rule-major); padding-top: 6pt; }
   .p4-ask .txt { margin-top: 3pt; font-size: 11pt; line-height: 1.36; font-weight: 500; color: var(--ink); max-width: 7.1in; }
   .p4-ask .fin { margin-top: 5pt; font-size: 9.2pt; line-height: 1.4; color: var(--ink-2); max-width: 7.1in; }
-  .p4-contact { display: flex; gap: 18pt; align-items: center; margin-top: 8pt; }
-  .p4-contact .wm-mark { height: 12.5pt; width: auto; }
-  .p4-contact .rl { font-size: 7.4pt; font-weight: 500; text-transform: uppercase; letter-spacing: 0.13em; color: var(--ink-3); white-space: nowrap; }
-  .p4-contact .ch { font-size: 9pt; white-space: nowrap; }
-  .p4-contact .ch a { border-bottom: 0.5pt solid var(--rule-minor); padding-bottom: 0.5pt; }
-  .p4-contact .tc { font-size: 9pt; color: var(--ink-3); white-space: nowrap; }
-  .p4-contact .tc a { color: var(--ink-2); border-bottom: 0.5pt solid var(--rule-minor); padding-bottom: 0.5pt; }
+  .p4-contact { display: flex; align-items: center; gap: 7pt; margin-top: 10pt; font-size: 9pt; color: var(--ink-3); }
+  .p4-contact .wm-mark { height: 12pt; width: auto; }
+  .p4-contact .sep { color: var(--ink-3); }
+  .p4-contact .tcx { white-space: nowrap; }
+  .p4-contact .lnk { color: var(--ink-2); border-bottom: 0.5pt solid var(--rule-minor); padding-bottom: 0.5pt; }
 </style>
 </head>
 <body>
@@ -188,8 +186,8 @@
   </div>
 
   <h1 class="p1-head">Choose the best fleet trajectory, not just the best next action.</h1>
-  <p class="p1-phrase">One live fleet state &middot; many counterfactual futures &middot; one safe trajectory
-  selected before execution</p>
+  <p class="p1-phrase">One live fleet state &middot; many candidate sequences &middot; one feasible next action
+  returned</p>
 
   <div class="plate" style="margin-top: 13pt;">
     <div class="plate-hd">
@@ -252,8 +250,8 @@
   <div class="p1-metrics">
     <div class="hero">
       <div class="v">8.24&times;</div>
-      <div class="l">mean SLA-safe goodput per modeled infrastructure dollar versus a constructed
-      production-informed replay baseline</div>
+      <div class="l">mean SLA-safe goodput per modeled infrastructure dollar versus a reconstructed
+      production-class baseline</div>
     </div>
     <div class="rest">
       <div class="r"><span class="n">84.5%</span><span class="t">fewer GPU-hours under identical input request sets</span></div>
@@ -285,13 +283,13 @@
   represents.</h1>
 
   <p class="p2-open">The uncapped ablation reran the exact harness, windows, and load behind the 8.24&times;
-  headline and varied one thing: the search strategy available to the planner. The production anchors
-  reproduced the published values exactly, in all three markets.</p>
+  headline. The simulator, objective, cost model, constraints, and inputs remained fixed; only the
+  planner's representable policy space and search procedure varied.</p>
 
   <div class="plate" style="margin-top: 12pt;">
     <div class="plate-hd">
       <span><b>FIG 02</b> &nbsp;Search-strategy ablation &middot; uncapped replay</span>
-      <span>Single variable &middot; the search</span>
+      <span>Fixed harness &middot; policy space + search</span>
     </div>
     <table class="mx">
       <thead>
@@ -305,7 +303,7 @@
       </thead>
       <tbody>
         <tr class="anchor">
-          <td class="c-space">Constructed baseline</td>
+          <td class="c-space">Reconstructed production-class baseline</td>
           <td class="c-comp">Completes</td>
           <td class="c-ratio">1.00&times;</td>
           <td class="c-delta"></td>
@@ -386,8 +384,8 @@
   </div>
 
   <div class="punch">
-    <p class="txt">The value was not hidden in a better score. It was hidden in a future the previous
-    search never considered.</p>
+    <p class="txt">The largest gain came from expanding the policy combinations the planner could
+    represent, not from searching the fixed grid more aggressively.</p>
   </div>
 
   <p class="p2-foot">Uncapped search-strategy ablation, 07.2026: an independent rerun of the exact
@@ -413,15 +411,14 @@
     <div class="mt">Technical memo<br/>Page 03 / 03</div>
   </div>
 
-  <h1 class="headline" style="margin-top: 13pt; font-size: 18pt;">A signal too large to ignore and too simulated
-  to trust without operator data.</h1>
+  <h1 class="headline" style="margin-top: 13pt; font-size: 20pt;">Validating the benchmark result on operator data.</h1>
 
   <div class="figbar">
-    <span><b>FIG 03</b> &nbsp;Uncapped replay &middot; SLA-safe goodput per dollar vs the constructed baseline</span>
-    <span>Three market windows</span>
+    <span><b>FIG 03</b> &nbsp;Uncapped replay &middot; SLA-safe gp/$ vs the reconstructed production-class baseline</span>
+    <span>Three markets</span>
   </div>
   <svg viewBox="0 0 520 84" style="margin-top: 5pt;" role="img"
-       aria-label="Horizontal comparison from the constructed baseline at 1.00x: PJM 7.98x and plus 698.1 percent, ERCOT 8.18x and plus 717.8 percent, CAISO 8.55x and plus 755.3 percent; the unweighted mean is 8.24x, marked by a dashed vertical line.">
+       aria-label="Horizontal comparison from the reconstructed production-class baseline at 1.00x: PJM 7.98x and plus 698.1 percent, ERCOT 8.18x and plus 717.8 percent, CAISO 8.55x and plus 755.3 percent; the unweighted mean is 8.24x, marked by a dashed vertical line.">
     <g font-family="Helvetica Now Display, Helvetica, Arial, sans-serif"
        shape-rendering="geometricPrecision" text-rendering="geometricPrecision"
        stroke-linecap="butt" stroke-linejoin="miter">
@@ -456,7 +453,7 @@
   <p class="p4-evidence">1,549,249 total input requests &middot; 84.5% fewer total GPU-hours &middot; lower SLA
   violation rates in all three windows &middot; both policies received the identical input request sets.</p>
 
-  <p class="p4-basedef">The comparison policy is a constructed production-informed replay baseline: a
+  <p class="p4-basedef">The comparison policy is a reconstructed production-class baseline: a
   deterministic public-replay policy assembled from established serving and cluster-control mechanisms,
   including continuous batching, deadline-aware
   ordering and admission, prefix-cache-aware routing, topology-aware placement, and backlog-driven
@@ -469,7 +466,7 @@
       <div class="sub">What this establishes</div>
       <p class="body">Under the selected uncapped high-load replay conditions, coupled predictive
       planning found feasible trajectories with materially better modeled economics and lower SLA
-      violation rates than the constructed baseline.</p>
+      violation rates than the reconstructed production-class baseline.</p>
     </div>
     <div class="col">
       <div class="sub">What this does not establish</div>
@@ -547,12 +544,11 @@
 
   <div class="p4-contact">
     <img class="wm-mark" src="aurelius-wordmark.png" alt="Aurelius"/>
-    <span class="ch"><a href="https://runaurelius.com">runaurelius.com</a></span>
-    <span class="tc"><span class="rl">Technical contact</span> &middot; <a href="mailto:beckett@runaurelius.com">beckett@runaurelius.com</a></span>
+    <span class="sep" aria-hidden="true">&middot;</span>
+    <a class="lnk" href="https://runaurelius.com">runaurelius.com</a>
+    <span class="sep" aria-hidden="true">&middot;</span>
+    <span class="tcx">Technical contact: <a class="lnk" href="mailto:beckett@runaurelius.com">beckett@runaurelius.com</a></span>
   </div>
-  <p style="margin-top: 5pt; font-size: 8.3pt; line-height: 1.4; color: var(--ink-3);">Complete
-  methodology, references, benchmark tables, limitations, and mechanism audits are in the supporting
-  full technical report.</p>
 
   <div class="ft">
     <span>Aurelius &middot; Technical memo</span>
