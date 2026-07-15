@@ -1,8 +1,8 @@
 # Aurelius Technical Report — CTO-Readiness Audit
 
-A critical read of the current technical report from the seat of a CoreWeave
-infrastructure CTO (someone who runs GPU-fleet scheduling at hyperscale and
-"actually understands what he's doing"). The goal is not to soften the report.
+A critical read of the current technical report from the seat of a
+hyperscale-infrastructure CTO (someone who runs GPU-fleet scheduling at scale and
+"actually understands what they're doing"). The goal is not to soften the report.
 It is to find every place it would lose a rigorous reader, and to make the
 strongest honest version of the argument.
 
@@ -72,7 +72,7 @@ fall out of it. Show, then name.
 
 ### 2.3 Not distinguishing yourself from a unified control plane
 
-CoreWeave already has a unified "mission control." If the report reads as "we
+a hyperscale operator already has a unified "mission control." If the report reads as "we
 unify telemetry and optimize," a CTO thinks "we have that." The rewrite says
 explicitly: unification answers *what is the best next decision given what I see
 now*; it does not answer *what is the best sequence given what is about to

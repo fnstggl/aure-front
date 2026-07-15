@@ -13,7 +13,7 @@
 *{margin:0;padding:0;box-sizing:border-box}
 html{-webkit-print-color-adjust:exact;print-color-adjust:exact}
 body{background:var(--bg);color:var(--ink);font-family:var(--sans);-webkit-font-smoothing:antialiased;
-  font-feature-settings:"ss01","cv01";letter-spacing:-0.006em}
+  font-feature-settings:"ss01","cv01"}
 .em{font-weight:500}
 .lab{font-family:var(--sans);text-transform:uppercase}
 
@@ -73,11 +73,11 @@ h1 .q{color:var(--t50)}
   <div class="cols">
     <div class="col">
       <div class="k">What it is</div>
-      <p>It is not a forecaster and not a scheduler replacement. It is a <span class="em">supervisory layer</span> that sits above Kubernetes, Slurm, or a serving router and never touches payloads. Each control period it forks the current fleet state into many forecasted futures, applies coupled policies across the controls the stack already exposes, advances each future under SLA, capacity, and power constraints, kills the ones that violate, and returns one policy for the existing stack to execute.</p>
+      <p>It is not a forecaster and not a scheduler replacement. It is a <span class="em">supervisory layer</span> that sits above Kubernetes, Slurm, or a serving router and never touches payloads. Each control period it forks the current fleet state into many counterfactual trajectories, applies coupled policies across the controls the stack already exposes, advances each trajectory under SLA, capacity, and power constraints, kills the ones that violate, and returns one policy for the existing stack to execute.</p>
     </div>
     <div class="col">
-      <div class="k">What we found</div>
-      <p>We changed exactly one thing. Holding the forecasts, the objective, the simulator, and the constraints fixed, we varied only the search the planner runs, so any change in the result is caused by the <span class="em">search</span> and nothing else. A single coherent policy already beats a reactive scheduler several times over. Searching a fixed set of policies saturates quickly. The largest block of value appears only when the search can represent <span class="em">coupled futures that no fixed grid contains</span>.</p>
+      <div class="k">The finding</div>
+      <p>Exactly one thing changed. Holding the forecasts, the objective, the simulator, and the constraints fixed, only the planner's representable policies and search varied, so any change in the result is caused by the <span class="em">search</span> and nothing else. A single coherent policy already beats a reactive scheduler several times over. Searching a fixed set of policies saturates quickly. The largest block of value appears only when the search can represent <span class="em">coupled policies that no fixed grid contains</span>.</p>
     </div>
   </div>
 
@@ -129,7 +129,7 @@ h1 .q{color:var(--t50)}
   parts.push('<line x1="'+(xIn+5)+'" y1="'+midY+'" x2="'+xFanA+'" y2="'+midY+'" stroke="'+ink+'" stroke-opacity="0.5" stroke-width="1"/>');
   parts.push('<text x="'+xIn+'" y="'+(midY-12)+'" font-family="Helvetica Now Display, sans-serif" font-size="8.5" letter-spacing="1.4" fill="rgba(0,0,0,0.5)">CURRENT STATE</text>');
   parts.push('<text x="'+xOut+'" y="'+(midY-12)+'" text-anchor="end" font-family="Helvetica Now Display, sans-serif" font-size="8.5" letter-spacing="1.4" fill="'+ink+'">SELECTED POLICY</text>');
-  parts.push('<text x="'+xField+'" y="'+(H-1)+'" text-anchor="middle" font-family="Helvetica Now Display, sans-serif" font-size="8" letter-spacing="1.2" fill="rgba(0,0,0,0.36)">MANY FORECASTED FUTURES</text>');
+  parts.push('<text x="'+xField+'" y="'+(H-1)+'" text-anchor="middle" font-family="Helvetica Now Display, sans-serif" font-size="8" letter-spacing="1.2" fill="rgba(0,0,0,0.36)">COUNTERFACTUAL TRAJECTORIES</text>');
   s.innerHTML=parts.join('');
 })();
 </script>
