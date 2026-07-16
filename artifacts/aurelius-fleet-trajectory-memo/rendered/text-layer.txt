@@ -5,24 +5,52 @@ PAGE 01 / 03
 Choose the best fleet trajectory, not just
 the best next action.
 ONE LIVE FLEET STATE · MANY CANDIDATE SEQUENCES · ONE FEASIBLE NEXT ACTION RETURNED
-F I G 0 1   SEARCH COMPRES SI ON
+F I G 0 1   PREDI CTIVE CONTROL CYCLE
 ONE DECI SI ON · READ - ONLY
-CONSTRAINT-AWARE GENERATION
-HIERARCHICAL SEARCH
-SELECT · RETURN
-~4.7M
-72-75
-1
-POSSIBLE COUPLED-POLICY
-CONFIGURATIONS PER DECISION
-CANDIDATE TRAJECTORIES
-SCORED PER DECISION
-HIGHEST-SCORING FEASIBLE
-POLICY RETURNED
-PJM 75 · ERCOT 72 · CAISO 72 CANDIDATE TRAJECTORIES SCORED PER DECISION. WHERE EXHAUSTIVE ENUMERATION WAS TRACTABLE,
-BOUNDED SEARCH SELECTED THE SAME OPTIMUM.
-BOUNDED SEARCH OVER THE CONNECTED CONTROL SURFACES
-METADATA ONLY
+01 OBSERVE
+02 FORK
+03 ADVANCE
+04 TEST
+05 RETURN
+PREDICTIVE FLEET MODEL
+HARD CONSTRAINT GATE
+INFEASIBLE TRAJECTORIES REMOVED BEFORE SCORING
+t+1
+t+2
+t+3
+t+4
+SLA / LATENCY BOUND
+CAPACITY / POWER BOUND
+CURRENT
+FLEET STATE
+TELEMETRY
+WORKLOAD QUEUE
+CAPACITY / TOPOLOGY
+SLA + OPERATOR CONSTRAINTS
+READ-ONLY INPUT
+A1
+REJECT · SLA
+A2
+A3
+REJECT · CAPACITY
+A5
+A6
+A4
+FEASIBLE
+FEASIBLE
+BEST
+FEASIBLE
+SELECTED FEASIBLE TRAJECTORY · A4
+RETURN FIRST ACTION ONLY · A4 → t+1
+EXISTING CONTROL PLANE EXECUTES
+ISOLATED SIMULATED STATE · LIVE FLEET UNCHANGED
+NEXT CYCLE BEGINS FROM THE NEW OBSERVED FLEET STATE
+~4.7M REPRESENTABLE COUPLED-POLICY CONFIGURATIONS · 72-75 CANDIDATE TRAJECTORIES SCORED PER DECISION · PJM 75 · ERCOT 72
+· CAISO 72.
+ONE OBSERVED FLEET STATE · MANY MULTI -PERI OD COUNTERFACTUALS · ONE CONSTRAI NED NEXT
+ACTI ON RETURNED
+METADATA
+ONLY
 Aurelius adds a pre-execution planning layer above Kubernetes, Slurm, serving schedulers, autoscalers, and fleet-management
 systems. Before a decision is committed, it generates constraint-aware coupled-policy candidates, advances each against
 isolated simulated state under the configured constraints, rejects infeasible paths, and returns the highest-scoring feasible policy
@@ -51,81 +79,34 @@ TECHNICAL MEMO
 PAGE 02 / 03
 The optimizer cannot choose a future it never
 represents.
-The uncapped ablation reran the exact harness, windows, and load behind the 8.24× headline. The simulator,
-objective, cost model, constraints, and inputs remained fixed; only the planner's representable policy space and
-search procedure varied.
-F I G 0 2   SEARCH- STRATEGY ABLATI ON · UNCAPPED REPLAY
-FIXED HARNES S · POLI CY SPACE + SEARCH
-SEARCH SPACE
-COMPLETION
-RELATIVE GP/$
-DELTA
-MECHANISM
-RECONSTRUCTED PRODUCTION-CLASS
-BASELINE
-COMPLETES
+The uncapped ablation held the simulator, objective, cost model, constraints, and inputs fixed and varied only
+the planner's representable policy space and search. It validates the control architecture on four implemented
+serving controls: batching, capacity, precision, and clock policy. Operator replay would test whether the same
+planning layer adds value over the broader controls and constraints available in an actual fleet.
+F I G 0 2   THREE STATES OF THE PLANNER
+UNCAPPED REPLAY · SI NGLE LOAD
+REACTIVE BASELINE
+reactive reference
 1.00×
-REACTIVE REFERENCE
-GPU CLOCK ONLY
-TIMES OUT*
-0.69×*
--31.3%*
-SINGLE SURFACE
-FIXED 24-POLICY GRID
-COMPLETES
+FIXED JOINT POSTURE
+one coupled policy set, no search
 3.62×
-+261.9%
-JOINT POSTURE
-REGIME-SPECIFIC CANDIDATE SET
-COMPLETES
-3.62×
-+261.9%
-GENERATED, NO SEARCH
-EXHAUSTIVE SEARCH OF FIXED GRID
-COMPLETES
-4.84×
-+383.6%
-FULL GRID
-ENUMERATION
-BOUNDED COUPLED SEARCH
-COMPLETES
-4.85×
-+385.4%
-BOUNDED BEAM
-HIERARCHICAL COUPLED-POLICY
-SEARCH (INDEPENDENT RERUN)
-COMPLETES
+ADAPTIVE COUPLED PLANNING
+off-grid coupled policies, multi-period
 8.29×
-+728.6%
-OFF-GRID COUPLING
-SLA VIOLATION RATE 0.038 TO 0.046 AT THE BASELINE, 0.0073 TO 0.011 FOR THE GRID ARMS, 0.0022 TO 0.0026 FOR THE HIERARCHICAL
-SEARCH · LOWEST OF ANY ARM.   * TIMES OUT AT THE STANDARD HARNESS BUDGET; AT AN EXTENDED BUDGET IT COMPLETES BELOW THE
-BASELINE.
-I DENTI CAL I NPUTS, WI NDOWS, AND LOAD I N EVERY ARM · 1,549,249 REQUESTS
+REPRESENTABLE POLICY SPACE · OFF-GRID COUPLING
+THE STEP TO 8.29× I S REPRESENTABLE POLI CY SPACE, NOT HARDER SEARCH
 RERUN · 07.2026
+PROOF · SEARCHING THE FIXED GRID HARDER SATURATES
+Exhaustive enumeration of the fixed grid reaches 4.84×; a bounded coupled search matches it at 4.85× while evaluating far fewer
+candidates. A single control surface (GPU clock only) cannot be scored within the harness budget and lands near 0.69× when forced to
+complete. The regime-specific candidate set, scored without coupled search, ties the fixed 24-policy grid at 3.62×. Only off-grid
+coupled policies reach 8.29×, at the lowest SLA violation rate of any arm (0.0022 to 0.0026, versus 0.038 to 0.046 at the reconstructed
+production-class baseline), across 1,549,249 requests with identical inputs and load in every arm.
 The independent rerun reached 8.29× versus the canonical 8.24× benchmark, a 0.6% difference in the mean; individual market results were
 within 1.2%. The report retains 8.24× as the canonical headline.
-A clock-only, single-surface search cannot be scored within the
-harness budget: the policy it selects degrades the simulated
-fleet until the replay exceeds it, in all three markets. Given far
-more compute it does complete, and still lands below the
-baseline (about 0.7×) with roughly ten times its SLA violation rate.
-Setting the posture jointly is worth roughly 3.6× on its own: a
-fixed 24-policy grid and the regime-specific candidate set,
-scored without coupled search, select the same policy at this
-load.
-Searching the grid harder is saturated: exhaustive enumeration
-of the fixed grid reaches 4.84×, and the bounded coupled
-search matches it at 4.85× while evaluating far fewer
-candidates.
-The hierarchical coupled-policy search reaches 8.29× with the
-lowest SLA violation rates of any arm. The gain beyond the grid-
-based strategies comes from additional valid coupled-policy
-combinations that the fixed grid did not contain.
-The largest gain came from expanding the policy combinations the planner
-could represent, not from searching the fixed grid more aggressively.
 Uncapped search-strategy ablation, 07.2026: an independent rerun of the exact harness, windows, and load behind the headline benchmark, with
-production anchors reproducing the published values exactly. Ratios are unweighted means across the three markets. The frozen V1 audit separately
+production anchors reproducing the published values exactly; ratios are unweighted means across the three markets. The frozen V1 audit separately
 measured zero search regret where exhaustive enumeration was tractable, at approximately 40 candidate evaluations per decision. Neither validates
 the simulator or establishes production savings.
 AURELIUS · TECHNICAL MEMO

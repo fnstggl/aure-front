@@ -92,3 +92,20 @@ the v2 memo uses, the required benchmark language, and every claim decision.
   removed. The right-column control sentence ("forecast, simulator,
   objective, cost model, and constraint gates were unchanged") was dropped
   as redundant with the opening paragraph's held-fixed statement.
+
+- Design pass (figures + page-2 structure): page 1's FIG 01 was rebuilt from
+  a search-compression funnel into a predictive control cycle diagram
+  (observe -> fork -> advance across t+1..t+4 -> hard constraint gate ->
+  return first action; live fleet stays authoritative). Page 2's 7-row
+  ablation table was reorganized into a three-state mechanism figure
+  (reactive baseline 1.00x -> fixed joint posture 3.62x -> adaptive coupled
+  planning 8.29x) with the "representable policy space, not harder search"
+  argument made visual, plus a compact proof box carrying the remaining arm
+  values (GPU clock only 0.69x; exhaustive fixed grid 4.84x = bounded coupled
+  search 4.85x; regime-specific set 3.62x) and the SLA rates. No benchmark
+  value was changed; the per-arm delta percentages (equal to multiplier - 1)
+  were folded into the multipliers. Added the operator-scope sentence up
+  front: the benchmark validates the architecture on four implemented serving
+  controls (batching, capacity, precision, clock policy); operator replay
+  would test the broader fleet controls. An editable Excalidraw version of
+  FIG 01 lives at source/fig01-predictive-control-cycle.excalidraw.

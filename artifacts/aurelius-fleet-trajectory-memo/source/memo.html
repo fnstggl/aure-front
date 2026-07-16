@@ -136,6 +136,9 @@
   .p2-foot { margin-top: 6pt; font-size: 8.2pt; line-height: 1.38; color: var(--ink-3); max-width: 7.2in; }
   .p2-repro { margin-top: 7pt; font-size: 8.6pt; line-height: 1.42; color: var(--ink-2); max-width: 7.2in; }
   .p2-repro b { font-weight: 500; color: var(--ink); }
+  .proof { margin-top: 10pt; border: 0.5pt solid var(--rule-minor); padding: 7pt 12pt; }
+  .proof .h { font-size: 6.8pt; font-weight: 500; text-transform: uppercase; letter-spacing: 0.13em; color: var(--ink-3); }
+  .proof p { margin-top: 4pt; font-size: 8.7pt; line-height: 1.42; color: var(--ink-2); max-width: 7.15in; }
 
   /* ============ page 3 ============ */
   .p3-cap { margin-top: 9pt; font-size: 9.1pt; line-height: 1.48; color: var(--ink-3); max-width: 7.2in; }
@@ -193,50 +196,110 @@
 
   <div class="plate" style="margin-top: 13pt;">
     <div class="plate-hd">
-      <span><b>FIG 01</b> &nbsp;Search compression</span>
+      <span><b>FIG 01</b> &nbsp;Predictive control cycle</span>
       <span>One decision &middot; read-only</span>
     </div>
-    <svg viewBox="0 0 520 104" role="img"
-         aria-label="Search compression, left to right: about 4.7 million possible coupled-policy configurations per decision, reduced by constraint-aware generation and hierarchical search to 72 to 75 candidate trajectories scored per decision, then one highest-scoring feasible policy returned.">
-      <g font-family="Helvetica Now Display, Helvetica, Arial, sans-serif"
-         shape-rendering="geometricPrecision" text-rendering="geometricPrecision"
-         stroke-linecap="butt" stroke-linejoin="miter">
-        <!-- connectors -->
-        <g stroke="#111110">
-          <line x1="140" y1="47" x2="248" y2="47" stroke-width="0.75"/>
-          <line x1="346" y1="47" x2="432" y2="47" stroke-width="0.75"/>
-        </g>
-        <g fill="#111110" stroke="none">
-          <path d="M248 44 L256 47 L248 50 Z"/>
-          <path d="M432 44 L440 47 L432 50 Z"/>
-        </g>
-        <!-- process labels above the connectors -->
-        <g text-anchor="middle" stroke="none" fill="#6E6A62" font-size="6.2" font-weight="500" letter-spacing="0.5">
-          <text x="194" y="32">CONSTRAINT-AWARE GENERATION</text>
-          <text x="194" y="41">HIERARCHICAL SEARCH</text>
-          <text x="389" y="37">SELECT &middot; RETURN</text>
-        </g>
-        <!-- numbers on one baseline, decreasing -->
-        <g text-anchor="middle" stroke="none" fill="#111110" font-weight="500">
-          <text x="74" y="56" font-size="24" letter-spacing="-0.4">~4.7M</text>
-          <text x="298" y="56" font-size="18" letter-spacing="-0.1">72-75</text>
-          <text x="468" y="56" font-size="18">1</text>
-        </g>
-        <!-- captions in their own zone -->
-        <g text-anchor="middle" stroke="none" fill="#6E6A62" font-size="6.2" font-weight="500" letter-spacing="0.5">
-          <text x="74" y="72">POSSIBLE COUPLED-POLICY</text>
-          <text x="74" y="81">CONFIGURATIONS PER DECISION</text>
-          <text x="298" y="72">CANDIDATE TRAJECTORIES</text>
-          <text x="298" y="81">SCORED PER DECISION</text>
-          <text x="468" y="72">HIGHEST-SCORING FEASIBLE</text>
-          <text x="468" y="81">POLICY RETURNED</text>
-        </g>
-      </g>
+    <svg viewBox="0 0 520 214" role="img" aria-label="Predictive control cycle. One observed fleet state on the left forks into six candidate multi-period action sequences that advance through four future control periods in an isolated predictive fleet model; projected fleet states diverge, trajectories that breach the SLA or capacity bound are removed at a hard constraint gate, one feasible trajectory is selected, and only its first action is returned to the existing control plane while the live fleet stays authoritative.">
+    <g font-family="Helvetica Now Display, Helvetica, Arial, sans-serif" shape-rendering="geometricPrecision" text-rendering="geometricPrecision" stroke-linecap="butt" stroke-linejoin="miter">
+    <text x="6" y="12" font-size="7" font-weight="500" letter-spacing="0.06em"><tspan fill="#6E6A62">01</tspan><tspan fill="#111110">&#160;OBSERVE</tspan></text>
+    <text x="100" y="12" font-size="7" font-weight="500" letter-spacing="0.06em"><tspan fill="#6E6A62">02</tspan><tspan fill="#111110">&#160;FORK</tspan></text>
+    <text x="158" y="12" font-size="7" font-weight="500" letter-spacing="0.06em"><tspan fill="#6E6A62">03</tspan><tspan fill="#111110">&#160;ADVANCE</tspan></text>
+    <text x="392" y="12" font-size="7" font-weight="500" letter-spacing="0.06em"><tspan fill="#6E6A62">04</tspan><tspan fill="#111110">&#160;TEST</tspan></text>
+    <text x="452" y="12" font-size="7" font-weight="500" letter-spacing="0.06em"><tspan fill="#6E6A62">05</tspan><tspan fill="#111110">&#160;RETURN</tspan></text>
+    <line x1="6" y1="17" x2="514" y2="17" stroke="#D2D2D2" stroke-width="0.5"/>
+    <text x="262" y="30" font-size="6.8" font-weight="500" fill="#3A3833" text-anchor="middle" letter-spacing="0.12em">PREDICTIVE FLEET MODEL</text>
+    <text x="514" y="30" font-size="6.8" font-weight="500" fill="#3A3833" text-anchor="end" letter-spacing="0.12em">HARD CONSTRAINT GATE</text>
+    <text x="514" y="39" font-size="6.2" font-weight="500" fill="#6E6A62" text-anchor="end" letter-spacing="0.06em">INFEASIBLE TRAJECTORIES REMOVED BEFORE SCORING</text>
+    <text x="178" y="47" font-size="6.5" font-weight="500" fill="#6E6A62" text-anchor="middle" letter-spacing="0.04em">t+1</text>
+    <line x1="178" y1="52" x2="178" y2="152" stroke="#D2D2D2" stroke-width="0.5"/>
+    <text x="244" y="47" font-size="6.5" font-weight="500" fill="#6E6A62" text-anchor="middle" letter-spacing="0.04em">t+2</text>
+    <line x1="244" y1="52" x2="244" y2="152" stroke="#D2D2D2" stroke-width="0.5"/>
+    <text x="310" y="47" font-size="6.5" font-weight="500" fill="#6E6A62" text-anchor="middle" letter-spacing="0.04em">t+3</text>
+    <line x1="310" y1="52" x2="310" y2="152" stroke="#D2D2D2" stroke-width="0.5"/>
+    <text x="376" y="47" font-size="6.5" font-weight="500" fill="#6E6A62" text-anchor="middle" letter-spacing="0.04em">t+4</text>
+    <line x1="376" y1="52" x2="376" y2="152" stroke="#D2D2D2" stroke-width="0.5"/>
+    <line x1="150" y1="60" x2="404" y2="60" stroke="#D2D2D2" stroke-width="0.6" stroke-dasharray="1.4 2.4"/>
+    <line x1="150" y1="146" x2="404" y2="146" stroke="#D2D2D2" stroke-width="0.6" stroke-dasharray="1.4 2.4"/>
+    <text x="151" y="57" font-size="6.2" font-weight="500" fill="#6E6A62">SLA / LATENCY BOUND</text>
+    <text x="151" y="154" font-size="6.2" font-weight="500" fill="#6E6A62">CAPACITY / POWER BOUND</text>
+    <line x1="21" y1="52" x2="21" y2="152" stroke="#111110" stroke-width="1.0"/>
+    <text x="27" y="56" font-size="6.8" font-weight="500" fill="#111110" letter-spacing="0.05em">CURRENT</text>
+    <text x="27" y="64" font-size="6.8" font-weight="500" fill="#111110" letter-spacing="0.05em">FLEET STATE</text>
+    <line x1="21" y1="84" x2="26" y2="84" stroke="#111110" stroke-width="0.75"/>
+    <text x="27" y="86.2" font-size="6.2" font-weight="500" fill="#6E6A62" letter-spacing="0.03em">TELEMETRY</text>
+    <line x1="21" y1="97" x2="26" y2="97" stroke="#111110" stroke-width="0.75"/>
+    <text x="27" y="99.2" font-size="6.2" font-weight="500" fill="#6E6A62" letter-spacing="0.03em">WORKLOAD QUEUE</text>
+    <line x1="21" y1="110" x2="26" y2="110" stroke="#111110" stroke-width="0.75"/>
+    <text x="27" y="112.2" font-size="6.2" font-weight="500" fill="#6E6A62" letter-spacing="0.03em">CAPACITY / TOPOLOGY</text>
+    <line x1="21" y1="123" x2="26" y2="123" stroke="#111110" stroke-width="0.75"/>
+    <text x="27" y="125.2" font-size="6.2" font-weight="500" fill="#6E6A62" letter-spacing="0.03em">SLA + OPERATOR CONSTRAINTS</text>
+    <text x="27" y="151" font-size="6.2" font-weight="500" fill="#3A3833" letter-spacing="0.05em">READ-ONLY INPUT</text>
+    <line x1="21" y1="102" x2="122" y2="102" stroke="#111110" stroke-width="0.75"/>
+    <line x1="122" y1="93" x2="122" y2="111" stroke="#111110" stroke-width="1.0"/>
+    <polyline points="122,102 178,72 244,67 310,64 376,62 404,62" fill="none" stroke="#8C8C8C" stroke-width="0.75"/>
+    <line x1="178" y1="69.6" x2="178" y2="74.4" stroke="#8C8C8C" stroke-width="0.75"/>
+    <line x1="244" y1="64.6" x2="244" y2="69.4" stroke="#8C8C8C" stroke-width="0.75"/>
+    <line x1="310" y1="61.6" x2="310" y2="66.4" stroke="#8C8C8C" stroke-width="0.75"/>
+    <line x1="376" y1="59.6" x2="376" y2="64.4" stroke="#8C8C8C" stroke-width="0.75"/>
+    <text x="171" y="74" font-size="6.0" font-weight="500" fill="#6E6A62" text-anchor="end" letter-spacing="0.02em">A1</text>
+    <polyline points="122,102 178,85 244,72 310,60 346,53" fill="none" stroke="#C4C4C4" stroke-width="0.75"/>
+    <line x1="178" y1="82.6" x2="178" y2="87.4" stroke="#C4C4C4" stroke-width="0.75"/>
+    <line x1="244" y1="69.6" x2="244" y2="74.4" stroke="#C4C4C4" stroke-width="0.75"/>
+    <line x1="310" y1="57.6" x2="310" y2="62.4" stroke="#C4C4C4" stroke-width="0.75"/>
+    <line x1="346" y1="49.6" x2="346" y2="56.4" stroke="#111110" stroke-width="1.1"/>
+    <text x="351" y="55.3" font-size="6.0" font-weight="500" fill="#111110" letter-spacing="0.05em">REJECT &#183; SLA</text>
+    <text x="171" y="87" font-size="6.0" font-weight="500" fill="#6E6A62" text-anchor="end" letter-spacing="0.02em">A2</text>
+    <polyline points="122,102 178,98 244,96 310,94 376,93 404,93" fill="none" stroke="#8C8C8C" stroke-width="0.75"/>
+    <line x1="178" y1="95.6" x2="178" y2="100.4" stroke="#8C8C8C" stroke-width="0.75"/>
+    <line x1="244" y1="93.6" x2="244" y2="98.4" stroke="#8C8C8C" stroke-width="0.75"/>
+    <line x1="310" y1="91.6" x2="310" y2="96.4" stroke="#8C8C8C" stroke-width="0.75"/>
+    <line x1="376" y1="90.6" x2="376" y2="95.4" stroke="#8C8C8C" stroke-width="0.75"/>
+    <text x="171" y="100" font-size="6.0" font-weight="500" fill="#6E6A62" text-anchor="end" letter-spacing="0.02em">A3</text>
+    <polyline points="122,102 178,122 244,136 296,149" fill="none" stroke="#C4C4C4" stroke-width="0.75"/>
+    <line x1="178" y1="119.6" x2="178" y2="124.4" stroke="#C4C4C4" stroke-width="0.75"/>
+    <line x1="244" y1="133.6" x2="244" y2="138.4" stroke="#C4C4C4" stroke-width="0.75"/>
+    <line x1="296" y1="145.6" x2="296" y2="152.4" stroke="#111110" stroke-width="1.1"/>
+    <text x="301" y="151.3" font-size="6.0" font-weight="500" fill="#111110" letter-spacing="0.05em">REJECT &#183; CAPACITY</text>
+    <text x="171" y="124" font-size="6.0" font-weight="500" fill="#6E6A62" text-anchor="end" letter-spacing="0.02em">A5</text>
+    <polyline points="122,102 178,135 244,138 310,140 376,141 404,141" fill="none" stroke="#8C8C8C" stroke-width="0.75"/>
+    <line x1="178" y1="132.6" x2="178" y2="137.4" stroke="#8C8C8C" stroke-width="0.75"/>
+    <line x1="244" y1="135.6" x2="244" y2="140.4" stroke="#8C8C8C" stroke-width="0.75"/>
+    <line x1="310" y1="137.6" x2="310" y2="142.4" stroke="#8C8C8C" stroke-width="0.75"/>
+    <line x1="376" y1="138.6" x2="376" y2="143.4" stroke="#8C8C8C" stroke-width="0.75"/>
+    <text x="171" y="137" font-size="6.0" font-weight="500" fill="#6E6A62" text-anchor="end" letter-spacing="0.02em">A6</text>
+    <polyline points="122,102 178,110 244,111 310,112 376,113 404,113" fill="none" stroke="#111110" stroke-width="1.5"/>
+    <line x1="178" y1="107.6" x2="178" y2="112.4" stroke="#111110" stroke-width="1.1"/>
+    <line x1="244" y1="108.6" x2="244" y2="113.4" stroke="#111110" stroke-width="1.1"/>
+    <line x1="310" y1="109.6" x2="310" y2="114.4" stroke="#111110" stroke-width="1.1"/>
+    <line x1="376" y1="110.6" x2="376" y2="115.4" stroke="#111110" stroke-width="1.1"/>
+    <text x="171" y="112" font-size="6.0" font-weight="500" fill="#111110" text-anchor="end" letter-spacing="0.02em">A4</text>
+    <line x1="178" y1="106.6" x2="178" y2="113.4" stroke="#111110" stroke-width="1.6"/>
+    <line x1="404" y1="52" x2="404" y2="152" stroke="#111110" stroke-width="1.0"/>
+    <line x1="404" y1="62" x2="407" y2="62" stroke="#111110" stroke-width="0.75"/>
+    <text x="412" y="64.2" font-size="6.2" font-weight="500" fill="#6E6A62" letter-spacing="0.06em">FEASIBLE</text>
+    <line x1="404" y1="93" x2="407" y2="93" stroke="#111110" stroke-width="0.75"/>
+    <text x="412" y="95.2" font-size="6.2" font-weight="500" fill="#6E6A62" letter-spacing="0.06em">FEASIBLE</text>
+    <line x1="404" y1="113" x2="407" y2="113" stroke="#111110" stroke-width="0.75"/>
+    <text x="412" y="109.0" font-size="6.2" font-weight="500" fill="#111110" letter-spacing="0.06em">BEST</text>
+    <line x1="404" y1="141" x2="407" y2="141" stroke="#111110" stroke-width="0.75"/>
+    <text x="412" y="143.2" font-size="6.2" font-weight="500" fill="#6E6A62" letter-spacing="0.06em">FEASIBLE</text>
+    <polyline points="404,113 470,113" fill="none" stroke="#111110" stroke-width="1.5"/>
+    <line x1="470" y1="100" x2="470" y2="126" stroke="#111110" stroke-width="1.0"/>
+    <text x="514" y="168" font-size="6.5" font-weight="500" fill="#111110" text-anchor="end" letter-spacing="0.05em">SELECTED FEASIBLE TRAJECTORY &#183; A4</text>
+    <text x="514" y="177" font-size="6.5" font-weight="500" fill="#111110" text-anchor="end" letter-spacing="0.05em">RETURN FIRST ACTION ONLY &#183; A4 &#8594; t+1</text>
+    <text x="514" y="186" font-size="6.2" font-weight="500" fill="#6E6A62" text-anchor="end" letter-spacing="0.06em">EXISTING CONTROL PLANE EXECUTES</text>
+    <text x="262" y="166" font-size="6.5" font-weight="500" fill="#3A3833" text-anchor="middle" letter-spacing="0.08em">ISOLATED SIMULATED STATE &#183; LIVE FLEET UNCHANGED</text>
+    <line x1="470" y1="190" x2="470" y2="200" stroke="#D2D2D2" stroke-width="0.6"/>
+    <line x1="21" y1="200" x2="470" y2="200" stroke="#D2D2D2" stroke-width="0.6"/>
+    <line x1="21" y1="152" x2="21" y2="200" stroke="#D2D2D2" stroke-width="0.6"/>
+    <path d="M18.6 156 L21 152 L23.4 156" fill="none" stroke="#6E6A62" stroke-width="0.75"/>
+    <text x="264" y="197" font-size="6.2" font-weight="500" fill="#6E6A62" text-anchor="middle" letter-spacing="0.08em">NEXT CYCLE BEGINS FROM THE NEW OBSERVED FLEET STATE</text>
+    </g>
     </svg>
-    <div class="mx-note">PJM 75 &middot; ERCOT 72 &middot; CAISO 72 candidate trajectories scored per decision.
-    Where exhaustive enumeration was tractable, bounded search selected the same optimum.</div>
+    <div class="mx-note">~4.7M representable coupled-policy configurations &middot; 72-75 candidate
+    trajectories scored per decision &middot; PJM 75 &middot; ERCOT 72 &middot; CAISO 72.</div>
     <div class="plate-cap">
-      <span>Bounded search over the connected control surfaces</span>
+      <span>One observed fleet state &middot; many multi-period counterfactuals &middot; one constrained next action returned</span>
       <span>Metadata only</span>
     </div>
   </div>
@@ -284,121 +347,62 @@
   <h1 class="headline" style="margin-top: 11pt;">The optimizer cannot choose a future it never
   represents.</h1>
 
-  <p class="p2-open">The uncapped ablation reran the exact harness, windows, and load behind the 8.24&times;
-  headline. The simulator, objective, cost model, constraints, and inputs remained fixed; only the
-  planner's representable policy space and search procedure varied.</p>
+  <p class="p2-open">The uncapped ablation held the simulator, objective, cost model, constraints, and
+  inputs fixed and varied only the planner's representable policy space and search. It validates the
+  control architecture on four implemented serving controls: batching, capacity, precision, and clock
+  policy. Operator replay would test whether the same planning layer adds value over the broader controls
+  and constraints available in an actual fleet.</p>
 
-  <div class="plate" style="margin-top: 9pt;">
+  <div class="plate" style="margin-top: 10pt;">
     <div class="plate-hd">
-      <span><b>FIG 02</b> &nbsp;Search-strategy ablation &middot; uncapped replay</span>
-      <span>Fixed harness &middot; policy space + search</span>
+      <span><b>FIG 02</b> &nbsp;Three states of the planner</span>
+      <span>Uncapped replay &middot; single load</span>
     </div>
-    <table class="mx">
-      <thead>
-        <tr>
-          <th style="width:39%;">Search space</th>
-          <th style="width:14%;">Completion</th>
-          <th class="r" style="width:13%;">Relative gp/$</th>
-          <th class="r" style="width:12%;">Delta</th>
-          <th style="width:22%;">Mechanism</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr class="anchor">
-          <td class="c-space">Reconstructed production-class baseline</td>
-          <td class="c-comp">Completes</td>
-          <td class="c-ratio">1.00&times;</td>
-          <td class="c-delta"></td>
-          <td class="c-mech">Reactive reference</td>
-        </tr>
-        <tr>
-          <td class="c-space">GPU clock only</td>
-          <td class="c-comp">Times out*</td>
-          <td class="c-ratio">0.69&times;*</td>
-          <td class="c-delta">-31.3%*</td>
-          <td class="c-mech">Single surface</td>
-        </tr>
-        <tr>
-          <td class="c-space">Fixed 24-policy grid</td>
-          <td class="c-comp">Completes</td>
-          <td class="c-ratio">3.62&times;</td>
-          <td class="c-delta">+261.9%</td>
-          <td class="c-mech">Joint posture</td>
-        </tr>
-        <tr>
-          <td class="c-space">Regime-specific candidate set</td>
-          <td class="c-comp">Completes</td>
-          <td class="c-ratio">3.62&times;</td>
-          <td class="c-delta">+261.9%</td>
-          <td class="c-mech">Generated, no search</td>
-        </tr>
-        <tr>
-          <td class="c-space">Exhaustive search of fixed grid</td>
-          <td class="c-comp">Completes</td>
-          <td class="c-ratio">4.84&times;</td>
-          <td class="c-delta">+383.6%</td>
-          <td class="c-mech">Full grid enumeration</td>
-        </tr>
-        <tr>
-          <td class="c-space">Bounded coupled search</td>
-          <td class="c-comp">Completes</td>
-          <td class="c-ratio">4.85&times;</td>
-          <td class="c-delta">+385.4%</td>
-          <td class="c-mech">Bounded beam</td>
-        </tr>
-        <tr class="sel">
-          <td class="c-space">Hierarchical coupled-policy search (independent rerun)</td>
-          <td class="c-comp">Completes</td>
-          <td class="c-ratio">8.29&times;</td>
-          <td class="c-delta">+728.6%</td>
-          <td class="c-mech">Off-grid coupling</td>
-        </tr>
-      </tbody>
-    </table>
-    <div class="mx-note">SLA violation rate 0.038 to 0.046 at the baseline, 0.0073 to 0.011 for the grid
-    arms, 0.0022 to 0.0026 for the hierarchical search &middot; lowest of any arm. &nbsp; * Times out at
-    the standard harness budget; at an extended budget it completes below the baseline.</div>
+    <svg viewBox="0 0 520 104" role="img" aria-label="Three states of the planner. A reactive baseline at 1.00x; a fixed joint posture at 3.62x from one coupled policy set chosen without search; and adaptive multi-period coupled planning at 8.29x. The step from 3.62x to 8.29x is representable policy space from off-grid coupling, not harder search.">
+    <g font-family="Helvetica Now Display, Helvetica, Arial, sans-serif" shape-rendering="geometricPrecision" text-rendering="geometricPrecision" stroke-linecap="butt" stroke-linejoin="miter">
+    <rect x="210" y="22.5" width="24.0" height="15" fill="none" stroke="#8C8C8C" stroke-width="0.75"/>
+    <text x="202" y="29.0" font-size="7.0" font-weight="500" fill="#111110" text-anchor="end" letter-spacing="0.03em">REACTIVE BASELINE</text>
+    <text x="202" y="37.5" font-size="6.2" font-weight="500" fill="#6E6A62" text-anchor="end" letter-spacing="0.02em">reactive reference</text>
+    <text x="240.0" y="32.6" font-size="11" font-weight="500" fill="#111110" letter-spacing="-0.01em">1.00&#215;</text>
+    <rect x="210" y="54.5" width="86.88" height="15" fill="#8C8C8C"/>
+    <text x="202" y="61.0" font-size="7.0" font-weight="500" fill="#111110" text-anchor="end" letter-spacing="0.03em">FIXED JOINT POSTURE</text>
+    <text x="202" y="69.5" font-size="6.2" font-weight="500" fill="#6E6A62" text-anchor="end" letter-spacing="0.02em">one coupled policy set, no search</text>
+    <text x="302.88" y="64.6" font-size="11" font-weight="500" fill="#111110" letter-spacing="-0.01em">3.62&#215;</text>
+    <rect x="210" y="86.5" width="198.95999999999998" height="15" fill="#111110"/>
+    <text x="202" y="93.0" font-size="7.0" font-weight="500" fill="#111110" text-anchor="end" letter-spacing="0.03em">ADAPTIVE COUPLED PLANNING</text>
+    <text x="202" y="101.5" font-size="6.2" font-weight="500" fill="#6E6A62" text-anchor="end" letter-spacing="0.02em">off-grid coupled policies, multi-period</text>
+    <text x="414.96" y="96.6" font-size="11" font-weight="500" fill="#111110" letter-spacing="-0.01em">8.29&#215;</text>
+    <line x1="296.88" y1="54.5" x2="296.88" y2="101.5" stroke="#D2D2D2" stroke-width="0.6" stroke-dasharray="1.4 2.2"/>
+    <path d="M296.88 80.0 L296.88 83.0 L408.96 83.0 L408.96 80.0" fill="none" stroke="#111110" stroke-width="0.75"/>
+    <text x="352.91999999999996" y="79.0" font-size="6.2" font-weight="500" fill="#111110" text-anchor="middle" letter-spacing="0.05em">REPRESENTABLE POLICY SPACE &#183; OFF-GRID COUPLING</text>
+    </g>
+    </svg>
     <div class="plate-cap">
-      <span>Identical inputs, windows, and load in every arm &middot; 1,549,249 requests</span>
+      <span>The step to 8.29&times; is representable policy space, not harder search</span>
       <span>Rerun &middot; 07.2026</span>
     </div>
+  </div>
+
+  <div class="proof">
+    <div class="h">Proof &middot; searching the fixed grid harder saturates</div>
+    <p>Exhaustive enumeration of the fixed grid reaches 4.84&times;; a bounded coupled search matches it at
+    4.85&times; while evaluating far fewer candidates. A single control surface (GPU clock only) cannot be
+    scored within the harness budget and lands near 0.69&times; when forced to complete. The
+    regime-specific candidate set, scored without coupled search, ties the fixed 24-policy grid at
+    3.62&times;. Only off-grid coupled policies reach 8.29&times;, at the lowest SLA violation rate of any
+    arm (0.0022 to 0.0026, versus 0.038 to 0.046 at the reconstructed production-class baseline), across
+    1,549,249 requests with identical inputs and load in every arm.</p>
   </div>
 
   <p class="p2-repro">The independent rerun reached 8.29&times; versus the canonical 8.24&times; benchmark, a
   0.6% difference in the mean; individual market results were within 1.2%. <b>The report retains 8.24&times;
   as the canonical headline.</b></p>
 
-  <div class="p2-expl">
-    <div class="col">
-      <p>A clock-only, single-surface search cannot be scored within the harness budget: the policy it
-      selects degrades the simulated fleet until the replay exceeds it, in all three markets. Given far
-      more compute it does complete, and still lands below the baseline (about 0.7&times;) with roughly
-      ten times its SLA violation rate.</p>
-      <p>Setting the posture jointly is worth roughly 3.6&times; on its own: a fixed 24-policy grid and
-      the regime-specific candidate set, scored without coupled search, select the same policy at this
-      load.</p>
-    </div>
-    <div class="col">
-      <p>Searching the grid harder is saturated: exhaustive enumeration of the fixed grid reaches
-      4.84&times;, and the bounded coupled search matches it at 4.85&times; while evaluating far fewer
-      candidates.</p>
-      <p>The hierarchical coupled-policy search reaches 8.29&times; with the lowest SLA violation rates of
-      any arm. The gain beyond the grid-based strategies comes from additional valid coupled-policy
-      combinations that the fixed grid did not contain.</p>
-    </div>
-  </div>
-
-  <div class="punch">
-    <p class="txt">The largest gain came from expanding the policy combinations the planner could
-    represent, not from searching the fixed grid more aggressively.</p>
-  </div>
-
-  <p class="p2-foot">Uncapped search-strategy ablation, 07.2026: an independent rerun of the exact
-  harness, windows, and load behind the headline benchmark, with production anchors reproducing the
-  published values exactly. Ratios are unweighted means across the three markets. The frozen V1 audit
-  separately measured zero search regret where exhaustive enumeration was tractable, at approximately 40
-  candidate evaluations per decision. Neither validates the simulator or establishes production
-  savings.</p>
+  <p class="p2-foot">Uncapped search-strategy ablation, 07.2026: an independent rerun of the exact harness,
+  windows, and load behind the headline benchmark, with production anchors reproducing the published
+  values exactly; ratios are unweighted means across the three markets. The frozen V1 audit separately
+  measured zero search regret where exhaustive enumeration was tractable, at approximately 40 candidate
+  evaluations per decision. Neither validates the simulator or establishes production savings.</p>
 
   <div class="ft">
     <span>Aurelius &middot; Technical memo</span>
