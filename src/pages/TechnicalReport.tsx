@@ -261,11 +261,10 @@ export default function TechnicalReport() {
                 <p className={P}>
                   Because the surfaces interact, Aurelius evaluates coupled decision bundles rather than
                   tuning one knob at a time, and which candidates it evaluates is itself a first-class
-                  step, not an afterthought. A physics-guided generator proposes a focused set of
-                  high-value coupled bundles implied by the operating regime, always including the
-                  known-strong candidates so a high-value option is never silently dropped. The set is
-                  then searched in a way that captures cross-surface coupling, expanding to more
-                  surfaces only when a decision is close and stopping early when the choice is clear.
+                  step, not an afterthought. A physics-guided generator proposes a compact set of
+                  high-value coupled bundles implied by the operating regime. The set is then searched
+                  in a way that preserves cross-surface coupling, expands when the decision is close,
+                  and stops early when the choice is clear.
                 </p>
                 <Figure>
                   <SearchStrategyLadder />
@@ -302,10 +301,10 @@ export default function TechnicalReport() {
                   objective, and the safety gate all unchanged, enabling more decision levers initially
                   made results <em>worse</em>. The cause was not the controller; it was containment.
                   The planner&rsquo;s candidate set had collapsed to a single surface (the GPU clock),
-                  so the bundle that actually wins during an expensive window (
-                  <Em>lower precision + aggressive batching + a higher clock</Em>, which packs far more
-                  goodput per GPU-hour) was never in the set being evaluated. The optimizer cannot pick
-                  what it never sees.
+                  so the combination that actually wins during an expensive window (
+                  <Em>a coupled execution-policy bundle spanning multiple serving controls</Em>, which
+                  packs far more goodput per GPU-hour) was never in the set being evaluated. The
+                  optimizer cannot pick what it never sees.
                 </p>
                 <p className={`${P} mt-4`}>
                   Making candidate generation physics-guided, and searching the coupled set under a
