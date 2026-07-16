@@ -21,6 +21,11 @@ const Contact = lazyWithReload(() => import("./pages/Contact"));
 const Privacy = lazyWithReload(() => import("./pages/Privacy"));
 const NotFound = lazyWithReload(() => import("./pages/NotFound"));
 
+// Private, unlisted company research memos (/{company-slug}-FH37X). These are
+// noindex,nofollow, kept out of the sitemap, and never linked from public nav.
+// One thin wrapper per company; see src/pages/research/ + PRIVATE_ROUTES.
+const FireworksResearch = lazyWithReload(() => import("./pages/research/FireworksResearch"));
+
 const queryClient = new QueryClient();
 
 const RouteFallback = () => <div className="min-h-[100dvh] bg-background" aria-hidden />;
@@ -43,6 +48,13 @@ const App = () => (
               <Route path="/docs" element={<Docs />} />
               <Route path="/contact" element={<Contact />} />
               <Route path="/privacy" element={<Privacy />} />
+
+              {/* Private company research memos — unlisted, noindex,nofollow.
+                  The template demo and the Fireworks per-company URL render the
+                  same data-driven page. Add future companies the same way. */}
+              <Route path="/company-template-FH37X" element={<FireworksResearch />} />
+              <Route path="/fireworks-ai-FH37X" element={<FireworksResearch />} />
+
               <Route path="*" element={<NotFound />} />
             </Routes>
           </Suspense>
