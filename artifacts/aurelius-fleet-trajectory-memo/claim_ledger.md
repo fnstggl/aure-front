@@ -40,14 +40,14 @@ the v2 memo uses, the required benchmark language, and every claim decision.
 
 | Uncapped search-strategy ablation (page 2): fixed grid 3.62x / +261.9%; regime-specific candidate set without coupled search 3.62x; exhaustive search of the fixed grid 4.84x / +383.6%; bounded coupled search 4.85x / +385.4%; hierarchical coupled-policy search 8.29x / +728.6%; clock-only arm cannot be scored within the standard 300 s harness budget in any market; at an extended 1800 s budget it completes but lands below the baseline (0.68x-0.70x, mean 0.69x) with a ~0.43 SLA violation rate; SLA violation rates fall from 0.038-0.046 (baseline) to 0.0022-0.0026 (hierarchical) | New artifact `data/external/mpc_controller/uncapped_search_ablation.json` produced by `scripts/run_uncapped_search_ablation.py` (research repo, 07.2026): identical harness, windows, and load to `request_cap_sweep.json` uncapped cells; production anchors reproduced published gp/$ byte-identically in all three markets (130,538.91 / 130,178.26 / 130,000.36); hierarchical arm reproduced published headline cells within +0.58% / +1.22% / -0.003%. Summary in `research/UNCAPPED_SEARCH_ABLATION_RESULTS.md`. | Page 2 footnote: independent rerun; ratios are unweighted means across markets; hierarchical reproduces the published headline within 1.2 percent per market; the V1 zero-regret audit remains the only regret measurement; neither validates the simulator or establishes production savings. |
 
-## Page 1 search-compression figure (FIG 01, v4)
+## Page 1 decision-space field (FIG 01, v4)
 
 | Claim (figure wording) | Source | Qualification |
 |---|---|---|
 | ~4.7M possible coupled-policy configurations per decision | `CandidateBundleGenerator.theoretical_combinations()` in `aurelius/environment/candidate_search.py` = product of `ACTION_SPECS[s].options` over the connected surfaces = 3*2*2*3*3*3*3*3*3*3*5*4*3*3 = 4,723,920. | "~4.7M" is the connected-surface space actually searched by the benchmark arm. Including the four SIMULATED_ONLY surfaces (opt-in, not varied in the reported replay) the product is 340,122,240 (~340M). Not the ~23M first assumed. |
 | 72-75 candidate trajectories scored per decision (PJM 75, ERCOT 72, CAISO 72) | `candidate_bundles_evaluated` recorded per uncapped cell in `data/external/mpc_controller/request_cap_sweep.json` for `aurelius_mpc_hierarchical_search` (pjm/ercot/caiso|uncapped): 75 / 72 / 72; `theoretical_bundles` (the method's own generated set) = 74. | Per-decision figure (the controller stores `last_decision_diag`); `config.max_decisions = 3`. Simulated, load-dependent. |
 | 1 highest-scoring feasible policy returned | The controller returns one `best_cand` per decision (`controller.py` decide path). | Mechanism statement, not a benchmark number. |
-| "Where exhaustive enumeration was tractable, bounded search selected the same optimum." | Frozen V1 zero-regret audit (`PHYSICS_GUIDED_PLANNER_RESULTS.md`): bounded search matched the exhaustive optimum where enumeration was tractable (regret 0.0). | Stated as scoped, not as proof of global optimality over the ~4.7M space. The memo does NOT claim zero regret across the full space; the funnel note and page-1 lead both scope it to "separately tractable spaces". |
+| "Where exhaustive enumeration was tractable, bounded search selected the same optimum." | Frozen V1 zero-regret audit (`PHYSICS_GUIDED_PLANNER_RESULTS.md`): bounded search matched the exhaustive optimum where enumeration was tractable (regret 0.0). | Stated as scoped, not as proof of global optimality over the ~4.7M space. The memo does NOT claim zero regret across the full space; the FIG 01 plate-cap scopes bounded search to "the representable space" and the page-1 lead scopes the exhaustive-match claim to "separately tractable spaces". |
 
 ## Claims softened, removed, or changed
 
@@ -111,5 +111,25 @@ the v2 memo uses, the required benchmark language, and every claim decision.
   were folded into the multipliers. Added the operator-scope sentence up
   front: the benchmark validates the architecture on four implemented serving
   controls (batching, capacity, precision, clock policy); operator replay
-  would test the broader fleet controls. An editable Excalidraw version of
-  FIG 01 lives at source/fig01-predictive-control-cycle.excalidraw.
+  would test the broader fleet controls. (That architecture diagram was itself
+  replaced in the next pass; see below.)
+
+- Design pass (FIG 01 to the decision-space field): page 1's FIG 01 was rebuilt
+  again, from the predictive-control architecture diagram into a dense
+  decision-space field, a light-mode adaptation of the site's world-model
+  graphic. It shows one large field of small squares for the ~4.7M representable
+  coupled-policy configurations per decision (hero number 4,723,920), a tilted
+  bloom of the 72-75 the bounded search scores (outer #8C8C8C, inner finalists
+  #6E6A62), and the 1 returned configuration as a single ink cell with
+  registration ticks. No numeric claim changed: the 4,723,920 / 72-75 (PJM 75,
+  ERCOT 72, CAISO 72) / 1 values and their sources are exactly as in the FIG 01
+  claim table above. The intent is a restrained artifact (one field, one strong
+  quantitative statement, almost no labels) rather than a flowchart. The field
+  is deterministic and generated by source/fig01_field.py (a sine hash, stable
+  across rebuilds); the now-orphaned
+  source/fig01-predictive-control-architecture.excalidraw was removed. Follow-up:
+  the plate-cap now carries the field legend ("each square represents one
+  multi-period coupled-policy configuration") beside the bounded-search scope,
+  both at a smaller `.fig01-cap` size so they share one line; the earlier
+  per-market plate-cap line (PJM 75 / ERCOT 72 / CAISO 72 scored) was dropped
+  from the figure and is retained only in the claim table above.
