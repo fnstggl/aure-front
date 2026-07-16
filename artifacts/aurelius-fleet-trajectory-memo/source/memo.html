@@ -62,6 +62,7 @@
   /* ---- header / footer ---- */
   .hd { display: flex; align-items: flex-end; justify-content: space-between; padding-bottom: 8pt; border-bottom: 0.75pt solid var(--rule-major); }
   .hd .wm { font-size: 12.5pt; font-weight: 500; letter-spacing: 0.02em; line-height: 1; }
+  .hd .wm-logo { display: block; height: 15.5pt; width: auto; }
   .hd .cat { margin-top: 4.5pt; font-size: 7.4pt; font-weight: 500; text-transform: uppercase; letter-spacing: 0.14em; color: var(--ink-3); }
   .hd .mt { font-size: 7.4pt; font-weight: 500; text-transform: uppercase; letter-spacing: 0.14em; color: var(--ink-2); text-align: right; line-height: 1.75; }
   .ft {
@@ -126,13 +127,18 @@
   .mx tr.sel .c-space, .mx tr.sel .c-ratio, .mx tr.sel .c-delta { color: var(--ink); }
   .mx tr.sel .c-ratio { font-size: 12.5pt; }
   .mx-note { padding: 5pt 12pt; border-top: 0.5pt solid var(--rule-minor); font-size: 6.5pt; font-weight: 500; text-transform: uppercase; letter-spacing: 0.1em; color: var(--ink-3); line-height: 1.38; }
-  .p2-expl { margin-top: 9pt; display: flex; gap: 28pt; }
+  .p2-expl { margin-top: 7pt; display: flex; gap: 28pt; }
   .p2-expl .col { flex: 1 1 0; }
-  .p2-expl p { font-size: 9.4pt; line-height: 1.45; color: var(--ink-2); }
-  .p2-expl p + p { margin-top: 6pt; }
-  .punch { margin-top: 9pt; border-top: 0.75pt solid var(--rule-major); padding-top: 8pt; }
+  .p2-expl p { font-size: 9.1pt; line-height: 1.4; color: var(--ink-2); }
+  .p2-expl p + p { margin-top: 5pt; }
+  .punch { margin-top: 6pt; border-top: 0.75pt solid var(--rule-major); padding-top: 6pt; }
   .punch .txt { font-size: 15.5pt; line-height: 1.26; letter-spacing: -0.014em; font-weight: 500; max-width: 6.9in; }
-  .p2-foot { margin-top: 8pt; font-size: 8.2pt; line-height: 1.4; color: var(--ink-3); max-width: 7.2in; }
+  .p2-foot { margin-top: 6pt; font-size: 8.2pt; line-height: 1.38; color: var(--ink-3); max-width: 7.2in; }
+  .p2-repro { margin-top: 7pt; font-size: 8.6pt; line-height: 1.42; color: var(--ink-2); max-width: 7.2in; }
+  .p2-repro b { font-weight: 500; color: var(--ink); }
+  .proof { margin-top: 10pt; border: 0.5pt solid var(--rule-minor); padding: 7pt 12pt; }
+  .proof .h { font-size: 6.8pt; font-weight: 500; text-transform: uppercase; letter-spacing: 0.13em; color: var(--ink-3); }
+  .proof p { margin-top: 4pt; font-size: 8.7pt; line-height: 1.42; color: var(--ink-2); max-width: 7.15in; }
 
   /* ============ page 3 ============ */
   .p3-cap { margin-top: 9pt; font-size: 9.1pt; line-height: 1.48; color: var(--ink-3); max-width: 7.2in; }
@@ -163,11 +169,11 @@
   .p4-ask { margin-top: 7pt; border-top: 0.75pt solid var(--rule-major); padding-top: 6pt; }
   .p4-ask .txt { margin-top: 3pt; font-size: 11pt; line-height: 1.36; font-weight: 500; color: var(--ink); max-width: 7.1in; }
   .p4-ask .fin { margin-top: 5pt; font-size: 9.2pt; line-height: 1.4; color: var(--ink-2); max-width: 7.1in; }
-  .p4-contact { display: flex; gap: 20pt; align-items: baseline; margin-top: 8pt; }
-  .p4-contact .nm { font-size: 10.5pt; font-weight: 500; white-space: nowrap; }
-  .p4-contact .rl { font-size: 7.4pt; font-weight: 500; text-transform: uppercase; letter-spacing: 0.13em; color: var(--ink-3); white-space: nowrap; }
-  .p4-contact .ch { font-size: 9pt; white-space: nowrap; }
-  .p4-contact .ch a { border-bottom: 0.5pt solid var(--rule-minor); padding-bottom: 0.5pt; }
+  .p4-contact { display: flex; align-items: center; gap: 7pt; margin-top: 10pt; font-size: 9pt; color: var(--ink-3); }
+  .p4-contact .wm-mark { height: 12pt; width: auto; }
+  .p4-contact .sep { color: var(--ink-3); }
+  .p4-contact .tcx { white-space: nowrap; }
+  .p4-contact .lnk { color: var(--ink-2); border-bottom: 0.5pt solid var(--rule-minor); padding-bottom: 0.5pt; }
 </style>
 </head>
 <body>
@@ -178,62 +184,76 @@
 <section class="page">
   <div class="hd">
     <div>
-      <div class="wm">AURELIUS</div>
+      <img class="wm-logo" src="aurelius-wordmark.png" alt="Aurelius"/>
       <div class="cat">A predictive supervisory layer for GPU fleets</div>
     </div>
     <div class="mt">Technical memo<br/>Page 01 / 03</div>
   </div>
 
   <h1 class="p1-head">Choose the best fleet trajectory, not just the best next action.</h1>
-  <p class="p1-phrase">One live fleet state &middot; many counterfactual futures &middot; one safe trajectory
-  selected before execution</p>
+  <p class="p1-phrase">One live fleet state &middot; many candidate sequences &middot; one feasible next action
+  returned</p>
 
   <div class="plate" style="margin-top: 13pt;">
     <div class="plate-hd">
-      <span><b>FIG 01</b> &nbsp;Search compression</span>
+      <span><b>FIG 01</b> &nbsp;Predictive control architecture</span>
       <span>One decision &middot; read-only</span>
     </div>
-    <svg viewBox="0 0 520 104" role="img"
-         aria-label="Search compression, left to right: about 4.7 million possible coupled-policy configurations per decision, reduced by constraint-aware generation and hierarchical search to 72 to 75 candidate trajectories scored per decision, then one highest-scoring feasible policy returned.">
-      <g font-family="Helvetica Now Display, Helvetica, Arial, sans-serif"
-         shape-rendering="geometricPrecision" text-rendering="geometricPrecision"
-         stroke-linecap="butt" stroke-linejoin="miter">
-        <!-- connectors -->
-        <g stroke="#111110">
-          <line x1="140" y1="47" x2="248" y2="47" stroke-width="0.75"/>
-          <line x1="346" y1="47" x2="432" y2="47" stroke-width="0.75"/>
-        </g>
-        <g fill="#111110" stroke="none">
-          <path d="M248 44 L256 47 L248 50 Z"/>
-          <path d="M432 44 L440 47 L432 50 Z"/>
-        </g>
-        <!-- process labels above the connectors -->
-        <g text-anchor="middle" stroke="none" fill="#6E6A62" font-size="6.2" font-weight="500" letter-spacing="0.5">
-          <text x="194" y="32">CONSTRAINT-AWARE GENERATION</text>
-          <text x="194" y="41">HIERARCHICAL SEARCH</text>
-          <text x="389" y="37">SELECT &middot; RETURN</text>
-        </g>
-        <!-- numbers on one baseline, decreasing -->
-        <g text-anchor="middle" stroke="none" fill="#111110" font-weight="500">
-          <text x="74" y="56" font-size="24" letter-spacing="-0.4">~4.7M</text>
-          <text x="298" y="56" font-size="18" letter-spacing="-0.1">72-75</text>
-          <text x="468" y="56" font-size="18">1</text>
-        </g>
-        <!-- captions in their own zone -->
-        <g text-anchor="middle" stroke="none" fill="#6E6A62" font-size="6.2" font-weight="500" letter-spacing="0.5">
-          <text x="74" y="72">POSSIBLE COUPLED-POLICY</text>
-          <text x="74" y="81">CONFIGURATIONS PER DECISION</text>
-          <text x="298" y="72">CANDIDATE TRAJECTORIES</text>
-          <text x="298" y="81">SCORED PER DECISION</text>
-          <text x="468" y="72">HIGHEST-SCORING FEASIBLE</text>
-          <text x="468" y="81">POLICY RETURNED</text>
-        </g>
-      </g>
+    <svg viewBox="0 0 520 182" role="img" aria-label="Architecture. One real observed fleet state feeds a dominant predictive fleet model, which projects several candidate futures as sequences of fleet states and selects one feasible trajectory; only the first action of that trajectory is committed to the existing control plane, and the loop repeats from the next observed state. Infeasible futures terminate inside the model.">
+    <g font-family="Helvetica Now Display, Helvetica, Arial, sans-serif" shape-rendering="geometricPrecision" text-rendering="geometricPrecision" stroke-linecap="butt" stroke-linejoin="miter">
+    <rect x="88" y="18" width="312" height="132" fill="none" stroke="#3A3833" stroke-width="0.9"/>
+    <text x="99" y="33" font-size="8.2" font-weight="500" fill="#111110" letter-spacing="0.04em">PREDICTIVE FLEET MODEL</text>
+    <text x="389" y="33" font-size="6.2" font-weight="500" fill="#6E6A62" text-anchor="end" letter-spacing="0.06em">ISOLATED &#183; READ-ONLY</text>
+    <line x1="88" y1="39" x2="400" y2="39" stroke="#00000020" stroke-width="0.5"/>
+    <text x="99" y="51" font-size="6.2" font-weight="500" fill="#6E6A62" letter-spacing="0.06em">CANDIDATE FUTURES</text>
+    <rect x="16" y="61.0" width="50" height="46" fill="#111110" stroke="#111110" stroke-width="0.75"/>
+    <line x1="23" y1="73.0" x2="59" y2="73.0" stroke="#57554F" stroke-width="0.6"/>
+    <line x1="23" y1="84.0" x2="59" y2="84.0" stroke="#57554F" stroke-width="0.6"/>
+    <line x1="23" y1="95.0" x2="59" y2="95.0" stroke="#57554F" stroke-width="0.6"/>
+    <text x="41.0" y="117.0" font-size="6.4" font-weight="500" fill="#111110" text-anchor="middle" letter-spacing="0.05em">OBSERVED</text>
+    <text x="41.0" y="125.0" font-size="6.4" font-weight="500" fill="#111110" text-anchor="middle" letter-spacing="0.05em">FLEET STATE</text>
+    <line x1="66" y1="84.0" x2="88" y2="84.0" stroke="#111110" stroke-width="0.9"/>
+    <line x1="88" y1="84.0" x2="84.31415324006043" y2="86.01358726213765" stroke="#111110" stroke-width="0.9"/>
+    <line x1="88" y1="84.0" x2="84.31415324006043" y2="81.98641273786235" stroke="#111110" stroke-width="0.9"/>
+    <rect x="150" y="58.0" width="58" height="12" fill="#D4D4D4"/>
+    <rect x="214" y="58.0" width="58" height="12" fill="#D4D4D4"/>
+    <rect x="278" y="58.0" width="58" height="12" fill="#D4D4D4"/>
+    <rect x="150" y="112.0" width="58" height="12" fill="#D4D4D4"/>
+    <rect x="214" y="112.0" width="58" height="12" fill="#D4D4D4"/>
+    <rect x="278" y="112.0" width="58" height="12" fill="#D4D4D4"/>
+    <rect x="150" y="76.0" width="58" height="12" fill="#D4D4D4"/>
+    <line x1="216.8" y1="79.8" x2="221.2" y2="84.2" stroke="#6E6A62" stroke-width="0.75"/>
+    <line x1="216.8" y1="84.2" x2="221.2" y2="79.8" stroke="#6E6A62" stroke-width="0.75"/>
+    <rect x="150" y="130.0" width="58" height="12" fill="#D4D4D4"/>
+    <rect x="214" y="130.0" width="58" height="12" fill="#D4D4D4"/>
+    <line x1="280.8" y1="133.8" x2="285.2" y2="138.2" stroke="#6E6A62" stroke-width="0.75"/>
+    <line x1="280.8" y1="138.2" x2="285.2" y2="133.8" stroke="#6E6A62" stroke-width="0.75"/>
+    <rect x="150" y="94.0" width="58" height="12" fill="#111110"/>
+    <rect x="214" y="94.0" width="58" height="12" fill="#8C8C8C"/>
+    <rect x="278" y="94.0" width="58" height="12" fill="#8C8C8C"/>
+    <text x="179.0" y="102.9" font-size="6.0" font-weight="500" fill="#FBFAF8" text-anchor="middle">t+1</text>
+    <text x="343" y="102.4" font-size="6.2" font-weight="500" fill="#111110" letter-spacing="0.05em">SELECTED</text>
+    <rect x="452" y="64.0" width="56" height="40" fill="none" stroke="#111110" stroke-width="0.9"/>
+    <text x="480.0" y="82.0" font-size="6.4" font-weight="500" fill="#111110" text-anchor="middle" letter-spacing="0.05em">EXISTING</text>
+    <text x="480.0" y="91.0" font-size="6.4" font-weight="500" fill="#111110" text-anchor="middle" letter-spacing="0.05em">CONTROL PLANE</text>
+    <line x1="400" y1="84.0" x2="452" y2="84.0" stroke="#111110" stroke-width="0.9"/>
+    <line x1="452" y1="84.0" x2="448.3141532400604" y2="86.01358726213765" stroke="#111110" stroke-width="0.9"/>
+    <line x1="452" y1="84.0" x2="448.3141532400604" y2="81.98641273786235" stroke="#111110" stroke-width="0.9"/>
+    <text x="426.0" y="74.0" font-size="6.0" font-weight="500" fill="#111110" text-anchor="middle" letter-spacing="0.05em">COMMIT</text>
+    <text x="426.0" y="81.0" font-size="6.0" font-weight="500" fill="#111110" text-anchor="middle" letter-spacing="0.05em">FIRST ACTION</text>
+    <line x1="480.0" y1="104.0" x2="480.0" y2="168" stroke="#C7C7C7" stroke-width="0.75"/>
+    <line x1="480.0" y1="168" x2="10" y2="168" stroke="#C7C7C7" stroke-width="0.75"/>
+    <line x1="10" y1="168" x2="10" y2="84.0" stroke="#C7C7C7" stroke-width="0.75"/>
+    <line x1="10" y1="84.0" x2="16" y2="84.0" stroke="#C7C7C7" stroke-width="0.75"/>
+    <line x1="16" y1="84.0" x2="12.314153240060435" y2="86.01358726213765" stroke="#C7C7C7" stroke-width="0.75"/>
+    <line x1="16" y1="84.0" x2="12.314153240060435" y2="81.98641273786235" stroke="#C7C7C7" stroke-width="0.75"/>
+    <text x="245.0" y="164" font-size="6.2" font-weight="500" fill="#6E6A62" text-anchor="middle" letter-spacing="0.06em">NEXT OBSERVED FLEET STATE</text>
+    </g>
     </svg>
-    <div class="mx-note">PJM 75 &middot; ERCOT 72 &middot; CAISO 72 candidate trajectories scored per decision.
-    Where exhaustive enumeration was tractable, bounded search selected the same optimum.</div>
+    <div class="mx-note">~4.7M representable coupled-policy configurations &middot; 72-75 candidate
+    futures scored per decision &middot; PJM 75 &middot; ERCOT 72 &middot; CAISO 72.</div>
     <div class="plate-cap">
-      <span>Bounded search over the connected control surfaces</span>
+      <span>One observed fleet state &middot; many projected futures in the model &middot; one committed next action</span>
       <span>Metadata only</span>
     </div>
   </div>
@@ -249,8 +269,8 @@
   <div class="p1-metrics">
     <div class="hero">
       <div class="v">8.24&times;</div>
-      <div class="l">mean SLA-safe goodput per modeled infrastructure dollar versus a constructed
-      production-informed replay baseline</div>
+      <div class="l">mean SLA-safe goodput per modeled infrastructure dollar versus a reconstructed
+      production-class baseline</div>
     </div>
     <div class="rest">
       <div class="r"><span class="n">84.5%</span><span class="t">fewer GPU-hours under identical input request sets</span></div>
@@ -274,126 +294,69 @@
 <!-- ================================================================= -->
 <section class="page">
   <div class="hd">
-    <span class="wm">AURELIUS</span>
+    <img class="wm-logo" src="aurelius-wordmark.png" alt="Aurelius"/>
     <div class="mt">Technical memo<br/>Page 02 / 03</div>
   </div>
 
-  <h1 class="headline" style="margin-top: 15pt;">The optimizer cannot choose a future it never
+  <h1 class="headline" style="margin-top: 11pt;">The optimizer cannot choose a future it never
   represents.</h1>
 
-  <p class="p2-open">The uncapped ablation reran the exact harness, windows, and load behind the 8.24&times;
-  headline and varied one thing: the search strategy available to the planner. The production anchors
-  reproduced the published values exactly, in all three markets.</p>
+  <p class="p2-open">The uncapped ablation held the simulator, objective, cost model, constraints, and
+  inputs fixed and varied only the planner's representable policy space and search. It validates the
+  control architecture on four implemented serving controls: batching, capacity, precision, and clock
+  policy. Operator replay would test whether the same planning layer adds value over the broader controls
+  and constraints available in an actual fleet.</p>
 
-  <div class="plate" style="margin-top: 12pt;">
+  <div class="plate" style="margin-top: 10pt;">
     <div class="plate-hd">
-      <span><b>FIG 02</b> &nbsp;Search-strategy ablation &middot; uncapped replay</span>
-      <span>Single variable &middot; the search</span>
+      <span><b>FIG 02</b> &nbsp;Three states of the planner</span>
+      <span>Uncapped replay &middot; single load</span>
     </div>
-    <table class="mx">
-      <thead>
-        <tr>
-          <th style="width:39%;">Search space</th>
-          <th style="width:14%;">Completion</th>
-          <th class="r" style="width:13%;">Relative gp/$</th>
-          <th class="r" style="width:12%;">Delta</th>
-          <th style="width:22%;">Mechanism</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr class="anchor">
-          <td class="c-space">Constructed baseline</td>
-          <td class="c-comp">Completes</td>
-          <td class="c-ratio">1.00&times;</td>
-          <td class="c-delta"></td>
-          <td class="c-mech">Reactive reference</td>
-        </tr>
-        <tr>
-          <td class="c-space">GPU clock only</td>
-          <td class="c-comp">Times out*</td>
-          <td class="c-ratio">0.69&times;*</td>
-          <td class="c-delta">-31.3%*</td>
-          <td class="c-mech">Single surface</td>
-        </tr>
-        <tr>
-          <td class="c-space">Fixed 24-policy grid</td>
-          <td class="c-comp">Completes</td>
-          <td class="c-ratio">3.62&times;</td>
-          <td class="c-delta">+261.9%</td>
-          <td class="c-mech">Joint posture</td>
-        </tr>
-        <tr>
-          <td class="c-space">Regime-specific candidate set</td>
-          <td class="c-comp">Completes</td>
-          <td class="c-ratio">3.62&times;</td>
-          <td class="c-delta">+261.9%</td>
-          <td class="c-mech">Generated, no search</td>
-        </tr>
-        <tr>
-          <td class="c-space">Exhaustive search of fixed grid</td>
-          <td class="c-comp">Completes</td>
-          <td class="c-ratio">4.84&times;</td>
-          <td class="c-delta">+383.6%</td>
-          <td class="c-mech">Full grid enumeration</td>
-        </tr>
-        <tr>
-          <td class="c-space">Bounded coupled search</td>
-          <td class="c-comp">Completes</td>
-          <td class="c-ratio">4.85&times;</td>
-          <td class="c-delta">+385.4%</td>
-          <td class="c-mech">Bounded beam</td>
-        </tr>
-        <tr class="sel">
-          <td class="c-space">Hierarchical coupled-policy search</td>
-          <td class="c-comp">Completes</td>
-          <td class="c-ratio">8.29&times;</td>
-          <td class="c-delta">+728.6%</td>
-          <td class="c-mech">Off-grid coupling</td>
-        </tr>
-      </tbody>
-    </table>
-    <div class="mx-note">SLA violation rate 0.038 to 0.046 at the baseline, 0.0073 to 0.011 for the grid
-    arms, 0.0022 to 0.0026 for the hierarchical search &middot; lowest of any arm. &nbsp; * Times out at
-    the standard harness budget; at an extended budget it completes below the baseline.</div>
+    <svg viewBox="0 0 520 104" role="img" aria-label="Three states of the planner. A reactive baseline at 1.00x; a fixed joint posture at 3.62x from one coupled policy set chosen without search; and adaptive multi-period coupled planning at 8.29x. The step from 3.62x to 8.29x is representable policy space from off-grid coupling, not harder search.">
+    <g font-family="Helvetica Now Display, Helvetica, Arial, sans-serif" shape-rendering="geometricPrecision" text-rendering="geometricPrecision" stroke-linecap="butt" stroke-linejoin="miter">
+    <rect x="210" y="22.5" width="24.0" height="15" fill="none" stroke="#8C8C8C" stroke-width="0.75"/>
+    <text x="202" y="29.0" font-size="7.0" font-weight="500" fill="#111110" text-anchor="end" letter-spacing="0.03em">REACTIVE BASELINE</text>
+    <text x="202" y="37.5" font-size="6.2" font-weight="500" fill="#6E6A62" text-anchor="end" letter-spacing="0.02em">reactive reference</text>
+    <text x="240.0" y="32.6" font-size="11" font-weight="500" fill="#111110" letter-spacing="-0.01em">1.00&#215;</text>
+    <rect x="210" y="54.5" width="86.88" height="15" fill="#8C8C8C"/>
+    <text x="202" y="61.0" font-size="7.0" font-weight="500" fill="#111110" text-anchor="end" letter-spacing="0.03em">FIXED JOINT POSTURE</text>
+    <text x="202" y="69.5" font-size="6.2" font-weight="500" fill="#6E6A62" text-anchor="end" letter-spacing="0.02em">one coupled policy set, no search</text>
+    <text x="302.88" y="64.6" font-size="11" font-weight="500" fill="#111110" letter-spacing="-0.01em">3.62&#215;</text>
+    <rect x="210" y="86.5" width="198.95999999999998" height="15" fill="#111110"/>
+    <text x="202" y="93.0" font-size="7.0" font-weight="500" fill="#111110" text-anchor="end" letter-spacing="0.03em">ADAPTIVE COUPLED PLANNING</text>
+    <text x="202" y="101.5" font-size="6.2" font-weight="500" fill="#6E6A62" text-anchor="end" letter-spacing="0.02em">off-grid coupled policies, multi-period</text>
+    <text x="414.96" y="96.6" font-size="11" font-weight="500" fill="#111110" letter-spacing="-0.01em">8.29&#215;</text>
+    <line x1="296.88" y1="54.5" x2="296.88" y2="101.5" stroke="#D2D2D2" stroke-width="0.6" stroke-dasharray="1.4 2.2"/>
+    <path d="M296.88 80.0 L296.88 83.0 L408.96 83.0 L408.96 80.0" fill="none" stroke="#111110" stroke-width="0.75"/>
+    <text x="352.91999999999996" y="79.0" font-size="6.2" font-weight="500" fill="#111110" text-anchor="middle" letter-spacing="0.05em">REPRESENTABLE POLICY SPACE &#183; OFF-GRID COUPLING</text>
+    </g>
+    </svg>
     <div class="plate-cap">
-      <span>Identical inputs, windows, and load in every arm &middot; 1,549,249 requests</span>
+      <span>The step to 8.29&times; is representable policy space, not harder search</span>
       <span>Rerun &middot; 07.2026</span>
     </div>
   </div>
 
-  <div class="p2-expl">
-    <div class="col">
-      <p>A clock-only, single-surface search cannot be scored within the harness budget: the policy it
-      selects degrades the simulated fleet until the replay exceeds it, in all three markets. Given far
-      more compute it does complete, and still lands below the baseline (about 0.7&times;) with roughly
-      ten times its SLA violation rate.</p>
-      <p>Setting the posture jointly is worth roughly 3.6&times; on its own: a fixed 24-policy grid and
-      the regime-specific candidate set, scored without coupled search, select the same policy at this
-      load.</p>
-    </div>
-    <div class="col">
-      <p>Searching the grid harder is saturated: exhaustive enumeration of the fixed grid reaches
-      4.84&times;, and the bounded coupled search matches it at 4.85&times; while evaluating far fewer
-      candidates.</p>
-      <p>The hierarchical coupled-policy search reaches 8.29&times; with the lowest SLA violation rates of
-      any arm. The near-doubling beyond every grid-based strategy is value in coupled futures no fixed
-      grid represented. The forecast, simulator, objective, cost model, and constraint gates were
-      unchanged in every arm.</p>
-    </div>
+  <div class="proof">
+    <div class="h">Proof &middot; searching the fixed grid harder saturates</div>
+    <p>Exhaustive enumeration of the fixed grid reaches 4.84&times;; a bounded coupled search matches it at
+    4.85&times; while evaluating far fewer candidates. A single control surface (GPU clock only) cannot be
+    scored within the harness budget and lands near 0.69&times; when forced to complete. The
+    regime-specific candidate set, scored without coupled search, ties the fixed 24-policy grid at
+    3.62&times;. Only off-grid coupled policies reach 8.29&times;, at the lowest SLA violation rate of any
+    arm (0.0022 to 0.0026, versus 0.038 to 0.046 at the reconstructed production-class baseline), across
+    1,549,249 requests with identical inputs and load in every arm.</p>
   </div>
 
-  <div class="punch">
-    <p class="txt">The value was not hidden in a better score. It was hidden in a future the previous
-    search never considered.</p>
-  </div>
+  <p class="p2-repro">The independent rerun reached 8.29&times; versus the canonical 8.24&times; benchmark, a
+  0.6% difference in the mean; individual market results were within 1.2%. <b>The report retains 8.24&times;
+  as the canonical headline.</b></p>
 
-  <p class="p2-foot">Uncapped search-strategy ablation, 07.2026: an independent rerun of the exact
-  harness, windows, and load behind the headline benchmark. Production anchors reproduced published
-  values exactly; the hierarchical arm reproduced the published headline within 1.2 percent per market
-  (8.29&times; here against the published 8.24&times; mean). Ratios are unweighted means across the three
-  markets. The frozen V1 audit separately measured zero search regret where exhaustive enumeration was
-  tractable, at approximately 40 candidate evaluations per decision. Neither validates the simulator or
-  establishes production savings.</p>
+  <p class="p2-foot">Uncapped search-strategy ablation, 07.2026: an independent rerun of the exact harness,
+  windows, and load behind the headline benchmark, with production anchors reproducing the published
+  values exactly; ratios are unweighted means across the three markets. The frozen V1 audit separately
+  measured zero search regret where exhaustive enumeration was tractable, at approximately 40 candidate
+  evaluations per decision. Neither validates the simulator or establishes production savings.</p>
 
   <div class="ft">
     <span>Aurelius &middot; Technical memo</span>
@@ -406,19 +369,18 @@
 <!-- ================================================================= -->
 <section class="page">
   <div class="hd">
-    <span class="wm">AURELIUS</span>
+    <img class="wm-logo" src="aurelius-wordmark.png" alt="Aurelius"/>
     <div class="mt">Technical memo<br/>Page 03 / 03</div>
   </div>
 
-  <h1 class="headline" style="margin-top: 13pt; font-size: 18pt;">A signal too large to ignore and too simulated
-  to trust without operator data.</h1>
+  <h1 class="headline" style="margin-top: 13pt; font-size: 20pt;">Validating the benchmark result on operator data.</h1>
 
   <div class="figbar">
-    <span><b>FIG 03</b> &nbsp;Uncapped replay &middot; SLA-safe goodput per dollar vs the constructed baseline</span>
-    <span>Three market windows</span>
+    <span><b>FIG 03</b> &nbsp;Uncapped replay &middot; SLA-safe gp/$ vs the reconstructed production-class baseline</span>
+    <span>Three markets</span>
   </div>
   <svg viewBox="0 0 520 84" style="margin-top: 5pt;" role="img"
-       aria-label="Horizontal comparison from the constructed baseline at 1.00x: PJM 7.98x and plus 698.1 percent, ERCOT 8.18x and plus 717.8 percent, CAISO 8.55x and plus 755.3 percent; the unweighted mean is 8.24x, marked by a dashed vertical line.">
+       aria-label="Horizontal comparison from the reconstructed production-class baseline at 1.00x: PJM 7.98x and plus 698.1 percent, ERCOT 8.18x and plus 717.8 percent, CAISO 8.55x and plus 755.3 percent; the unweighted mean is 8.24x, marked by a dashed vertical line.">
     <g font-family="Helvetica Now Display, Helvetica, Arial, sans-serif"
        shape-rendering="geometricPrecision" text-rendering="geometricPrecision"
        stroke-linecap="butt" stroke-linejoin="miter">
@@ -453,7 +415,7 @@
   <p class="p4-evidence">1,549,249 total input requests &middot; 84.5% fewer total GPU-hours &middot; lower SLA
   violation rates in all three windows &middot; both policies received the identical input request sets.</p>
 
-  <p class="p4-basedef">The comparison policy is a constructed production-informed replay baseline: a
+  <p class="p4-basedef">The comparison policy is a reconstructed production-class baseline: a
   deterministic public-replay policy assembled from established serving and cluster-control mechanisms,
   including continuous batching, deadline-aware
   ordering and admission, prefix-cache-aware routing, topology-aware placement, and backlog-driven
@@ -466,7 +428,7 @@
       <div class="sub">What this establishes</div>
       <p class="body">Under the selected uncapped high-load replay conditions, coupled predictive
       planning found feasible trajectories with materially better modeled economics and lower SLA
-      violation rates than the constructed baseline.</p>
+      violation rates than the reconstructed production-class baseline.</p>
     </div>
     <div class="col">
       <div class="sub">What this does not establish</div>
@@ -543,17 +505,15 @@
   </div>
 
   <div class="p4-contact">
-    <span class="nm">Beckett Zahedi</span>
-    <span class="rl">Founder &middot; Aurelius</span>
-    <span class="ch"><a href="mailto:beckett@runaurelius.com">beckett@runaurelius.com</a></span>
-    <span class="ch"><a href="https://runaurelius.com">runaurelius.com</a></span>
+    <img class="wm-mark" src="aurelius-wordmark.png" alt="Aurelius"/>
+    <span class="sep" aria-hidden="true">&middot;</span>
+    <a class="lnk" href="https://runaurelius.com">runaurelius.com</a>
+    <span class="sep" aria-hidden="true">&middot;</span>
+    <span class="tcx">Technical contact: <a class="lnk" href="mailto:beckett@runaurelius.com">beckett@runaurelius.com</a></span>
   </div>
-  <p style="margin-top: 5pt; font-size: 8.3pt; line-height: 1.4; color: var(--ink-3);">Complete
-  methodology, references, benchmark tables, limitations, and mechanism audits are in the supporting
-  full technical report.</p>
 
   <div class="ft">
-    <span>Aurelius &middot; Technical memo &middot; runaurelius.com</span>
+    <span>Aurelius &middot; Technical memo</span>
     <span>Page 03 / 03</span>
   </div>
 </section>

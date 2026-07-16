@@ -8,8 +8,9 @@ the v2 memo uses, the required benchmark language, and every claim decision.
 
 ## Benchmark language policy (enforced by source/build.py on every build)
 
-- Required: "constructed production-informed replay baseline" on pages 1
-  and 4 ("constructed baseline" thereafter).
+- Required: "reconstructed production-class baseline" on pages 1 and 3
+  (matching the full technical report's terminology; "the baseline"
+  thereafter).
 - Banned and machine-checked as absent: "production-class scheduler",
   "production-class composite", "what a competent operator already runs",
   "production-scale replay", "production-comparable", "economic posture",
@@ -24,8 +25,8 @@ the v2 memo uses, the required benchmark language, and every claim decision.
 
 | Claim (memo wording) | Source | Qualification carried in the memo |
 |---|---|---|
-| 8.24x mean SLA-safe goodput per modeled infrastructure dollar vs the constructed production-informed replay baseline | Derived from `data/external/mpc_controller/request_cap_sweep.json`: per-market gp/$ ratios 1041842.01/130538.91 = 7.98x, 1064601.79/130178.26 = 8.18x, 1111915.47/130000.36 = 8.55x; unweighted mean 8.237x, identically 1 + 723.7% (mean of deltas 698.11 / 717.8 / 755.32). | Page 1 scope line and page 4 "what this does not establish": simulated, load-dependent, selected public-trace windows, not a production result, not an estimate for a particular fleet or internal scheduler; magnitude materially affected by the benchmark's batching, precision, service-time, and modeled cost assumptions. |
-| PJM 7.98x / +698.1%, ERCOT 8.18x / +717.8%, CAISO 8.55x / +755.3%, unweighted mean 8.24x / +723.7% | Same artifact. | Shown on one axis against the constructed baseline at 1.00x; never merged with V1. |
+| 8.24x mean SLA-safe goodput per modeled infrastructure dollar vs the reconstructed production-class baseline | Derived from `data/external/mpc_controller/request_cap_sweep.json`: per-market gp/$ ratios 1041842.01/130538.91 = 7.98x, 1064601.79/130178.26 = 8.18x, 1111915.47/130000.36 = 8.55x; unweighted mean 8.237x, identically 1 + 723.7% (mean of deltas 698.11 / 717.8 / 755.32). | Page 1 scope line and page 4 "what this does not establish": simulated, load-dependent, selected public-trace windows, not a production result, not an estimate for a particular fleet or internal scheduler; magnitude materially affected by the benchmark's batching, precision, service-time, and modeled cost assumptions. |
+| PJM 7.98x / +698.1%, ERCOT 8.18x / +717.8%, CAISO 8.55x / +755.3%, unweighted mean 8.24x / +723.7% | Same artifact. | Shown on one axis against the reconstructed production-class baseline at 1.00x; never merged with V1. |
 | 84.5% fewer total GPU-hours; 1,549,249 total input requests; lower SLA violation rates in all three windows; identical input request sets | Same artifact: GPU-hours 173.13 vs 1,115.10; requests 576,912 + 442,716 + 529,621; SLA 0.0023 vs 0.0382, 0.0013 vs 0.0447, 0.0018 vs 0.0458; both arms replay the same windows. | "Under identical input request sets" stated on pages 1 and 4. |
 | V1 ablation: GPU clock only -4.47% (SLA gate failed, exhaustive optimum not matched); regime-specific candidate set +100.48% (passed, not matched); coupled-policy search +161.31% (passed, matched), approximately 40 candidate evaluations per decision | `data/external/mpc_controller/physics_guided_planner_backtest.json`; `research/PHYSICS_GUIDED_PLANNER_RESULTS.md` L33-41 (clock_only -4.47%; fixed_24_grid/candidates +100.48%; beam +161.31%, regret 0.0, 40.5 evals). | Page 2 footnote: frozen Benchmark V1, primary market window; different load and comparison policy from the uncapped replay; validates search inside enumerated spaces only; does not validate the simulator or establish production savings. |
 | "Held constant: forecast, simulator, objective, cost model, constraint gates; only the policy set changed" | Same ablation artifacts (single-variable arm design). | None needed. |
@@ -67,3 +68,48 @@ the v2 memo uses, the required benchmark language, and every claim decision.
 - The memo nowhere claims the V1 ablation attributes the uncapped result;
   page 2's footnote states the two benchmarks differ in load and comparison
   policy, and no bridge multiplier between them is drawn.
+- Later revision (page-copy pass): the baseline label was renamed from
+  "constructed production-informed replay baseline" to "reconstructed
+  production-class baseline" on every page, to match the full technical
+  report's terminology; the build.py required-phrase check was updated to
+  match. Page 2's ablation is now framed accurately as varying "the
+  planner's representable policy space and search procedure" (not a single
+  variable) while the simulator, objective, cost model, constraints, and
+  inputs stay fixed; the FIG 02 label reads "fixed harness · policy space +
+  search". Page 1's motif line became "one live fleet state · many
+  candidate sequences · one feasible next action returned" (Aurelius
+  returns one next action, it does not execute a whole trajectory). Page 3's
+  heading was simplified to "Validating the benchmark result on operator
+  data" and the redundant "supporting full technical report" line was
+  dropped from the closing contact row.
+- Page-2 8.24x/8.29x handling: 8.24x stays the canonical headline
+  everywhere (cover, page-1 hero, page-3 chart, page-2 opening). 8.29x
+  appears only in the independent-rerun ablation, and its table row is now
+  explicitly labeled "(independent rerun)". A concise note directly under
+  the FIG 02 table states the rerun reached 8.29x vs the canonical 8.24x
+  (0.6% mean difference; per-market within 1.2%) and that 8.24x is retained
+  as canonical; the long footnote's duplicate reproducibility clause was
+  removed. The right-column control sentence ("forecast, simulator,
+  objective, cost model, and constraint gates were unchanged") was dropped
+  as redundant with the opening paragraph's held-fixed statement.
+
+- Design pass (figures + page-2 structure): page 1's FIG 01 was rebuilt from a search-compression funnel into a
+  predictive-control ARCHITECTURE diagram in which the predictive fleet
+  model dominates: one observed fleet state feeds the model, which projects
+  candidate futures as sequences of fleet states, selects one feasible
+  trajectory, and commits only its first action to the existing control
+  plane, then replans from the next observed state (receding horizon). The
+  live fleet stays authoritative. (Superseded an interim process-style
+  version with numbered stages and fan-out trajectories.) Page 2's 7-row
+  ablation table was reorganized into a three-state mechanism figure
+  (reactive baseline 1.00x -> fixed joint posture 3.62x -> adaptive coupled
+  planning 8.29x) with the "representable policy space, not harder search"
+  argument made visual, plus a compact proof box carrying the remaining arm
+  values (GPU clock only 0.69x; exhaustive fixed grid 4.84x = bounded coupled
+  search 4.85x; regime-specific set 3.62x) and the SLA rates. No benchmark
+  value was changed; the per-arm delta percentages (equal to multiplier - 1)
+  were folded into the multipliers. Added the operator-scope sentence up
+  front: the benchmark validates the architecture on four implemented serving
+  controls (batching, capacity, precision, clock policy); operator replay
+  would test the broader fleet controls. An editable Excalidraw version of
+  FIG 01 lives at source/fig01-predictive-control-cycle.excalidraw.

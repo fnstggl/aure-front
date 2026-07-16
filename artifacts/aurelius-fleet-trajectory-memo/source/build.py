@@ -24,7 +24,7 @@ EXPECTED_PAGES = 3
 
 METADATA = {
     "title": "Aurelius - Counterfactual Planning for GPU Fleets",
-    "author": "Beckett Zahedi",
+    "author": "Aurelius",
     "subject": "Fleet-Trajectory Architecture, Public-Replay Evidence, and Historical Validation",
 }
 
@@ -42,7 +42,7 @@ BANNED_PHRASES = [
     "—",  # em dash
     "–",  # en dash
 ]
-REQUIRED_ON_PAGES = {"constructed production-informed replay baseline": [1, 3]}
+REQUIRED_ON_PAGES = {"reconstructed production-class baseline": [1, 3]}
 
 DEFAULT_CHROMIUM_CANDIDATES = [
     "/opt/pw-browsers/chromium-1194/chrome-linux/chrome",
