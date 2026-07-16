@@ -93,10 +93,14 @@ the v2 memo uses, the required benchmark language, and every claim decision.
   objective, cost model, and constraint gates were unchanged") was dropped
   as redundant with the opening paragraph's held-fixed statement.
 
-- Design pass (figures + page-2 structure): page 1's FIG 01 was rebuilt from
-  a search-compression funnel into a predictive control cycle diagram
-  (observe -> fork -> advance across t+1..t+4 -> hard constraint gate ->
-  return first action; live fleet stays authoritative). Page 2's 7-row
+- Design pass (figures + page-2 structure): page 1's FIG 01 was rebuilt from a search-compression funnel into a
+  predictive-control ARCHITECTURE diagram in which the predictive fleet
+  model dominates: one observed fleet state feeds the model, which projects
+  candidate futures as sequences of fleet states, selects one feasible
+  trajectory, and commits only its first action to the existing control
+  plane, then replans from the next observed state (receding horizon). The
+  live fleet stays authoritative. (Superseded an interim process-style
+  version with numbered stages and fan-out trajectories.) Page 2's 7-row
   ablation table was reorganized into a three-state mechanism figure
   (reactive baseline 1.00x -> fixed joint posture 3.62x -> adaptive coupled
   planning 8.29x) with the "representable policy space, not harder search"

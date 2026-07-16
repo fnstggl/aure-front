@@ -196,110 +196,64 @@
 
   <div class="plate" style="margin-top: 13pt;">
     <div class="plate-hd">
-      <span><b>FIG 01</b> &nbsp;Predictive control cycle</span>
+      <span><b>FIG 01</b> &nbsp;Predictive control architecture</span>
       <span>One decision &middot; read-only</span>
     </div>
-    <svg viewBox="0 0 520 214" role="img" aria-label="Predictive control cycle. One observed fleet state on the left forks into six candidate multi-period action sequences that advance through four future control periods in an isolated predictive fleet model; projected fleet states diverge, trajectories that breach the SLA or capacity bound are removed at a hard constraint gate, one feasible trajectory is selected, and only its first action is returned to the existing control plane while the live fleet stays authoritative.">
+    <svg viewBox="0 0 520 182" role="img" aria-label="Architecture. One real observed fleet state feeds a dominant predictive fleet model, which projects several candidate futures as sequences of fleet states and selects one feasible trajectory; only the first action of that trajectory is committed to the existing control plane, and the loop repeats from the next observed state. Infeasible futures terminate inside the model.">
     <g font-family="Helvetica Now Display, Helvetica, Arial, sans-serif" shape-rendering="geometricPrecision" text-rendering="geometricPrecision" stroke-linecap="butt" stroke-linejoin="miter">
-    <text x="6" y="12" font-size="7" font-weight="500" letter-spacing="0.06em"><tspan fill="#6E6A62">01</tspan><tspan fill="#111110">&#160;OBSERVE</tspan></text>
-    <text x="100" y="12" font-size="7" font-weight="500" letter-spacing="0.06em"><tspan fill="#6E6A62">02</tspan><tspan fill="#111110">&#160;FORK</tspan></text>
-    <text x="158" y="12" font-size="7" font-weight="500" letter-spacing="0.06em"><tspan fill="#6E6A62">03</tspan><tspan fill="#111110">&#160;ADVANCE</tspan></text>
-    <text x="392" y="12" font-size="7" font-weight="500" letter-spacing="0.06em"><tspan fill="#6E6A62">04</tspan><tspan fill="#111110">&#160;TEST</tspan></text>
-    <text x="452" y="12" font-size="7" font-weight="500" letter-spacing="0.06em"><tspan fill="#6E6A62">05</tspan><tspan fill="#111110">&#160;RETURN</tspan></text>
-    <line x1="6" y1="17" x2="514" y2="17" stroke="#D2D2D2" stroke-width="0.5"/>
-    <text x="262" y="30" font-size="6.8" font-weight="500" fill="#3A3833" text-anchor="middle" letter-spacing="0.12em">PREDICTIVE FLEET MODEL</text>
-    <text x="514" y="30" font-size="6.8" font-weight="500" fill="#3A3833" text-anchor="end" letter-spacing="0.12em">HARD CONSTRAINT GATE</text>
-    <text x="514" y="39" font-size="6.2" font-weight="500" fill="#6E6A62" text-anchor="end" letter-spacing="0.06em">INFEASIBLE TRAJECTORIES REMOVED BEFORE SCORING</text>
-    <text x="178" y="47" font-size="6.5" font-weight="500" fill="#6E6A62" text-anchor="middle" letter-spacing="0.04em">t+1</text>
-    <line x1="178" y1="52" x2="178" y2="152" stroke="#D2D2D2" stroke-width="0.5"/>
-    <text x="244" y="47" font-size="6.5" font-weight="500" fill="#6E6A62" text-anchor="middle" letter-spacing="0.04em">t+2</text>
-    <line x1="244" y1="52" x2="244" y2="152" stroke="#D2D2D2" stroke-width="0.5"/>
-    <text x="310" y="47" font-size="6.5" font-weight="500" fill="#6E6A62" text-anchor="middle" letter-spacing="0.04em">t+3</text>
-    <line x1="310" y1="52" x2="310" y2="152" stroke="#D2D2D2" stroke-width="0.5"/>
-    <text x="376" y="47" font-size="6.5" font-weight="500" fill="#6E6A62" text-anchor="middle" letter-spacing="0.04em">t+4</text>
-    <line x1="376" y1="52" x2="376" y2="152" stroke="#D2D2D2" stroke-width="0.5"/>
-    <line x1="150" y1="60" x2="404" y2="60" stroke="#D2D2D2" stroke-width="0.6" stroke-dasharray="1.4 2.4"/>
-    <line x1="150" y1="146" x2="404" y2="146" stroke="#D2D2D2" stroke-width="0.6" stroke-dasharray="1.4 2.4"/>
-    <text x="151" y="57" font-size="6.2" font-weight="500" fill="#6E6A62">SLA / LATENCY BOUND</text>
-    <text x="151" y="154" font-size="6.2" font-weight="500" fill="#6E6A62">CAPACITY / POWER BOUND</text>
-    <line x1="21" y1="52" x2="21" y2="152" stroke="#111110" stroke-width="1.0"/>
-    <text x="27" y="56" font-size="6.8" font-weight="500" fill="#111110" letter-spacing="0.05em">CURRENT</text>
-    <text x="27" y="64" font-size="6.8" font-weight="500" fill="#111110" letter-spacing="0.05em">FLEET STATE</text>
-    <line x1="21" y1="84" x2="26" y2="84" stroke="#111110" stroke-width="0.75"/>
-    <text x="27" y="86.2" font-size="6.2" font-weight="500" fill="#6E6A62" letter-spacing="0.03em">TELEMETRY</text>
-    <line x1="21" y1="97" x2="26" y2="97" stroke="#111110" stroke-width="0.75"/>
-    <text x="27" y="99.2" font-size="6.2" font-weight="500" fill="#6E6A62" letter-spacing="0.03em">WORKLOAD QUEUE</text>
-    <line x1="21" y1="110" x2="26" y2="110" stroke="#111110" stroke-width="0.75"/>
-    <text x="27" y="112.2" font-size="6.2" font-weight="500" fill="#6E6A62" letter-spacing="0.03em">CAPACITY / TOPOLOGY</text>
-    <line x1="21" y1="123" x2="26" y2="123" stroke="#111110" stroke-width="0.75"/>
-    <text x="27" y="125.2" font-size="6.2" font-weight="500" fill="#6E6A62" letter-spacing="0.03em">SLA + OPERATOR CONSTRAINTS</text>
-    <text x="27" y="151" font-size="6.2" font-weight="500" fill="#3A3833" letter-spacing="0.05em">READ-ONLY INPUT</text>
-    <line x1="21" y1="102" x2="122" y2="102" stroke="#111110" stroke-width="0.75"/>
-    <line x1="122" y1="93" x2="122" y2="111" stroke="#111110" stroke-width="1.0"/>
-    <polyline points="122,102 178,72 244,67 310,64 376,62 404,62" fill="none" stroke="#8C8C8C" stroke-width="0.75"/>
-    <line x1="178" y1="69.6" x2="178" y2="74.4" stroke="#8C8C8C" stroke-width="0.75"/>
-    <line x1="244" y1="64.6" x2="244" y2="69.4" stroke="#8C8C8C" stroke-width="0.75"/>
-    <line x1="310" y1="61.6" x2="310" y2="66.4" stroke="#8C8C8C" stroke-width="0.75"/>
-    <line x1="376" y1="59.6" x2="376" y2="64.4" stroke="#8C8C8C" stroke-width="0.75"/>
-    <text x="171" y="74" font-size="6.0" font-weight="500" fill="#6E6A62" text-anchor="end" letter-spacing="0.02em">A1</text>
-    <polyline points="122,102 178,85 244,72 310,60 346,53" fill="none" stroke="#C4C4C4" stroke-width="0.75"/>
-    <line x1="178" y1="82.6" x2="178" y2="87.4" stroke="#C4C4C4" stroke-width="0.75"/>
-    <line x1="244" y1="69.6" x2="244" y2="74.4" stroke="#C4C4C4" stroke-width="0.75"/>
-    <line x1="310" y1="57.6" x2="310" y2="62.4" stroke="#C4C4C4" stroke-width="0.75"/>
-    <line x1="346" y1="49.6" x2="346" y2="56.4" stroke="#111110" stroke-width="1.1"/>
-    <text x="351" y="55.3" font-size="6.0" font-weight="500" fill="#111110" letter-spacing="0.05em">REJECT &#183; SLA</text>
-    <text x="171" y="87" font-size="6.0" font-weight="500" fill="#6E6A62" text-anchor="end" letter-spacing="0.02em">A2</text>
-    <polyline points="122,102 178,98 244,96 310,94 376,93 404,93" fill="none" stroke="#8C8C8C" stroke-width="0.75"/>
-    <line x1="178" y1="95.6" x2="178" y2="100.4" stroke="#8C8C8C" stroke-width="0.75"/>
-    <line x1="244" y1="93.6" x2="244" y2="98.4" stroke="#8C8C8C" stroke-width="0.75"/>
-    <line x1="310" y1="91.6" x2="310" y2="96.4" stroke="#8C8C8C" stroke-width="0.75"/>
-    <line x1="376" y1="90.6" x2="376" y2="95.4" stroke="#8C8C8C" stroke-width="0.75"/>
-    <text x="171" y="100" font-size="6.0" font-weight="500" fill="#6E6A62" text-anchor="end" letter-spacing="0.02em">A3</text>
-    <polyline points="122,102 178,122 244,136 296,149" fill="none" stroke="#C4C4C4" stroke-width="0.75"/>
-    <line x1="178" y1="119.6" x2="178" y2="124.4" stroke="#C4C4C4" stroke-width="0.75"/>
-    <line x1="244" y1="133.6" x2="244" y2="138.4" stroke="#C4C4C4" stroke-width="0.75"/>
-    <line x1="296" y1="145.6" x2="296" y2="152.4" stroke="#111110" stroke-width="1.1"/>
-    <text x="301" y="151.3" font-size="6.0" font-weight="500" fill="#111110" letter-spacing="0.05em">REJECT &#183; CAPACITY</text>
-    <text x="171" y="124" font-size="6.0" font-weight="500" fill="#6E6A62" text-anchor="end" letter-spacing="0.02em">A5</text>
-    <polyline points="122,102 178,135 244,138 310,140 376,141 404,141" fill="none" stroke="#8C8C8C" stroke-width="0.75"/>
-    <line x1="178" y1="132.6" x2="178" y2="137.4" stroke="#8C8C8C" stroke-width="0.75"/>
-    <line x1="244" y1="135.6" x2="244" y2="140.4" stroke="#8C8C8C" stroke-width="0.75"/>
-    <line x1="310" y1="137.6" x2="310" y2="142.4" stroke="#8C8C8C" stroke-width="0.75"/>
-    <line x1="376" y1="138.6" x2="376" y2="143.4" stroke="#8C8C8C" stroke-width="0.75"/>
-    <text x="171" y="137" font-size="6.0" font-weight="500" fill="#6E6A62" text-anchor="end" letter-spacing="0.02em">A6</text>
-    <polyline points="122,102 178,110 244,111 310,112 376,113 404,113" fill="none" stroke="#111110" stroke-width="1.5"/>
-    <line x1="178" y1="107.6" x2="178" y2="112.4" stroke="#111110" stroke-width="1.1"/>
-    <line x1="244" y1="108.6" x2="244" y2="113.4" stroke="#111110" stroke-width="1.1"/>
-    <line x1="310" y1="109.6" x2="310" y2="114.4" stroke="#111110" stroke-width="1.1"/>
-    <line x1="376" y1="110.6" x2="376" y2="115.4" stroke="#111110" stroke-width="1.1"/>
-    <text x="171" y="112" font-size="6.0" font-weight="500" fill="#111110" text-anchor="end" letter-spacing="0.02em">A4</text>
-    <line x1="178" y1="106.6" x2="178" y2="113.4" stroke="#111110" stroke-width="1.6"/>
-    <line x1="404" y1="52" x2="404" y2="152" stroke="#111110" stroke-width="1.0"/>
-    <line x1="404" y1="62" x2="407" y2="62" stroke="#111110" stroke-width="0.75"/>
-    <text x="412" y="64.2" font-size="6.2" font-weight="500" fill="#6E6A62" letter-spacing="0.06em">FEASIBLE</text>
-    <line x1="404" y1="93" x2="407" y2="93" stroke="#111110" stroke-width="0.75"/>
-    <text x="412" y="95.2" font-size="6.2" font-weight="500" fill="#6E6A62" letter-spacing="0.06em">FEASIBLE</text>
-    <line x1="404" y1="113" x2="407" y2="113" stroke="#111110" stroke-width="0.75"/>
-    <text x="412" y="109.0" font-size="6.2" font-weight="500" fill="#111110" letter-spacing="0.06em">BEST</text>
-    <line x1="404" y1="141" x2="407" y2="141" stroke="#111110" stroke-width="0.75"/>
-    <text x="412" y="143.2" font-size="6.2" font-weight="500" fill="#6E6A62" letter-spacing="0.06em">FEASIBLE</text>
-    <polyline points="404,113 470,113" fill="none" stroke="#111110" stroke-width="1.5"/>
-    <line x1="470" y1="100" x2="470" y2="126" stroke="#111110" stroke-width="1.0"/>
-    <text x="514" y="168" font-size="6.5" font-weight="500" fill="#111110" text-anchor="end" letter-spacing="0.05em">SELECTED FEASIBLE TRAJECTORY &#183; A4</text>
-    <text x="514" y="177" font-size="6.5" font-weight="500" fill="#111110" text-anchor="end" letter-spacing="0.05em">RETURN FIRST ACTION ONLY &#183; A4 &#8594; t+1</text>
-    <text x="514" y="186" font-size="6.2" font-weight="500" fill="#6E6A62" text-anchor="end" letter-spacing="0.06em">EXISTING CONTROL PLANE EXECUTES</text>
-    <text x="262" y="166" font-size="6.5" font-weight="500" fill="#3A3833" text-anchor="middle" letter-spacing="0.08em">ISOLATED SIMULATED STATE &#183; LIVE FLEET UNCHANGED</text>
-    <line x1="470" y1="190" x2="470" y2="200" stroke="#D2D2D2" stroke-width="0.6"/>
-    <line x1="21" y1="200" x2="470" y2="200" stroke="#D2D2D2" stroke-width="0.6"/>
-    <line x1="21" y1="152" x2="21" y2="200" stroke="#D2D2D2" stroke-width="0.6"/>
-    <path d="M18.6 156 L21 152 L23.4 156" fill="none" stroke="#6E6A62" stroke-width="0.75"/>
-    <text x="264" y="197" font-size="6.2" font-weight="500" fill="#6E6A62" text-anchor="middle" letter-spacing="0.08em">NEXT CYCLE BEGINS FROM THE NEW OBSERVED FLEET STATE</text>
+    <rect x="88" y="18" width="312" height="132" fill="none" stroke="#3A3833" stroke-width="0.9"/>
+    <text x="99" y="33" font-size="8.2" font-weight="500" fill="#111110" letter-spacing="0.04em">PREDICTIVE FLEET MODEL</text>
+    <text x="389" y="33" font-size="6.2" font-weight="500" fill="#6E6A62" text-anchor="end" letter-spacing="0.06em">ISOLATED &#183; READ-ONLY</text>
+    <line x1="88" y1="39" x2="400" y2="39" stroke="#00000020" stroke-width="0.5"/>
+    <text x="99" y="51" font-size="6.2" font-weight="500" fill="#6E6A62" letter-spacing="0.06em">CANDIDATE FUTURES</text>
+    <rect x="16" y="61.0" width="50" height="46" fill="#111110" stroke="#111110" stroke-width="0.75"/>
+    <line x1="23" y1="73.0" x2="59" y2="73.0" stroke="#57554F" stroke-width="0.6"/>
+    <line x1="23" y1="84.0" x2="59" y2="84.0" stroke="#57554F" stroke-width="0.6"/>
+    <line x1="23" y1="95.0" x2="59" y2="95.0" stroke="#57554F" stroke-width="0.6"/>
+    <text x="41.0" y="117.0" font-size="6.4" font-weight="500" fill="#111110" text-anchor="middle" letter-spacing="0.05em">OBSERVED</text>
+    <text x="41.0" y="125.0" font-size="6.4" font-weight="500" fill="#111110" text-anchor="middle" letter-spacing="0.05em">FLEET STATE</text>
+    <line x1="66" y1="84.0" x2="88" y2="84.0" stroke="#111110" stroke-width="0.9"/>
+    <line x1="88" y1="84.0" x2="84.31415324006043" y2="86.01358726213765" stroke="#111110" stroke-width="0.9"/>
+    <line x1="88" y1="84.0" x2="84.31415324006043" y2="81.98641273786235" stroke="#111110" stroke-width="0.9"/>
+    <rect x="150" y="58.0" width="58" height="12" fill="#D4D4D4"/>
+    <rect x="214" y="58.0" width="58" height="12" fill="#D4D4D4"/>
+    <rect x="278" y="58.0" width="58" height="12" fill="#D4D4D4"/>
+    <rect x="150" y="112.0" width="58" height="12" fill="#D4D4D4"/>
+    <rect x="214" y="112.0" width="58" height="12" fill="#D4D4D4"/>
+    <rect x="278" y="112.0" width="58" height="12" fill="#D4D4D4"/>
+    <rect x="150" y="76.0" width="58" height="12" fill="#D4D4D4"/>
+    <line x1="216.8" y1="79.8" x2="221.2" y2="84.2" stroke="#6E6A62" stroke-width="0.75"/>
+    <line x1="216.8" y1="84.2" x2="221.2" y2="79.8" stroke="#6E6A62" stroke-width="0.75"/>
+    <rect x="150" y="130.0" width="58" height="12" fill="#D4D4D4"/>
+    <rect x="214" y="130.0" width="58" height="12" fill="#D4D4D4"/>
+    <line x1="280.8" y1="133.8" x2="285.2" y2="138.2" stroke="#6E6A62" stroke-width="0.75"/>
+    <line x1="280.8" y1="138.2" x2="285.2" y2="133.8" stroke="#6E6A62" stroke-width="0.75"/>
+    <rect x="150" y="94.0" width="58" height="12" fill="#111110"/>
+    <rect x="214" y="94.0" width="58" height="12" fill="#8C8C8C"/>
+    <rect x="278" y="94.0" width="58" height="12" fill="#8C8C8C"/>
+    <text x="179.0" y="102.9" font-size="6.0" font-weight="500" fill="#FBFAF8" text-anchor="middle">t+1</text>
+    <text x="343" y="102.4" font-size="6.2" font-weight="500" fill="#111110" letter-spacing="0.05em">SELECTED</text>
+    <rect x="452" y="64.0" width="56" height="40" fill="none" stroke="#111110" stroke-width="0.9"/>
+    <text x="480.0" y="82.0" font-size="6.4" font-weight="500" fill="#111110" text-anchor="middle" letter-spacing="0.05em">EXISTING</text>
+    <text x="480.0" y="91.0" font-size="6.4" font-weight="500" fill="#111110" text-anchor="middle" letter-spacing="0.05em">CONTROL PLANE</text>
+    <line x1="400" y1="84.0" x2="452" y2="84.0" stroke="#111110" stroke-width="0.9"/>
+    <line x1="452" y1="84.0" x2="448.3141532400604" y2="86.01358726213765" stroke="#111110" stroke-width="0.9"/>
+    <line x1="452" y1="84.0" x2="448.3141532400604" y2="81.98641273786235" stroke="#111110" stroke-width="0.9"/>
+    <text x="426.0" y="74.0" font-size="6.0" font-weight="500" fill="#111110" text-anchor="middle" letter-spacing="0.05em">COMMIT</text>
+    <text x="426.0" y="81.0" font-size="6.0" font-weight="500" fill="#111110" text-anchor="middle" letter-spacing="0.05em">FIRST ACTION</text>
+    <line x1="480.0" y1="104.0" x2="480.0" y2="168" stroke="#C7C7C7" stroke-width="0.75"/>
+    <line x1="480.0" y1="168" x2="10" y2="168" stroke="#C7C7C7" stroke-width="0.75"/>
+    <line x1="10" y1="168" x2="10" y2="84.0" stroke="#C7C7C7" stroke-width="0.75"/>
+    <line x1="10" y1="84.0" x2="16" y2="84.0" stroke="#C7C7C7" stroke-width="0.75"/>
+    <line x1="16" y1="84.0" x2="12.314153240060435" y2="86.01358726213765" stroke="#C7C7C7" stroke-width="0.75"/>
+    <line x1="16" y1="84.0" x2="12.314153240060435" y2="81.98641273786235" stroke="#C7C7C7" stroke-width="0.75"/>
+    <text x="245.0" y="164" font-size="6.2" font-weight="500" fill="#6E6A62" text-anchor="middle" letter-spacing="0.06em">NEXT OBSERVED FLEET STATE</text>
     </g>
     </svg>
     <div class="mx-note">~4.7M representable coupled-policy configurations &middot; 72-75 candidate
-    trajectories scored per decision &middot; PJM 75 &middot; ERCOT 72 &middot; CAISO 72.</div>
+    futures scored per decision &middot; PJM 75 &middot; ERCOT 72 &middot; CAISO 72.</div>
     <div class="plate-cap">
-      <span>One observed fleet state &middot; many multi-period counterfactuals &middot; one constrained next action returned</span>
+      <span>One observed fleet state &middot; many projected futures in the model &middot; one committed next action</span>
       <span>Metadata only</span>
     </div>
   </div>
