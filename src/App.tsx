@@ -16,6 +16,7 @@ const TechnicalReport = lazyWithReload(() => import("./pages/TechnicalReport"));
 const HowItWorks = lazyWithReload(() => import("./pages/HowItWorks"));
 const Safety = lazyWithReload(() => import("./pages/Safety"));
 const ShadowAudit = lazyWithReload(() => import("./pages/ShadowAudit"));
+const Replay = lazyWithReload(() => import("./pages/Replay"));
 const Docs = lazyWithReload(() => import("./pages/Docs"));
 const Contact = lazyWithReload(() => import("./pages/Contact"));
 const Privacy = lazyWithReload(() => import("./pages/Privacy"));
@@ -40,6 +41,7 @@ const App = () => (
               <Route path="/how-it-works" element={<HowItWorks />} />
               <Route path="/safety" element={<Safety />} />
               <Route path="/shadow-audit" element={<ShadowAudit />} />
+              <Route path="/replay" element={<Replay />} />
               <Route path="/docs" element={<Docs />} />
               <Route path="/contact" element={<Contact />} />
               <Route path="/privacy" element={<Privacy />} />

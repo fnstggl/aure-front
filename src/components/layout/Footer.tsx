@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 const footerLinks: { label: string; href: string; mobileOnly?: boolean }[] = [
   { label: "Technical Report", href: "/technical-report" },
   { label: "Safety", href: "/safety", mobileOnly: true },
+  { label: "Replay", href: "/replay" },
   { label: "Get Access", href: "/contact" },
   { label: "Privacy", href: "/privacy" },
 ];

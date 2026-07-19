@@ -104,6 +104,15 @@ export const ROUTES: RouteMeta[] = [
     changefreq: "monthly",
   },
   {
+    path: "/replay",
+    title: "Aurelius Replay · rerun your own scheduler logs, locally | Aurelius",
+    description:
+      "A read-only local tool that replays your historical scheduler or serving logs through Aurelius's decision layer and reports the counterfactual — same workloads, same arrivals, scored on SLA-safe goodput per dollar. Runs on your machine; no logs leave it.",
+    name: "Replay",
+    priority: 0.9,
+    changefreq: "monthly",
+  },
+  {
     path: "/docs",
     title: "Documentation · Aurelius technical reference",
     description:
